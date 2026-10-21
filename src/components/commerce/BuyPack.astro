@@ -5,7 +5,7 @@
  *
  *     <BuyPack productId="ai-video-voiceover" />
  *
- * Everything else is derived from src/data/catalog.mjs and the bouncer pack manifest, so a new
+ * Everything else is derived from src/data/catalog.mjs and the fulfillment config, so a new
  * product needs NO change to this file, no new checkout code, and no new download page.
  *
  * ── The one rule this component exists to enforce ───────────────────────────────────────────
@@ -14,9 +14,8 @@
  * into a real checkout when ALL of these hold, checked at BUILD time:
  *     1. the catalog entry says live
  *     2. the catalog carries a real pri_ price id
- *     3. the bouncer pack manifest exists, and declares a price_id (a download product ROUTES on
- *        it — without one, fulfillment falls back to browser-supplied data)
- *     4. every artifact the manifest promises actually exists on disk
+ *     3. the fulfillment config declares this product's price id
+ *     4. every file the product promises is deployed
  * Any failure renders an honest "not on sale yet" state instead of a button that takes money.
  *
  * Optional props let a page override the copy without touching the logic.
@@ -25,7 +24,7 @@ import { productById } from '../../data/catalog.mjs';
 import kcAvailability from '../../data/kc-availability.json';
 
 interface Props {
-  /** Catalog id. Must match the bouncer pack directory name under kc-data/products/. */
+  /** Catalog id. Must match the fulfillment pack id. */
   productId: string;
   /** Button label. Defaults to "Get the pack · $NN one-time". */
   label?: string;
@@ -54,13 +53,9 @@ if (!product) {
 }
 
 // ── Build-time availability, derived from the artifacts that actually deploy ────────────────
-// paddle-server/ is private (not in the public repo or CI), so scripts/kc-availability.mjs reads
-// the pack manifest + extras locally and snapshots the result. Missing entry -> not buyable.
+// Snapshotted by scripts/kc-availability.mjs. Missing entry -> not buyable.
 const pack = kcAvailability.packs?.[productId];
-// `price_id` may be a single string OR an array (a product carries its $1 smoke-test price
-// alongside the real one during a launch). Require the price we are ABOUT TO CHARGE to be
-// among them: a manifest that declares some other product's price would otherwise pass, and
-// the buyer would pay here and be fulfilled something else.
+// Require the price we are about to charge to be among the pack's declared prices.
 const manifestHasPriceId = !!pack && pack.priceIds.includes(product.paddle?.priceId);
 const artifactsPresent = !!pack && pack.artifactsPresent === true;
 
@@ -141,8 +136,7 @@ const CFG = {
               eventCallback: function (ev) {
                 if (!ev || !ev.name) return;
                 if (ev.name === 'checkout.completed' && ev.data && ev.data.transaction_id) {
-                  // The generic pack page asks the bouncer what this transaction entitles and
-                  // renders a button per file. Same page for every download product, forever.
+                  // Hand off to the delivery page.
                   location.href = '/kc/pack/?txn=' + encodeURIComponent(ev.data.transaction_id);
                 } else if (ev.name === 'checkout.error' || ev.name === 'checkout.payment-error') {
                   setNote('There was a problem with the checkout. Please try again, or contact support@bestanswerhub.com.');
@@ -162,9 +156,6 @@ const CFG = {
           try {
             Paddle.Checkout.open({
               items: [{ priceId: CFG.price, quantity: 1 }],
-              // Belt and braces. Fulfillment ROUTES on the price id inside the signed webhook
-              // body; this is only a fallback for a pack whose manifest price_id is not yet set,
-              // and it is ignored the moment the price resolves server-side.
               customData: { assessment: CFG.product },
             });
           } catch (e) {
