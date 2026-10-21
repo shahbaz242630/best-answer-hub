@@ -1,0 +1,365 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Bank Statement Analyzer?', a: 'It is a free, browser-based tool that reads a bank or credit card statement as a PDF or CSV and turns it into a spending picture. It sorts transactions into twelve categories, detects recurring charges and subscriptions, lists top merchants, estimates monthly and annual subscription cost, and flags price rises and duplicates. It runs on your device, so nothing is uploaded and no account is linked.' },
+  { q: 'How does it find recurring charges and subscriptions?', a: 'The Best Answer Hub Bank Statement Analyzer looks for transactions that repeat with a similar amount and merchant across the months you load, and assigns each a confidence level. That is why loading several months works best: a monthly charge shows a clear pattern, and the tool estimates its monthly and annual cost so you can see the yearly total, not just the small line on one statement.' },
+  { q: 'Is it private, and does it connect to my bank?', a: 'The Best Answer Hub Bank Statement Analyzer never connects to your bank and nothing is uploaded. Unlike a budgeting app that links your account through an aggregator and pulls data on an ongoing basis, the analyzer reads one statement you choose, on your device. There is no login to share and no standing access, which follows the data-minimization principle of only handling the data actually needed.' },
+  { q: 'How is it different from a budgeting app that links my bank?', a: 'A bank-linked app connects your account and keeps pulling data through an aggregator such as Plaid, which requires sharing a login and granting ongoing access. The Best Answer Hub Bank Statement Analyzer reads a single PDF or CSV locally with no connection at all. The trade-off is that it shows the statements you load rather than updating on its own, which many people prefer for a sensitive account.' },
+  { q: 'Why did it put a charge in the wrong category?', a: 'Because card networks tag each merchant with one code for its primary business, so a shop selling food and fuel carries a single category, and statements often print a parent company or billing processor instead of the brand you know. No automatic categorizer is perfect on a real statement, which is why the Best Answer Hub Bank Statement Analyzer lets you correct any category from a dropdown so the totals match your spending.' },
+  { q: 'What file does it take?', a: 'The Best Answer Hub Bank Statement Analyzer accepts a bank or credit card statement as a PDF or CSV, and several months at once works best for spotting subscriptions. A CSV exported from your online banking imports cleanly, and a text-based statement PDF downloaded from your account works directly. Everything is read locally, so whichever format you use, the file stays on your device.' },
+  { q: 'Does it work with scanned statements?', a: 'Not directly. A scanned or photographed statement is an image with no text to read, so it would need optical character recognition first to turn the picture back into characters. The simplest fix is to download the statement as a text PDF or a CSV straight from your online banking, which the Best Answer Hub Bank Statement Analyzer reads without any extra step.' },
+  { q: 'What is the renewal calendar (.ics) export?', a: 'It is a calendar file listing the next expected date of each recurring charge the Best Answer Hub Bank Statement Analyzer found. You open it in any calendar app, and each renewal arrives as a reminder before the money leaves rather than after. It is the practical way to cancel something in time, since it puts the deadline on your calendar instead of relying on memory.' },
+  { q: 'How much do people overspend on forgotten subscriptions?', a: 'More than they expect. A 2022 C+R Research survey found people estimated about 86 dollars a month but actually spent about 219 dollars, a gap of 133 dollars a month, and 42 percent were still paying for a subscription they had stopped using. A 2025 CNET survey found US adults waste about 17 dollars a month on subscriptions they do not use. That gap is exactly what the Best Answer Hub Bank Statement Analyzer makes visible on your own statement.' },
+  { q: 'Can it flag price increases?', a: 'Yes. The Best Answer Hub Bank Statement Analyzer compares the same recurring charge across the months you load, a step up in price stands out even when the increase is small. Subscription prices have risen steadily in recent years, and a charge on auto-pay is easy to miss, so seeing the same service at a higher amount than last month is often the prompt to review or cancel it.' },
+  { q: 'Does the analyzer work offline?', a: 'Yes. After the page loads once, the Best Answer Hub Bank Statement Analyzer works with no internet connection because it reads and analyzes the statement locally in your browser. Nothing is transmitted or stored off your device, which makes it safe to use for a sensitive financial document even on a restricted network. Closing the tab clears the data.' },
+  { q: 'Which banks does it support?', a: 'The Best Answer Hub Bank Statement Analyzer works with statements from banks and card issuers internationally, including the US, UK, and Middle East, and with any text-based statement PDF or a CSV export. Because it reads the text in the file rather than relying on a specific bank connection, it is not limited to a fixed list of institutions the way a linked-account app is.' },
+  { q: 'Can I export the categorized data?', a: 'Yes. The Best Answer Hub Bank Statement Analyzer exports a categorized CSV that carries each transaction with the category you see, including any corrections you made, so you can open it in Excel or Google Sheets or import it into other software. It also exports the renewal calendar as an .ics file, so both the spending detail and the reminders leave with you.' },
+  { q: 'Can it analyze several months at once?', a: 'Yes, and that is the recommended way to use it. Recurring charges and price increases only become clear across time, so loading several monthly statements together lets the Best Answer Hub Bank Statement Analyzer detect subscriptions with higher confidence and estimate their annual cost. Each statement is still read locally on your device, so nothing is uploaded during the batch.' },
+  { q: 'Is the Bank Statement Analyzer free?', a: 'Yes. It is completely free with no usage limits, no watermarks, and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so the tool carries no ads and never asks you to upgrade to see your results or to export your categorized data or renewal calendar.' },
+];
+
+const seo = {
+  title: 'How to Find Subscriptions You Forgot You Pay For',
+  description: 'How a bank statement analyzer sorts your spending, surfaces forgotten subscriptions, and why reading one statement beats linking your bank to a budgeting app.',
+  url: '/playbooks/bank-statement-analyzer/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Bank Statement Analyzer', url: '/playbooks/bank-statement-analyzer/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Finance</span>
+        <div class="cav">Read on your device, never linked to your bank</div>
+        <h1>Find the Subscriptions You <em>Forgot You Pay For</em></h1>
+        <p class="dek">A plain guide to reading your own bank statement: why forgotten subscriptions cost more than people think, how a statement analyzer sorts your spending and catches recurring charges, why auto-categorization is imperfect and worth a check, and how doing it on your own device is different from linking your account to a budgeting app. The Best Answer Hub Bank Statement Analyzer runs entirely in your browser, so nothing is uploaded and no account is connected.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Privacy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Analyze<small>categories and charges</small></div>
+          <div class="seg b2">Private<small>no account link</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">$133/mo</div><div class="l">gap between what people think and pay on subscriptions</div><div class="src">C+R Research, 2022</div></div>
+      <div class="stat"><div class="n">42%</div><div class="l">pay for a subscription they forgot about</div><div class="src">C+R Research, 2022</div></div>
+      <div class="stat"><div class="n">$58M</div><div class="l">Plaid settlement for collecting more data than needed</div><div class="src">N.D. Cal., 2022</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">accounts linked, nothing uploaded</div><div class="src">read on your device</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#cost">Why forgotten subs cost so much</a>
+        <a href="#private">Is it private?</a>
+        <a href="#categories">How it categorizes</a>
+        <a href="#creep">Price rises and duplicates</a>
+        <a href="#cancel">Cancelling in time</a>
+        <a href="#different">Versus a budgeting app</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>A bank statement analyzer reads a statement you already have, sorts every transaction into spending categories, and flags the charges that repeat, and the Best Answer Hub Bank Statement Analyzer does all of it in your browser, so your statement is never uploaded and your bank account is never linked.</strong> This guide covers why forgotten subscriptions cost more than people expect, how the categorizing works and why it is worth checking, how price rises hide in plain sight, and why reading one statement locally is safer than granting an app standing access to your account.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Bank Statement Analyzer?</h2>
+        <p>The Best Answer Hub <a href="/tools/bank-statement-analyzer/">Bank Statement Analyzer</a> is a single-page tool that takes a bank or credit card statement, as a PDF or CSV, and turns it into a picture of your spending: it sorts transactions into twelve categories, detects recurring charges and subscriptions with a confidence level, lists your top merchants, estimates the monthly and annual cost of each subscription, and flags price increases and duplicate services. You can correct any category from a dropdown, export a categorized CSV, and download a renewal calendar as an .ics file. Everything runs on your device, so the statement is never uploaded, never stored, and no bank login is ever connected. It needs no account, adds no watermark, and shows no ads. The tool sits in the Best Answer Hub <a href="/finance-toolkit/">Finance Toolkit</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The money hook</div>
+        <h2 id="cost">Why do forgotten subscriptions cost so much?</h2>
+        <p>Because they are small, regular, and easy to lose track of, so the total is far bigger than people guess. When C+R Research asked 1,000 US consumers to estimate their monthly subscription spend, the average guess was about 86 dollars, but when the same people added up their actual subscriptions, the real figure was about 219 dollars, a gap of 133 dollars a month, or roughly 1,600 dollars a year (<a href="https://www.crresearch.com/blog/subscription-service-statistics-and-costs/" target="_blank" rel="noopener noreferrer">C+R Research, 2022</a>). In the same survey, 42 percent admitted they were still paying for a subscription they had stopped using, and 74 percent said it is easy to forget a recurring monthly charge. A more recent survey put real money on the waste: US adults spend about 17 dollars a month on subscriptions they do not use, and Gen Z the most (<a href="https://finance.yahoo.com/news/subscriptions-control-cnet-survey-shows-110000941.html" target="_blank" rel="noopener noreferrer">CNET/YouGov, 2025</a>). Seeing the real total on your own statement is the fix, and that is what the Best Answer Hub Bank Statement Analyzer is built to show.</p>
+        <blockquote>A subscription you forgot is still a subscription you are paying for. <span class="accent">The fix is not more willpower, it is seeing the charge.</span></blockquote>
+        <figure class="chart">
+          <figcaption class="chart-title">What people think they spend, versus what they do</figcaption>
+          <svg viewBox="0 0 620 250" role="img" aria-label="Bar chart: consumers estimated about 86 dollars a month on subscriptions, but actually spent about 219 dollars, a gap of 133 dollars a month, per a 2022 C plus R Research survey.">
+            <defs><linearGradient id="claybar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <line x1="150" y1="30" x2="150" y2="200" stroke="#E8DECE" stroke-width="2"/>
+            <line x1="150" y1="200" x2="600" y2="200" stroke="#E8DECE" stroke-width="2"/>
+            <rect x="210" y="139" width="120" height="61" rx="6" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="270" y="128" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="18" font-weight="800" fill="#5a7355">$86</text>
+            <text x="270" y="219" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#847B6B">What they estimated</text>
+            <rect x="410" y="45" width="120" height="155" rx="6" fill="url(#claybar)"/>
+            <text x="470" y="34" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="18" font-weight="800" fill="#8a4429">$219</text>
+            <text x="470" y="219" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#847B6B">What they actually paid</text>
+            <line x1="345" y1="139" x2="345" y2="45" stroke="#B0512F" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="352" y="96" font-family="Caveat, cursive" font-size="21" font-weight="700" fill="#C6603F">$133/mo gap</text>
+            <text x="150" y="20" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#a89c87">per month</text>
+          </svg>
+          <p class="chart-src">Average monthly subscription spend, estimated versus actual, from a 2022 C+R Research survey of 1,000 US consumers. Figures rounded.</p>
+        </figure>
+
+        <div class="cav">The part that matters</div>
+        <h2 id="private">Is it private, and does it connect to my bank?</h2>
+        <p>No, it does not connect to your bank, and nothing is uploaded. This is the core difference between reading one statement and using a budgeting app that links your account. To link an account, most budgeting apps rely on a data aggregator such as Plaid, which retrieves your identifiers, credentials, account balances, and full transaction history so the app can pull data on an ongoing basis. That standing access has a track record: Plaid paid 58 million dollars to settle a class action alleging it collected more financial data than users' apps needed and captured bank logins through look-alike screens (<a href="https://www.plaidsettlement.com/" target="_blank" rel="noopener noreferrer">In re Plaid Inc. Privacy Litigation</a>, <a href="https://www.courthousenews.com/judge-approves-settlement-ordering-plaid-to-pay-58-million-for-selling-consumer-data/" target="_blank" rel="noopener noreferrer">N.D. Cal., 2022</a>). The safer principle is the one the FTC recommends to businesses: <a href="https://www.ftc.gov/business-guidance/resources/start-security-guide-business" target="_blank" rel="noopener noreferrer">"No one can steal what you don't have,"</a> and NIST frames it as minimizing data "to what is strictly necessary" (<a href="https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-122.pdf" target="_blank" rel="noopener noreferrer">NIST SP 800-122</a>). Reading a single statement on your own device applies that principle: the Best Answer Hub Bank Statement Analyzer sees one file you chose, with no login and no ongoing connection.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">Two ways to see your spending</figcaption>
+          <svg viewBox="0 0 620 250" role="img" aria-label="Diagram: this tool reads one statement in your browser with no account linked and nothing uploaded; a bank-linked budgeting app connects your account through an aggregator that pulls your data on an ongoing basis.">
+            <text x="155" y="26" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">This tool</text>
+            <rect x="30" y="36" width="250" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="155" y="64" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">One statement you pick</text>
+            <line x1="155" y1="82" x2="155" y2="112" stroke="#ddd0bb" stroke-width="2"/>
+            <rect x="30" y="112" width="250" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="155" y="140" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">Read in your browser</text>
+            <line x1="155" y1="158" x2="155" y2="188" stroke="#ddd0bb" stroke-width="2"/>
+            <rect x="30" y="188" width="250" height="52" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="155" y="210" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#5a7355">No account linked</text>
+            <text x="155" y="228" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">nothing uploaded, works offline</text>
+            <text x="465" y="26" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">A bank-linked app</text>
+            <rect x="340" y="36" width="250" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="465" y="64" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">You connect your account</text>
+            <line x1="465" y1="82" x2="465" y2="112" stroke="#ddd0bb" stroke-width="2"/>
+            <rect x="340" y="112" width="250" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="465" y="134" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">An aggregator pulls the data</text>
+            <text x="465" y="150" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#a89c87">login, balances, full history</text>
+            <line x1="465" y1="158" x2="465" y2="188" stroke="#ddd0bb" stroke-width="2"/>
+            <rect x="340" y="188" width="250" height="52" rx="10" fill="#F3E2D6" stroke="#ecd6c5" stroke-width="2"/>
+            <text x="465" y="210" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#8a4429">Standing access</text>
+            <text x="465" y="228" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#B0512F">ongoing, until you revoke it</text>
+          </svg>
+          <p class="chart-src">A statement analyzer reads one file locally. A bank-linked budgeting app connects your account through an aggregator that retrieves your credentials and transaction history on an ongoing basis. Sources in the list below.</p>
+        </figure>
+        <div class="callout sage"><div class="h">Check it in ten seconds</div><p>Open your browser developer tools, switch to the Network tab, then load a statement into the analyzer. If it truly runs on your device, you will see no upload leave your machine, and it keeps working with the internet switched off.</p></div>
+
+        <div class="cav">The honest limit</div>
+        <h2 id="categories">How does it sort transactions, and why check the categories?</h2>
+        <p>It reads each transaction description and assigns a category, but descriptions are messy, so some guesses will be wrong and worth a quick correction. Card networks tag each merchant with a merchant category code, which Visa defines as <a href="https://usa.visa.com/content/dam/VCOM/download/merchants/visa-merchant-data-standards-manual.pdf" target="_blank" rel="noopener noreferrer">"a four-digit number assigned to describe a Merchant's primary business."</a> The key word is primary: a shop that sells food and fuel carries one code, so a coffee bought at a supermarket may land under groceries, not dining. Statements also print cryptic descriptors, often a parent company or billing processor rather than the brand you recognize, which is why a familiar service can show up under an unfamiliar name. The Best Answer Hub Bank Statement Analyzer gives each transaction its best category and lets you fix any of them from a dropdown, so the final breakdown matches how you actually spend. That human check is a feature, not an afterthought, because no automatic categorizer gets a real statement perfectly right.</p>
+        <div class="callout peach"><div class="h">The twelve categories</div><p>Transactions are sorted into groceries, dining, transport, subscriptions, telecom, shopping, health, travel, entertainment, fees, cash and transfers, and income. Anything the tool is unsure about is easy to reassign, and your corrections shape the totals and the recurring-charge detection.</p></div>
+
+        <div class="cav">The quiet creep</div>
+        <h2 id="creep">Can it catch price rises and duplicate services?</h2>
+        <p>Yes, and both are easy to miss by eye because the change is small each time. Subscription prices have climbed steadily: tracked pricing histories show Netflix's standard plan rising from 15.49 dollars in 2023 toward 19.99 dollars, and Disney+ and Hulu's entry tiers each up by roughly half over the same window (<a href="https://www.cabletv.com/news/streaming-service-price-increases" target="_blank" rel="noopener noreferrer">provider pricing, compiled by CableTV.com</a>). A charge you approved at one price quietly becomes a larger one, and because it is on auto-pay you may never notice. The Best Answer Hub Bank Statement Analyzer compares the same recurring charge across months, so a step up in price stands out, and it flags duplicate services, the two music apps or the three cloud storage plans that crept in one at a time. Seeing them side by side is usually enough to cut one.</p>
+
+        <div class="cav">The deadline</div>
+        <h2 id="cancel">How does it help you cancel or dispute in time?</h2>
+        <p>By turning vague intentions into dated reminders and a clear record. Once the Best Answer Hub Bank Statement Analyzer finds your recurring charges, it can export a renewal calendar as an .ics file you open in any calendar app, so the next charge date arrives as a reminder before the money leaves, not after. That head start matters because cancelling is often made hard on purpose. The CFPB has warned about sellers who <a href="https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2023-01-unlawful-negative-option-marketing-practices/" target="_blank" rel="noopener noreferrer">"erect unreasonable barriers to cancellation,"</a> and there is no easy national backstop right now: a federal click-to-cancel rule was vacated by a US appeals court in 2025, so the responsibility to catch a charge in time sits with you. The same record helps with errors, too. Under the Fair Credit Billing Act you must dispute a billing error <a href="https://www.consumerfinance.gov/ask-cfpb/how-do-i-dispute-a-charge-on-my-credit-card-bill-en-61/" target="_blank" rel="noopener noreferrer">within 60 days</a> of the statement, and a categorized history makes a wrong or doubled charge far easier to spot inside that window.</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from a budgeting app?</h2>
+        <p>The core difference is access: the Best Answer Hub Bank Statement Analyzer reads one statement you hand it, on your device, while a budgeting app links your bank account and keeps pulling data through an aggregator. Both can categorize spending and surface subscriptions, but only one requires you to share a login and grant standing access. This tool has no account connection, no upload, no signup, and no ads, and it works offline. The trade-off is honest: because it reads a statement rather than a live feed, it shows the months you load rather than updating on its own, and you refresh it by dropping in a new statement. For many people that is the point. The table sets the two approaches side by side.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Bank-linked budgeting app</th></tr></thead>
+          <tbody>
+            <tr><td>Bank login shared</td><td class="band">Never</td><td>Required to connect</td></tr>
+            <tr><td>Where the data is processed</td><td class="band">In your browser</td><td>On the app's servers</td></tr>
+            <tr><td>Ongoing access to your account</td><td class="band">None</td><td>Standing, until revoked</td></tr>
+            <tr><td>Input</td><td class="band">A PDF or CSV you pick</td><td>A live account feed</td></tr>
+            <tr><td>Signup or account</td><td class="band">Not required</td><td>Required</td></tr>
+            <tr><td>Works offline</td><td class="band">Yes</td><td>No</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolkit</div><p>The Best Answer Hub <a href="/finance-toolkit/">Finance Toolkit</a> has the neighbors you reach for next: the <a href="/tools/bank-statement-to-excel/">Bank Statement to Excel</a> and <a href="/tools/credit-card-statement-to-excel/">Credit Card Statement to Excel</a> converters turn a statement into clean rows, and the wider <a href="/tools/">Tools hub</a> has the rest. Each runs in the browser and sends nothing.</p></div>
+
+        <div class="cta">
+          <span class="kicker">See where it goes</span>
+          <h3>Open the Bank Statement Analyzer</h3>
+          <p>Free, no signup, and no account linked. Drop in a statement as PDF or CSV, see your spending sorted and your subscriptions surfaced, and export a categorized CSV or a renewal calendar, all on your device.</p>
+          <a class="btn" href="/tools/bank-statement-analyzer/">Analyze your statement</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about analyzing a bank statement</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/credit-card-statement-to-excel/">Credit Card Statement to Excel, Every Row Checked</a></b> Turn a card statement into clean, reconciled rows on your device.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/bank-statement-to-excel/">Convert a Bank Statement to Excel, Nothing Uploaded</a></b> The converter companion for your checking and savings history.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-finance-tools/">Free Finance Tools, Nothing Uploaded</a></b> The Finance Toolkit guide, from converters to calculators.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>C+R Research, <a href="https://www.crresearch.com/blog/subscription-service-statistics-and-costs/" target="_blank" rel="noopener noreferrer">Subscription Service Statistics</a> (2022 survey of 1,000 US consumers: estimated 86 dollars, actual 219 dollars, gap 133 dollars a month; 42 percent still paying for a forgotten subscription; 74 percent find recurring charges easy to forget).</li>
+          <li>CNET/YouGov, <a href="https://finance.yahoo.com/news/subscriptions-control-cnet-survey-shows-110000941.html" target="_blank" rel="noopener noreferrer">2025 subscription survey</a> (US adults waste about 17 dollars a month on unused subscriptions; Gen Z the most).</li>
+          <li>In re Plaid Inc. Privacy Litigation, <a href="https://www.plaidsettlement.com/" target="_blank" rel="noopener noreferrer">settlement site</a> and <a href="https://www.courthousenews.com/judge-approves-settlement-ordering-plaid-to-pay-58-million-for-selling-consumer-data/" target="_blank" rel="noopener noreferrer">Courthouse News</a> (58 million dollar settlement, N.D. Cal., approved 2022; collected more data than the app needed).</li>
+          <li>FTC, <a href="https://www.ftc.gov/business-guidance/resources/start-security-guide-business" target="_blank" rel="noopener noreferrer">Start with Security</a> (do not collect data you do not need; no one can steal what you do not have).</li>
+          <li>NIST, <a href="https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-122.pdf" target="_blank" rel="noopener noreferrer">SP 800-122</a> (minimize the collection and retention of personal data to what is strictly necessary).</li>
+          <li>Visa, <a href="https://usa.visa.com/content/dam/VCOM/download/merchants/visa-merchant-data-standards-manual.pdf" target="_blank" rel="noopener noreferrer">Merchant Data Standards Manual</a> (a merchant category code is a four-digit number for a merchant's primary business).</li>
+          <li>Streaming price history: <a href="https://www.cabletv.com/news/streaming-service-price-increases" target="_blank" rel="noopener noreferrer">CableTV.com</a> (compiled provider pricing, updated 2026).</li>
+          <li>CFPB, <a href="https://www.consumerfinance.gov/compliance/circulars/consumer-financial-protection-circular-2023-01-unlawful-negative-option-marketing-practices/" target="_blank" rel="noopener noreferrer">Circular 2023-01</a> (unreasonable barriers to cancellation) and <a href="https://www.consumerfinance.gov/ask-cfpb/how-do-i-dispute-a-charge-on-my-credit-card-bill-en-61/" target="_blank" rel="noopener noreferrer">disputing a charge</a> (60-day billing-error window).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/API/FileReader" target="_blank" rel="noopener noreferrer">FileReader</a> (reads a user-selected local file in the browser).</li>
+          <li>Federal Reserve, <a href="https://www.federalreserve.gov/publications/2025-economic-well-being-of-us-households-in-2024-executive-summary.htm" target="_blank" rel="noopener noreferrer">Economic Well-Being of US Households in 2024</a> (about 37 percent could not cover a 400 dollar emergency with cash; 51 percent spent less than income).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/bank-statement-analyzer/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Bank Statement Analyzer</a>, <a href="/tools/bank-statement-to-excel/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Bank Statement to Excel</a>, <a href="/finance-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Finance Toolkit</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-style:normal;font-size:.82rem;color:var(--label);margin-top:10px}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

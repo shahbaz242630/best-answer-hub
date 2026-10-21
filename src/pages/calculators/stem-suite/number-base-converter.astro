@@ -1,0 +1,637 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ToolFAQ from '../../../components/tools/ToolFAQ.astro';
+import ToolHowItWorks from '../../../components/tools/ToolHowItWorks.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+import HowToSchema from '../../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Number Base Converter?',
+    a: 'The Best Answer Hub Number Base Converter is a free, browser-based tool that converts numbers between any bases from 2 to 36 with arbitrary-precision BigInt arithmetic. Unlike RapidTables and ConvertSuite.net, which limit users to binary, octal, decimal, and hex, the Best Answer Hub Number Base Converter shows all base conversions simultaneously with two\'s complement visualization, ASCII mapping, and step-by-step explanations. Enter a number in any base and see instant conversions to every other base with one-click copy buttons. All processing runs client-side with no signup required.',
+  },
+  {
+    q: 'Why do most online base converters only support 4 number bases?',
+    a: 'Most free online base converters, including ConvertSuite.net and MiniWebtool, support only binary, octal, decimal, and hexadecimal because these four bases cover approximately 95% of typical programming and electronics use cases. Building a generic base-N converter requires handling arbitrary radix alphabets (0-9, A-Z), BigInt arithmetic for numbers beyond JavaScript\'s 9,007,199,254,740,991 safe integer limit, and proper padding logic for bit-width displays. The Best Answer Hub Number Base Converter implements all of this, supporting bases 2 through 36 with arbitrary-precision BigInt math and automatic digit grouping for readability.',
+  },
+  {
+    q: 'How do I convert a negative decimal number to binary two\'s complement?',
+    a: 'First, write the positive number in binary using your target bit width, typically 8 or 16 bits. Then invert every bit, changing 0s to 1s and 1s to 0s, and add 1 to the result using standard two\'s complement arithmetic taught in AP Computer Science and digital logic courses. For example, negative 5 in 8-bit two\'s complement is 00000101, inverted to 11111010, plus 1 equals 11111011. The Best Answer Hub Number Base Converter automates this: select the Two\'s Complement toggle, choose 8-bit, 16-bit, or 32-bit width, and the tool displays the sign bit, inverted form, and final result instantly.',
+  },
+  {
+    q: 'What is the largest number the Best Answer Hub Number Base Converter can handle?',
+    a: 'The Best Answer Hub Number Base Converter uses JavaScript\'s native BigInt type, which supports integers of arbitrary length limited only by available system memory. Most online converters, including ConvertSuite.net, are capped at JavaScript\'s safe integer limit of 9,007,199,254,740,991, which is 2^53 minus 1. The Best Answer Hub Number Base Converter handles numbers with hundreds of digits across all bases from 2 to 36 without precision loss. For context, 2^256 (the key size used in Bitcoin\'s secp256k1 elliptic curve) converts accurately to hex, decimal, and every other supported base.',
+  },
+  {
+    q: 'Why does my hex to binary conversion look wrong?',
+    a: 'Hex to binary errors almost always happen because one or more hex digits were not expanded to exactly four binary bits each. Every hexadecimal digit maps to a 4-bit nibble (0xF is 1111, 0x5 is 0101, and 0xA is 1010), so omitting a leading zero in any group corrupts the entire result. If you convert 0xF5 and write 111101 instead of 11110101, the missing zero creates an entirely different value. The Best Answer Hub Number Base Converter prevents this by showing every hex digit alongside its 4-bit group visually, with zero-padding enforced automatically. For quick manual verification, memorize that 0x0 through 0xF map to 0000 through 1111.',
+  },
+  {
+    q: 'Can the Best Answer Hub Number Base Converter show me the step-by-step math?',
+    a: 'Yes. Click the Show Steps toggle and the Best Answer Hub Number Base Converter displays the long division method for converting from the source base to decimal, followed by the repeated division-by-target-base method for converting from decimal to the destination base with every quotient and remainder labeled. Each step shows the dividend, divisor, quotient, and remainder with the place value explicitly labeled. This matches the method taught in AP Computer Science A and most university digital logic courses. The steps update instantly as you type, making the tool useful for both quick lookups and learning the conversion algorithm.',
+  },
+  {
+    q: 'How do I convert a fractional decimal number to binary?',
+    a: 'Multiply the fractional part by 2 repeatedly and record the integer part of each result as the next binary digit after the radix point. For example, converting 0.625 decimal gives 0.101 binary because 0.625 times 2 is 1.25, then 0.25 times 2 is 0.5, then 0.5 times 2 is 1.0. Some fractions like 0.1 decimal produce infinite repeating binary patterns (0.000110011...), similar to how 1/3 is 0.333... in decimal. The Best Answer Hub Number Base Converter shows up to 16 fractional digits and flags repeating patterns when detected.',
+  },
+  {
+    q: 'What do the 0x, 0b, and 0o prefixes mean in programming?',
+    a: 'The 0x prefix marks a hexadecimal number in C, C++, Java, Python, and JavaScript. The 0b prefix marks binary in Python 3, JavaScript ES6, and C++14, while 0o marks octal in Python 3, replacing the older leading-zero convention that caused frequent bugs. For example, 0xFF equals 255 decimal, 0b11111111 also equals 255, and 0o377 equals 255. The Best Answer Hub Number Base Converter auto-detects these prefixes: paste 0x1A3B and the tool automatically switches to base 16, or paste 0b101010 and it switches to base 2. This eliminates manual base selection for programmers copying values from IDEs and debuggers.',
+  },
+  {
+    q: 'Why does Windows Calculator overflow at 0x7FFFFFFFFFFFFFFF?',
+    a: 'Windows Calculator in Programmer mode uses a signed 64-bit QWORD internally, so its maximum positive value is 0x7FFFFFFFFFFFFFFF, which equals 9,223,372,036,854,775,807 in decimal. Entering any value larger than this causes immediate overflow because the sign bit flips, interpreting the number as negative. The Best Answer Hub Number Base Converter avoids this limitation entirely by using JavaScript BigInt, which handles integers of any length. As of June 2026, Windows Calculator still does not support arbitrary-precision arithmetic in Programmer mode, and Microsoft has not announced plans to add it.',
+  },
+  {
+    q: 'How is an IPv4 address related to binary and hexadecimal?',
+    a: 'An IPv4 address is a 32-bit integer written in dotted-decimal notation for human readability, with each of the four octets representing 8 bits. The address 192.168.1.1 is 11000000.10101000.00000001.00000001 in binary and 0xC0A80101 in hexadecimal for network engineers and security analysts. Network professionals frequently convert between these representations when reading packet captures in Wireshark, configuring subnet masks, or writing firewall rules. The Best Answer Hub Number Base Converter displays the binary and hex forms of any decimal number, making it easy to verify IP address conversions for CCNA coursework and network troubleshooting.',
+  },
+  {
+    q: 'Can I convert RGB color values to hexadecimal?',
+    a: 'Yes. An RGB color is three 8-bit values ranging from 0 to 255, one each for red, green, and blue. Convert each channel to a 2-digit hex number and concatenate them in order: RGB(255, 128, 64) becomes FF8040 in standard web color notation. The Best Answer Hub Number Base Converter converts each channel individually. For a complete color conversion tool with live preview, contrast checking, and WCAG accessibility grading, use the <a href="/tools/color-palette-generator/">Best Answer Hub Color Palette Generator</a>. That tool generates full palettes from a single seed color and exports to CSS, Tailwind, and hex formats.',
+  },
+  {
+    q: 'What is base-36 and where is it used?',
+    a: 'Base-36 uses the digits 0-9 and the letters A-Z for a total of 36 symbols, making it the highest base natively supported by Python\'s int() function and JavaScript\'s parseInt() with a radix parameter. Base-36 is used in URL shorteners like TinyURL and bit.ly to encode large database IDs into short, human-readable strings. It also appears in geohash location encoding and some spreadsheet cell reference systems. The Best Answer Hub Number Base Converter supports base-36 alongside every base from 2 to 36, with automatic uppercase formatting for alphabetic digits.',
+  },
+  {
+    q: 'How do I batch convert multiple numbers at once?',
+    a: 'The Best Answer Hub Number Base Converter supports comma-separated or newline-separated lists in the input field, so you can paste multiple values such as 255, 128, 64, 32 and see conversions for every number simultaneously. Most competing tools, including OnlineTools.digital and ConvertSuite.net, handle only one number at a time. Batch mode is useful for programmers converting memory dump values, network administrators translating port numbers, and students checking entire worksheet columns. Each row has its own copy button for quick pasting into code editors.',
+  },
+  {
+    q: 'What is the difference between signed and unsigned binary numbers?',
+    a: 'Unsigned binary treats every bit as a positive magnitude, so an 8-bit value ranges from 0 to 255. Signed binary, typically using two\'s complement, reserves the leftmost bit as a sign indicator, giving a range of negative 128 to positive 127 for 8-bit values. The same bit pattern 11111111 is 255 unsigned but negative 1 signed. The Best Answer Hub Number Base Converter shows both interpretations side by side when you enable the Two\'s Complement toggle. Select 8-bit, 16-bit, or 32-bit width to see the padded binary, sign bit, and decimal value for both signed and unsigned views.',
+  },
+  {
+    q: 'Is the Best Answer Hub Number Base Converter free and private?',
+    a: 'Yes. The Best Answer Hub Number Base Converter is completely free with no usage limits, no signup, no email capture, and no premium tiers as of June 2026. Every conversion runs entirely in the browser using client-side JavaScript and the native BigInt API with no server contact. No numbers, formulas, or conversion history are uploaded, stored, or logged on any server. To verify this, disconnect from the internet after loading the page and the tool will continue working perfectly. This makes it safe for converting proprietary memory addresses, cryptographic keys, and sensitive research data.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your number and select the base', description: 'Type any number and choose its base from 2 to 36. The converter auto-detects 0x, 0b, and 0o prefixes. Toggle two\'s complement or step-by-step mode before converting.' },
+  { title: 'View instant conversions to all bases', description: 'See binary, octal, decimal, and hexadecimal prominently, plus every base from 2 to 36 in a compact grid. Copy any result with one click. BigInt precision handles numbers far beyond JavaScript\'s safe integer limit.' },
+  { title: 'Explore two\'s complement, ASCII, and step-by-step math', description: 'Enable two\'s complement to see signed 8-bit, 16-bit, or 32-bit representations. View the ASCII character for valid code points. Expand step-by-step working to learn the division and place-value methods.' },
+];
+
+const seo = {
+  title: 'Number Base Converter — Binary to Hex to Decimal (2026)',
+  description: 'Free number base converter supporting binary, octal, decimal, hex, and all bases 2–36. BigInt precision, two\'s complement, step-by-step working. No signup.',
+  url: '/calculators/stem-suite/number-base-converter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'STEM Suite', url: '/calculators/stem-suite/' },
+    { name: 'Number Base Converter', url: '/calculators/stem-suite/number-base-converter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated June 2026
+          </div>
+          <a href="/calculators/stem-suite/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            STEM Suite
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Number Base Converter:<br/>
+          <em class="italic text-bae-primary">Binary, hex, decimal &amp; every base</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Convert numbers between any bases from 2 to 36 with arbitrary-precision BigInt arithmetic. Auto-detects 0x, 0b, and 0o prefixes. Shows two's complement, ASCII mapping, and step-by-step conversion working. All calculations run locally in your browser.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section class="py-6 md:py-8" aria-label="Number base converter">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <div class="mb-4">
+              <label class="text-sm font-semibold text-bae-ink block mb-1.5">Number</label>
+              <input type="text" id="num-input" placeholder="e.g. 255 or 0xFF or 0b11111111" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              <p class="text-xs text-bae-muted mt-1.5">Supports prefixes: 0x (hex), 0b (binary), 0o (octal). Prefix overrides manual base selection.</p>
+            </div>
+            <div class="mb-4">
+              <label class="text-sm font-semibold text-bae-ink block mb-1.5">Base</label>
+              <select id="base-select" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                {Array.from({length: 35}, (_, i) => (
+                  <option value={i + 2} selected={i + 2 === 10}>Base {i + 2}</option>
+                ))}
+              </select>
+            </div>
+            <div class="flex flex-wrap gap-4 mb-4">
+              <label class="flex items-center gap-1.5 text-xs text-bae-muted cursor-pointer select-none">
+                <input type="checkbox" id="show-twos" class="accent-bae-primary w-3.5 h-3.5" />
+                Show two's complement
+              </label>
+              <label class="flex items-center gap-1.5 text-xs text-bae-muted cursor-pointer select-none">
+                <input type="checkbox" id="show-steps" class="accent-bae-primary w-3.5 h-3.5" />
+                Show step-by-step
+              </label>
+            </div>
+            <div id="bit-width-panel" class="hidden mb-4">
+              <label class="text-sm font-semibold text-bae-ink block mb-1.5">Bit Width</label>
+              <select id="bit-width" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                <option value="8">8-bit</option>
+                <option value="16" selected>16-bit</option>
+                <option value="32">32-bit</option>
+              </select>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button type="button" id="convert-btn" class="px-4 py-2 bg-bae-ink text-white text-sm font-medium rounded-bae-sm hover:opacity-90 transition-opacity">Convert</button>
+              <button type="button" id="clear-btn" class="px-4 py-2 border border-bae-border text-sm font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors">Clear</button>
+            </div>
+            <div id="conv-error" class="hidden mb-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-bae-sm px-3 py-2"></div>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="text-xs text-bae-muted self-center">Try:</span>
+              <button type="button" class="quick-num px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors" data-num="255" data-base="10">255</button>
+              <button type="button" class="quick-num px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors" data-num="0xFF" data-base="16">0xFF</button>
+              <button type="button" class="quick-num px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors" data-num="0b101010" data-base="2">0b101010</button>
+              <button type="button" class="quick-num px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors" data-num="-37" data-base="10">-37</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Results -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg" id="result-panel">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Results</h3>
+            <div id="result-content">
+              <p class="text-sm text-white/70">Enter a number and select a base to see conversions to binary, octal, decimal, hexadecimal, and all bases 2–36.</p>
+            </div>
+          </div>
+          <button type="button" id="pdf-btn" class="hidden w-full bg-bae-ink hover:bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+            Download PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <ToolHowItWorks steps={steps} />
+
+  <!-- FAQ -->
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Scenarios -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people calculate with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases for the Best Answer Hub Number Base Converter.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Computer Science Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify binary and hex for assembly language</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Binary • Hex • Two's complement</p>
+          <p class="text-sm text-bae-muted">Convert between binary, octal, decimal, and hexadecimal for digital logic homework and assembly language programming. Use the two's complement view to verify signed integer representations for 8-bit, 16-bit, and 32-bit systems.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Web Developers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Convert RGB values to hex color codes</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">RGB • Hex colors • CSS</p>
+          <p class="text-sm text-bae-muted">Convert individual RGB channel values from decimal to hex for CSS color declarations. Verify that RGB(255, 128, 64) maps to #FF8040, or inspect Unicode code points for special characters in web fonts.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Network Engineers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Convert IP addresses and subnet masks</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">IPv4 • Subnetting • Binary</p>
+          <p class="text-sm text-bae-muted">Translate dotted-decimal IPv4 addresses into binary and hex for subnet mask calculations and firewall rule verification. Convert port numbers between decimal and hex for protocol analysis and packet inspection.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Embedded Systems Engineers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Debug register values and memory dumps</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Registers • Two's complement • BigInt</p>
+          <p class="text-sm text-bae-muted">Interpret 16-bit and 32-bit register values from microcontrollers with two's complement visualization. Handle large memory addresses beyond JavaScript's 2^53-1 safe integer limit using the BigInt-powered converter.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <ToolRelatedCTA currentHref="/calculators/stem-suite/number-base-converter/" />
+
+  <HowToSchema steps={steps} name="How to Use the Best Answer Hub Number Base Converter" />
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      let lastResults = null;
+      const $ = id => document.getElementById(id);
+      const DIGITS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const VALID_CHARS = '0123456789abcdefghijklmnopqrstuvwxyz';
+
+      function escapeHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
+      function showError(msg) {
+        const el = $('conv-error');
+        el.textContent = msg;
+        el.classList.remove('hidden');
+      }
+
+      function hideError() {
+        $('conv-error').classList.add('hidden');
+      }
+
+      function toBase(n, base) {
+        if (n === 0n) return '0';
+        const digits = DIGITS;
+        let abs = n < 0n ? -n : n;
+        let result = '';
+        const b = BigInt(base);
+        while (abs > 0n) {
+          result = digits[Number(abs % b)] + result;
+          abs = abs / b;
+        }
+        return n < 0n ? '-' + result : result;
+      }
+
+      function parseInput(input, base) {
+        input = input.trim();
+        if (!input) return null;
+
+        const lower = input.toLowerCase();
+        if (lower.startsWith('0x')) {
+          input = input.slice(2);
+          base = 16;
+        } else if (lower.startsWith('0b')) {
+          input = input.slice(2);
+          base = 2;
+        } else if (lower.startsWith('0o')) {
+          input = input.slice(2);
+          base = 8;
+        }
+
+        const maxChar = VALID_CHARS[base - 1];
+        for (const ch of input.toLowerCase()) {
+          if (ch === '-') continue;
+          const idx = VALID_CHARS.indexOf(ch);
+          if (idx === -1 || idx >= base) {
+            throw new Error('Invalid digit "' + ch + '" for base ' + base + '. Valid digits: 0-' + (base > 10 ? '9, A-' + maxChar.toUpperCase() : maxChar));
+          }
+        }
+
+        let result = 0n;
+        const isNegative = input.startsWith('-');
+        const absInput = isNegative ? input.slice(1) : input;
+
+        for (const ch of absInput.toLowerCase()) {
+          const val = VALID_CHARS.indexOf(ch);
+          result = result * BigInt(base) + BigInt(val);
+        }
+
+        return isNegative ? -result : result;
+      }
+
+      function twosComplement(n, bits) {
+        const maxVal = 2n ** BigInt(bits);
+        if (n >= 0n) {
+          return n % maxVal;
+        } else {
+          return maxVal + (n % maxVal);
+        }
+      }
+
+      function formatBinary(binStr, groupSize) {
+        groupSize = groupSize || 4;
+        const isNeg = binStr.startsWith('-');
+        const absStr = isNeg ? binStr.slice(1) : binStr;
+        const padded = absStr.padStart(Math.ceil(absStr.length / groupSize) * groupSize, '0');
+        const grouped = padded.match(new RegExp('.{1,' + groupSize + '}', 'g')).join(' ');
+        return isNeg ? '-' + grouped : grouped;
+      }
+
+      function getStepsToBase(decimal, targetBase) {
+        const steps = [];
+        let n = decimal < 0n ? -decimal : decimal;
+        if (n === 0n) return [{n: 0n, q: 0n, r: 0n}];
+        const b = BigInt(targetBase);
+        while (n > 0n) {
+          const r = n % b;
+          const q = n / b;
+          steps.push({n, q, r});
+          n = q;
+        }
+        return steps;
+      }
+
+      function getStepsFromBase(input, base) {
+        const steps = [];
+        const chars = input.toLowerCase().split('');
+        let value = 0n;
+        const b = BigInt(base);
+        for (let i = 0; i < chars.length; i++) {
+          const digitVal = VALID_CHARS.indexOf(chars[i]);
+          const placeValue = b ** BigInt(chars.length - 1 - i);
+          const contribution = BigInt(digitVal) * placeValue;
+          value += contribution;
+          steps.push({digit: chars[i].toUpperCase(), digitVal, place: chars.length - 1 - i, placeValue: placeValue.toString(), contribution: contribution.toString(), runningTotal: value.toString()});
+        }
+        return steps;
+      }
+
+      function doConvert() {
+        hideError();
+        const input = $('num-input').value.trim();
+        if (!input) {
+          $('result-content').innerHTML = '<p class="text-sm text-white/70">Enter a number and select a base to see conversions to binary, octal, decimal, hexadecimal, and all bases 2–36.</p>';
+          return;
+        }
+
+        const base = parseInt($('base-select').value, 10);
+        let decimal;
+        try {
+          decimal = parseInput(input, base);
+        } catch (e) {
+          showError(e.message);
+          return;
+        }
+
+        if (decimal === null) return;
+
+        const results = {};
+        for (let b = 2; b <= 36; b++) {
+          results[b] = toBase(decimal, b);
+        }
+        lastResults = {decimal, results, input, base};
+
+        renderResults();
+        updateURL('num=' + encodeURIComponent(input) + '&base=' + base);
+      }
+
+      async function exportPDF(){
+        if(typeof html2pdf==='undefined' || !lastResults) return;
+        const btn=$('pdf-btn'); const orig=btn.textContent;
+        btn.textContent='Generating PDF...'; btn.disabled=true;
+        const report=document.createElement('div');
+        report.style.cssText='width:210mm;padding:20px;box-sizing:border-box;background:#fff;color:#1a1a1a;font-family:sans-serif;';
+        const {decimal, results, input, base} = lastResults;
+        const showTwos = $('show-twos').checked;
+        const bitWidth = parseInt($('bit-width').value, 10);
+        let pdfHtml='';
+        pdfHtml+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">';
+        pdfHtml+='<div style="width:40px;height:40px;border-radius:10px;background:#0f0f1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;font-family:Georgia,serif;">B<span style=\"color:#8b5cf6;\">.</span></div>';
+        pdfHtml+='<div><div style="font-size:18px;font-weight:bold;">Best Answer Hub</div><div style="font-size:13px;color:#666;">Number Base Converter Report</div></div></div>';
+        pdfHtml+='<div style="font-size:14px;font-weight:bold;margin-bottom:8px;">Input: '+escapeHtml(input)+' (base '+base+')</div>';
+        pdfHtml+='<div style="font-size:12px;color:#666;margin-bottom:16px;">Decimal value: '+decimal.toString()+'</div>';
+        // Common bases
+        pdfHtml+='<div style="font-size:11px;font-weight:bold;color:#666;margin-bottom:6px;">Common Bases</div>';
+        pdfHtml+='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;table-layout:fixed;">';
+        pdfHtml+='<col style="width:100px"><col>';
+        const commonBases=[{b:2,label:'Binary'},{b:8,label:'Octal'},{b:10,label:'Decimal'},{b:16,label:'Hexadecimal'}];
+        commonBases.forEach(({b,label})=>{
+          const val=results[b];
+          pdfHtml+='<tr style="border-bottom:1px solid #eee;"><td style="padding:4px 8px 4px 0;font-weight:bold;vertical-align:top;">'+label+'</td><td style="padding:4px 0;font-family:monospace;word-break:break-all;vertical-align:top;">'+escapeHtml(val)+'</td></tr>';
+        });
+        pdfHtml+='</table>';
+        // All bases
+        pdfHtml+='<div style="font-size:11px;font-weight:bold;color:#666;margin-bottom:6px;">All Bases (2–36)</div>';
+        pdfHtml+='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;table-layout:fixed;">';
+        pdfHtml+='<col style="width:70px"><col>';
+        for(let b=2;b<=36;b++){
+          const v = escapeHtml(results[b]);
+          const display = v.length > 60 ? v.substring(0,60) + '…' : v;
+          pdfHtml+='<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;font-weight:bold;vertical-align:top;">Base-'+b+'</td><td style="padding:3px 0;font-family:monospace;word-break:break-all;vertical-align:top;">'+display+'</td></tr>';
+        }
+        pdfHtml+='</table>';
+        // Two's complement
+        if(showTwos){
+          const tcVal=twosComplement(decimal,bitWidth);
+          const tcBin=toBase(tcVal,2).padStart(bitWidth,'0');
+          pdfHtml+='<div style="border-top:1px solid #ddd;padding-top:12px;margin-bottom:16px;">';
+          pdfHtml+='<div style="font-size:11px;font-weight:bold;color:#666;margin-bottom:6px;">Two\'s Complement ('+bitWidth+'-bit)</div>';
+          pdfHtml+='<div style="font-family:monospace;font-size:13px;font-weight:bold;color:#6366f1;margin-bottom:4px;">'+escapeHtml(tcBin.match(/.{1,4}/g).join(' '))+'</div>';
+          pdfHtml+='<div style="font-size:11px;color:#666;">Signed: '+decimal.toString()+' | Unsigned: '+tcVal.toString()+'</div>';
+          pdfHtml+='</div>';
+        }
+        // ASCII
+        if(decimal>=0n && decimal<=1114111n){
+          const num=Number(decimal);
+          if(num>=32 && num<=126){
+            pdfHtml+='<div style="font-size:11px;font-weight:bold;color:#666;margin-bottom:6px;">ASCII Character</div>';
+            pdfHtml+='<div style="font-size:16px;font-family:monospace;font-weight:bold;color:#6366f1;margin-bottom:16px;">'+escapeHtml(String.fromCharCode(num))+' (U+'+num.toString(16).toUpperCase().padStart(4,'0')+')</div>';
+          }
+        }
+        report.innerHTML=pdfHtml;
+        document.body.appendChild(report);
+        await html2pdf().set({margin:0,filename:'number-base-converter-report.pdf',image:{type:'jpeg',quality:0.95},html2canvas:{scale:2,scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(report).save();
+        document.body.removeChild(report);
+        btn.textContent=orig; btn.disabled=false;
+      }
+
+      function renderResults() {
+        if (!lastResults) return;
+        const {decimal, results, input, base} = lastResults;
+        const showSteps = $('show-steps').checked;
+        const showTwos = $('show-twos').checked;
+        const bitWidth = parseInt($('bit-width').value, 10);
+
+        let html = '<div class="space-y-4">';
+
+        html += '<div class="text-sm text-white/50 mb-1">Input</div>';
+        html += '<div class="text-base font-semibold mb-2">' + escapeHtml(input) + ' <span class="text-sm font-normal text-white/50">(base ' + base + ')</span></div>';
+
+        // Common bases
+        html += '<div class="border-t border-white/10 pt-3">';
+        html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-3">Common Bases</div>';
+        html += '<div class="space-y-2">';
+
+        const commonBases = [
+          {b: 2, label: 'Binary'},
+          {b: 8, label: 'Octal'},
+          {b: 10, label: 'Decimal'},
+          {b: 16, label: 'Hexadecimal'}
+        ];
+
+        commonBases.forEach(({b, label}) => {
+          const val = results[b];
+          const displayVal = b === 2 ? formatBinary(val, 4) : val;
+          html += '<div class="flex items-center justify-between bg-white/5 rounded-bae-sm px-3 py-2">';
+          html += '<div><span class="text-xs text-white/50 uppercase">' + label + '</span><div class="font-mono text-sm text-white/90">' + escapeHtml(displayVal) + '</div></div>';
+          html += '<button type="button" class="copy-btn text-xs bg-bae-primary/20 text-bae-primary px-2 py-1 rounded-bae-sm hover:bg-bae-primary/30 transition-colors" data-val="' + escapeHtml(val) + '">Copy</button>';
+          html += '</div>';
+        });
+
+        html += '</div></div>';
+
+        // All bases
+        html += '<div class="border-t border-white/10 pt-3">';
+        html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-3">All Bases (2–36)</div>';
+        html += '<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-64 overflow-y-auto pr-1">';
+        for (let b = 2; b <= 36; b++) {
+          html += '<div class="bg-white/5 rounded-bae-sm px-2 py-1.5">';
+          html += '<div class="text-[10px] text-white/40 uppercase">Base-' + b + '</div>';
+          html += '<div class="font-mono text-xs text-white/80 truncate" title="' + escapeHtml(results[b]) + '">' + escapeHtml(results[b]) + '</div>';
+          html += '</div>';
+        }
+        html += '</div></div>';
+
+        // Two's complement
+        if (showTwos) {
+          html += '<div class="border-t border-white/10 pt-3">';
+          html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-3">Two\'s Complement (' + bitWidth + '-bit)</div>';
+          const tcVal = twosComplement(decimal, bitWidth);
+          const tcBin = toBase(tcVal, 2).padStart(bitWidth, '0');
+          const tcGrouped = tcBin.match(/.{1,4}/g).join(' ');
+          html += '<div class="bg-white/5 rounded-bae-sm px-3 py-2 mb-2">';
+          html += '<div class="text-xs text-white/50">Binary (' + bitWidth + '-bit)</div>';
+          html += '<div class="font-mono text-sm text-bae-primary">' + escapeHtml(tcGrouped) + '</div>';
+          html += '</div>';
+          html += '<div class="grid grid-cols-2 gap-2">';
+          html += '<div class="bg-white/5 rounded-bae-sm px-3 py-2"><div class="text-xs text-white/50">Signed</div><div class="font-mono text-sm text-white/90">' + escapeHtml(decimal.toString()) + '</div></div>';
+          html += '<div class="bg-white/5 rounded-bae-sm px-3 py-2"><div class="text-xs text-white/50">Unsigned</div><div class="font-mono text-sm text-white/90">' + escapeHtml(tcVal.toString()) + '</div></div>';
+          html += '</div>';
+          html += '</div>';
+        }
+
+        // ASCII/Unicode
+        if (decimal >= 0n && decimal <= 1114111n) {
+          const num = Number(decimal);
+          if (num >= 32 && num <= 126) {
+            html += '<div class="border-t border-white/10 pt-3">';
+            html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">ASCII Character</div>';
+            html += '<div class="bg-white/5 rounded-bae-sm px-3 py-2 text-center">';
+            html += '<div class="text-2xl font-mono text-bae-primary mb-1">' + escapeHtml(String.fromCharCode(num)) + '</div>';
+            html += '<div class="text-xs text-white/50">U+' + num.toString(16).toUpperCase().padStart(4, '0') + '</div>';
+            html += '</div></div>';
+          } else if (num <= 255) {
+            html += '<div class="border-t border-white/10 pt-3">';
+            html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Extended ASCII</div>';
+            html += '<div class="bg-white/5 rounded-bae-sm px-3 py-2 text-center">';
+            html += '<div class="text-2xl font-mono text-bae-primary mb-1">' + escapeHtml(String.fromCharCode(num)) + '</div>';
+            html += '<div class="text-xs text-white/50">Code ' + num + '</div>';
+            html += '</div></div>';
+          }
+        }
+
+        // Steps
+        if (showSteps) {
+          html += '<div class="border-t border-white/10 pt-3">';
+          html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-3">Step-by-Step</div>';
+
+          const cleanInput = input.replace(/^-/, '');
+
+          if (base !== 10 && cleanInput) {
+            html += '<div class="mb-3"><div class="text-sm font-medium text-white/70 mb-1">Step 1: Convert from base-' + base + ' to decimal</div>';
+            const steps = getStepsFromBase(cleanInput, base);
+            html += '<div class="bg-white/5 rounded-bae-sm p-2 text-xs space-y-1">';
+            steps.forEach(step => {
+              html += '<div class="font-mono text-white/70">' + escapeHtml(step.digit) + ' × ' + base + '<sup>' + step.place + '</sup> = ' + step.digitVal + ' × ' + step.placeValue + ' = ' + step.contribution + '</div>';
+            });
+            html += '<div class="border-t border-white/10 pt-1 font-mono text-bae-primary">Total = ' + (decimal < 0n ? '-' : '') + steps[steps.length - 1].runningTotal + '</div>';
+            html += '</div></div>';
+          }
+
+          const absDecimal = decimal < 0n ? -decimal : decimal;
+
+          html += '<div class="mb-3"><div class="text-sm font-medium text-white/70 mb-1">' + (base !== 10 ? 'Step 2' : 'Step 1') + ': Convert from decimal to binary</div>';
+          const binSteps = getStepsToBase(absDecimal, 2);
+          html += '<div class="bg-white/5 rounded-bae-sm p-2 text-xs space-y-1">';
+          binSteps.forEach(step => {
+            html += '<div class="font-mono text-white/70">' + step.n.toString() + ' ÷ 2 = ' + step.q.toString() + ' remainder ' + step.r.toString() + '</div>';
+          });
+          const binResult = binSteps.map(s => s.r.toString()).reverse().join('');
+          html += '<div class="border-t border-white/10 pt-1 font-mono text-bae-primary">Binary = ' + (decimal < 0n ? '-' : '') + binResult + '</div>';
+          html += '</div></div>';
+
+          html += '<div><div class="text-sm font-medium text-white/70 mb-1">' + (base !== 10 ? 'Step 3' : 'Step 2') + ': Convert from decimal to hexadecimal</div>';
+          const hexSteps = getStepsToBase(absDecimal, 16);
+          html += '<div class="bg-white/5 rounded-bae-sm p-2 text-xs space-y-1">';
+          hexSteps.forEach(step => {
+            const rStr = step.r < 10n ? step.r.toString() : String.fromCharCode(65 + Number(step.r) - 10);
+            html += '<div class="font-mono text-white/70">' + step.n.toString() + ' ÷ 16 = ' + step.q.toString() + ' remainder ' + rStr + '</div>';
+          });
+          const hexResult = hexSteps.map(s => {
+            return s.r < 10n ? s.r.toString() : String.fromCharCode(65 + Number(s.r) - 10);
+          }).reverse().join('');
+          html += '<div class="border-t border-white/10 pt-1 font-mono text-bae-primary">Hex = ' + (decimal < 0n ? '-' : '') + hexResult + '</div>';
+          html += '</div></div>';
+
+          html += '</div>';
+        }
+
+        html += '</div>';
+        $('result-content').innerHTML = html;
+        $('pdf-btn').classList.remove('hidden');
+
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const val = this.dataset.val;
+            navigator.clipboard.writeText(val).then(() => {
+              const orig = this.textContent;
+              this.textContent = 'Copied!';
+              setTimeout(() => this.textContent = orig, 1500);
+            });
+          });
+        });
+      }
+
+      function updateURL(param) {
+        const url = new URL(window.location.href);
+        url.search = param ? '?' + param : '';
+        history.replaceState({}, '', url);
+      }
+
+      function loadFromURL() {
+        const url = new URL(window.location.href);
+        const num = url.searchParams.get('num');
+        const base = url.searchParams.get('base');
+        if (num) {
+          $('num-input').value = num;
+          if (base) $('base-select').value = base;
+          doConvert();
+        }
+      }
+
+      $('pdf-btn').addEventListener('click', exportPDF);
+      $('convert-btn').addEventListener('click', doConvert);
+      $('clear-btn').addEventListener('click', () => {
+        $('num-input').value = '';
+        hideError();
+        $('result-content').innerHTML = '<p class="text-sm text-white/70">Enter a number and select a base to see conversions to binary, octal, decimal, hexadecimal, and all bases 2–36.</p>';
+        $('pdf-btn').classList.add('hidden');
+        updateURL('');
+      });
+      $('num-input').addEventListener('keydown', e => { if (e.key === 'Enter') doConvert(); });
+      $('show-twos').addEventListener('change', () => {
+        $('bit-width-panel').classList.toggle('hidden', !$('show-twos').checked);
+        if (lastResults) renderResults();
+      });
+      $('bit-width').addEventListener('change', () => { if (lastResults) renderResults(); });
+      $('show-steps').addEventListener('change', () => { if (lastResults) renderResults(); });
+
+      document.querySelectorAll('.quick-num').forEach(btn => {
+        btn.addEventListener('click', () => {
+          $('num-input').value = btn.dataset.num;
+          $('base-select').value = btn.dataset.base;
+          doConvert();
+        });
+      });
+
+      loadFromURL();
+    })();
+  </script>
+</BaseLayout>

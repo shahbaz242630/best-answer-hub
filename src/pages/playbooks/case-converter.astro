@@ -1,0 +1,352 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-11T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Case Converter?', a: 'The Best Answer Hub Case Converter is a free, browser-based tool that transforms text between eight formats: uppercase, lowercase, title case, sentence case, camelCase, PascalCase, snake_case, and kebab-case. Paste your text, click a format, and copy the result. Everything runs locally, with no signup and nothing uploaded to a server.' },
+  { q: 'What is the difference between title case and sentence case?', a: 'Title case capitalizes the major words in a phrase, like The Quick Brown Fox. Sentence case capitalizes only the first word and any proper nouns, like The quick brown fox. Title case suits formal titles and product names, while sentence case suits headlines, interface labels, and email subject lines.' },
+  { q: 'When should I use title case versus sentence case?', a: 'Use title case for book, film, and formal headings, and sentence case for almost everything digital. Most modern style guides, including the GOV.UK Design System, now default to sentence case for headings because it reads more naturally and is harder to get wrong. Neither has any search ranking advantage.' },
+  { q: 'How do AP and Chicago title case rules differ?', a: 'Mainly over prepositions. AP style capitalizes prepositions and conjunctions of four or more letters, so it writes With and From. The Chicago Manual of Style keeps all prepositions lowercase regardless of length, so it writes with. Both always capitalize the first and last word of a title, whatever the word is.' },
+  { q: 'Which small words stay lowercase in a title?', a: 'The minor words usually left lowercase are articles like a, an, and the, coordinating conjunctions like and, but, and or, and short prepositions like of, to, and in. The exception is universal: the first and last word of a title are always capitalized, even when they are one of these small words.' },
+  { q: 'Are short verbs like is and are capitalized in a title?', a: 'Yes, always. Verbs are capitalized in title case no matter how short they are, so Is, Are, Be, and It are all capitalized. Only articles, short prepositions, and coordinating conjunctions drop to lowercase. This is one of the most common title case mistakes, and every major style guide agrees on it.' },
+  { q: 'What is the difference between camelCase, PascalCase, snake_case, and kebab-case?', a: 'camelCase joins words with the first lowercase and each later word capitalized, like getUserProfile. PascalCase capitalizes every word, like GetUserProfile. snake_case joins words with underscores in lowercase, like get_user_profile. kebab-case joins them with hyphens, like get-user-profile. Each has its own home in code and the web.' },
+  { q: 'Which case should I use for code in Python or JavaScript?', a: 'Follow the language convention. Python PEP 8 uses snake_case for functions and variables and CapWords, or PascalCase, for classes. JavaScript uses camelCase for variables and functions, and PascalCase for classes. Constants are conventionally uppercase with underscores. Matching the convention keeps code readable and, with some linters, valid.' },
+  { q: 'Is snake_case or kebab-case better for URLs?', a: 'kebab-case, with hyphens, is better for URLs and CSS. Search engines treat a hyphen as a word separator and an underscore as a joiner, so get-user-profile reads as three words while get_user_profile can read as one. Google advises hyphens in URLs. Keep snake_case for Python code and database columns.' },
+  { q: 'Why do title case converters give different results?', a: 'Because there is no single title case standard. AP, Chicago, APA, and MLA each define different rules for prepositions and conjunctions, so a tool that does not say which style it follows will vary. The Best Answer Hub Case Converter applies a widely used convention, and for academic work you should check the required style guide.' },
+  { q: 'Why can uppercasing change the length of my text?', a: 'Because some characters do not map one-to-one. The German lowercase eszett, written as a sharp s, uppercases to two letters, SS, so a word can get longer when you uppercase it. Unicode documents these exceptional mappings. It is a small thing, but it can break assumptions in code that expects uppercase and lowercase to be the same length.' },
+  { q: 'Does converting case handle other languages correctly?', a: 'It can, but only with locale-aware conversion. In Turkish, a lowercase i uppercases to a dotted capital and an uppercase I lowercases to a dotless one, so an English-style conversion is wrong. JavaScript provides toLocaleUpperCase and toLocaleLowerCase for this, and MDN notes the result differs for locales such as Turkish.' },
+  { q: 'Should brand names like iPhone keep their casing?', a: 'Yes. Names with deliberate casing, like iPhone, macOS, eBay, and YouTube, should keep their official form even inside a title. Automatic converters flatten them into Iphone or Macos, so after converting a heading, restore any brand names by hand. The structural case conversion is automatic, but brand exceptions are manual.' },
+  { q: 'Is it private to convert text in an online tool?', a: 'Only if it runs on your device. Many online converters upload your text to a server, which exposes anything sensitive like an unpublished headline or code. The Best Answer Hub Case Converter processes everything in your browser with local JavaScript, so nothing is uploaded, stored, or seen by anyone else.' },
+  { q: 'Is the Best Answer Hub Case Converter free?', a: 'Yes, completely free with no signup, no limits, and no ads. It runs on client-side JavaScript in your browser, so there are no server costs and no account to create. You can convert as much text as you like between all eight cases, and copy each result with one click.' },
+];
+
+const seo = {
+  title: 'Which Text Case to Use: Titles, Code, and URLs',
+  description: 'The eight text cases and when to use each: title versus sentence case, camelCase and snake_case for code, kebab-case for URLs, plus the tricky Unicode gotchas.',
+  url: '/playbooks/case-converter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Case Converter', url: '/playbooks/case-converter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · Writing &amp; Code</span>
+        <div class="cav">Same words, eight looks</div>
+        <h1>Which Text Case to Use, <em>and When</em></h1>
+        <p class="dek">Uppercase, title case, camelCase, snake_case: the same words can be written eight ways, and each has a job. Here is which case fits a title, which fits code, which fits a URL, and why converting case is trickier than it looks.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Writers and developers</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Writing<small>title &amp; sentence</small></div>
+          <div class="seg b2">Code<small>camel, snake, kebab</small></div>
+          <div class="seg b3">One click<small>eight formats</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">8</div><div class="l">case formats in one click</div><div class="src">Best Answer Hub</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">text uploaded to any server</div><div class="src">Best Answer Hub</div></div>
+      <div class="stat"><div class="n">4+</div><div class="l">letters: when AP capitalizes a preposition</div><div class="src">AP style</div></div>
+      <div class="stat"><div class="n">ß&rarr;SS</div><div class="l">one letter that grows when uppercased</div><div class="src">Unicode</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#styles">The eight cases</a>
+        <a href="#title">Title vs sentence case</a>
+        <a href="#code">Which case for code</a>
+        <a href="#url">snake or kebab for URLs</a>
+        <a href="#gotchas">Why it is tricky</a>
+        <a href="#private">Converting privately</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead">The same phrase can be written in at least eight different cases, and choosing the right one is not just style: it is what makes a heading read cleanly, a variable name compile, and a URL rank. <strong>The Best Answer Hub Case Converter switches text between all eight in one click, entirely in your browser, with nothing uploaded, so you can match the case to the job without retyping a thing.</strong></p>
+
+        <p>Most people know upper and lower case. The interesting choices are the ones in between: title versus sentence case for writing, and the family of programming cases (camelCase, snake_case, kebab-case) for code and the web. This guide covers when to use each, and the surprising ways case conversion goes wrong.</p>
+
+        <div class="cav">One phrase, eight ways</div>
+        <h2 id="styles">The eight text cases at a glance</h2>
+        <p>Here is the same input written in every case the tool produces. The four on the left are for reading; the four on the right are for code and the web. The infographic below shows them side by side, and the table names where each one belongs.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">The same phrase in eight cases</figcaption>
+          <div class="caseinput">input: hello world example</div>
+          <div class="casefan">
+            <div class="cell"><div class="lbl">UPPERCASE</div><div class="val">HELLO WORLD EXAMPLE</div></div>
+            <div class="cell"><div class="lbl">camelCase</div><div class="val">helloWorldExample</div></div>
+            <div class="cell"><div class="lbl">lowercase</div><div class="val">hello world example</div></div>
+            <div class="cell"><div class="lbl">PascalCase</div><div class="val">HelloWorldExample</div></div>
+            <div class="cell"><div class="lbl">Title Case</div><div class="val">Hello World Example</div></div>
+            <div class="cell"><div class="lbl">snake_case</div><div class="val">hello_world_example</div></div>
+            <div class="cell"><div class="lbl">Sentence case</div><div class="val">Hello world example</div></div>
+            <div class="cell"><div class="lbl">kebab-case</div><div class="val">hello-world-example</div></div>
+          </div>
+          <p class="chart-src">Case names per MDN glossary (camel case, snake case, kebab case). The Best Answer Hub Case Converter outputs all eight.</p>
+        </figure>
+        <table>
+          <thead><tr><th>Case</th><th>Example</th><th>Where it belongs</th></tr></thead>
+          <tbody>
+            <tr><td class="band">UPPERCASE</td><td><code>HELLO WORLD</code></td><td>Acronyms, short emphasis, not body text</td></tr>
+            <tr><td class="band">lowercase</td><td><code>hello world</code></td><td>Casual text, tags, some brand styling</td></tr>
+            <tr><td class="band">Title Case</td><td><code>Hello World</code></td><td>Formal titles, headings, product names</td></tr>
+            <tr><td class="band">Sentence case</td><td><code>Hello world</code></td><td>Headlines, UI labels, subject lines</td></tr>
+            <tr><td class="band">camelCase</td><td><code>helloWorld</code></td><td>Variables and functions in JavaScript</td></tr>
+            <tr><td class="band">PascalCase</td><td><code>HelloWorld</code></td><td>Class names and components</td></tr>
+            <tr><td class="band">snake_case</td><td><code>hello_world</code></td><td>Python code, database columns</td></tr>
+            <tr><td class="band">kebab-case</td><td><code>hello-world</code></td><td>URLs, CSS classes, HTML attributes</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The writing choice</div>
+        <h2 id="title">Title case or sentence case: which should you use?</h2>
+        <p>Use title case for formal titles and sentence case for almost everything else. Title case capitalizes the major words, like "The Quick Brown Fox," and suits book and film titles, product names, and formal headings. Sentence case capitalizes only the first word and any proper nouns, like "The quick brown fox," and it has become the default for headlines and interface text because it reads more naturally and is harder to get wrong. Government and product style guides now say so outright: the GOV.UK Design System instructs teams to "write all headings in sentence case" (<a href="https://design-system.service.gov.uk/styles/headings/" target="_blank" rel="noopener noreferrer">GOV.UK</a>).</p>
+        <p>Title case itself is not one rule but several, which is why two tools can capitalize the same title differently. The split is over small words. The Chicago Manual of Style lowercases all prepositions no matter how long, so it keeps "with" lowercase (<a href="https://www.chicagomanualofstyle.org/qanda/data/faq/topics/CapitalizationTitles/faq0101.html" target="_blank" rel="noopener noreferrer">Chicago</a>), while AP style capitalizes prepositions and conjunctions once they reach four letters, so it writes "With." One rule holds across every guide: the first and last word of a title are always capitalized, whatever they are.</p>
+        <div class="callout sage"><div class="h">The rule people get wrong</div><p>Short verbs are always capitalized in a title. Words like "Is," "Are," "Be," and "It" look small, so people lowercase them, but only articles, short prepositions, and coordinating conjunctions drop to lowercase. "What It Is" is correct; "What it is" is not, in title case.</p></div>
+
+        <div class="cav">The code choice</div>
+        <h2 id="code">Which case should you use for code?</h2>
+        <p>In programming, case is not decoration, it is convention, and each language has one. Python official style, PEP 8, says function and variable names "should be lowercase, with words separated by underscores," which is snake_case, while class names "should normally use the CapWords convention," which is PascalCase (<a href="https://peps.python.org/pep-0008/" target="_blank" rel="noopener noreferrer">PEP 8</a>). JavaScript goes the other way for variables: MDN guidance is to "use camel case, starting with a lowercase character," and PascalCase for classes (<a href="https://developer.mozilla.org/en-US/docs/MDN/Writing_guidelines/Code_style_guide/JavaScript" target="_blank" rel="noopener noreferrer">MDN</a>). Constants are conventionally all caps with underscores. Following the convention is what makes code readable to the next person, and in some linters, valid at all.</p>
+        <table>
+          <thead><tr><th>Context</th><th>Convention</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Python functions and variables</td><td>snake_case</td><td><code>get_user_profile</code></td></tr>
+            <tr><td class="band">Python and other class names</td><td>PascalCase</td><td><code>UserProfile</code></td></tr>
+            <tr><td class="band">JavaScript variables and functions</td><td>camelCase</td><td><code>getUserProfile</code></td></tr>
+            <tr><td class="band">Constants</td><td>UPPER with underscores</td><td><code>MAX_RETRIES</code></td></tr>
+            <tr><td class="band">CSS classes and URLs</td><td>kebab-case</td><td><code>get-user-profile</code></td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">A small but real SEO point</div>
+        <h2 id="url">Is snake_case or kebab-case better for URLs?</h2>
+        <p>For URLs and CSS, kebab-case wins, and for a concrete reason. Search engines and the web platform treat a hyphen as a word separator but an underscore as a joiner, so <code>get-user-profile</code> reads as three words while <code>get_user_profile</code> can read as one. Google has long advised using hyphens rather than underscores in URLs for exactly this reason, and MDN documents kebab-case as the convention for CSS custom properties and class names (<a href="https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case" target="_blank" rel="noopener noreferrer">MDN</a>). Save snake_case for Python and database work, where the underscore is at home.</p>
+        <blockquote>Case is a signal, not decoration. <span class="accent">The right one tells a reader you are formal, or tells a compiler you meant a class, or tells Google where the words break.</span></blockquote>
+
+        <div class="cav">Where it goes wrong</div>
+        <h2 id="gotchas">Why is converting case trickier than it looks?</h2>
+        <p>Because letters do not always map one-to-one. The clearest example is the German eszett: the lowercase sharp s uppercases to "SS," two letters, so uppercasing a word can actually change its length (<a href="https://www.unicode.org/faq/casemap_charprop" target="_blank" rel="noopener noreferrer">Unicode</a>). Case can also be language-dependent. In Turkish, a lowercase "i" uppercases to a dotted capital and an uppercase "I" lowercases to a dotless one, so a naive English-style conversion is simply wrong for Turkish text. This is why JavaScript offers locale-aware methods, <code>toLocaleUpperCase</code> and <code>toLocaleLowerCase</code>, alongside the plain ones, and MDN notes the results differ "for some locales, such as Turkish" (<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toLocaleUpperCase" target="_blank" rel="noopener noreferrer">MDN</a>).</p>
+        <p>Two more traps are worth knowing. There is no single correct title case, because the rules are style-specific and no programming language ships a built-in <code>toTitleCase</code>, so every converter has to pick a convention. And brand names with deliberate casing, like <code>iPhone</code>, <code>macOS</code>, or <code>eBay</code>, will be flattened by any automatic tool, so restore those by hand after converting. A last, softer point: long passages set in all capitals are harder to read for most people, which W3C accessibility material advises against for body text (<a href="https://www.w3.org/WAI/GL/low-vision-a11y-tf/wiki/Capitalization" target="_blank" rel="noopener noreferrer">W3C WAI</a>), so keep uppercase for short emphasis, not paragraphs.</p>
+
+        <div class="cav">The quiet benefit</div>
+        <h2 id="private">Is it private to convert text online?</h2>
+        <p>It is when the tool runs on your device, and that is worth checking for anything sensitive. Converting case is trivial, but the text itself may not be: an unpublished headline, a client name, a snippet of code. Many online converters send whatever you paste to a server, which hands that text to a third party for no good reason. The safer habit mirrors what regulators advise about data you do not need to share: the FTC tells organizations not to collect sensitive information they have no need for (<a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">FTC</a>).</p>
+        <p>The Best Answer Hub Case Converter runs entirely in your browser using local JavaScript string methods, so your text never leaves the page. There is no upload, no account, and nothing stored. It is a small tool, but the principle holds: if the work can happen on your own machine, there is no reason to send the words anywhere.</p>
+
+        <div class="cta">
+          <span class="kicker">Switch case in one click</span>
+          <h3>Convert text between all eight cases, free</h3>
+          <p>Paste your text, click a format, and copy the result. Title, sentence, camelCase, snake_case, and more, all in your browser with nothing uploaded.</p>
+          <a class="btn" href="/tools/case-converter/">Open the Case Converter</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about text case</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-career-tools/">Free Career &amp; Resume Tools</a></b> The whole Career Toolkit explained, from resumes to writing helpers, all in your browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/word-counter/">Writing to a Word or Character Limit</a></b> The counts that matter, from X to the Common App, counted privately.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools, Nothing Uploaded</a></b> The Developer Toolbox, from JSON to Base64, all client-side.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Glossary/Camel_case" target="_blank" rel="noopener noreferrer">Camel case</a>, <a href="https://developer.mozilla.org/en-US/docs/Glossary/Snake_case" target="_blank" rel="noopener noreferrer">Snake case</a>, and <a href="https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case" target="_blank" rel="noopener noreferrer">Kebab case</a> (definitions).</li>
+          <li>Python, <a href="https://peps.python.org/pep-0008/" target="_blank" rel="noopener noreferrer">PEP 8, Naming Conventions</a> (snake_case for functions and variables, CapWords for classes, all caps for constants).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/MDN/Writing_guidelines/Code_style_guide/JavaScript" target="_blank" rel="noopener noreferrer">JavaScript code style guide</a> (camelCase for variables and functions, PascalCase for classes).</li>
+          <li>The Chicago Manual of Style, <a href="https://www.chicagomanualofstyle.org/qanda/data/faq/topics/CapitalizationTitles/faq0101.html" target="_blank" rel="noopener noreferrer">Capitalization of titles</a> (lowercase prepositions regardless of length).</li>
+          <li>GOV.UK Design System, <a href="https://design-system.service.gov.uk/styles/headings/" target="_blank" rel="noopener noreferrer">Headings</a> (write all headings in sentence case).</li>
+          <li>Unicode Consortium, <a href="https://www.unicode.org/faq/casemap_charprop" target="_blank" rel="noopener noreferrer">Case Mappings FAQ</a> (eszett uppercases to SS; Turkish dotted and dotless i).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toLocaleUpperCase" target="_blank" rel="noopener noreferrer">String.toLocaleUpperCase()</a> (locale-aware case, differs for Turkish).</li>
+          <li>W3C WAI, <a href="https://www.w3.org/WAI/GL/low-vision-a11y-tf/wiki/Capitalization" target="_blank" rel="noopener noreferrer">Capitalization</a> (all-capital text is harder to read; working-group material).</li>
+          <li>FTC, <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">Protecting Personal Information: A Guide for Business</a> (do not collect sensitive data you do not need).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/case-converter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Case Converter</a>, <a href="/tools/word-counter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Word Counter</a>, and the <a href="/career-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Career Toolkit</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep);word-break:break-word}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb td code{font-size:.82rem}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 11px;border-radius:999px;display:inline-block;white-space:nowrap;font-family:'Bricolage Grotesque',sans-serif}
+  .pb .lv1{background:var(--sage)}
+  .pb .lv2{background:var(--clay)}
+  .pb .lv3{background:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .casefan{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+  .pb .casefan .cell{border:1.5px solid var(--border);border-radius:12px;padding:10px 12px;background:var(--cream)}
+  .pb .casefan .cell .lbl{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--label);font-weight:700}
+  .pb .casefan .cell .val{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9rem;color:var(--clay-deep);margin-top:3px;word-break:break-word}
+  .pb .caseinput{text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.95rem;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-radius:10px;padding:9px 12px;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}.pb .casefan{grid-template-columns:1fr}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

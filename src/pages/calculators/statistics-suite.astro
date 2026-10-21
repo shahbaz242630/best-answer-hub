@@ -1,0 +1,278 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../components/tools/ToolRelatedCTA.astro';
+import ToolHubValueProp from '../../components/tools/ToolHubValueProp.astro';
+import { statisticsSuiteTools } from '../../data/tools';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Statistics Calculator Suite?',
+    a: 'The Best Answer Hub Statistics Calculator Suite is a free collection of browser-based statistical calculators for students, researchers, and data analysts. It includes four dedicated tools: Z-Score Calculator, Confidence Interval Calculator, P-Value Calculator, and T-Test Calculator. Every calculator runs entirely in the browser, so no data is sent to any server.',
+  },
+  {
+    q: 'Which calculator should I use for my data?',
+    a: 'Use the Z-Score Calculator when standardising a raw score against a known mean and standard deviation. Use the Confidence Interval Calculator when estimating a population parameter from sample data. Use the P-Value Calculator when converting a test statistic into a probability. Use the T-Test Calculator when comparing a sample mean to a hypothesised value or comparing two groups. Best Answer Hub Statistics Calculator Suite includes a decision guide on each page to help select the right test.',
+  },
+  {
+    q: 'How do I calculate a z-score by hand?',
+    a: 'The z-score formula is z = (X − μ) / σ for population data, or z = (X − x̄) / s for sample data, where X is the raw score, μ or x̄ is the mean, and σ or s is the standard deviation. Best Answer Hub Statistics Calculator Suite displays this formula with substituted values for every calculation, making the exact computation transparent.',
+  },
+  {
+    q: 'When should I use population standard deviation versus sample standard deviation?',
+    a: 'Use population standard deviation (σ) when the dataset includes every member of the group being studied. Use sample standard deviation (s) when working with a subset of the population. Best Answer Hub Statistics Calculator Suite provides clearly labelled input fields for both and automatically selects the appropriate formula based on the input.',
+  },
+  {
+    q: 'How do I interpret a 95% confidence interval?',
+    a: 'A 95% confidence interval means that if the same sampling method were repeated many times, approximately 95% of the calculated intervals would contain the true population parameter. It does not mean there is a 95% probability that the true value lies within any single interval. Best Answer Hub Statistics Calculator Suite includes this interpretation automatically with every result.',
+  },
+  {
+    q: 'Why is my confidence interval wider than I expected?',
+    a: 'A wider interval usually means higher variability in the data, a smaller sample size, or a higher confidence level. Best Answer Hub Statistics Calculator Suite shows the margin of error and standard error breakdown so users can see exactly what is driving the width.',
+  },
+  {
+    q: 'What is a p-value in simple terms?',
+    a: 'A p-value is the probability of obtaining test results at least as extreme as the observed results, assuming the null hypothesis is true. A small p-value (typically < 0.05) suggests strong evidence against the null hypothesis. Best Answer Hub Statistics Calculator Suite converts z-scores and t-statistics into p-values instantly and explains the conclusion in plain language.',
+  },
+  {
+    q: 'How do I know if my p-value is statistically significant?',
+    a: 'Compare the p-value to the chosen significance level (alpha). If the p-value is less than alpha (commonly 0.05), the result is considered statistically significant. Best Answer Hub Statistics Calculator Suite allows users to set a custom alpha level and highlights whether the result is significant with a clear visual indicator.',
+  },
+  {
+    q: 'What is the difference between one-tailed and two-tailed p-values?',
+    a: 'A one-tailed test examines the possibility of a relationship in a single direction, for example whether a treatment increases a value. A two-tailed test examines the possibility in both directions, whether a treatment increases or decreases a value. Two-tailed tests are the standard in most scientific research. Best Answer Hub Statistics Calculator Suite reports both one-tailed and two-tailed p-values for every calculation.',
+  },
+  {
+    q: 'When should I use a t-test instead of a z-test?',
+    a: 'Use a t-test when the population standard deviation is unknown and must be estimated from the sample, or when the sample size is small (typically n < 30). Use a z-test when the population standard deviation is known and the sample size is large. Best Answer Hub Statistics Calculator Suite provides both calculators and includes input validation warnings when a t-test may be more appropriate.',
+  },
+  {
+    q: 'What is the difference between a one-sample and a two-sample t-test?',
+    a: 'A one-sample t-test compares the mean of a single sample to a known or hypothesised population mean. A two-sample (independent) t-test compares the means of two separate groups. A paired t-test compares measurements from the same subjects at two different times. Best Answer Hub Statistics Calculator Suite offers separate calculators for each design with labelled input fields.',
+  },
+  {
+    q: 'What are degrees of freedom and why do they matter?',
+    a: 'Degrees of freedom represent the number of independent values in a calculation that are free to vary. For a one-sample t-test, df = n − 1. They determine the shape of the t-distribution and the critical value. Best Answer Hub Statistics Calculator Suite calculates degrees of freedom automatically and displays the critical t-value alongside results.',
+  },
+  {
+    q: 'Is there one place with all these statistics calculators instead of a different site for each test?',
+    a: 'Yes. The Best Answer Hub Statistics Calculator Suite gathers the z-score, confidence interval, p-value, and t-test calculators in one place, so there is no need to open a separate site for each test. Every calculator is free, runs entirely in the browser, shows step-by-step working, and exports to PDF, with no signup. It is built to be the one-stop shop for an entire statistics assignment: standardise a score, estimate a population parameter, convert a test statistic to a p-value, and compare group means, all from a single hub.',
+  },
+  {
+    q: 'Is Best Answer Hub Statistics Calculator Suite free to use?',
+    a: 'Yes. The entire suite is free with no hidden fees, premium tiers, subscription plans, or advertisements.',
+  },
+  {
+    q: 'Is my data private when using Best Answer Hub Statistics Calculator Suite?',
+    a: 'Yes. All calculations run entirely in the browser using client-side JavaScript. No data is uploaded, stored, or logged on any server. Sensitive research data can be calculated with complete privacy.',
+  },
+  {
+    q: 'Can I export or save my calculation results?',
+    a: 'Yes. Best Answer Hub Statistics Calculator Suite includes a PDF export feature for every calculator. The exported document includes all inputs, formulas, step-by-step working, results, and interpretation notes, ideal for homework, reports, or research documentation. No account or signup is required.',
+  },
+];
+
+const steps = [
+  { title: 'Choose a calculator', description: 'Select from Z-Score, Confidence Interval, P-Value, or T-Test calculators. Each has its own dedicated page optimized for mobile and desktop.' },
+  { title: 'Enter your data', description: 'Input raw scores, sample means, standard deviations, or test statistics. Everything happens instantly in your browser with no uploads to any server.' },
+  { title: 'Get instant results', description: 'See z-scores, confidence intervals, p-values, or t-test results immediately. Clear formula display shows exactly how each value is calculated.' },
+];
+
+const placeholderTools = [
+  {
+    title: 'Z-Score Calculator',
+    description: 'Convert raw scores to z-scores and percentiles. Supports population and sample standard deviation. Clear formula display and PDF export.',
+    meta: 'Z-Score • Percentile • Standard deviation • PDF export',
+    icon: '📐',
+  },
+  {
+    title: 'Confidence Interval Calculator',
+    description: 'Calculate confidence intervals for means and proportions. Supports 90%, 95%, and 99% confidence levels. Formula transparency and PDF export.',
+    meta: 'Mean • Proportion • 90/95/99% • PDF export',
+    icon: '📏',
+  },
+  {
+    title: 'P-Value Calculator',
+    description: 'Calculate p-values from z-scores, t-scores, chi-square values, and F-ratios. One-tailed and two-tailed results with interpretation guidance.',
+    meta: 'Z-score • T-score • Chi-square • F-ratio • PDF export',
+    icon: '🎯',
+  },
+  {
+    title: 'T-Test Calculator',
+    description: 'Perform one-sample, independent (two-sample), and paired t-tests. Calculates t-statistic, degrees of freedom, p-value, and effect size.',
+    meta: 'One-sample • Independent • Paired • Effect size • PDF',
+    icon: '🔬',
+  },
+];
+
+const seo = {
+  title: 'Statistics Calculator Suite | Z-Score, CI, P-Value & T-Test',
+  description: 'Free statistics calculator suite with step-by-step explanations. Calculate z-scores, confidence intervals, p-values, and t-tests. No signup, no data stored.',
+  url: '/calculators/statistics-suite/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Statistics Suite', url: '/calculators/statistics-suite/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    backLink="/calculators/"
+    backLabel="← Calculators"
+    badge="Free Tools · Statistical Analysis"
+    title="Statistics Calculator Suite:"
+    accentText="Z-Score, Confidence Interval, P-Value & T-Test"
+    description="Free statistics calculator suite with step-by-step explanations. Calculate z-scores, confidence intervals, p-values, and t-tests with visible formulas, plain-English interpretation, and instant PDF export. No signup. Your data never leaves your device."
+  />
+
+  <!-- Placeholder Calculator Cards -->
+  <section class="py-6 md:py-8" aria-label="Statistics calculators">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="/calculators/statistics-suite/z-score-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">📐</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">Z-Score Calculator</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Calculate z-scores with step-by-step work, percentile conversion, and an interactive bell curve. Solve for z-score, raw score, mean, or standard deviation.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">Step-by-step • Percentile • Bell curve • Reverse solve • PDF export</p>
+        </a>
+        <a href="/calculators/statistics-suite/confidence-interval-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">📊</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">Confidence Interval Calculator</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Calculate confidence intervals for means and proportions with step-by-step work, margin of error, and an interactive distribution visual. Supports z-intervals and t-intervals.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">Mean CI • Proportion CI • Z-interval • T-interval • PDF export</p>
+        </a>
+        <a href="/calculators/statistics-suite/p-value-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">🎯</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">P-Value Calculator</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Calculate p-values from z-scores, t-scores, chi-square values, and F-ratios. One-tailed and two-tailed results with step-by-step work.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">Z-score • T-score • Chi-square • F-ratio • PDF export</p>
+        </a>
+        <a href="/calculators/statistics-suite/t-test-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">🔬</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">T-Test Calculator</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Perform one-sample, independent, and paired t-tests. Calculates t-statistic, degrees of freedom, p-value, and Cohen's d effect size.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">One-sample • Independent • Paired • Cohen's d • PDF export</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <ToolHubValueProp
+    hubName="Statistics Calculator Suite"
+    count={statisticsSuiteTools.length}
+    noun="statistics calculators"
+    replaces="opening a different stats site for every test"
+  />
+
+  <!-- Why Statistics Calculators -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Why use the Statistics Calculator Suite?</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from students, researchers, and data analysts who need quick, accurate statistical calculations.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify homework and exam answers instantly</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Z-Score + Confidence Interval + P-Value</p>
+          <p class="text-sm text-bae-muted">Run the Z-Score Calculator to check whether your exam score is above or below average, then use the Confidence Interval Calculator to estimate population parameters from sample data. The P-Value Calculator helps verify hypothesis test conclusions from any textbook problem.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Researchers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Quick statistical checks before formal analysis</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">T-Test + P-Value + Confidence Interval</p>
+          <p class="text-sm text-bae-muted">Use the T-Test Calculator for one-sample, independent, and paired designs to get t-statistics, degrees of freedom, and p-values with effect size. Cross-check with the Confidence Interval Calculator to see whether your effect is practically significant, not just statistically significant.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Data Analysts</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Standardise and compare metrics across datasets</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Z-Score + Confidence Interval</p>
+          <p class="text-sm text-bae-muted">Convert raw metrics from different sources into standardised z-scores for fair comparison. Calculate confidence intervals around conversion rates, response rates, or A/B test differences to communicate uncertainty clearly to stakeholders.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Quality Assurance</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Statistical process control and outlier detection</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Z-Score + T-Test</p>
+          <p class="text-sm text-bae-muted">Flag outliers in manufacturing or service metrics by calculating z-scores for individual measurements. Use the T-Test Calculator to compare before-and-after process changes with proper statistical rigour, documenting effect sizes for management reporting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Which Calculator Should I Use? -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light" aria-label="Calculator selection guide">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Which calculator should I use?</h2>
+      <p class="text-sm text-bae-muted mb-8">Not sure which statistical test fits your data? Use this quick decision guide.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">1</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I have one raw score and want to know how unusual it is</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">Z-Score Calculator</strong>. It converts a raw score into standard deviations from the mean and gives the corresponding percentile.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">2</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I have sample data and want to estimate the true population value</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">Confidence Interval Calculator</strong>. It calculates a range that captures the true mean or proportion at your chosen confidence level.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">3</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I have a test statistic and need to know if my result is significant</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">P-Value Calculator</strong>. Enter a z-score, t-score, chi-square, or F-ratio to get one-tailed and two-tailed p-values with interpretation.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">4</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I want to compare a sample mean to a value or compare two groups</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">T-Test Calculator</strong>. Choose one-sample, independent (two-sample), or paired designs. Returns t-statistic, degrees of freedom, p-value, and effect size.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Back to Calculators CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6 text-center">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-3">Explore more calculators</h2>
+      <p class="text-sm text-bae-muted mb-6 max-w-xl mx-auto">Browse the full collection of financial, mathematical, and utility calculators on Best Answer Hub.</p>
+      <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-primary text-white px-6 py-3 rounded-bae-sm font-medium text-sm no-underline hover:bg-bae-primary-dark transition-colors">
+        <span>View all calculators</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+</BaseLayout>

@@ -1,0 +1,933 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-07-12T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Credit Card Statement to Excel converter?',
+    a: 'The Best Answer Hub Credit Card Statement to Excel converter is a free browser-based tool that turns credit card statement PDFs into clean Excel or CSV files. It reads the transaction sections, separates dates, descriptions, charges, and payments, reconciles everything against the statement totals, and runs entirely on your device with no file ever uploaded. Updated July 2026.',
+  },
+  {
+    q: 'Does this tool upload my credit card statement to a server?',
+    a: 'No. Every step runs locally in your browser, so the PDF never leaves your device, is never stored, and is never seen by anyone else. You can confirm this yourself: open your browser\'s Network tab while converting and no file data is sent, and the converter keeps working after you disconnect from the internet. That makes it suitable for the most sensitive financial documents.',
+  },
+  {
+    q: 'How do I convert a credit card statement PDF to Excel?',
+    a: 'Drag one or more PDF statements into the upload area or click to browse. The Best Answer Hub Credit Card Statement to Excel converter reads each page, rebuilds the transaction list, labels each row as a purchase, payment, fee, or interest, and reconciles the rows against the statement summary. Choose Excel or CSV, review the editable preview, then download.',
+  },
+  {
+    q: 'Is it really free, or are there credits, page limits, or a signup?',
+    a: 'It is completely free with no signup, no subscription, no per-page credits, and no watermarks. Many converters charge monthly plans or page credits and lock downloads behind an account. The Best Answer Hub Credit Card Statement to Excel converter has none of that, because all processing happens on your own device with no server cost to recover. There is no premium tier.',
+  },
+  {
+    q: 'My card issuer only lets me export 90 days of transactions. How do I get older ones into Excel?',
+    a: 'Convert the archived PDF statements instead. Most issuers cap CSV downloads to a rolling window — Chase and Capital One around 90 days, American Express to recent activity plus the past six billing statements — while keeping up to seven years of monthly PDFs online. Download those PDFs and the Best Answer Hub Credit Card Statement to Excel converter rebuilds the full history without retyping.',
+  },
+  {
+    q: 'Can I combine several months of statements into one spreadsheet?',
+    a: 'Yes. The Best Answer Hub Credit Card Statement to Excel converter accepts multiple PDF statements at once and merges them into a single spreadsheet, with each row tagged by statement so you can still tell months apart. This is the fastest way to backfill a year of card history for taxes, budgeting, or bookkeeping instead of converting and stitching files one by one.',
+  },
+  {
+    q: 'How do I know the converted numbers are correct?',
+    a: 'Every statement is reconciled two ways. The Best Answer Hub Credit Card Statement to Excel converter first checks the statement\'s own summary — previous balance minus payments plus purchases, fees, and interest must equal the new balance — then verifies the extracted rows add up to those printed totals. If anything does not reconcile, a clear warning appears so nothing is silently wrong.',
+  },
+  {
+    q: 'Which credit card issuers does it support?',
+    a: 'It is format-aware rather than issuer-specific, so it reads statements from most major issuers — Chase, American Express, Citi, Capital One, Discover, Bank of America, UK cards that mark credits with a CR suffix, and bilingual Middle East statements such as HSBC UAE with VAT columns and Arabic text. Unusual store-card formats may need a quick review in the preview.',
+  },
+  {
+    q: 'How does it handle payments, refunds, fees, and interest charges?',
+    a: 'Each row gets a type label. The Best Answer Hub Credit Card Statement to Excel converter reads the statement\'s own sections — payments and credits, purchases, fees, interest — so payments and refunds land in a credits column and charges stay separate, with signs preserved. That means totals, pivot tables, and expense reports work immediately without manually re-sorting mixed-sign rows.',
+  },
+  {
+    q: 'Why does copying and pasting a statement into Excel break the formatting?',
+    a: 'PDF statements are laid out for printing, so pasted text loses its columns, wraps descriptions across lines, and mixes dates with amounts. The Best Answer Hub Credit Card Statement to Excel converter avoids that by reading the PDF\'s text positions directly: wrapped descriptions are folded back into one row and transaction and posting dates are kept as proper columns.',
+  },
+  {
+    q: 'Does it work with Amex statements that have multiple employee or family cards?',
+    a: 'Yes. American Express lists charges in a separate subsection per card member, which trips up basic converters and makes reconciling painful. The Best Answer Hub Credit Card Statement to Excel converter parses through each card member\'s subsection and keeps every transaction in one continuous table, so a business statement with several employee cards converts in one pass.',
+  },
+  {
+    q: 'Is it safe to upload a credit card statement to ChatGPT or an AI tool?',
+    a: 'Pasting or uploading card statements into AI chatbots sends your account details, merchant history, and balances to a third-party server, where retention policies vary. A safer workflow is converting the statement locally first: the Best Answer Hub Credit Card Statement to Excel converter runs entirely in your browser, so you get a clean spreadsheet without any part of the statement leaving your device.',
+  },
+  {
+    q: 'Can I import the CSV into QuickBooks or other accounting software?',
+    a: 'Yes. The CSV download uses clean Date, Description, and amount columns, which matches the three-column and four-column layouts QuickBooks Online accepts for imports, and works with Xero, Wave, and spreadsheets. Bookkeepers backfilling client card history beyond the bank-feed window can convert each archived PDF statement and import the CSVs month by month.',
+  },
+  {
+    q: 'Does it work on scanned or photographed statements?',
+    a: 'It works best on text-based PDFs, the kind an issuer generates digitally — and every major issuer produces those. Scanned paper statements have no text layer, so the converter detects them and offers optional in-browser text recognition (OCR), which is slower and best-effort. For accuracy, download the original digital PDF from your card issuer instead of scanning paper copies.',
+  },
+  {
+    q: 'What if my statement PDF is password-protected?',
+    a: 'Some issuers, including certain American Express downloads, protect statement PDFs with a password. Browsers cannot hand a locked file to the converter, so remove the password first: open the PDF in your viewer with the password, print or save it as a new unlocked PDF, then convert that copy. The Best Answer Hub Credit Card Statement to Excel converter will flag locked files with a clear message.',
+  },
+];
+
+const steps = [
+  { title: 'Drop your PDF statements', description: 'Drag one or more credit card statement PDFs into the upload area. Files stay on your device and are never uploaded. The tool shows the file count, pages, and size after loading.' },
+  { title: 'Review the reconciled table', description: 'The converter rebuilds every transaction with a type label and reconciles rows against each statement\'s printed totals. Anything that does not add up is called out before you export.' },
+  { title: 'Download Excel or CSV', description: 'Choose Excel (.xlsx) or CSV and download instantly. Multiple statements merge into one clean spreadsheet with date, description, type, charge, and payment columns.' },
+];
+
+const seo = {
+  title: 'Credit Card Statement to Excel: Free PDF to XLSX/CSV (2026)',
+  description: 'Convert credit card statement PDFs to Excel or CSV free, in your browser — Chase, Amex, Citi and more. Reconciles to statement totals. No upload, no signup.',
+  url: '/tools/credit-card-statement-to-excel/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Finance Toolkit', url: '/finance-toolkit/' },
+    { name: 'Credit Card Statement to Excel', url: '/tools/credit-card-statement-to-excel/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · Nothing Uploaded"
+    title="Credit Card Statement to Excel:"
+    accentText="Turn card statement PDFs into clean spreadsheets"
+    description="Convert credit card statement PDFs into clean Excel or CSV in your browser. Reads purchases, payments, fees, and interest, reconciles against statement totals, and never uploads your file. No signup, no credits, no page limits."
+    href={seo.url}
+  />
+
+  <!-- Converter Interface -->
+  <section class="py-6 md:py-8" aria-label="Credit card statement to Excel converter">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-4">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1" id="drop-title">Drop your PDF card statements here</p>
+          <p class="text-xs text-bae-muted" id="drop-subtitle">or click to browse — several statements at once is fine (.pdf only)</p>
+          <input type="file" id="file-input" class="hidden" accept=".pdf,application/pdf" multiple />
+        </div>
+
+        <!-- File Info -->
+        <div id="file-info" class="hidden mb-4 text-center">
+          <p class="text-sm text-bae-ink font-medium" id="info-name"></p>
+          <p class="text-xs text-bae-muted"><span id="info-pages"></span> · <span id="info-size"></span></p>
+          <button type="button" id="reset-top" class="mt-2 text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors">↺ Reset — choose different files</button>
+        </div>
+
+        <!-- Scanned notice -->
+        <div id="scanned-notice" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-3 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div class="text-xs text-amber-700">
+            <p class="font-semibold mb-1">This looks like a scanned statement</p>
+            <p class="mb-2">Text-based PDFs from your card issuer give the most accurate results. You can try in-browser text recognition (OCR), which is slower and best-effort, so review the output carefully.</p>
+            <button type="button" id="ocr-btn" class="bg-amber-600 text-white text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:bg-amber-700 transition-colors">Try OCR (best-effort)</button>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-area" class="hidden mb-4 bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="text-sm font-bold text-bae-ink mb-4">Export Settings</h3>
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Output Format</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto">
+              <button type="button" id="format-xlsx" class="format-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">Excel (.xlsx)</button>
+              <button type="button" id="format-csv" class="format-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">CSV</button>
+            </div>
+          </div>
+          <button type="button" id="convert-btn" class="w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+            Convert Statements
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Reading statement...</p>
+            <p class="text-xs text-bae-muted mt-2">Processing locally in your browser</p>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-bae-ink">Detected Transactions</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100" id="result-count">0 rows</span>
+            </div>
+
+            <!-- Reconciliation banner -->
+            <div id="recon-banner" class="mb-4 rounded-bae-sm p-3 text-xs"></div>
+
+            <!-- Editable preview -->
+            <div class="overflow-x-auto border border-bae-border rounded-bae-sm mb-4 max-h-96 overflow-y-auto">
+              <table class="w-full text-xs" id="preview-table">
+                <thead class="bg-bae-bg sticky top-0">
+                  <tr class="text-left text-bae-muted">
+                    <th class="px-2 py-2 font-medium">Date</th>
+                    <th class="px-2 py-2 font-medium">Description</th>
+                    <th class="px-2 py-2 font-medium">Type</th>
+                    <th class="px-2 py-2 font-medium text-right">Charge</th>
+                    <th class="px-2 py-2 font-medium text-right">Payment / Credit</th>
+                  </tr>
+                </thead>
+                <tbody id="preview-body"></tbody>
+              </table>
+            </div>
+            <p class="text-[11px] text-bae-muted mb-4">Tip: cells are editable. Posting dates (where the statement prints them) are included in the download.</p>
+
+            <div class="flex gap-3">
+              <button type="button" id="download-btn" class="flex-1 bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">Download</button>
+              <button type="button" id="reset-btn" class="px-4 bg-bae-ink text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-primary transition-colors">New files</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div id="error-area" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-4">
+          <p class="text-sm font-semibold text-amber-800 mb-1" id="error-title">Could not read this statement</p>
+          <p class="text-xs text-amber-700" id="error-text"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What to keep in mind</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>Review before use:</strong> Always check the preview. The reconciliation check compares rows against the statement's own totals, but it cannot catch every error.</li>
+              <li><strong>Text-based PDFs work best:</strong> Scanned statements rely on OCR, which is slower and less accurate.</li>
+              <li><strong>Unusual layouts:</strong> Some store-card, credit-union, and international formats may need manual edits in the preview.</li>
+              <li><strong>Password-protected files:</strong> Remove the password in your PDF viewer first, then convert the unlocked copy.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+</BaseLayout>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────────────
+  // Credit Card Statement to Excel, 100% client-side. PDF.js (text + coords),
+  // line grouping, then the CC parse core: section state machine (payments /
+  // purchases / fees / interest), two-date rows, detached-sign merging, year
+  // inference from the closing date, and Reg-Z summary reconciliation (cards
+  // print no running balance — the totals identity is the checksum instead).
+  // The parse core block is plain JS and node-tested against the real file
+  // (Claude Test.md hard rule) — keep the markers intact.
+  // ─────────────────────────────────────────────────────────────────────────
+  (function () {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input') as HTMLInputElement;
+    const fileInfo = document.getElementById('file-info');
+    const infoName = document.getElementById('info-name');
+    const infoPages = document.getElementById('info-pages');
+    const infoSize = document.getElementById('info-size');
+    const settingsArea = document.getElementById('settings-area');
+    const scannedNotice = document.getElementById('scanned-notice');
+    const ocrBtn = document.getElementById('ocr-btn');
+    const convertBtn = document.getElementById('convert-btn');
+    const progressArea = document.getElementById('progress-area');
+    const progressText = document.getElementById('progress-text');
+    const resultArea = document.getElementById('result-area');
+    const resultCount = document.getElementById('result-count');
+    const reconBanner = document.getElementById('recon-banner');
+    const previewBody = document.getElementById('preview-body');
+    const downloadBtn = document.getElementById('download-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const errorArea = document.getElementById('error-area');
+    const errorText = document.getElementById('error-text');
+
+    let pdfjsLib: any = null;
+    let xlsxLib: any = null;
+    let tesseractLib: any = null;
+    let docs: any[] = [];      // [{ file, pdf, numPages }]
+    let rows: any[] = [];      // parsed transactions across all files
+    let fileResults: any[] = []; // per-file { name, summary, checks, rowCount }
+    let outputFormat = 'xlsx';
+
+    function escapeHtml(s: string): string {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function formatBytes(b: number): string {
+      if (!b) return '0 B';
+      const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(b) / Math.log(k));
+      return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    function validatePdf(file: File): boolean {
+      if (!file.name.toLowerCase().endsWith('.pdf')) return false;
+      return file.type === '' || file.type === 'application/pdf' || file.type === 'application/octet-stream';
+    }
+    function showError(msg: string) {
+      progressArea?.classList.add('hidden');
+      if (errorText) errorText.textContent = msg;
+      errorArea?.classList.remove('hidden');
+    }
+
+    function loadScript(src: string): Promise<void> {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Failed to load ' + src));
+        document.head.appendChild(s);
+      });
+    }
+    async function loadCore() {
+      if (!pdfjsLib) {
+        await loadScript('/pdf.min.js');
+        pdfjsLib = (window as any).pdfjsLib;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+      }
+      if (!xlsxLib) {
+        await loadScript('/xlsx.full.min.js');
+        xlsxLib = (window as any).XLSX;
+      }
+    }
+    async function loadTesseract() {
+      if (tesseractLib) return;
+      await loadScript('/tesseract/tesseract.min.js');
+      tesseractLib = (window as any).Tesseract;
+    }
+
+    // Group page text items into visual lines by y coordinate (same approach as
+    // the Bank Statement converter — proven on real statement PDFs).
+    function groupLines(items: any[]): any[] {
+      const toks = items
+        .filter((it) => it && typeof it.str === 'string' && it.str.trim() !== '')
+        .map((it) => ({ s: it.str.trim(), x: it.transform[4], y: it.transform[5] }));
+      toks.sort((a, b) => b.y - a.y || a.x - b.x);
+      const lines: any[] = [];
+      let cur: any[] = [];
+      let lastY: number | null = null;
+      for (const t of toks) {
+        if (lastY === null || Math.abs(t.y - lastY) <= 3) {
+          cur.push(t);
+        } else {
+          if (cur.length) lines.push(cur);
+          cur = [t];
+        }
+        lastY = t.y;
+      }
+      if (cur.length) lines.push(cur);
+      lines.forEach((l) => l.sort((a: any, b: any) => a.x - b.x));
+      return lines;
+    }
+
+// ── CC PARSE CORE (plain JS — node-tested, see Claude Test.md hard rule) ──
+const CC_ARABIC_RE = /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/;
+const CC_MONEY_RE = /^[\(\-\+]?\s*(?:[A-Z]{3}\s+)?(?:[$£€]\s*\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?|\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+\.\d{1,2})\s*\)?(?:\s*(?:CR|DR))?$/i;
+const CC_FOOTER_RE = /please review this account statement|report any discrepancies|regulated by|customer service|page \d+ of \d+|important information about/i;
+const CC_MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+
+const CC_SEC_RULES = [
+  { re: /^(payments and other credits|payments,? credits( and adjustments)?|payments and credits|payments\/credits|payments? received|other credits)$/i, sec: 'payments' },
+  { re: /^(purchases?( and adjustments)?|standard purchases|new charges|new transactions|transactions)$/i, sec: 'charges' },
+  { re: /^(fees|fees charged)$/i, sec: 'fees' },
+  { re: /^(interest charged)$/i, sec: 'interest' },
+];
+const CC_SEC_EXCLUDE_RE = /^(totals? year-to-date|interest charge calculation|rewards summary|membership rewards|cashback bonus|plan balance details|pay over time|qualifying promotional|special terms|deferred interest|account summary|payment information)/i;
+const CC_SUMMARY_LABELS = [
+  ['previousBalance', /^(previous balance|total outstanding \(previous statement\)|opening balance)\b/i],
+  ['payments', /^(payments?,? (and other )?credits( and adjustments)?|payments?\/credits|payment, credits|payments and credits|\(-\) payment)\b/i],
+  ['purchases', /^(purchases|new charges|\(\+\) new purchases)\b/i],
+  ['cashAdvances', /^cash advances\b/i],
+  ['balanceTransfers', /^balance transfers\b/i],
+  ['fees', /^(fees( charged)?|\(\+\) fees)\b/i],
+  ['interest', /^(interest charged|\(\+\) finance charges)\b/i],
+  ['vat', /^\(\+\) vat\b/i],
+  ['newBalance', /^(new balance|total outstanding \(current statement\)|total outstanding on statement date)\b/i],
+];
+const CC_CLOSING_RES = [
+  { re: /opening\/closing date\s+\d{1,2}\/\d{1,2}\/\d{2,4}\s*[-–]\s*(\d{1,2})\/\d{1,2}\/(\d{2,4})/i, kind: 'mdy' },
+  { re: /billing period:?\s*\d{1,2}\/\d{1,2}\/\d{2,4}\s*[-–]\s*(\d{1,2})\/\d{1,2}\/(\d{2,4})/i, kind: 'mdy' },
+  { re: /(?<!\/)(?:statement )?closing date:?\s+(\d{1,2})\/\d{1,2}\/(\d{2,4})/i, kind: 'mdy' },
+  { re: /statement date:?\s+\d{1,2}\s+([A-Za-z]{3,9})\.?\s+(\d{4})/i, kind: 'dmy-name' },
+  { re: /\bfrom\s+\d{1,2}\s+[A-Za-z]{3,9}\.?\s*\d{2,4}\s+to\s+\d{1,2}\s+([A-Za-z]{3,9})\.?\s*(\d{2,4})/i, kind: 'dmy-name' },
+];
+// Page furniture / statement-chrome lines that must never join a transaction.
+const CC_NOISE_RE = /^(credit card statement|together we thrive|details of your transactions|transaction date\b|page \d+|to view your|opening balance|closing balance)/i;
+
+function ccIsDate(s) {
+  const t = String(s || '').trim();
+  const m = t.match(/^(\d{1,2})[\/.\-](\d{1,2})([\/.\-]\d{2,4})?$/);
+  if (m) {
+    const a = parseInt(m[1], 10), b = parseInt(m[2], 10);
+    return a >= 1 && a <= 31 && b >= 1 && b <= 31 && (a <= 12 || b <= 12);
+  }
+  const MON = /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
+  let w = t.match(/^(\d{1,2})[-\s]([A-Za-z]{3,9})\.?([-\s]\d{2,4})?$/);
+  if (w) { const d = parseInt(w[1], 10); return d >= 1 && d <= 31 && MON.test(w[2]); }
+  w = t.match(/^([A-Za-z]{3,9})\.?\s+(\d{1,2}),?(\s+\d{2,4})?$/);
+  if (w) { const d = parseInt(w[2], 10); return d >= 1 && d <= 31 && MON.test(w[1]); }
+  return false;
+}
+function ccIsMoney(s) {
+  const t = String(s || '').trim();
+  return /\d/.test(t) && CC_MONEY_RE.test(t);
+}
+function ccParseMoneyParts(s) {
+  let t = String(s || '').trim().replace(/^([\(\-\+]?)\s*[A-Za-z]{3}\s+/, '$1');
+  const cr = /(^|\s)CR$/i.test(t);
+  const neg = /^\(.*\)$/.test(t) || /^-/.test(t);
+  t = t.replace(/[()$£€,\s]/g, '').replace(/CR$|DR$/i, '').replace(/^[+-]/, '');
+  const n = parseFloat(t);
+  if (isNaN(n)) return null;
+  return { val: neg ? -n : n, cr: cr };
+}
+function ccMatchClosing(text) {
+  for (const c of CC_CLOSING_RES) {
+    const m = text.match(c.re);
+    if (!m) continue;
+    if (c.kind === 'mdy') {
+      let y = parseInt(m[2], 10); if (y < 100) y += 2000;
+      return { month: parseInt(m[1], 10), year: y };
+    }
+    const mo = CC_MONTHS[m[1].slice(0, 3).toLowerCase()];
+    let y = parseInt(m[2], 10); if (y < 100) y += 2000;
+    if (mo) return { month: mo, year: y };
+  }
+  return null;
+}
+function ccApplyYear(dateStr, closing) {
+  if (!closing || !dateStr) return dateStr;
+  let m = dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);
+  if (m) {
+    const mo = parseInt(m[1], 10);
+    const yr = mo > closing.month ? closing.year - 1 : closing.year;
+    return dateStr + '/' + yr;
+  }
+  m = dateStr.match(/^(\d{1,2})\s+([A-Za-z]{3,9})\.?$/);
+  if (m) {
+    const mo = CC_MONTHS[m[2].slice(0, 3).toLowerCase()];
+    if (!mo) return dateStr;
+    const yr = mo > closing.month ? closing.year - 1 : closing.year;
+    return dateStr + ' ' + yr;
+  }
+  return dateStr;
+}
+// Merge detached sign tokens ("-" | "$25.00") and trailing CR/DR tokens
+// ("9,600.00" | "CR") into single amount tokens.
+function ccNormalizeSigns(line) {
+  const out = [];
+  for (let i = 0; i < line.length; i++) {
+    const t = line[i];
+    if ((t.s === '-' || t.s === '+') && line[i + 1] && ccIsMoney(line[i + 1].s)) {
+      out.push({ s: t.s + line[i + 1].s, x: line[i + 1].x });
+      i++;
+      continue;
+    }
+    if (ccIsMoney(t.s) && line[i + 1] && /^(CR|DR)$/i.test(line[i + 1].s)) {
+      out.push({ s: t.s + ' ' + line[i + 1].s.toUpperCase(), x: t.x });
+      i++;
+      continue;
+    }
+    out.push(t);
+  }
+  return out;
+}
+function ccAssignAmount(row, parts, section) {
+  const isCredit = section === 'payments' || parts.cr || parts.val < 0;
+  if (isCredit) {
+    row.credit = Math.abs(parts.val).toFixed(2);
+    row.type = 'Payment / Credit';
+  } else {
+    row.charge = Math.abs(parts.val).toFixed(2);
+    row.type = section === 'fees' ? 'Fee' : section === 'interest' ? 'Interest' : 'Purchase';
+  }
+}
+
+// lines = array of visual lines; each line = array of { s, x } tokens sorted by x.
+// Two layout families are handled: (a) US/UK section statements (section state
+// machine, sign/CR overrides, no running balance — Reg-Z summary identity is the
+// checksum); (b) banded-block statements (HSBC UAE style): an Original/VAT/Total
+// column header defines x-bands, transactions are '-'-separated blocks whose
+// dates may sit BELOW the amount line and whose FX-fee sub-lines carry the block
+// total on the last line. Reconciliation identity includes the VAT component.
+function parseCardStatement(lines) {
+  const summary = {};
+  let closing = null;
+  const rows = [];
+  let section = 'none';
+  let foldTarget = null;
+  let bands = null;
+  let block = null;
+  let lastLone = null;
+  let pendingSum = null;
+  let idx = -1;
+
+  function finalizeBlock() {
+    if (block && block.date && (block.total || block.orig)) {
+      const parts = block.total || block.orig;
+      const row = {
+        date: block.date, postDate: block.postDate,
+        description: block.desc.replace(/\s{2,}/g, ' ').trim(),
+        charge: '', credit: '', type: '', section: 'banded', flagged: false,
+      };
+      const isCredit = parts.cr || parts.val < 0;
+      if (isCredit) { row.credit = Math.abs(parts.val).toFixed(2); row.type = 'Payment / Credit'; }
+      else { row.charge = Math.abs(parts.val).toFixed(2); row.type = 'Purchase'; }
+      rows.push(row);
+    }
+    block = null;
+  }
+
+  for (const raw of lines) {
+    idx++;
+    let line = raw.filter(function (t) { return !CC_ARABIC_RE.test(t.s); });
+    if (!line.length) continue;
+    line = ccNormalizeSigns(line);
+    const text = line.map(function (t) { return t.s; }).join(' ').trim();
+    if (!text) continue;
+    if (!closing) { const c = ccMatchClosing(text); if (c) closing = c; }
+
+    // banded column header (e.g. "Transaction Date ... Original Amount VAT Total Amount")
+    if (/original amount/i.test(text) && /total amount/i.test(text)) {
+      const orig = line.find(function (t) { return /^original amount/i.test(t.s); });
+      const vat = line.find(function (t) { return /^vat$/i.test(t.s); });
+      const total = line.find(function (t) { return /^total amount/i.test(t.s); });
+      if (orig && total) bands = { vatX: vat ? vat.x : total.x, totalX: total.x };
+      continue;
+    }
+
+    const moneyToks = line.filter(function (t) { return ccIsMoney(t.s); });
+
+    if (moneyToks.length) {
+      let labeled = false;
+      for (const pair of CC_SUMMARY_LABELS) {
+        if (pair[1].test(text)) {
+          if (summary[pair[0]] === undefined) {
+            const parts = ccParseMoneyParts(moneyToks[moneyToks.length - 1].s);
+            if (parts) summary[pair[0]] = parts.cr ? -Math.abs(parts.val) : parts.val;
+          }
+          labeled = true;
+          break;
+        }
+      }
+      if (labeled) continue;
+    } else {
+      if (CC_SEC_EXCLUDE_RE.test(text)) { section = 'skip'; foldTarget = null; continue; }
+      let matched = null;
+      for (const r of CC_SEC_RULES) { if (r.re.test(text)) { matched = r; break; } }
+      if (matched) { section = matched.sec; foldTarget = null; continue; }
+      if (/^account activity/i.test(text)) { section = 'none'; foldTarget = null; continue; }
+      if (/card ending|account ending/i.test(text)) { foldTarget = null; continue; }
+      // summary label whose value sits on an adjacent line (banded statements)
+      for (const pair of CC_SUMMARY_LABELS) {
+        if (summary[pair[0]] === undefined && pair[1].test(text)) {
+          if (lastLone && lastLone.idx === idx - 1) summary[pair[0]] = lastLone.val;
+          else pendingSum = { key: pair[0], idx: idx };
+          break;
+        }
+      }
+    }
+
+    const moneyOnly = moneyToks.length > 0 && moneyToks.length === line.length;
+    if (moneyOnly && pendingSum && pendingSum.idx === idx - 1 && summary[pendingSum.key] === undefined) {
+      const parts = ccParseMoneyParts(moneyToks[0].s);
+      if (parts) summary[pendingSum.key] = parts.cr ? -Math.abs(parts.val) : parts.val;
+      pendingSum = null;
+      continue;
+    }
+    if (moneyOnly && !bands) {
+      const parts = ccParseMoneyParts(moneyToks[0].s);
+      if (parts) lastLone = { val: parts.cr ? -Math.abs(parts.val) : parts.val, idx: idx };
+      // amount arrived on its own line (Citi quirk): completes the pending row
+      if (rows.length && rows[rows.length - 1].pendingAmt && section !== 'skip') {
+        const r = rows[rows.length - 1];
+        const p2 = ccParseMoneyParts(moneyToks[moneyToks.length - 1].s);
+        if (p2) { ccAssignAmount(r, p2, r.section); r.pendingAmt = false; }
+      }
+      continue;
+    }
+
+    // ── banded-block mode ──
+    if (bands) {
+      if (/^[-–]+$/.test(text)) { finalizeBlock(); continue; }
+      if (/^\d[\d\s-]{9,}$/.test(text)) { block = null; continue; } // card number subsection
+      if (CC_NOISE_RE.test(text) || CC_FOOTER_RE.test(text)) continue;
+      if (/^[A-Z]{3}\/[A-Z]{3}\b/.test(text)) continue; // FX rate line
+      if (!block) block = { date: '', postDate: '', desc: '', total: null, orig: null, origLocked: false, armed: false };
+      let start = 0;
+      const dated = line[0] && ccIsDate(line[0].s);
+      if (dated) {
+        if (block.date && (block.total || block.orig)) { finalizeBlock(); block = { date: '', postDate: '', desc: '', total: null, orig: null, origLocked: false, armed: false }; }
+        block.date = line[0].s;
+        start = 1;
+        if (line[1] && ccIsDate(line[1].s)) { block.postDate = line[1].s; start = 2; }
+        block.armed = true;
+      }
+      const rest = line.slice(start);
+      const money = rest.filter(function (t) { return ccIsMoney(t.s); });
+      if (money.length) block.armed = true;
+      let lineOrig = null;
+      for (const t of money) {
+        const parts = ccParseMoneyParts(t.s);
+        if (!parts) continue;
+        if (t.x >= bands.totalX - 12) block.total = parts;
+        else if (t.x >= bands.vatX - 12) { /* VAT column — not the amount */ }
+        else if (!block.origLocked) { if (!lineOrig || t.x > lineOrig.x) lineOrig = { parts: parts, x: t.x }; }
+      }
+      if (lineOrig) { block.orig = lineOrig.parts; block.origLocked = true; }
+      if (block.armed && (dated || money.length === 0 || !block.desc)) {
+        const textPart = rest.filter(function (t) { return !ccIsMoney(t.s); }).map(function (t) { return t.s; }).join(' ').trim();
+        if (textPart) block.desc = (block.desc + ' ' + textPart).trim();
+      }
+      continue;
+    }
+
+    // ── generic (US/UK section) mode ──
+    const first = line[0];
+    if (first && ccIsDate(first.s) && section !== 'skip') {
+      const second = line[1] && ccIsDate(line[1].s) ? line[1] : null;
+      const startIdx = second ? 2 : 1;
+      let amtTok = null;
+      for (const t of moneyToks) { if (!amtTok || t.x > amtTok.x) amtTok = t; }
+      const descToks = line.slice(startIdx).filter(function (t) { return !ccIsMoney(t.s); });
+      const row = {
+        date: first.s, postDate: second ? second.s : '',
+        description: descToks.map(function (t) { return t.s; }).join(' ').trim(),
+        charge: '', credit: '', type: '', section: section, flagged: false, pendingAmt: !amtTok,
+      };
+      if (amtTok) {
+        const parts = ccParseMoneyParts(amtTok.s);
+        if (parts) ccAssignAmount(row, parts, section); else row.pendingAmt = true;
+      }
+      rows.push(row);
+      foldTarget = rows.length - 1;
+      continue;
+    }
+
+    // pure-text continuation (wrapped description, FX detail lines) folds into
+    // the last transaction — never across section headers or footer boilerplate
+    if (moneyToks.length === 0 && foldTarget != null && section !== 'skip') {
+      if (CC_FOOTER_RE.test(text)) { foldTarget = null; continue; }
+      rows[foldTarget].description = (rows[foldTarget].description + ' ' + text).trim();
+    }
+  }
+  if (bands) finalizeBlock();
+
+  for (const r of rows) {
+    if (r.pendingAmt) r.flagged = true;
+    r.date = ccApplyYear(r.date, closing);
+    r.postDate = ccApplyYear(r.postDate, closing);
+    delete r.pendingAmt;
+  }
+
+  const abs = function (k) { return summary[k] === undefined ? 0 : Math.abs(summary[k]); };
+  let identity = null;
+  if (summary.previousBalance !== undefined && summary.newBalance !== undefined && summary.purchases !== undefined) {
+    const expected = summary.previousBalance - abs('payments') + abs('purchases') + abs('cashAdvances') + abs('balanceTransfers') + abs('fees') + abs('interest') + abs('vat');
+    identity = Math.abs(expected - summary.newBalance) <= 0.02;
+  }
+  let parsedCredits = 0, parsedCharges = 0;
+  for (const r of rows) {
+    parsedCredits += r.credit ? parseFloat(r.credit) : 0;
+    parsedCharges += r.charge ? parseFloat(r.charge) : 0;
+  }
+  let rowsMatch = null;
+  if (summary.payments !== undefined || summary.purchases !== undefined) {
+    const expCharges = abs('purchases') + abs('cashAdvances') + abs('balanceTransfers') + abs('fees') + abs('interest') + abs('vat');
+    rowsMatch = Math.abs(parsedCredits - abs('payments')) <= 0.02 && Math.abs(parsedCharges - expCharges) <= 0.02;
+  }
+  return { rows: rows, summary: summary, checks: { identity: identity, rowsMatch: rowsMatch, parsedCredits: parsedCredits, parsedCharges: parsedCharges } };
+}
+// ── END CC PARSE CORE ──
+
+    // ── Main flow ────────────────────────────────────────────────────────────
+    async function handleFiles(files: File[]) {
+      errorArea?.classList.add('hidden');
+      resultArea?.classList.add('hidden');
+      scannedNotice?.classList.add('hidden');
+      const pdfs = files.filter(validatePdf);
+      if (!pdfs.length) { showError('Please choose valid .pdf files.'); return; }
+      progressArea?.classList.remove('hidden');
+      if (progressText) progressText.textContent = 'Loading...';
+      try {
+        await loadCore();
+        docs = [];
+        let totalPages = 0, totalSize = 0;
+        for (const file of pdfs) {
+          const buf = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+          docs.push({ file, pdf, numPages: pdf.numPages });
+          totalPages += pdf.numPages;
+          totalSize += file.size;
+        }
+        if (infoName) infoName.textContent = docs.length === 1 ? docs[0].file.name : docs.length + ' statements selected';
+        if (infoPages) infoPages.textContent = totalPages + (totalPages === 1 ? ' page' : ' pages');
+        if (infoSize) infoSize.textContent = formatBytes(totalSize);
+        fileInfo?.classList.remove('hidden');
+        settingsArea?.classList.remove('hidden');
+        progressArea?.classList.add('hidden');
+      } catch (e: any) {
+        showError(e?.message || 'A PDF could not be opened. It may be corrupt or password-protected — remove the password in your PDF viewer first, then try the unlocked copy.');
+      }
+    }
+
+    async function convert() {
+      if (!docs.length) return;
+      settingsArea?.classList.add('hidden');
+      progressArea?.classList.remove('hidden');
+      rows = []; fileResults = [];
+      let anyTextless = false;
+      try {
+        for (let d = 0; d < docs.length; d++) {
+          const doc = docs[d];
+          const allLines: any[] = [];
+          let totalItems = 0;
+          for (let i = 1; i <= doc.numPages; i++) {
+            if (progressText) progressText.textContent = `Reading ${doc.file.name} — page ${i} of ${doc.numPages}...`;
+            const page = await doc.pdf.getPage(i);
+            const tc = await page.getTextContent();
+            totalItems += tc.items.length;
+            allLines.push(...groupLines(tc.items));
+          }
+          if (totalItems === 0) { anyTextless = true; fileResults.push({ name: doc.file.name, summary: {}, checks: {}, rowCount: 0, textless: true }); continue; }
+          const parsed = parseCardStatement(allLines);
+          parsed.rows.forEach((r: any) => { r.fileName = doc.file.name; });
+          rows.push(...parsed.rows);
+          fileResults.push({ name: doc.file.name, summary: parsed.summary, checks: parsed.checks, rowCount: parsed.rows.length });
+        }
+        if (rows.length === 0) {
+          progressArea?.classList.add('hidden');
+          if (anyTextless && docs.length === 1) { scannedNotice?.classList.remove('hidden'); }
+          else { showError('No transaction rows could be assembled. The layout may be unusual — or the files are scanned images (convert a scanned statement on its own to use OCR).'); }
+          return;
+        }
+        renderPreview();
+        showReconBanner();
+        progressArea?.classList.add('hidden');
+        resultArea?.classList.remove('hidden');
+        resultArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (e: any) {
+        showError(e?.message || 'Something went wrong while reading the statements.');
+      }
+    }
+
+    async function runOcr() {
+      if (docs.length !== 1) return;
+      scannedNotice?.classList.add('hidden');
+      progressArea?.classList.remove('hidden');
+      if (progressText) progressText.textContent = 'Preparing text recognition (one-time setup)...';
+      rows = []; fileResults = [];
+      let worker: any = null;
+      try {
+        await loadTesseract();
+        worker = await tesseractLib.createWorker('eng', 1, {
+          workerPath: '/tesseract/worker.min.js',
+          corePath: '/tesseract/',
+          langPath: '/tesseract/',
+          workerBlobURL: false,
+          logger: (m: any) => {
+            if (m && m.status === 'recognizing text' && progressText) {
+              progressText.textContent = `Reading scanned text ${Math.round((m.progress || 0) * 100)}%`;
+            }
+          },
+        });
+        const doc = docs[0];
+        const allLines: any[] = [];
+        for (let i = 1; i <= doc.numPages; i++) {
+          const page = await doc.pdf.getPage(i);
+          const viewport = page.getViewport({ scale: 2.5 });
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.floor(viewport.width));
+          canvas.height = Math.max(1, Math.floor(viewport.height));
+          const ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport }).promise;
+          const { data } = await worker.recognize(canvas);
+          (data.text || '').split(/\r?\n/).forEach((ln: string) => {
+            const t = ln.trim();
+            if (!t) return;
+            // rebuild a token line: split on runs of 2+ spaces so the parse core
+            // sees the same { s, x } shape as the PDF text path
+            const toks = t.split(/\s{2,}|\t/).filter(Boolean).map((s, idx) => ({ s: s.trim(), x: idx * 100 }));
+            if (toks.length) allLines.push(toks);
+          });
+          canvas.width = 0; canvas.height = 0;
+        }
+        await worker.terminate(); worker = null;
+        const parsed = parseCardStatement(allLines);
+        parsed.rows.forEach((r: any) => { r.fileName = doc.file.name; });
+        rows = parsed.rows;
+        fileResults = [{ name: doc.file.name, summary: parsed.summary, checks: parsed.checks, rowCount: rows.length }];
+        if (rows.length === 0) { showError('No readable transactions were found. The scan may be low-resolution or skewed.'); return; }
+        renderPreview();
+        showReconBanner();
+        progressArea?.classList.add('hidden');
+        resultArea?.classList.remove('hidden');
+      } catch (e: any) {
+        if (worker) { try { await worker.terminate(); } catch {} }
+        showError(e?.message || 'Text recognition failed.');
+      }
+    }
+
+    function renderPreview() {
+      if (!previewBody) return;
+      const multi = fileResults.filter((f: any) => !f.textless).length > 1;
+      let html = '';
+      let lastFile = '';
+      rows.forEach((r: any, i: number) => {
+        if (multi && r.fileName !== lastFile) {
+          lastFile = r.fileName;
+          html += `<tr class="bg-bae-bg border-t border-bae-border"><td colspan="5" class="px-2 py-1.5 font-semibold text-bae-muted">${escapeHtml(r.fileName)}</td></tr>`;
+        }
+        html += `
+        <tr class="${r.flagged ? 'bg-amber-50' : ''} border-t border-bae-border-light" data-i="${i}">
+          <td class="px-2 py-1.5" contenteditable data-k="date">${escapeHtml(r.date)}</td>
+          <td class="px-2 py-1.5" contenteditable data-k="description">${escapeHtml(r.description)}</td>
+          <td class="px-2 py-1.5" contenteditable data-k="type">${escapeHtml(r.type)}</td>
+          <td class="px-2 py-1.5 text-right" contenteditable data-k="charge">${escapeHtml(r.charge)}</td>
+          <td class="px-2 py-1.5 text-right" contenteditable data-k="credit">${escapeHtml(r.credit)}</td>
+        </tr>`;
+      });
+      previewBody.innerHTML = html;
+      if (resultCount) resultCount.textContent = rows.length + (rows.length === 1 ? ' row' : ' rows');
+    }
+
+    function showReconBanner() {
+      if (!reconBanner) return;
+      const checked = fileResults.filter((f: any) => !f.textless);
+      const parts: string[] = [];
+      let anyBad = false, anyUnchecked = false;
+      for (const f of checked) {
+        const idOk = f.checks.identity, rowsOk = f.checks.rowsMatch;
+        if (idOk === null || idOk === undefined || rowsOk === null || rowsOk === undefined) {
+          anyUnchecked = true;
+          if (checked.length > 1) parts.push(f.name + ': summary totals not detected — review rows manually.');
+        } else if (idOk && rowsOk) {
+          if (checked.length > 1) parts.push(f.name + ': reconciles to the statement totals.');
+        } else {
+          anyBad = true;
+          if (checked.length > 1) parts.push(f.name + ': does NOT reconcile to the statement totals — review before downloading.');
+        }
+      }
+      const textless = fileResults.filter((f: any) => f.textless);
+      for (const f of textless) { parts.push(f.name + ': looks scanned (no text layer) — convert it on its own to use OCR.'); anyBad = true; }
+      if (anyBad) {
+        reconBanner.className = 'mb-4 rounded-bae-sm p-3 text-xs bg-amber-50 text-amber-700 border border-amber-200';
+        reconBanner.textContent = checked.length > 1 || textless.length ? parts.join(' ') : 'The extracted rows do not add up to the statement’s printed totals. A row may have been misread or missed — review the preview before downloading.';
+      } else if (anyUnchecked) {
+        reconBanner.className = 'mb-4 rounded-bae-sm p-3 text-xs bg-bae-bg text-bae-muted border border-bae-border';
+        reconBanner.textContent = checked.length > 1 ? parts.join(' ') : 'No summary-totals block was detected, so the reconciliation check could not run. Review the rows before downloading.';
+      } else {
+        reconBanner.className = 'mb-4 rounded-bae-sm p-3 text-xs bg-emerald-50 text-emerald-700 border border-emerald-100';
+        reconBanner.textContent = checked.length > 1 ? 'All ' + checked.length + ' statements reconcile to their printed totals.' : 'Rows reconcile to the statement’s printed totals (previous balance, payments, purchases, fees, interest, new balance).';
+      }
+    }
+
+    // Read edits back from the table before export.
+    function syncEdits() {
+      if (!previewBody) return;
+      previewBody.querySelectorAll('tr[data-i]').forEach((tr) => {
+        const i = parseInt((tr as HTMLElement).dataset.i || '-1', 10);
+        if (i < 0 || !rows[i]) return;
+        tr.querySelectorAll('[data-k]').forEach((td) => {
+          const k = (td as HTMLElement).dataset.k!;
+          rows[i][k] = (td.textContent || '').trim();
+        });
+      });
+    }
+
+    function download() {
+      syncEdits();
+      const multi = fileResults.filter((f: any) => !f.textless).length > 1;
+      const hasPostDate = rows.some((r: any) => r.postDate);
+      const header: string[] = [];
+      if (multi) header.push('Statement');
+      header.push('Date');
+      if (hasPostDate) header.push('Post Date');
+      header.push('Description', 'Type', 'Charge', 'Payment / Credit');
+      const aoa = [header, ...rows.map((r: any) => {
+        const row: any[] = [];
+        if (multi) row.push(r.fileName);
+        row.push(r.date);
+        if (hasPostDate) row.push(r.postDate);
+        row.push(r.description, r.type, r.charge, r.credit);
+        return row;
+      })];
+      const base = docs.length === 1 ? (docs[0].file.name || 'statement').replace(/\.pdf$/i, '') : 'card-statements';
+      if (outputFormat === 'csv') {
+        const csv = aoa.map((row) => row.map((c: any) => {
+          const v = String(c == null ? '' : c);
+          return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+        }).join(',')).join('\r\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        triggerDownload(blob, base + '.csv');
+      } else {
+        const ws = xlsxLib.utils.aoa_to_sheet(aoa);
+        const widths = [];
+        if (multi) widths.push({ wch: 24 });
+        widths.push({ wch: 12 });
+        if (hasPostDate) widths.push({ wch: 12 });
+        widths.push({ wch: 44 }, { wch: 16 }, { wch: 12 }, { wch: 16 });
+        ws['!cols'] = widths;
+        const wb = xlsxLib.utils.book_new();
+        xlsxLib.utils.book_append_sheet(wb, ws, 'Transactions');
+        const out = xlsxLib.write(wb, { bookType: 'xlsx', type: 'array' });
+        triggerDownload(new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), base + '.xlsx');
+      }
+    }
+    function triggerDownload(blob: Blob, name: string) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name; document.body.appendChild(a); a.click();
+      document.body.removeChild(a); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    function reset() {
+      docs = []; rows = []; fileResults = [];
+      fileInput.value = '';
+      [fileInfo, settingsArea, progressArea, resultArea, errorArea, scannedNotice].forEach((el) => el?.classList.add('hidden'));
+    }
+
+    // ── Wiring ───────────────────────────────────────────────────────────────
+    dropZone?.addEventListener('click', () => fileInput.click());
+    dropZone?.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary'); });
+    dropZone?.addEventListener('dragleave', () => dropZone.classList.remove('border-bae-primary'));
+    dropZone?.addEventListener('drop', (e) => {
+      e.preventDefault(); dropZone.classList.remove('border-bae-primary');
+      const fs = e.dataTransfer?.files; if (fs && fs.length) handleFiles(Array.from(fs));
+    });
+    fileInput?.addEventListener('change', () => {
+      const fs = fileInput.files ? Array.from(fileInput.files) : [];
+      fileInput.value = ''; // allow re-selecting the same files without a page refresh
+      if (fs.length) handleFiles(fs);
+    });
+    convertBtn?.addEventListener('click', convert);
+    document.getElementById('reset-top')?.addEventListener('click', reset);
+    ocrBtn?.addEventListener('click', runOcr);
+    downloadBtn?.addEventListener('click', download);
+    resetBtn?.addEventListener('click', reset);
+    document.getElementById('format-xlsx')?.addEventListener('click', () => setFormat('xlsx'));
+    document.getElementById('format-csv')?.addEventListener('click', () => setFormat('csv'));
+    function setFormat(fmt: string) {
+      outputFormat = fmt;
+      const x = document.getElementById('format-xlsx'), c = document.getElementById('format-csv');
+      [x, c].forEach((b) => { b?.classList.remove('bg-bae-primary', 'text-white'); b?.classList.add('text-bae-muted'); });
+      const active = fmt === 'xlsx' ? x : c;
+      active?.classList.add('bg-bae-primary', 'text-white'); active?.classList.remove('text-bae-muted');
+    }
+  })();
+</script>

@@ -1,0 +1,303 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolHero from '../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../components/tools/ToolRelatedCTA.astro';
+import ToolHubValueProp from '../components/tools/ToolHubValueProp.astro';
+import { developerTools } from '../data/tools';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Developer Toolbox?',
+    a: `The Best Answer Hub Developer Toolbox is a free collection of ${developerTools.length} browser-based utilities designed for developers, programmers, and anyone working with data formats. It includes a <a href="/developer-toolbox/diff-checker/">diff checker</a>, <a href="/developer-toolbox/cron-expression-generator/">cron expression generator</a>, <a href="/developer-toolbox/css-generators/">CSS generators</a> for shadows, gradients, flexbox, and grid, a <a href="/developer-toolbox/data-converter/">data converter</a> for CSV, JSON, XML, and YAML, a <a href="/developer-toolbox/sql-formatter/">SQL formatter and validator</a> for PostgreSQL, MySQL, SQLite, and SQL Server, <a href="/developer-toolbox/network-tools/">network tools</a> for DNS lookup, site check, and WHOIS, a <a href="/developer-toolbox/markdown-editor/">Markdown editor</a> with live GitHub-flavored preview, a <a href="/developer-toolbox/mock-api-key-generator/">mock API key generator</a> for OpenAI, Anthropic, Google, Azure, and Stripe, an <a href="/developer-toolbox/html-cleaner/">HTML cleaner and text stripper</a> for Word and Google Docs cleanup, a <a href="/tools/json-formatter/">JSON formatter and validator</a>, <a href="/tools/base64-encoder/">Base64 encoder and decoder</a>, <a href="/tools/jwt-decoder/">JWT token inspector</a>, <a href="/tools/regex-tester/">regex tester</a>, <a href="/tools/hash-generator/">hash generator</a>, <a href="/tools/url-encoder/">URL encoder and decoder</a>, and <a href="/tools/timestamp-converter/">timestamp converter</a>. Every tool runs entirely in your browser, and no data is sent to any server.`,
+  },
+  {
+    q: 'Is the Developer Toolbox free to use?',
+    a: 'The Best Answer Hub Developer Toolbox is completely free with no usage limits, no signup, and no watermarked output. Every utility runs client-side using JavaScript, so there are no server costs, no rate limiting, and no paywalled features. The toolbox is free for personal projects, commercial work, and enterprise use.',
+  },
+  {
+    q: 'Are my inputs stored or sent to a server?',
+    a: "No. Your data never leaves your browser. All processing happens locally using JavaScript and the Web Crypto API. The Best Answer Hub Developer Toolbox does not log, store, or transmit any of the text, tokens, files, or data you enter. You can verify this by disconnecting from the internet after loading the page. Every tool continues to work perfectly. Open your browser's Network tab while using any tool and you will see zero outbound data requests.",
+  },
+  {
+    q: 'Can I use the Developer Toolbox offline?',
+    a: 'Yes. After you load a tool page once, it works without an internet connection. Every tool is built with vanilla JavaScript and runs entirely inside your browser. There are no external API calls, no cloud processing, and no server dependencies. This makes the toolbox reliable on trains, flights, and anywhere with limited or no connectivity.',
+  },
+  {
+    q: 'What developer tools are included?',
+    a: `The Best Answer Hub Developer Toolbox includes ${developerTools.length} utilities: a diff checker for comparing text side by side; a cron expression generator for building schedules with plain-English explanations; CSS generators for box shadows, gradients, flexbox, and CSS grid; a data converter for transforming CSV, JSON, XML, and YAML; a SQL formatter and validator for PostgreSQL, MySQL, SQLite, and SQL Server; network tools for DNS lookup, site reachability testing, and WHOIS queries; a Markdown editor with GitHub-flavored live preview; a mock API key generator that creates realistic placeholders for OpenAI, Anthropic, Google, Azure, and Stripe; an HTML cleaner and text stripper that removes Word formatting and invisible Unicode characters; a JSON formatter and validator; a Base64 encoder and decoder with full Unicode and emoji support; a JWT decoder that inspects headers, payloads, and expiration times; a regex tester with real-time match highlighting; a hash generator using SHA-1, SHA-256, SHA-384, and SHA-512; a URL encoder and decoder for web-safe strings; and a timestamp converter for Unix timestamps and ISO 8601 dates.`,
+  },
+  {
+    q: 'Why should I use browser-based developer tools?',
+    a: "Browser-based tools are faster, more private, and more reliable than server-side alternatives. Pasting a JWT token, production JSON, or a regex pattern containing log data into a server-side tool means that data leaves your device. The Best Answer Hub Developer Toolbox processes everything locally, with no upload, no network round-trip, and no risk of the service logging your input. The toolbox also works without an internet connection after the first page load, making it suitable for restricted or air-gapped environments.",
+  },
+  {
+    q: 'How does the Developer Toolbox compare to jwt.io, Regex101, and CyberChef?',
+    a: 'JWT.io, Regex101, and CyberChef are well-known tools but share a common trade-off: they process data server-side, and Regex101 has confirmed it sends every keystroke to its backend. The Best Answer Hub Developer Toolbox processes everything locally in your browser with no outbound data requests. It is ad-free, requires no account, and works offline after the first load. For developers under corporate security policies, on air-gapped networks, or working with production tokens and PII, client-side processing is not a preference. It is a hard requirement.',
+  },
+  {
+    q: 'Is the Developer Toolbox safe for sensitive data like JWT tokens and API keys?',
+    a: 'Yes, because nothing leaves your device. When you paste a JWT token into the <a href="/tools/jwt-decoder/">Best Answer Hub JWT Decoder</a>, the token is parsed entirely in your browser using JavaScript. No secret key is required for decoding the header and payload, and no data is logged or transmitted. The decoder cannot cryptographically verify the signature without a secret key. This is a deliberate design choice so the tool never needs to handle credentials.',
+  },
+  {
+    q: 'Do I need to create an account to use these tools?',
+    a: 'No account, email address, or signup of any kind is required for any tool in the Best Answer Hub Developer Toolbox. Open any tool, paste your data, and get results instantly. There are no paywalls, no premium tiers, no feature gates, and no trial periods. Every utility is available in full on first visit with zero friction.',
+  },
+  {
+    q: 'Is there one place to get all these developer tools without using a different site for each one?',
+    a: `Yes. That is the entire point of the Best Answer Hub Developer Toolbox. Instead of using one site for JSON, another for JWTs, another for regex, and another for diffs, all ${developerTools.length} utilities live on one hub with a single consistent interface. Every tool is free, runs client-side in your browser, and needs no account, so you bookmark one page instead of ten. It is built to be the one-stop shop for everyday developer tasks (formatting, decoding, converting, generating, and testing) without bouncing between separate single-purpose websites.`,
+  },
+  {
+    q: 'Can I bookmark individual tools instead of the whole toolbox?',
+    a: `Yes. Every utility has its own dedicated URL, for example <a href="/tools/json-formatter/">bestanswerhub.com/tools/json-formatter/</a> or <a href="/developer-toolbox/mock-api-key-generator/">bestanswerhub.com/developer-toolbox/mock-api-key-generator/</a>. Bookmark only the tools you use daily, share specific utilities with teammates, or find them instantly from your browser address bar. The Best Answer Hub Developer Toolbox hub lists all ${developerTools.length} tools in one place if you need a starting point.`,
+  },
+  {
+    q: 'Which browsers are supported?',
+    a: `All modern browsers are fully supported: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, and Opera 76+. The tools use standard Web APIs including TextEncoder, TextDecoder, Web Crypto, and the File API, all universally available since 2021. Internet Explorer is not supported. All ${developerTools.length} tools work identically on desktop, tablet, and mobile browsers.`,
+  },
+  {
+    q: 'Are these tools open source?',
+    a: "The tools are not open source, but they use only standard browser APIs with no proprietary algorithms. The Best Answer Hub JSON Formatter uses native JSON.parse and JSON.stringify. The Best Answer Hub Hash Generator uses the Web Crypto API. The Best Answer Hub Mock API Key Generator uses crypto.getRandomValues() for local randomness. The Best Answer Hub Base64 Encoder and Best Answer Hub JWT Decoder use atob, btoa, TextEncoder, and TextDecoder. Every line of client-side code is fully inspectable in your browser's developer tools.",
+  },
+  {
+    q: 'Why do security-conscious developers avoid pasting JWTs, API keys, and production JSON into online tools?',
+    a: "A Hacker News thread titled 'Why I Actively Discourage Online Tooling like jwt.io and Online JSON Validators' has over 200 upvotes and 164 comments. The concern is concrete: pasting a JWT or production JSON into a server-side tool sends that data to a third-party server you do not control. Regex101 has confirmed it sends every keystroke to its backend. A popular JSON Formatter Chrome extension was acquired and began injecting adware in 2026, affecting all installed users automatically. The Best Answer Hub Developer Toolbox processes everything locally. Your tokens, patterns, and payloads never leave your browser.",
+  },
+  {
+    q: 'Can I use the Developer Toolbox on a corporate network or behind a company proxy?',
+    a: 'Yes. Because all processing happens in the browser, the Best Answer Hub Developer Toolbox makes no outbound requests with your data. A corporate proxy that blocks uploads to third-party servers will not affect this toolbox. There is nothing to intercept. Developers working under PCI DSS, HIPAA, SOC 2, or government compliance requirements use client-side tools for exactly this reason. Load any tool page once, and it continues to function even if outbound network access is subsequently restricted.',
+  },
+  {
+    q: 'What is the difference between encoding, encryption, and hashing?',
+    a: 'These three operations are frequently confused. Encoding, such as Base64 or URL percent-encoding, is a reversible transformation for transport or storage. It provides zero security and anyone can reverse it. Encryption, such as AES-256 or RSA, is a reversible transformation that requires a secret key and protects confidentiality. Hashing, such as SHA-256, SHA-512, or bcrypt, is a one-way transformation that produces a fixed-length fingerprint and cannot be reversed. The Best Answer Hub Developer Toolbox covers encoding with the <a href="/tools/base64-encoder/">Base64 Encoder</a> and <a href="/tools/url-encoder/">URL Encoder</a>, and hashing with the <a href="/tools/hash-generator/">Hash Generator</a> using the Web Crypto API.',
+  },
+];
+
+const steps = [
+  { title: 'Pick a utility', description: `Choose from ${developerTools.length} tools: diff checker, cron generator, CSS generators, data converter, SQL formatter, network tools, Markdown editor, mock API key generator, HTML cleaner, JSON formatter, Base64 encoder, JWT decoder, regex tester, hash generator, URL encoder, and timestamp converter. Each has its own dedicated page.` },
+  { title: 'Paste your data', description: 'Enter the text, code, token, SQL query, or value you want to process. Everything happens instantly in your browser, with no uploads, no round-trips, and no accounts required.' },
+  { title: 'Get instant results', description: 'See formatted, decoded, validated, or converted output immediately. Copy the result with one click and paste it directly into your editor, terminal, or pipeline.' },
+];
+
+const seo = {
+  title: 'Free Developer Toolbox — JSON, JWT, Regex & More (2026)',
+  description: `Free browser-based developer tools: JSON formatter, JWT decoder, regex tester, SQL formatter, diff checker, and more — ${developerTools.length} tools. No signup, no uploads.`,
+  url: '/developer-toolbox/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Developer Toolbox', url: '/developer-toolbox/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\\s{2,}/g, ' ').trim() })),
+};
+
+const devTools = [
+  {
+    href: '/developer-toolbox/diff-checker/',
+    badge: 'Checker',
+    title: 'Diff Checker',
+    description: 'Compare two texts side by side. Spot additions, deletions, and changes with color-coded highlighting. No uploads.',
+    meta: 'Line • Word • Split • Unified • Offline',
+    icon: '≠',
+  },
+  {
+    href: '/developer-toolbox/cron-expression-generator/',
+    badge: 'Generator',
+    title: 'Cron Expression Generator',
+    description: 'Build cron schedules visually with instant plain-English explanations and next 10 execution previews. No uploads.',
+    meta: 'Standard • Quartz • 6-Field • Next-Run Preview',
+    icon: '⏰',
+  },
+  {
+    href: '/developer-toolbox/css-generators/',
+    badge: 'Generator',
+    title: 'CSS Generators',
+    description: 'Design box shadows, gradients, flexbox layouts, and CSS grids visually. Live preview with CSS and Tailwind output.',
+    meta: 'Shadow • Gradient • Flexbox • Grid • Tailwind',
+    icon: '🎨',
+  },
+  {
+    href: '/developer-toolbox/data-converter/',
+    badge: 'Converter',
+    title: 'Data Converter',
+    description: 'Convert between CSV, JSON, XML, and YAML in any direction. Auto-detect input format. No uploads.',
+    meta: 'CSV • JSON • XML • YAML • Auto-detect',
+    icon: '⇄',
+  },
+  {
+    href: '/developer-toolbox/sql-formatter/',
+    badge: 'Formatter',
+    title: 'SQL Formatter & Validator',
+    description: 'Beautify, minify, and validate SQL for PostgreSQL, MySQL, SQLite, and SQL Server. Syntax highlighting.',
+    meta: 'PostgreSQL • MySQL • SQLite • T-SQL • Validate',
+    icon: '🗃',
+  },
+  {
+    href: '/developer-toolbox/network-tools/',
+    badge: 'Checker',
+    title: 'Network Tools',
+    description: 'DNS lookup via DNS-over-HTTPS, site reachability check, and RDAP WHOIS lookup. Queries stay client-side.',
+    meta: 'DNS • Site Check • WHOIS • DoH • RDAP',
+    icon: '🌐',
+  },
+  {
+    href: '/developer-toolbox/markdown-editor/',
+    badge: 'Editor',
+    title: 'Markdown Editor',
+    description: 'Write Markdown with live GitHub-flavored preview, syntax highlighting, and HTML export. Auto-saves locally. No uploads.',
+    meta: 'GFM • Live preview • HTML export • Offline',
+    icon: '📝',
+  },
+  {
+    href: '/developer-toolbox/mock-api-key-generator/',
+    badge: 'Generator',
+    title: 'Mock API Key Generator',
+    description: 'Generate realistic non-functional API key placeholders for OpenAI, Anthropic, Google, Azure, and Stripe. Perfect for tutorials, CI/CD, and .env.example files.',
+    meta: 'Client-side • 6 providers • .env output • Demo markers',
+    icon: '🔑',
+  },
+  {
+    href: '/developer-toolbox/html-cleaner/',
+    badge: 'Cleaner',
+    title: 'HTML Cleaner & Text Stripper',
+    description: 'Clean messy HTML from Word, Google Docs, and CMS exports into semantic markup. Strip invisible Unicode characters, smart quotes, and zero-width spaces from text.',
+    meta: 'Word cleanup • Invisible chars • Smart quotes • No upload',
+    icon: '🧼',
+  },
+  {
+    href: '/tools/json-formatter/',
+    badge: 'Formatter',
+    title: 'JSON Formatter & Validator',
+    description: 'Beautify, minify, and validate JSON instantly in your browser. Catches syntax errors with precise line numbers.',
+    meta: 'Format • Minify • Validate • Offline',
+    icon: '{ }',
+  },
+  {
+    href: '/tools/base64-encoder/',
+    badge: 'Encoder',
+    title: 'Base64 Encoder / Decoder',
+    description: 'Encode text to Base64 or decode Base64 back to text with full Unicode and emoji support.',
+    meta: 'Encode • Decode • Unicode • Emoji',
+    icon: '64',
+  },
+  {
+    href: '/tools/jwt-decoder/',
+    badge: 'Decoder',
+    title: 'JWT Decoder',
+    description: 'Inspect JWT token headers, payloads, and expiration times. No secret key required. Client-side only.',
+    meta: 'Header • Payload • Expiry • Signature',
+    icon: '🔑',
+  },
+  {
+    href: '/tools/regex-tester/',
+    badge: 'Tester',
+    title: 'Regex Tester',
+    description: 'Test regular expressions with real-time match highlighting, capture groups, and replacement preview.',
+    meta: 'Real-time • Flags • Groups • Replace',
+    icon: '.*',
+  },
+  {
+    href: '/tools/hash-generator/',
+    badge: 'Generator',
+    title: 'Hash Generator',
+    description: 'Generate SHA-1, SHA-256, SHA-384, and SHA-512 hashes using the Web Crypto API. No server needed.',
+    meta: 'SHA-1 • SHA-256 • SHA-384 • SHA-512',
+    icon: '#',
+  },
+  {
+    href: '/tools/url-encoder/',
+    badge: 'Encoder',
+    title: 'URL Encoder / Decoder',
+    description: 'Encode and decode URLs, URI components, and query strings for safe web transmission.',
+    meta: 'Component • Full URL • Encode • Decode',
+    icon: '🔗',
+  },
+  {
+    href: '/tools/timestamp-converter/',
+    badge: 'Converter',
+    title: 'Timestamp Converter',
+    description: 'Convert Unix timestamps to human-readable dates in local time, UTC, and ISO 8601 formats.',
+    meta: 'Unix • ISO 8601 • UTC • Local • Relative',
+    icon: '⏱',
+  },
+];
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge={`Free Tool · ${developerTools.length} Utilities · No Signup`}
+    title="Developer Toolbox:"
+    accentText="Format, decode, test & convert"
+    description="Free browser-based utilities for developers: Diff checker, Cron generator, CSS generators, Data converter, SQL formatter, Network tools, Markdown editor, Mock API key generator, HTML cleaner, JSON formatter, Base64 encoder/decoder, JWT token inspector, regex tester, hash generator, URL encoder, and timestamp converter. Your data never leaves your device."
+  />
+
+  <!-- Tool Cards -->
+  <section class="py-6 md:py-8" aria-label="Developer tools">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="dev-tools-grid">
+        {devTools.map((tool) => (
+          <a href={tool.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{tool.badge}</span>
+              <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{tool.icon}</span>
+            </div>
+            <h2 class="text-base font-semibold text-bae-ink mb-2">{tool.title}</h2>
+            <p class="text-sm text-bae-muted line-clamp-2">{tool.description}</p>
+            <p class="text-xs text-bae-muted mt-3 font-medium">{tool.meta}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolHubValueProp
+    hubName="Developer Toolbox"
+    count={developerTools.length}
+    noun="developer tools"
+    replaces="pasting tokens, JSON, and regex into a different server-side site for every task"
+  />
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What developers use it for -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What developers use it for</h2>
+      <p class="text-sm text-bae-muted mb-8">Common workflows from backend engineers, frontend developers, DevOps teams, and security-conscious developers.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Production Debugging</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Decode a JWT and check token expiry, without leaking to external servers</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">JWT Decoder + Timestamp Converter, fully offline-capable</p>
+          <p class="text-sm text-bae-muted">Paste the token into the Best Answer Hub JWT Decoder to inspect the header, payload, and claims. The <code>exp</code> field is a Unix timestamp, so drop it straight into the Timestamp Converter to see the exact expiry date and time in local, UTC, and ISO 8601 format. Nothing leaves your browser, so this workflow is safe on corporate networks and during live production incidents.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Frontend Development</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Build CSS layouts, test regex patterns, and compare config files in one tab</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">CSS Generators + Regex Tester + Diff Checker</p>
+          <p class="text-sm text-bae-muted">Design a box shadow or CSS gradient visually and copy the output directly into your stylesheet or as a Tailwind class. Test your validation regex against real input strings with flag-level control before committing it to code. When a config or component file changes, run both versions through the Diff Checker to review additions and deletions side by side, no Git required.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Data & API Work</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Format API responses, convert between data formats, and validate SQL queries</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">JSON Formatter + Data Converter + SQL Formatter</p>
+          <p class="text-sm text-bae-muted">Paste a minified API response into the Best Answer Hub JSON Formatter to beautify and validate it instantly. Convert the output to CSV or YAML using the Data Converter when you need it in a different shape for import or testing. Write or paste a raw SQL query into the SQL Formatter to indent and validate it against PostgreSQL, MySQL, SQLite, or SQL Server syntax before running it against a live database.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">DevOps & Infrastructure</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify SHA-256 checksums, build cron schedules, and look up DNS records</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Hash Generator + Cron Expression Generator + Network Tools</p>
+          <p class="text-sm text-bae-muted">Generate a SHA-256 hash of a build artifact or config value in the Best Answer Hub Hash Generator to verify integrity against a published checksum. Build a cron schedule visually in the Cron Expression Generator, which supports Standard 5-field, 6-field, and Quartz formats with a plain-English explanation and next 10 run preview. Use Network Tools to run a DNS-over-HTTPS lookup or RDAP WHOIS query without installing nslookup or dig locally.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+</BaseLayout>

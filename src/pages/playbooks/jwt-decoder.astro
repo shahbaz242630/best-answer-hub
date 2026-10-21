@@ -1,0 +1,362 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-10T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub JWT Decoder?', a: 'The Best Answer Hub JWT Decoder is a free, browser-based tool that splits a JSON Web Token into its three parts and decodes the header and payload into readable JSON. It shows the algorithm, the claims, and the expiry, and it decodes without verifying. It needs no account and sends nothing to a server.' },
+  { q: 'What are the three parts of a JWT?', a: 'A JWT has a header, a payload, and a signature, joined by dots as header.payload.signature. The header names the algorithm and type, the payload carries the claims, and the signature protects the first two from tampering. The Best Answer Hub JWT Decoder shows the header and payload as JSON and previews the signature.' },
+  { q: 'Is a JWT encrypted?', a: 'Usually not. A signed JWT is encoded, not encrypted, so its header and payload are readable by anyone who holds the token. Encryption is a separate standard, JSON Web Encryption, and most tokens are only signed. The Best Answer Hub JWT Decoder reads a signed token instantly, which is exactly why you should keep secrets out of the payload.' },
+  { q: 'Can anyone read the contents of my JWT?', a: 'Yes, if they have the token. A signed JWT protects against tampering but not against reading, so the payload is visible to anyone who receives it. The maintainers of jwt.io warn against putting secret information in the payload for this reason. Treat a JWT payload as public, which the Best Answer Hub JWT Decoder makes obvious.' },
+  { q: 'What do the claims iss, sub, aud, exp, nbf, and iat mean?', a: 'Issuer is who signed the token, subject is who it is about, and audience is who it is for. Expiration, not before, and issued at are times in seconds since 1970. The Best Answer Hub JWT Decoder labels each registered claim and turns the time claims into readable dates so you can see when a token is valid.' },
+  { q: 'What is the difference between decoding and verifying a JWT?', a: 'Decoding reads the header and payload so you can see the claims. Verifying recomputes the signature with the signing key to prove the token is genuine and unchanged. The Best Answer Hub JWT Decoder decodes for inspection; verification belongs on the server with a trusted library, because it needs a key that must never enter a browser.' },
+  { q: 'Can this tool verify a JWT signature?', a: 'No, by design. Verifying a signature needs the signing secret or public key, which is unsafe to paste into any web tool. The Best Answer Hub JWT Decoder only decodes the header and payload for readability, and shows the signature as a preview. For verification, use a server-side library and keep the key on the server.' },
+  { q: 'Should I paste my signing secret or key into an online decoder?', a: 'Never. The signing key protects every token you issue, so it must stay on the server and never touch a browser tool. A decoder does not need it, because reading a token requires no key. The Best Answer Hub JWT Decoder asks only for the token and shows its contents without any secret, so nothing sensitive is entered.' },
+  { q: 'What is the alg none vulnerability?', a: 'It is an attack where the algorithm field is set to none and the signature dropped, and a server that trusts the header accepts the unsigned token as valid, bypassing the signature check. The JWT best current practices warn against it. The Best Answer Hub JWT Decoder shows the algorithm clearly, so a value of none stands out at once.' },
+  { q: 'What is JWT algorithm confusion?', a: 'It is an attack that switches a token from RS256 to HS256 so a server set up for RSA verifies it with its public key used as an HMAC secret, letting an attacker forge tokens from public data. The fix is to pin the expected algorithm when verifying. The Best Answer Hub JWT Decoder surfaces the algorithm so a change is easy to spot.' },
+  { q: 'Is it safe to paste a production JWT into an online decoder?', a: 'Only into one that works on your device, and even then with care. A production token is a live credential, so pasting it into a server-side tool hands it over. The Best Answer Hub JWT Decoder runs client-side and sends nothing, and for the most sensitive tokens you can load the page then disconnect from the internet and it still works.' },
+  { q: 'Are my tokens uploaded when I use this decoder?', a: 'No. With the Best Answer Hub JWT Decoder your token never leaves your browser. The tool uses only client-side JavaScript to decode the header and payload, so there are no network requests carrying the token. You can confirm this by opening the Network tab in your developer tools and seeing zero outgoing requests as you paste and decode.' },
+  { q: 'How do I tell if a JWT has expired?', a: 'Read the expiration claim, which is a count of seconds since 1970, and compare it to now. The Best Answer Hub JWT Decoder does this automatically, showing how long a token has left or how long ago it expired. An expired token must be rejected, so this is a quick way to see why a request is being refused.' },
+  { q: 'Why does a JWT use base64url instead of base64?', a: 'Because a JWT often travels in URLs and HTTP headers, where standard base64 characters like plus and slash would be misread or need escaping. Base64url swaps those characters for URL-safe ones and drops the padding. The Best Answer Hub JWT Decoder handles base64url automatically, so tokens copied from headers or links decode without fiddling.' },
+  { q: 'How is this different from jwt.io?', a: 'Both decode in your browser, but jwt.io is a marketing asset for a paid identity product, with a create-an-account prompt and no on-page notice that the token stays local. The Best Answer Hub JWT Decoder shows no ads, pushes no product, asks for no account, and states plainly that nothing is uploaded. It is built for a quick, private inspection.' },
+];
+
+const seo = {
+  title: 'How to Read a JWT: Encoded, Not Encrypted',
+  description: 'How to read a JSON Web Token: its three parts, the claims inside, why the payload is encoded not encrypted, decode versus verify, and the alg none risk.',
+  url: '/playbooks/jwt-decoder/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'JWT Decoder', url: '/playbooks/jwt-decoder/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · Developer Tools</span>
+        <div class="cav">Anyone can read it, so should you</div>
+        <h1>A JWT Is Encoded, <em>Not Encrypted</em></h1>
+        <p class="dek">A practical guide to JSON Web Tokens: the three parts, the claims inside, why the payload is readable by anyone who holds the token, why decoding is not the same as verifying, and the alg none trick that has bypassed real logins. The Best Answer Hub JWT Decoder splits and reads a token in your browser and sends nothing to a server.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~10 min read</span><span>Developer tools</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Header, payload, signature<small>decoded live</small></div>
+          <div class="seg b2">Private<small>nothing uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">3</div><div class="l">parts in every JWT: header, payload, and signature</div><div class="src">RFC 7519, 2015</div></div>
+      <div class="stat"><div class="n">0%</div><div class="l">of a signed JWT is encrypted; the payload is only encoded</div><div class="src">RFC 7515</div></div>
+      <div class="stat"><div class="n">80,000+</div><div class="l">dev-tool pastes exposed in 2025, including admin JWTs</div><div class="src">watchTowr, 2025</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">network requests when you decode a token here</div><div class="src">runs in your browser</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#structure">The three parts</a>
+        <a href="#encrypted">Encoded, not encrypted</a>
+        <a href="#claims">What the claims mean</a>
+        <a href="#verify">Decode vs verify</a>
+        <a href="#security">alg none and confusion</a>
+        <a href="#private">Why decode in your browser</a>
+        <a href="#different">Versus other decoders</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub JWT Decoder is a free, browser-based tool that splits a JSON Web Token into its three parts and decodes the header and payload into readable JSON, showing the algorithm, the claims, and the expiry, with nothing uploaded to a server.</strong> This guide explains what a JWT contains, why the payload is readable by anyone who holds the token rather than encrypted, why decoding is not verifying, and the two algorithm tricks that have bypassed real signature checks.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub JWT Decoder?</h2>
+        <p>The Best Answer Hub <a href="/tools/jwt-decoder/">JWT Decoder</a> is a single-page tool that takes a JSON Web Token and shows what is inside it. It splits the token on its two dots, base64url-decodes the header and the payload into formatted JSON, previews the signature, reads the algorithm from the header, and works out from the expiry claim whether the token is still valid or has lapsed. It decodes but does not verify, because verification needs a secret or key you should never paste into a web tool. Every step runs as JavaScript on your own device using native methods, so the token is never uploaded and no account is needed. The tool sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> next to a <a href="/tools/json-formatter/">JSON Formatter</a> and a <a href="/tools/regex-tester/">Regex Tester</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">Three parts, two dots</div>
+        <h2 id="structure">What are the three parts of a JWT?</h2>
+        <p>A JWT is three base64url-encoded parts joined by dots: a header, a payload, and a signature, in the form header.payload.signature. The header, defined by the JSON Web Signature standard, names the signing algorithm and the token type. The payload carries the claims, the statements about the user and the token, such as who issued it and when it expires. The signature is computed over the first two parts with a key, and it lets a server confirm the token has not been tampered with. The Best Answer Hub JWT Decoder shows the first two parts as readable JSON and previews the third. The point to hold on to is that only the signature needs a key: the header and payload are simply encoded, so the decoder can read them, and so can anyone else.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">The three parts of a JWT, and which one needs a key</figcaption>
+          <svg viewBox="0 0 620 250" role="img" aria-label="Diagram: a JWT is header dot payload dot signature. The header and payload are base64url encoded and readable by anyone. The signature needs the key to verify and is not readable.">
+            <text x="20" y="26" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">A JWT: header . payload . signature</text>
+            <rect x="20" y="40" width="165" height="44" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="102" y="60" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#5a7355">Header</text>
+            <text x="102" y="77" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">algorithm, type</text>
+            <text x="193" y="68" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="20" font-weight="800" fill="#a89c87">.</text>
+            <rect x="205" y="40" width="200" height="44" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="305" y="60" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#5a7355">Payload</text>
+            <text x="305" y="77" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">the claims</text>
+            <text x="413" y="68" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="20" font-weight="800" fill="#a89c87">.</text>
+            <rect x="425" y="40" width="175" height="44" rx="10" fill="#F3E2D6" stroke="#ecd6c5" stroke-width="2"/>
+            <text x="512" y="60" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">Signature</text>
+            <text x="512" y="77" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#B0512F">needs the key</text>
+            <line x1="205" y1="112" x2="205" y2="130" stroke="#ddd0bb" stroke-width="2"/>
+            <line x1="512" y1="112" x2="512" y2="130" stroke="#ddd0bb" stroke-width="2"/>
+            <rect x="20" y="130" width="385" height="46" rx="10" fill="#fff" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="212" y="150" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#5a7355">Base64url encoded, readable by anyone</text>
+            <text x="212" y="167" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">the decoder shows these as JSON</text>
+            <rect x="425" y="130" width="175" height="46" rx="10" fill="#fff" stroke="#ecd6c5" stroke-width="2"/>
+            <text x="512" y="150" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">Verify with the key</text>
+            <text x="512" y="167" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#B0512F">not readable, not decoded</text>
+            <text x="20" y="212" font-family="Karla, sans-serif" font-size="12.5" fill="#4f4940">Integrity comes from the signature. Confidentiality does not: the payload is plain text once decoded.</text>
+          </svg>
+          <p class="chart-src">Structure per RFC 7515 (JSON Web Signature) and RFC 7519 (JSON Web Token), 2015. A signed JWT protects against tampering, not against reading.</p>
+        </figure>
+
+        <div class="cav">The load-bearing fact</div>
+        <h2 id="encrypted">Why can anyone read your JWT?</h2>
+        <p>Because a signed JWT is encoded, not encrypted, so its contents are readable by anyone who has the token. The JSON Web Signature standard gives a token integrity protection, a guarantee it has not been altered, but it does not give confidentiality. The header and payload are just base64url text, which any decoder, including this one, turns straight back into JSON. The maintainers of jwt.io put it plainly: the information in a signed token, though protected against tampering, is readable by anyone, so you should not put secret information in the payload unless it is encrypted. Encryption of a token is a separate standard, JSON Web Encryption, and most JWTs in the wild are signed, not encrypted. The practical rule follows directly: never place a password, a card number, or anything else sensitive in a JWT payload, because putting it there is the same as publishing it to everyone who receives the token.</p>
+        <blockquote>Signing a JWT proves it was not changed. <span class="accent">It does nothing to hide what is inside, so treat the payload as public.</span></blockquote>
+
+        <div class="cav">Reading the claims</div>
+        <h2 id="claims">What do the claims in a JWT mean?</h2>
+        <p>Claims are the statements a token makes, and the standard defines a set of registered claims the Best Answer Hub JWT Decoder labels for you. The time claims are the ones to watch: expiry, not before, and issued at are all NumericDate values, plain counts of seconds since the start of 1970, which the decoder turns into readable dates. The table lists the registered claims from RFC 7519.</p>
+        <table>
+          <thead><tr><th>Claim</th><th>Name</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td class="band">iss</td><td>Issuer</td><td>Who created and signed the token</td></tr>
+            <tr><td class="band">sub</td><td>Subject</td><td>Who the token is about, usually a user ID</td></tr>
+            <tr><td class="band">aud</td><td>Audience</td><td>Who the token is intended for, such as an API</td></tr>
+            <tr><td class="band">exp</td><td>Expiration</td><td>Seconds since 1970 after which the token must be rejected</td></tr>
+            <tr><td class="band">nbf</td><td>Not before</td><td>Time before which the token must not be accepted</td></tr>
+            <tr><td class="band">iat</td><td>Issued at</td><td>When the token was created</td></tr>
+            <tr><td class="band">jti</td><td>JWT ID</td><td>A unique identifier, which helps block replay</td></tr>
+          </tbody>
+        </table>
+        <p>Beyond these, a token can carry any custom claims an application needs, such as a role or a plan. The decoder shows all of them, registered and custom alike, so you can see exactly what a service is asserting about a user, and check whether the expiry has already passed.</p>
+
+        <div class="cav">A crucial distinction</div>
+        <h2 id="verify">Why is decoding a JWT not the same as verifying it?</h2>
+        <p>Because decoding only reads the token, while verifying proves it is genuine, and the two are easy to confuse. Decoding base64url-decodes the header and payload so you can see the claims, which is what the Best Answer Hub JWT Decoder does. Verifying recomputes the signature with the signing key and checks it matches, which proves the token was issued by who it claims and has not been changed. The best current practices for JWT are strict about this: every cryptographic operation must be validated and the whole token must be rejected if any of them fail. That is why a decoder showing a token content proves nothing about its validity, and why verification belongs on the server with a trusted library. It is also why you should never paste your signing secret or private key into any web tool: the key is what protects every token you issue, so it must stay on the server, never in a browser.</p>
+
+        <div class="cav">Two real attacks</div>
+        <h2 id="security">What are the alg none and algorithm confusion attacks?</h2>
+        <p>Both attacks abuse the fact that a JWT names its own algorithm in the header, and both are documented in the JWT best current practices. In the alg none attack, an attacker changes the algorithm field to none and drops the signature, and a library that trusts that value will treat the unsigned token as valid, bypassing the signature check entirely. In algorithm confusion, an attacker switches a token from RS256 to HS256, and a server set up for RSA can be tricked into verifying with its own public key used as an HMAC secret, letting the attacker forge tokens with information that is already public. The defense for both is on the server: pin the expected algorithm in every verify call rather than trusting the header, and reject anything else. The Best Answer Hub JWT Decoder shows the algorithm from the header prominently, so an unexpected value like none jumps out the moment you decode the token.</p>
+        <div class="callout peach"><div class="h">Where the danger lives</div><p>These are verification bugs, not decoding bugs, so they bite on the server that trusts a token, not in a viewer. Reading a token to spot a suspicious algorithm is safe and useful. Accepting one without pinning the algorithm is where logins get bypassed. Decode to inspect, then verify server-side with the algorithm locked down.</p></div>
+
+        <div class="cav">The honest part</div>
+        <h2 id="private">Why should you decode a JWT in your browser?</h2>
+        <p>Because a real JWT is often a live credential, and the safest place to open one is your own device, which is where the Best Answer Hub JWT Decoder keeps it. An access token is a bearer token, which means, in the words of the standard, any party in possession of it can use it to reach the protected resource, without any further proof. Pasting a production token into a website therefore hands over a working key for as long as the token is valid. The risk is not theoretical: in November 2025, researchers at watchTowr found more than 80,000 saved pastes, over five gigabytes, exposed from two popular online developer tools, and the haul specifically included administrative JWT tokens alongside credentials and private keys, with planted secrets accessed within 48 hours. A client-side decoder never transmits the token, so there is nothing to store or leak. The principle is the one the Federal Trade Commission gives to business: do not collect data you do not need, and where you can, keep it on the user device.</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from jwt.io or other decoders?</h2>
+        <p>The difference is posture: the Best Answer Hub JWT Decoder shows no ads, asks for no account, pushes no product, and states plainly that the token stays in your browser. To be fair, most reputable decoders also run client-side, so decoding locally is not unique. The honest gaps are elsewhere. The best-known decoder, jwt.io, is a marketing asset for a paid identity product, carries a create-an-account call to action, and shows neither a reassurance that the token stays local nor a warning against pasting a production token. Some free decoders run ads. Others, like Microsoft's jwt.ms, do state that the token never leaves your browser, which is the right thing to do. The table sets the usual experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical online decoder</th></tr></thead>
+          <tbody>
+            <tr><td>Token uploaded to a server</td><td class="band">Never, decoded locally</td><td>Usually client-side, but some send it and you cannot tell</td></tr>
+            <tr><td>Ads or trackers</td><td class="band">None</td><td>Common on free decoders</td></tr>
+            <tr><td>Account or signup</td><td class="band">Never</td><td>jwt.io pushes an account</td></tr>
+            <tr><td>Vendor upsell</td><td class="band">None</td><td>jwt.io promotes a paid identity product</td></tr>
+            <tr><td>Says the token stays local</td><td class="band">Yes</td><td>jwt.io does not; jwt.ms does</td></tr>
+            <tr><td>Flags the algorithm</td><td class="band">Shown</td><td>Varies</td></tr>
+          </tbody>
+        </table>
+        <p>None of this makes the decoding special, because base64url is the same everywhere. What differs is what a tool does around it: whether it shows ads, whether it upsells, and whether it is honest that a token is a credential to be careful with. The Best Answer Hub JWT Decoder keeps the token local and says so.</p>
+        <div class="callout"><div class="h">Pair it with the rest of the toolbox</div><p>A token rarely travels alone. The Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> has the neighbors you reach for next: a <a href="/tools/json-formatter/">JSON Formatter</a> to expand a nested claim, a <a href="/tools/base64-encoder/">Base64 Encoder</a>, and a <a href="/tools/regex-tester/">Regex Tester</a>, each running in the browser and sending nothing.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Decode it now</span>
+          <h3>Open the JWT Decoder</h3>
+          <p>Free, no signup, and processed entirely in your browser. Paste a token to read its header and payload, see every claim, and check the expiry, with nothing uploaded.</p>
+          <a class="btn" href="/tools/jwt-decoder/">Decode your token</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about JSON Web Tokens</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, from a JSON formatter to a hash generator, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/json-formatter/">Format and Validate JSON, Nothing Uploaded</a></b> Expand a nested claim into clean, readable JSON, in your browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/regex-tester/">Test Any Regex, Nothing Uploaded</a></b> The same privacy-first approach, applied to building and testing patterns.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/how-good-is-your-ai-knowledge/">How Good Is Your AI Knowledge?</a></b> A free, no-signup check on where you really stand with everyday AI tools.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc7519" target="_blank" rel="noopener noreferrer">RFC 7519, JSON Web Token (JWT)</a>, 2015 (the three-part structure, and the registered claims iss, sub, aud, exp, nbf, iat, and jti).</li>
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc7515" target="_blank" rel="noopener noreferrer">RFC 7515, JSON Web Signature (JWS)</a>, 2015 (a signed token provides integrity, not confidentiality; the header.payload.signature form).</li>
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc7516" target="_blank" rel="noopener noreferrer">RFC 7516, JSON Web Encryption (JWE)</a>, 2015 (the separate standard that actually encrypts a token).</li>
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc8725" target="_blank" rel="noopener noreferrer">RFC 8725, JSON Web Token Best Current Practices</a>, 2020 (the alg none and RS256 to HS256 algorithm confusion attacks, and rejecting a token if any check fails).</li>
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc6750" target="_blank" rel="noopener noreferrer">RFC 6750, OAuth 2.0 Bearer Token Usage</a>, 2012 (any party in possession of a bearer token can use it).</li>
+          <li>jwt.io, maintained by Auth0, <a href="https://jwt.io/introduction" target="_blank" rel="noopener noreferrer">Introduction to JSON Web Tokens</a>, 2026 (a signed token is readable by anyone; do not put secret information in the payload).</li>
+          <li>OWASP, <a href="https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">JSON Web Token Cheat Sheet</a>, 2026 (JWT contents are base64 encoded, not encrypted by default).</li>
+          <li>watchTowr Labs, <a href="https://labs.watchtowr.com/stop-putting-your-passwords-into-random-websites-yes-seriously-you-are-the-problem/" target="_blank" rel="noopener noreferrer">Stop Putting Your Passwords Into Random Websites</a>, 25 November 2025 (more than 80,000 saved pastes, over 5 GB, exposed from two online developer tools, including administrative JWT tokens), with confirmation from <a href="https://www.bleepingcomputer.com/news/security/code-beautifiers-expose-credentials-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">BleepingComputer</a>.</li>
+          <li>Federal Trade Commission, <a href="https://www.ftc.gov/business-guidance/resources/start-security-guide-business" target="_blank" rel="noopener noreferrer">Start with Security: A Guide for Business</a>, 2023 (do not collect data you do not need; where possible keep it on the user device).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/jwt-decoder/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">JWT Decoder</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, <a href="/tools/json-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">JSON Formatter</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

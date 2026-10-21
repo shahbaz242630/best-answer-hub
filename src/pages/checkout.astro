@@ -1,0 +1,181 @@
+---
+// Universal secure checkout page — the single Paddle "default payment link" for the
+// whole site. EVERY paid item routes through here; only the price ID passed in the URL
+// changes (e.g. /checkout/?price=pri_xxx). One page, one Paddle.js init, one place to maintain.
+//
+// Paddle config comes from .env (gitignored), matching the PUBLIC_GA4_ID convention:
+//   PUBLIC_PADDLE_ENV          = 'sandbox' | 'production'
+//   PUBLIC_PADDLE_CLIENT_TOKEN = publishable client-side token (NOT a secret — runs in the browser)
+// Go-live swap = set PUBLIC_PADDLE_ENV=production and the live token in .env, then rebuild. No code edit.
+//
+// Secret API keys NEVER appear here or anywhere in the build — they live only server-side
+// (the PHP "bouncer" that verifies payment before releasing a PDF). See KnowledgeCenter_HANDOFF.md.
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const PADDLE_ENV = import.meta.env.PUBLIC_PADDLE_ENV || 'sandbox';
+const PADDLE_CLIENT_TOKEN = import.meta.env.PUBLIC_PADDLE_CLIENT_TOKEN || '';
+
+const seo = {
+  title: 'Secure Checkout — Best Answer Hub',
+  description: 'Complete your secure purchase. Payments are processed by Paddle, our authorized reseller and Merchant of Record.',
+  url: '/checkout/',
+  type: 'WebPage' as const,
+};
+---
+
+<BaseLayout seo={seo} noindex={true}>
+  <section class="py-16 md:py-24">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-lg mx-auto bg-bae-card border border-bae-border rounded-bae shadow-bae-sm p-8 text-center">
+        <div class="inline-flex items-center gap-2 text-xs font-medium text-bae-muted mb-4">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Secure checkout · processed by Paddle</span>
+        </div>
+
+        <h1 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink mb-3">Secure <span class="italic text-bae-primary">checkout</span></h1>
+
+        <p id="checkout-status" class="text-sm text-bae-muted mb-6" aria-live="polite">Preparing your secure checkout…</p>
+
+        <button type="button" id="open-checkout-btn"
+          class="hidden bg-bae-primary text-white text-sm font-semibold px-6 py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+          Open secure checkout
+        </button>
+
+        <div id="checkout-fallback" class="hidden mt-2">
+          <a href="/knowledge-center/" class="text-sm text-bae-primary font-medium underline underline-offset-2 hover:text-bae-accent transition-colors">
+            ← Back to the Knowledge Center
+          </a>
+        </div>
+
+        <p class="mt-6 text-xs text-bae-muted">
+          Paddle.com is our authorized reseller and Merchant of Record. Your payment details are entered
+          directly into Paddle's secure checkout and never touch this website.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script slot="scripts" is:inline define:vars={{ PADDLE_ENV, PADDLE_CLIENT_TOKEN }}>
+    (function () {
+      'use strict';
+
+      var statusEl = document.getElementById('checkout-status');
+      var openBtn = document.getElementById('open-checkout-btn');
+      var fallbackEl = document.getElementById('checkout-fallback');
+
+      function setStatus(msg) { statusEl.textContent = msg; }
+      function showFallback() { if (fallbackEl) fallbackEl.classList.remove('hidden'); }
+      function showButton() { if (openBtn) openBtn.classList.remove('hidden'); }
+
+      // --- Validate URL inputs (never trust query params) -----------------------
+      var params = new URLSearchParams(window.location.search);
+
+      var rawPrice = params.get('price') || '';
+      var rawTxn = params.get('_ptxn') || '';
+      var rawAssessment = params.get('assessment') || '';
+      var rawBucket = params.get('bucket') || '';
+
+      var priceId = /^pri_[a-z0-9]+$/i.test(rawPrice) ? rawPrice : '';
+      var transactionId = /^txn_[a-z0-9]+$/i.test(rawTxn) ? rawTxn : '';
+
+      // Where to send the buyer once payment completes. ALLOW-LISTED on purpose: the destination
+      // is chosen by a short key, never taken from the URL, so this can never become an open
+      // redirect. Unknown or absent key = stay on this page and confirm in place, which is what
+      // this page did before any download page existed.
+      var DESTINATIONS = { pack: '/kc/pack/', report: '/kc/report/' };
+      var destination = DESTINATIONS[(params.get('t') || '').replace(/[^a-z]/g, '')] || '';
+      // Custom data is passed to Paddle only — restrict to a safe charset, capped length.
+      function clean(v) { return (v || '').replace(/[^a-z0-9_-]/gi, '').slice(0, 40); }
+      var assessment = clean(rawAssessment);
+      var bucket = clean(rawBucket);
+
+      // --- Guard: Paddle.js loaded & configured ---------------------------------
+      if (typeof Paddle === 'undefined') {
+        setStatus('Checkout could not load. Please refresh, or contact support@bestanswerhub.com.');
+        showFallback();
+        return;
+      }
+      if (!PADDLE_CLIENT_TOKEN) {
+        setStatus('Checkout is not configured yet. Please check back shortly.');
+        showFallback();
+        return;
+      }
+
+      // --- Build the checkout options -------------------------------------------
+      var checkoutOptions = null;
+      if (transactionId) {
+        checkoutOptions = { transactionId: transactionId };
+      } else if (priceId) {
+        var customData = {};
+        if (assessment) customData.assessment = assessment;
+        if (bucket) customData.bucket = bucket;
+        checkoutOptions = { items: [{ priceId: priceId, quantity: 1 }] };
+        if (assessment || bucket) checkoutOptions.customData = customData;
+      }
+
+      if (!checkoutOptions) {
+        setStatus('No item selected for checkout.');
+        showFallback();
+        return;
+      }
+
+      function openCheckout() {
+        try {
+          Paddle.Checkout.open(checkoutOptions);
+        } catch (e) {
+          setStatus('We could not open the checkout. Please refresh and try again.');
+          showFallback();
+        }
+      }
+
+      try {
+        // Sandbox needs an explicit environment switch; live is Paddle.js's default.
+        // So only call Environment.set for sandbox — at go-live (PUBLIC_PADDLE_ENV=production)
+        // this is skipped automatically. Go-live = flip the .env value, no code edit needed.
+        if (PADDLE_ENV === 'sandbox') {
+          Paddle.Environment.set('sandbox');
+        }
+        Paddle.Initialize({
+          token: PADDLE_CLIENT_TOKEN,
+          eventCallback: function (event) {
+            if (!event || !event.name) return;
+            if (event.name === 'checkout.completed') {
+              // Hand off to the delivery page, which asks the PHP bouncer what this transaction
+              // entitles before releasing anything. Without a known destination, confirm in
+              // place rather than guessing: a buyer who lands nowhere still has their receipt.
+              var txn = event.data && event.data.transaction_id;
+              if (destination && /^txn_[a-z0-9]+$/i.test(txn || '')) {
+                setStatus('Payment complete. Preparing your download…');
+                location.href = destination + '?txn=' + encodeURIComponent(txn);
+                return;
+              }
+              setStatus('Payment complete. Thank you! Your receipt is on its way from Paddle.');
+              if (openBtn) openBtn.classList.add('hidden');
+              showFallback();
+            } else if (event.name === 'checkout.closed') {
+              setStatus('Checkout closed. You can reopen it below when you are ready.');
+              showButton();
+            } else if (event.name === 'checkout.error' || event.name === 'checkout.payment-error') {
+              setStatus('There was a problem with the checkout. Please try again, or contact support@bestanswerhub.com.');
+              showButton();
+              showFallback();
+            }
+          },
+        });
+      } catch (e) {
+        setStatus('Checkout could not initialize. Please refresh, or contact support@bestanswerhub.com.');
+        showFallback();
+        return;
+      }
+
+      // Auto-open the overlay, and wire the manual button as a fallback.
+      if (openBtn) openBtn.addEventListener('click', openCheckout);
+      setStatus('Opening your secure checkout…');
+      openCheckout();
+    })();
+  </script>
+</BaseLayout>

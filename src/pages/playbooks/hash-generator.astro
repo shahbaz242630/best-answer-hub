@@ -1,0 +1,395 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-11T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Hash Generator?', a: 'The Best Answer Hub Hash Generator is a free, browser-based tool that turns any text into a cryptographic hash. It offers SHA-256 by default plus SHA-1, SHA-384, and SHA-512, using the native Web Crypto API. Every hash is computed on your own device, so nothing is uploaded, and it needs no account.' },
+  { q: 'What is hashing, and how is it different from encryption?', a: 'Hashing turns data into a fixed-length fingerprint using a one-way function that cannot be reversed. Encryption is two-way and a key can undo it. That is why you cannot decrypt a hash. The Best Answer Hub Hash Generator produces one-way SHA digests, which suit fingerprinting and verifying data rather than hiding it for later recovery.' },
+  { q: 'Can you decrypt or reverse a hash?', a: 'No. A hash is a one-way function with no key, so there is nothing to decrypt and no way to run it backward. Weak inputs can still be guessed by brute force or looked up in precomputed tables, which is why salting matters for passwords. The Best Answer Hub Hash Generator only computes hashes, it never claims to reverse them.' },
+  { q: 'Which hash algorithms does the tool support?', a: 'The Best Answer Hub Hash Generator supports SHA-1, SHA-256, SHA-384, and SHA-512, with SHA-256 selected by default. It does not offer MD5, because the browser Web Crypto API leaves MD5 out on purpose as no longer secure. You can switch algorithms instantly without reloading or losing your input.' },
+  { q: 'Which hash algorithm should I use?', a: 'Use SHA-256 for general work such as fingerprinting and file verification, and SHA-512 when you want a longer digest. Avoid SHA-1 and MD5 for anything security-related, since both are broken. The Best Answer Hub Hash Generator defaults to SHA-256 and keeps SHA-1 available only for checking older, legacy values.' },
+  { q: 'Is MD5 safe to use?', a: 'No, not for security. MD5 has had practical collisions since 2004 and was abused by the Flame malware in 2012 to forge a signature. It is acceptable only as a quick, non-security checksum for spotting accidental corruption. The Best Answer Hub Hash Generator does not offer MD5, matching what the browser Web Crypto API supports.' },
+  { q: 'Is SHA-1 still safe?', a: 'No. Google and CWI Amsterdam produced the first real SHA-1 collision in 2017, and NIST has set a deadline to stop using SHA-1 entirely by the end of 2030. Use SHA-256 or SHA-3 instead. The Best Answer Hub Hash Generator keeps SHA-1 only so you can check older values, not for new security work.' },
+  { q: 'Can I hash a password with this tool?', a: 'You can compute the hash, but a raw SHA-256 is the wrong way to store a password because it is fast to brute-force. OWASP recommends a slow, salted function such as Argon2id, bcrypt, scrypt, or PBKDF2 instead. The Best Answer Hub Hash Generator is built for verifying and learning, not for production authentication.' },
+  { q: 'What is a salt, and why does it matter?', a: 'A salt is a unique random value added to each password before hashing, so identical passwords produce different hashes and precomputed tables no longer work. NIST requires a salt of at least 32 bits. A plain hash from the Best Answer Hub Hash Generator has no salt, which is one reason it is not meant for storing passwords.' },
+  { q: 'What is a checksum, and how do I verify a file?', a: 'A checksum is a published hash you compare against to confirm a download was not corrupted. Projects like Ubuntu and Apache publish SHA-256 values next to their files. For a whole binary file, command line tools such as sha256sum read it directly; the Best Answer Hub Hash Generator hashes text and strings for verifying values and snippets.' },
+  { q: 'Does the Hash Generator send my text to a server?', a: 'No. Every hash is computed inside your browser by the Web Crypto API and transmits nothing. You can confirm it by opening the Network tab in your browser developer tools and seeing zero outgoing requests, or by turning off your internet: the Best Answer Hub Hash Generator keeps working because everything happens locally.' },
+  { q: 'Can I use the Hash Generator offline?', a: 'Yes. After the page loads once, the Best Answer Hub Hash Generator works with no internet connection, because it relies on the browser built-in Web Crypto API. That makes it useful on restricted or air-gapped machines where sending data to a cloud service is blocked or simply unwise.' },
+  { q: 'What is the Web Crypto API?', a: 'The Web Crypto API is a standard cryptography interface built into modern browsers. Its digest method computes SHA-1, SHA-256, SHA-384, and SHA-512 using native, high-performance code, with no server involved. The Best Answer Hub Hash Generator calls this browser feature directly, which is why hashing is fast and stays entirely on your device.' },
+  { q: 'What is HMAC, and how is it different from a plain hash?', a: 'HMAC combines a hash function with a secret key to prove both integrity and origin, and is defined in RFC 2104. A plain hash has no key, so anyone can recompute it. The Best Answer Hub Hash Generator produces the plain digest; HMAC wraps that in a keyed construction used to sign API requests and webhooks.' },
+  { q: 'How is it different from other online hash tools?', a: 'Many online hash tools can send what you paste to a server, and some still default to the broken MD5 algorithm. The Best Answer Hub Hash Generator hashes your text in the browser with the native Web Crypto API, saves nothing, shows no ads, and sticks to the SHA family, so a password or secret never leaves your device.' },
+];
+
+const seo = {
+  title: 'What a Hash Is, and How to Generate One (2026)',
+  description: 'How hashing works, why you cannot decrypt a hash, which algorithms are safe and which are broken, and how to generate a SHA-256 hash in your browser.',
+  url: '/playbooks/hash-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Hash Generator', url: '/playbooks/hash-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Developer Tools</span>
+        <div class="cav">Hashed in your browser, never uploaded</div>
+        <h1>Generate a Hash, <em>Nothing Uploaded</em></h1>
+        <p class="dek">A plain guide to hashing: what a hash is, why it cannot be reversed, which algorithms are safe and which are broken, when a checksum is the right tool, and why a raw hash is the wrong way to store a password. The Best Answer Hub Hash Generator computes SHA-256 and more in your browser, so nothing is uploaded.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Privacy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Hash<small>SHA-1 to SHA-512</small></div>
+          <div class="seg b2">Private<small>never uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">0</div><div class="l">bytes uploaded to a server</div><div class="src">hashed on your device</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">SHA algorithms, one click</div><div class="src">SHA-1, 256, 384, 512</div></div>
+      <div class="stat"><div class="n">2030</div><div class="l">the year NIST retires SHA-1</div><div class="src">NIST, 2022</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">Web Crypto, even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#hashing">Hashing vs encryption</a>
+        <a href="#algorithms">Which algorithm</a>
+        <a href="#passwords">Hashing passwords</a>
+        <a href="#checksums">Verifying a file</a>
+        <a href="#safe">Is it safe?</a>
+        <a href="#different">Versus other tools</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>A hash is a fixed-length fingerprint of some data, produced by a one-way function that cannot be reversed, and the Best Answer Hub Hash Generator computes one from any text entirely in your browser so nothing is ever uploaded.</strong> This guide explains what hashing is and how it differs from encryption, which algorithms are safe and which are broken, why a raw hash is the wrong way to store a password, how to verify a file with a checksum, and why pasting a secret into an online tool can be a risk.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Hash Generator?</h2>
+        <p>The Best Answer Hub <a href="/tools/hash-generator/">Hash Generator</a> is a single-page tool that turns any text into a cryptographic hash, with SHA-256 selected by default and SHA-1, SHA-384, and SHA-512 a click away. It uses the browser native Web Crypto API, so the hashing happens on your own device in JavaScript: nothing is transmitted, nothing is stored, and it keeps working with the internet switched off. It deliberately sticks to the SHA family that browsers support and does not offer MD5, which the Web Crypto API leaves out because it is no longer secure (<a href="https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest" target="_blank" rel="noopener noreferrer">MDN</a>). It needs no account and shows no ads. The tool sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The core idea</div>
+        <h2 id="hashing">What is hashing, and how is it different from encryption?</h2>
+        <p>Hashing turns data of any size into a fixed-length string, and unlike encryption it only goes one way. A hash function is deterministic, so the same input always gives the same output, yet it is built so that you cannot work backward from the output to the input. That is the sharp line between the two: encryption is a two-way function that a key can reverse, while hashing is one-way, which is why the phrase "decrypt a hash" does not mean anything. As the OWASP guidance puts it, "hashing is a one-way function, it is impossible to decrypt a hash and obtain the original plaintext value," whereas "encryption is a two-way function" an attacker can reverse (<a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP</a>). A second key property is the avalanche effect: change a single character and the whole digest changes, as NIST notes that any change to a message will, with very high probability, produce a different digest (<a href="https://csrc.nist.gov/pubs/fips/180-4/upd1/final" target="_blank" rel="noopener noreferrer">FIPS 180-4</a>).</p>
+        <div class="difbox">
+          <div class="dt">The avalanche effect: change one letter, get a completely different hash</div>
+          <div class="hashcode">
+            <div class="hrow"><span class="hlabel">SHA-256 of "hello"</span><span class="hval">2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824</span></div>
+            <div class="hrow alt"><span class="hlabel">SHA-256 of "Hello"</span><span class="hval">185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969</span></div>
+          </div>
+          <p class="difnote">The two inputs differ only by a capital H, yet the SHA-256 digests share almost nothing. That is by design: a hash spreads any change across the whole output, so it cannot be nudged toward a target value.</p>
+        </div>
+
+        <div class="cav">Choosing safely</div>
+        <h2 id="algorithms">Which hash algorithm should you use?</h2>
+        <p>For anything security-related, use SHA-256 or another member of the SHA-2 family, and treat MD5 and SHA-1 as broken. A hash produces a fixed number of bits no matter how large the input: MD5 is 128 bits (32 hex characters), SHA-1 is 160 bits (40 hex), SHA-256 is 256 bits (64 hex), and SHA-512 is 512 bits (128 hex). Size is not the whole story, though, because two of these are broken by design flaws, not by being short. MD5 has had practical collisions since 2004 and was abused by the Flame malware in 2012 to forge a Windows update signature. SHA-1 fell in 2017, when Google and CWI Amsterdam produced the first real collision, the SHAttered attack, which took more than 9.2 quintillion SHA-1 computations, about 6,500 CPU-years of work (<a href="https://shattered.io/" target="_blank" rel="noopener noreferrer">shattered.io</a>). NIST has since set a hard deadline: stop using SHA-1 entirely by 31 December 2030, and migrate to SHA-2 or SHA-3 (<a href="https://www.nist.gov/news-events/news/2022/12/nist-retires-sha-1-cryptographic-algorithm" target="_blank" rel="noopener noreferrer">NIST</a>).</p>
+        <table>
+          <thead><tr><th>Algorithm</th><th>Status</th><th>What happened</th><th>Use it for</th></tr></thead>
+          <tbody>
+            <tr><td class="band">MD5</td><td>Broken</td><td>Collisions since 2004; forged a cert for Flame malware in 2012</td><td>Non-security checksums only</td></tr>
+            <tr><td class="band">SHA-1</td><td>Retired</td><td>First real collision in 2017; NIST ends all use by 2030</td><td>Legacy checks, never security</td></tr>
+            <tr><td class="band">SHA-256</td><td>Recommended</td><td>Part of SHA-2, standardized in FIPS 180-4</td><td>The safe default</td></tr>
+            <tr><td class="band">SHA-512</td><td>Recommended</td><td>Longer SHA-2 digest, also FIPS 180-4</td><td>High-assurance uses</td></tr>
+            <tr><td class="band">SHA-3</td><td>Recommended</td><td>A different, modern design, FIPS 202 (2015)</td><td>An alternative to SHA-2</td></tr>
+          </tbody>
+        </table>
+        <figure class="chart">
+          <figcaption class="chart-title">Digest size is fixed, whatever the input</figcaption>
+          <svg viewBox="0 0 620 200" role="img" aria-label="Bar chart of hash digest sizes in bits: MD5 128, SHA-1 160, SHA-256 256, SHA-512 512.">
+            <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C6603F"></stop><stop offset="1" stop-color="#8a4429"></stop></linearGradient></defs>
+            <g font-family="Karla, sans-serif" font-size="12.5" font-weight="700" fill="#33302A">
+              <text x="8" y="30">MD5</text>
+              <rect x="96" y="18" width="96" height="20" rx="5" fill="url(#cg)"></rect>
+              <text x="200" y="33" fill="#847B6B" font-weight="700">128 bits</text>
+              <text x="8" y="72">SHA-1</text>
+              <rect x="96" y="60" width="120" height="20" rx="5" fill="url(#cg)"></rect>
+              <text x="224" y="75" fill="#847B6B" font-weight="700">160 bits</text>
+              <text x="8" y="114">SHA-256</text>
+              <rect x="96" y="102" width="192" height="20" rx="5" fill="url(#cg)"></rect>
+              <text x="296" y="117" fill="#847B6B" font-weight="700">256 bits</text>
+              <text x="8" y="156">SHA-512</text>
+              <rect x="96" y="144" width="384" height="20" rx="5" fill="url(#cg)"></rect>
+              <text x="488" y="159" fill="#847B6B" font-weight="700">512 bits</text>
+            </g>
+          </svg>
+          <p class="chart-src">Digest sizes per NIST FIPS 180-4 (MD5 per RFC 1321). A hash is always the same length, whether the input is one word or a whole book. Bar length is proportional to bits.</p>
+        </figure>
+
+        <div class="cav">A common mistake</div>
+        <h2 id="passwords">Can you hash a password with this tool?</h2>
+        <p>You can compute the hash, but a raw SHA-256 or SHA-512 is the wrong way to store a password, and the Best Answer Hub Hash Generator is built for learning and verifying, not for production authentication. The problem is that the SHA family is fast, which is exactly what an attacker wants: modern hardware can try billions of guesses per second against a stolen database. OWASP is blunt that "fast hashing algorithms such as SHA-256 are not suitable for password storage" and recommends a slow, memory-hard function instead, with Argon2id as the first choice, then scrypt, bcrypt, or PBKDF2 at 600,000 iterations, each with a unique random salt (<a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP</a>). A salt is a unique random value added to each password before hashing, which stops an attacker reusing a precomputed table of hashes, and NIST requires it to be at least 32 bits (<a href="https://pages.nist.gov/800-63-3/sp800-63b.html" target="_blank" rel="noopener noreferrer">NIST SP 800-63B</a>).</p>
+        <div class="callout peach"><div class="h">The rule of thumb</div><p>Use a plain SHA-256 hash to fingerprint or verify data. To store a password, reach for Argon2id, bcrypt, or another purpose-built password hash with a per-user salt. The Best Answer Hub Hash Generator is the right tool for the first job and a teaching aid for the second, not a replacement for a real authentication library.</p></div>
+
+        <div class="cav">The everyday use</div>
+        <h2 id="checksums">How do you verify a file with a hash?</h2>
+        <p>A checksum is a published hash you compare against, and it is the most common everyday use of hashing. When a project shares a download, it often publishes the file's SHA-256 value next to it. Ubuntu ships a <code>SHA256SUMS</code> file so you can confirm an image "is not corrupted and hasn't been tampered with," and the Apache Software Foundation publishes SHA-256 and SHA-512 for its releases, noting that MD5 and SHA-1 are deprecated (<a href="https://ubuntu.com/tutorials/how-to-verify-ubuntu" target="_blank" rel="noopener noreferrer">Ubuntu</a>, <a href="https://www.apache.org/info/verification.html" target="_blank" rel="noopener noreferrer">Apache</a>). You compute the hash of what you downloaded and check it matches the published one: if a single byte changed in transit, the digests will not match. The Best Answer Hub Hash Generator hashes text and strings, so it is ideal for verifying a value, a token, or a snippet; for a whole binary file, the command line tools <code>sha256sum</code> or <code>shasum -a 256</code> read the file directly.</p>
+        <div class="callout sage"><div class="h">Integrity is not the same as authenticity</div><p>A matching checksum proves the file was not corrupted, but on its own it does not prove who made it, since anyone can publish a hash next to a file. That is why projects also sign releases with a cryptographic signature. Use the hash to catch corruption, and a signature to confirm the source.</p></div>
+
+        <div class="cav">The part that matters</div>
+        <h2 id="safe">Is it safe to hash a password or secret online?</h2>
+        <p>It is safe only when the hashing happens on your own device, which is exactly how the Best Answer Hub Hash Generator works. The risk with some online tools is that they send what you paste to a server, and that is a real exposure for passwords, API keys, and tokens. In November 2025, security researchers at watchTowr reported that more than 80,000 saved pastes, over five gigabytes in total, were publicly exposed through the "Recent Links" feature of two popular code tools, including credentials, private keys, and cloud secrets (<a href="https://www.bleepingcomputer.com/news/security/code-beautifiers-expose-credentials-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">BleepingComputer</a>). The wider trend is the same direction: 28.65 million fresh secrets landed in public code in 2025, up 34 percent on the year (<a href="https://blog.gitguardian.com/the-state-of-secrets-sprawl-2026/" target="_blank" rel="noopener noreferrer">GitGuardian</a>), and the average United States data breach reached a record 10.22 million dollars (<a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">IBM</a>).</p>
+        <blockquote>The safest hash tool is one that never sees your data. <span class="accent">Hash it in your browser, and there is nothing to upload, log, or leak.</span></blockquote>
+        <figure class="chart">
+          <figcaption class="chart-title">Where your text goes</figcaption>
+          <svg viewBox="0 0 620 244" role="img" aria-label="Diagram: text typed into this tool is hashed in your browser and nothing is uploaded; text pasted into some online hash tools is uploaded to a server.">
+            <rect x="200" y="14" width="220" height="46" rx="12" fill="#33302A"></rect>
+            <text x="310" y="42" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="700" fill="#fff">You enter text to hash</text>
+            <line x1="310" y1="60" x2="150" y2="96" stroke="#ddd0bb" stroke-width="2"></line>
+            <line x1="310" y1="60" x2="470" y2="96" stroke="#ddd0bb" stroke-width="2"></line>
+            <text x="150" y="86" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">This tool</text>
+            <rect x="40" y="96" width="220" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"></rect>
+            <text x="150" y="124" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">Hashed by Web Crypto</text>
+            <line x1="150" y1="142" x2="150" y2="176" stroke="#ddd0bb" stroke-width="2"></line>
+            <rect x="40" y="176" width="220" height="54" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"></rect>
+            <text x="150" y="200" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#5a7355">Nothing uploaded</text>
+            <text x="150" y="218" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">and it works offline</text>
+            <text x="470" y="86" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">Some online hash tools</text>
+            <rect x="360" y="96" width="220" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"></rect>
+            <text x="470" y="124" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">Uploaded to a server</text>
+            <line x1="470" y1="142" x2="470" y2="176" stroke="#ddd0bb" stroke-width="2"></line>
+            <rect x="360" y="176" width="220" height="54" rx="10" fill="#F3E2D6" stroke="#ecd6c5" stroke-width="2"></rect>
+            <text x="470" y="200" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#8a4429">Out of your hands</text>
+            <text x="470" y="218" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#B0512F">stored, and it may leak</text>
+          </svg>
+          <p class="chart-src">A client-side tool hashes text in your browser with the Web Crypto API and sends nothing. Some online tools upload what you paste, especially for files; watchTowr found more than 80,000 saved pastes exposed. Sources in the list below.</p>
+        </figure>
+        <div class="callout sage"><div class="h">How to check any online tool in ten seconds</div><p>Open your browser developer tools, switch to the Network tab, then generate a hash. If the work truly stays on your device, you will see zero outgoing requests. Do this once with the Best Answer Hub Hash Generator and you can confirm your text never leaves your machine.</p></div>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from other hash tools?</h2>
+        <p>The difference is that the Best Answer Hub Hash Generator hashes your text in the browser with the native Web Crypto API, rather than sending it to a server, and it declines to offer the broken MD5 algorithm that some tools still default to. The table sets the usual online experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical online hash tool</th></tr></thead>
+          <tbody>
+            <tr><td>Where hashing happens</td><td class="band">In your browser</td><td>Sometimes on a server, especially for files</td></tr>
+            <tr><td>Text uploaded</td><td class="band">Never</td><td>Sometimes, and may be logged</td></tr>
+            <tr><td>Account or signup</td><td class="band">Not required</td><td>Sometimes pushed</td></tr>
+            <tr><td>Ads</td><td class="band">None</td><td>Common</td></tr>
+            <tr><td>Works offline</td><td class="band">Yes</td><td>Usually not</td></tr>
+            <tr><td>Algorithms</td><td class="band">SHA-1, 256, 384, 512</td><td>Varies; some default to broken MD5</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolbox</div><p>Once you have your digest, the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> has the neighbors you reach for next: a <a href="/tools/json-formatter/">JSON Formatter</a>, a Base64 encoder, and a JWT decoder, each running in the browser and sending nothing. Hash here, then carry on without a single upload.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Hash it now</span>
+          <h3>Open the Hash Generator</h3>
+          <p>Free, no signup, and computed entirely in your browser. Enter your text, pick SHA-256 or another algorithm, and copy the digest in an instant.</p>
+          <a class="btn" href="/tools/hash-generator/">Generate a hash</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about hashing</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, from a JSON formatter to a JWT decoder, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/json-formatter/">Format and Validate JSON, Nothing Uploaded</a></b> The same privacy-first approach, applied to reading and validating JSON payloads.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to PDFs.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>NIST, <a href="https://csrc.nist.gov/pubs/fips/180-4/upd1/final" target="_blank" rel="noopener noreferrer">FIPS 180-4, Secure Hash Standard</a>, 2015 (SHA-1 and SHA-2 digest sizes; any change gives a different digest).</li>
+          <li>NIST, <a href="https://csrc.nist.gov/pubs/fips/202/final" target="_blank" rel="noopener noreferrer">FIPS 202, SHA-3 Standard</a>, 2015 (SHA-3 family based on Keccak).</li>
+          <li>NIST, <a href="https://www.nist.gov/news-events/news/2022/12/nist-retires-sha-1-cryptographic-algorithm" target="_blank" rel="noopener noreferrer">NIST Retires SHA-1 Cryptographic Algorithm</a>, 15 December 2022 (stop using SHA-1 by 31 December 2030; migrate to SHA-2 or SHA-3).</li>
+          <li>Stevens, Bursztein, Karpman, Albertini, Markov, <a href="https://shattered.io/" target="_blank" rel="noopener noreferrer">The first collision for full SHA-1 (SHAttered)</a>, Google and CWI Amsterdam, 23 February 2017 (over 9.2 quintillion SHA-1 computations).</li>
+          <li>Leurent and Peyrin, <a href="https://sha-mbles.github.io/" target="_blank" rel="noopener noreferrer">SHA-1 is a Shambles</a>, 2020 (first chosen-prefix SHA-1 collision).</li>
+          <li>CERT Coordination Center, <a href="https://www.kb.cert.org/vuls/id/836068" target="_blank" rel="noopener noreferrer">VU#836068: MD5 vulnerable to collision attacks</a>, 2008 (MD5 unsuitable for further security use).</li>
+          <li>OWASP, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">Password Storage Cheat Sheet</a> (hashing is one-way; fast hashes unsuitable for passwords; Argon2id, scrypt, bcrypt, PBKDF2 with salts).</li>
+          <li>NIST, <a href="https://pages.nist.gov/800-63-3/sp800-63b.html" target="_blank" rel="noopener noreferrer">SP 800-63B, Digital Identity Guidelines</a>, 2017 (salt of at least 32 bits; key derivation for stored secrets).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest" target="_blank" rel="noopener noreferrer">SubtleCrypto.digest()</a> (Web Crypto supports SHA-1, SHA-256, SHA-384, SHA-512, runs locally; MD5 is not supported).</li>
+          <li>Ubuntu, <a href="https://ubuntu.com/tutorials/how-to-verify-ubuntu" target="_blank" rel="noopener noreferrer">How to verify your Ubuntu download</a> (SHA256SUMS confirms the image is not corrupted or tampered with).</li>
+          <li>Apache Software Foundation, <a href="https://www.apache.org/info/verification.html" target="_blank" rel="noopener noreferrer">Verifying Apache Software Foundation Releases</a> (uses SHA-256 and SHA-512; MD5 and SHA-1 deprecated).</li>
+          <li>IETF, <a href="https://datatracker.ietf.org/doc/html/rfc2104" target="_blank" rel="noopener noreferrer">RFC 2104, HMAC</a>, 1997 (keyed message authentication built on a hash function).</li>
+          <li>BleepingComputer, <a href="https://www.bleepingcomputer.com/news/security/code-beautifiers-expose-credentials-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">Code beautifiers expose credentials</a>, 25 November 2025, and IBM, <a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">Cost of a Data Breach Report 2025</a>, and GitGuardian, <a href="https://blog.gitguardian.com/the-state-of-secrets-sprawl-2026/" target="_blank" rel="noopener noreferrer">The State of Secrets Sprawl 2026</a>.</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/hash-generator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Hash Generator</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, <a href="/tools/json-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">JSON Formatter</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  .pb .difbox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .difbox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .hashcode{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .pb .hashcode .hrow{padding:12px 14px}
+  .pb .hashcode .hrow.alt{border-top:1px solid var(--border);background:var(--sage-tint)}
+  .pb .hashcode .hlabel{display:block;font-family:'Karla',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--label);margin-bottom:4px}
+  .pb .hashcode .hval{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82rem;color:var(--clay-deep);word-break:break-all;line-height:1.5}
+  .pb .difnote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

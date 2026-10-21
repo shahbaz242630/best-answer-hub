@@ -1,0 +1,526 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub PDF Splitter?',
+    a: 'The Best Answer Hub PDF Splitter is a free browser-based tool that extracts specific pages or splits any PDF into multiple smaller files. It offers three modes: <strong>Extract Range</strong> pulls out specific pages (including non-consecutive ones like 1, 5, 9) and saves them as a new PDF; <strong>Split Every N Pages</strong> divides the document into equal chunks; and <strong>Extract All Pages</strong> saves every page as its own individual PDF, bundled in a ZIP archive. Everything runs locally in your browser using pdf-lib. No files are uploaded to any server.',
+  },
+  {
+    q: 'How do I extract specific pages or a page range from a PDF?',
+    a: 'Upload your PDF to the Best Answer Hub PDF Splitter, then select <strong>Extract Range</strong> mode. Type the pages you want using commas and dashes, for example, <code>1-3, 5, 8-10</code> extracts pages 1 through 3, page 5, and pages 8 through 10. Non-consecutive single pages are also supported: entering <code>2, 7, 15</code> extracts just those three pages. Click Split PDF and download the new file containing only the pages you selected. Page numbers are 1-based.',
+  },
+  {
+    q: 'How do I remove or delete specific pages from a PDF?',
+    a: 'Use the Best Answer Hub PDF Splitter\'s <strong>Extract Range</strong> mode to keep only the pages you want. To remove page 5 from a 10-page PDF, enter <code>1-4, 6-10</code>. The tool creates a new PDF with every page except page 5. To remove the first or last page, simply exclude it from the range. Download the result and discard the original. This is the fastest no-watermark approach for deleting unwanted pages without installing Adobe Acrobat.',
+  },
+  {
+    q: 'Is it safe to upload confidential documents to free PDF splitter tools?',
+    a: 'Smallpdf, iLovePDF, and most free online PDF splitters process files on their own servers: your documents are transmitted over the internet and temporarily stored on third-party infrastructure. Even with one-hour deletion policies, files do leave your device. For contracts, bank statements, medical records, or HR documents, this is a meaningful privacy risk. The Best Answer Hub PDF Splitter processes every file entirely in your browser. Nothing is transmitted to any server, verified by opening your browser\'s Network tab during splitting and confirming no outbound file data.',
+  },
+  {
+    q: 'Does splitting a PDF reduce quality or change formatting?',
+    a: 'No. The Best Answer Hub PDF Splitter uses pdf-lib\'s native page-copying API, which transfers page content at full fidelity. Text remains sharp, images retain their original resolution, and vector graphics stay intact. The tool does not re-encode, rasterize, or compress any content during splitting. It copies pages as-is into new files. The only change is that pages are reorganized into one or more new documents.',
+  },
+  {
+    q: 'Are bookmarks and interactive elements preserved after splitting?',
+    a: 'No. Bookmarks (table-of-contents outlines), form fields, annotations, and hyperlinks are not preserved in the output files. The Best Answer Hub PDF Splitter produces clean, static PDFs containing only the visual page content. If your original PDF has a clickable table of contents and you need to preserve that structure after splitting, a desktop tool such as PDFsam, Sejda, or Adobe Acrobat is needed to rebuild the bookmark structure in the output files.',
+  },
+  {
+    q: 'How do I split a PDF into individual pages, one file per page?',
+    a: 'Select <strong>Extract All Pages</strong> mode in the Best Answer Hub PDF Splitter and click Split PDF. The tool creates one individual PDF for every page and bundles them into a single ZIP archive. Each file is named sequentially: page-1.pdf, page-2.pdf, and so on. This is ideal for batch-separating scanned invoices, insurance forms, or any multi-page document where each page needs to become its own file. The mode supports up to 200 pages per session.',
+  },
+  {
+    q: 'How do I split a large PDF that is too big to email?',
+    a: 'Gmail and Outlook cap attachments at 25 MB, with practical deliverability issues above 10 MB. Use the Best Answer Hub PDF Splitter\'s <strong>Split Every N Pages</strong> mode to divide a large document into smaller parts, for example, splitting a 100-page PDF every 25 pages creates four manageable files. If the recipient only needs specific sections, <strong>Extract Range</strong> mode pulls exactly those pages. For large PDFs where compression works better than splitting, the <a href="/tools/pdf-compressor/">Best Answer Hub PDF Compressor</a> can reduce file size by 40–80% without splitting.',
+  },
+  {
+    q: 'How do I split a multi-invoice or bank statement PDF into separate files?',
+    a: 'Upload the combined PDF to the Best Answer Hub PDF Splitter and use <strong>Extract All Pages</strong> mode for single-page invoices (one file per page), or <strong>Split Every N Pages</strong> for multi-page invoices, for example, a 30-page PDF of 3-page invoices split every 3 pages creates 10 individual invoice files. All results are bundled in a ZIP archive. This is the fastest browser-based workflow for accountants, bookkeepers, and finance teams who receive batch-scanned invoice PDFs.',
+  },
+  {
+    q: 'How do I split a PDF on iPhone without downloading an app?',
+    a: 'Open the Best Answer Hub PDF Splitter in Safari on your iPhone. No app install required. Tap the upload area to select your PDF from Files, choose your split mode, enter your settings, and tap Split PDF. The processing runs entirely in Safari using client-side JavaScript; nothing is uploaded to a server. Download extracted PDFs or ZIP archives directly to your Files app. For single extracted ranges (a few pages), the process takes 5–10 seconds on modern iPhones.',
+  },
+  {
+    q: 'How do I split a PDF on Windows or Mac without Adobe Acrobat?',
+    a: 'Open the Best Answer Hub PDF Splitter in any modern browser (Chrome, Firefox, Edge, or Safari), no Adobe Acrobat required. On Mac, Apple Preview also supports basic page extraction: open the PDF, go to View → Thumbnails, select the pages you want, and drag them to a new window. On Windows there is no built-in PDF splitter. The browser-based Best Answer Hub PDF Splitter is the fastest no-install option. Neither Preview nor Windows built-in tools support split-every-N-pages mode, which the Best Answer Hub PDF Splitter handles natively.',
+  },
+  {
+    q: 'Can Adobe Reader split a PDF, or do I need paid Acrobat?',
+    a: 'Adobe Reader (the free viewer) cannot split PDFs. It is view-only software. Splitting requires either Adobe Acrobat Pro or Standard (from $23/month) or a free alternative. The Best Answer Hub PDF Splitter provides the same core split modes Acrobat offers (page range extraction, equal-chunk splitting, and individual page export) at no cost, with no file upload and no subscription.',
+  },
+  {
+    q: 'Can I split a password-protected PDF?',
+    a: 'Password-protected, encrypted, or DRM-protected PDFs cannot be split by browser-based tools without the decryption key. The Best Answer Hub PDF Splitter will show an error if you upload a protected file. To split it, first remove the password: open the PDF in Adobe Reader or Chrome\'s built-in PDF viewer using your password, choose Print → Save as PDF to create an unencrypted copy, then upload that copy to the splitter.',
+  },
+  {
+    q: 'Is there a free PDF splitter that works completely offline?',
+    a: 'Yes. The Best Answer Hub PDF Splitter processes every file entirely inside your browser using the pdf-lib and JSZip libraries. Your documents are never transmitted to any server, never stored, and never accessible to anyone outside your device. After the page loads once, the tool also works without an active internet connection. This makes it safe for HIPAA-sensitive medical records, NDA-protected contracts, financial statements, and any document that should not leave your computer.',
+  },
+  {
+    q: 'How does the Best Answer Hub PDF Splitter compare to Smallpdf and iLovePDF?',
+    a: 'Smallpdf limits free users to two splitting tasks per day and uploads files to its servers. iLovePDF allows one task per hour on the free tier and also processes files server-side, deleting uploads after two hours. Both add watermarks if you exceed free limits and require sign-up for certain modes. The Best Answer Hub PDF Splitter is completely free with no daily caps, no watermarks, no signup, and full local processing. The main trade-off: the Best Answer Hub PDF Splitter does not support splitting by bookmarks or chapters (which Sejda and PDFsam offer) or OCR-based content splitting.',
+  },
+];
+
+const steps = [
+  { title: 'Upload your PDF', description: 'Drag and drop or click to select a PDF file. The document stays on your device. Nothing is uploaded to any server. The tool shows the total page count after loading.' },
+  { title: 'Choose a split mode', description: 'Select Extract Range for specific pages, Split Every N Pages for equal chunks, or Extract All Pages for individual page files. Enter your settings and click Split PDF.' },
+  { title: 'Download the result', description: 'Single extracted ranges download as a PDF. Multi-file splits are bundled into a ZIP archive. Everything happens locally in seconds.' },
+];
+
+const seo = {
+  title: 'Free PDF Splitter — Extract Pages Online, No Upload (2026)',
+  description: 'Split PDFs free in your browser. Extract specific pages, split every N pages, or save each separately. No uploads, no signup. ZIP export supported.',
+  url: '/tools/pdf-splitter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'PDF Splitter', url: '/tools/pdf-splitter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Upload to Servers"
+    title="PDF Splitter:"
+    accentText="Extract pages in seconds"
+    description="Split PDF files for free in your browser. Extract specific page ranges, split every N pages, or save each page as its own file. No signup, no watermarks, no daily limits. ZIP export for multi-file results."
+    backLink="/pdf-toolkit/"
+    backLabel="← PDF Toolkit"
+  />
+
+  <!-- Splitter Interface -->
+  <section class="py-6 md:py-8" aria-label="PDF splitter">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-4">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1">Drop your PDF here</p>
+          <p class="text-xs text-bae-muted">or click to browse (.pdf files only)</p>
+          <input type="file" id="file-input" class="hidden" accept=".pdf,application/pdf" />
+        </div>
+
+        <!-- Size Warning -->
+        <div id="size-warning" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-3 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <p class="text-xs text-amber-700">This file is very large (<strong id="warn-size"></strong>). Splitting may take longer and your browser may become temporarily unresponsive.</p>
+        </div>
+
+        <!-- PDF Info -->
+        <div id="pdf-info" class="hidden mb-4 text-center">
+          <p class="text-sm text-bae-ink font-medium"><span id="info-name" class="truncate"></span></p>
+          <p class="text-xs text-bae-muted"><span id="info-pages"></span> pages · <span id="info-size"></span></p>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-area" class="hidden mb-4 bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="text-sm font-bold text-bae-ink mb-4">Split Settings</h3>
+
+          <!-- Mode -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Split Mode</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto flex-wrap">
+              <button type="button" id="mode-range" class="mode-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">Extract Range</button>
+              <button type="button" id="mode-chunk" class="mode-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Split Every N</button>
+              <button type="button" id="mode-all" class="mode-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Extract All Pages</button>
+            </div>
+          </div>
+
+          <!-- Range Input -->
+          <div class="mb-4" id="range-control">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Page Ranges (1-based)</label>
+            <input type="text" id="range-input" placeholder="e.g. 1-3, 5, 8-10" class="w-full px-3 py-2 bg-bae-bg border border-bae-border rounded-bae-sm text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            <p class="text-xs text-bae-muted mt-1.5">Use commas and dashes. Example: <code>1-5, 8, 12-15</code> extracts pages 1 through 5, page 8, and pages 12 through 15.</p>
+          </div>
+
+          <!-- Chunk Input -->
+          <div class="mb-4 hidden" id="chunk-control">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Pages Per File</label>
+            <input type="number" id="chunk-input" min="1" value="2" class="w-24 px-3 py-2 bg-bae-bg border border-bae-border rounded-bae-sm text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            <p class="text-xs text-bae-muted mt-1.5">A 10-page PDF with <strong>2</strong> pages per file creates 5 files: pages 1–2, 3–4, 5–6, 7–8, 9–10.</p>
+          </div>
+
+          <!-- All Pages Info -->
+          <div class="mb-4 hidden" id="all-control">
+            <p class="text-xs text-bae-muted">Each page will be saved as a separate PDF file and bundled into a ZIP archive.</p>
+          </div>
+
+          <button type="button" id="split-btn" class="w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+            Split PDF
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Splitting...</p>
+            <p class="text-xs text-bae-muted mt-1">Processing locally in your browser</p>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-bae-ink">Split Complete</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Ready</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                <p class="text-[10px] text-bae-muted uppercase tracking-wider mb-1">Original Pages</p>
+                <p id="original-pages" class="text-sm font-medium text-bae-ink">—</p>
+              </div>
+              <div class="bg-emerald-50 rounded-bae-sm p-3 text-center border border-emerald-100">
+                <p class="text-[10px] text-emerald-600 uppercase tracking-wider mb-1">Output Files</p>
+                <p id="output-files" class="text-sm font-medium text-emerald-700">—</p>
+              </div>
+            </div>
+            <a id="download-btn" href="#" download class="block w-full text-center bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm hover:bg-bae-accent transition-colors no-underline">
+              Download Result
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What this tool cannot do</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>Bookmarks and outlines:</strong> Table-of-contents bookmarks from the original PDF are not preserved.</li>
+              <li><strong>Interactive forms:</strong> Form fields, annotations, and hyperlinks are flattened during extraction.</li>
+              <li><strong>Password-protected files:</strong> Encrypted or DRM-protected PDFs cannot be opened or split.</li>
+              <li><strong>Page rearrangement:</strong> Pages are extracted in their original order. To reorder, use the <a href="/tools/pdf-merger/" class="text-amber-800 underline">Best Answer Hub PDF Merger</a> after splitting.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people split with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people split with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from finance teams, job seekers, professionals, and everyday users.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Finance & Accounting</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Separate batch-scanned invoices</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">One file per invoice, instantly</p>
+          <p class="text-sm text-bae-muted">Accounts teams often receive 30–100 page PDFs of monthly invoices scanned together. Split Every N Pages creates one file per invoice in seconds, bundled in a ZIP archive ready for individual filing or ERP upload.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Job Applications</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Extract pages for specific portals</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Submit only what the portal asks for</p>
+          <p class="text-sm text-bae-muted">Many job portals require a single page: just the certificate, just the transcript, just the work sample. Extract Range pulls exactly the pages needed without re-creating documents from scratch.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Legal & Academic</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Share only the relevant sections</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">No full document exposure</p>
+          <p class="text-sm text-bae-muted">Contracts, research papers, and reports often arrive as single large confidential files. Extract Range pulls only the pages needed for a deposition, client brief, or course reading, without sharing the entire document.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Email Attachments</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Split PDFs too large to email</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Each part under 10 MB</p>
+          <p class="text-sm text-bae-muted">Gmail and Outlook limit attachments to 25 MB, with real delivery issues above 10 MB. Split Every N Pages divides a large annual report or proposal into email-sized chunks. Each part arrives reliably with no bounce.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more PDF tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/pdf-compressor/" class="text-bae-primary hover:underline">PDF Compressor</a>, <a href="/tools/pdf-merger/" class="text-bae-primary hover:underline">PDF Merger</a>, <a href="/tools/pdf-rotator/" class="text-bae-primary hover:underline">PDF Rotator</a>, <a href="/tools/images-to-pdf/" class="text-bae-primary hover:underline">Images to PDF</a>, <a href="/tools/pdf-to-images/" class="text-bae-primary hover:underline">PDF to Images</a>, and <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>. All free, no signup.</p>
+        </div>
+        <a href="/pdf-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse PDF Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const settingsArea = document.getElementById('settings-area');
+      const progressArea = document.getElementById('progress-area');
+      const resultArea = document.getElementById('result-area');
+      const progressText = document.getElementById('progress-text');
+      const sizeWarning = document.getElementById('size-warning');
+      const warnSize = document.getElementById('warn-size');
+      const pdfInfo = document.getElementById('pdf-info');
+      const infoName = document.getElementById('info-name');
+      const infoPages = document.getElementById('info-pages');
+      const infoSize = document.getElementById('info-size');
+      const splitBtn = document.getElementById('split-btn');
+      const downloadBtn = document.getElementById('download-btn');
+      const originalPagesEl = document.getElementById('original-pages');
+      const outputFilesEl = document.getElementById('output-files');
+      const rangeInput = document.getElementById('range-input');
+      const chunkInput = document.getElementById('chunk-input');
+      const rangeControl = document.getElementById('range-control');
+      const chunkControl = document.getElementById('chunk-control');
+      const allControl = document.getElementById('all-control');
+      const modeRange = document.getElementById('mode-range');
+      const modeChunk = document.getElementById('mode-chunk');
+      const modeAll = document.getElementById('mode-all');
+
+      let currentFile = null;
+      let totalPages = 0;
+      let currentMode = 'range';
+      let PDFLib = null;
+      let JSZip = null;
+
+      function formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      function validatePdf(file) {
+        return file.name.toLowerCase().endsWith('.pdf') && file.type === 'application/pdf';
+      }
+
+      async function loadLibraries() {
+        if (!PDFLib) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = '/pdf-lib.min.js';
+            s.onload = () => { PDFLib = window.PDFLib; resolve(); };
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+        if (!JSZip) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = '/jszip.min.js';
+            s.onload = () => { JSZip = window.JSZip; resolve(); };
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+      }
+
+      function setMode(mode) {
+        currentMode = mode;
+        [modeRange, modeChunk, modeAll].forEach(btn => {
+          btn.classList.remove('bg-bae-primary', 'text-white');
+          btn.classList.add('text-bae-muted');
+        });
+        const activeBtn = mode === 'range' ? modeRange : mode === 'chunk' ? modeChunk : modeAll;
+        activeBtn.classList.add('bg-bae-primary', 'text-white');
+        activeBtn.classList.remove('text-bae-muted');
+
+        rangeControl.classList.toggle('hidden', mode !== 'range');
+        chunkControl.classList.toggle('hidden', mode !== 'chunk');
+        allControl.classList.toggle('hidden', mode !== 'all');
+      }
+
+      modeRange.addEventListener('click', () => setMode('range'));
+      modeChunk.addEventListener('click', () => setMode('chunk'));
+      modeAll.addEventListener('click', () => setMode('all'));
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+      const MAX_FILE_SIZE = 20 * 1024 * 1024 * 1024;
+      async function handleFile(file) {
+        if (!file) return;
+        if (!validatePdf(file)) {
+          alert('Please upload a PDF file.');
+          return;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+          alert('File too large. Maximum size is 20 GB.');
+          return;
+        }
+        if (downloadBtn._objUrl) URL.revokeObjectURL(downloadBtn._objUrl);
+        currentFile = file;
+        if (file.size > 500 * 1024 * 1024) {
+          warnSize.textContent = formatBytes(file.size);
+          sizeWarning.classList.remove('hidden');
+        } else {
+          sizeWarning.classList.add('hidden');
+        }
+
+        await loadLibraries();
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+          totalPages = pdf.getPageCount();
+
+          infoName.textContent = file.name;
+          infoPages.textContent = totalPages;
+          infoSize.textContent = formatBytes(file.size);
+          pdfInfo.classList.remove('hidden');
+          settingsArea.classList.remove('hidden');
+          resultArea.classList.add('hidden');
+          settingsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+          alert('Could not read this PDF. It may be password-protected or corrupted.');
+        }
+      }
+
+      splitBtn.addEventListener('click', async () => {
+        if (!currentFile || totalPages === 0) return;
+        resultArea.classList.add('hidden');
+        progressArea.classList.remove('hidden');
+        progressText.textContent = 'Splitting PDF...';
+
+        try {
+          await loadLibraries();
+          const arrayBuffer = await currentFile.arrayBuffer();
+          const sourcePdf = await PDFLib.PDFDocument.load(arrayBuffer);
+
+          let outputBlob, outputName, fileCount;
+
+          if (currentMode === 'range') {
+            const indices = parseRange(rangeInput.value.trim(), totalPages);
+            if (indices.length === 0) {
+              progressText.textContent = 'Please enter a valid page range.';
+              return;
+            }
+            progressText.textContent = 'Extracting pages...';
+            const newPdf = await PDFLib.PDFDocument.create();
+            const pages = await newPdf.copyPages(sourcePdf, indices);
+            pages.forEach(page => newPdf.addPage(page));
+            const bytes = await newPdf.save();
+            outputBlob = new Blob([bytes], { type: 'application/pdf' });
+            outputName = currentFile.name.replace(/\.pdf$/i, '') + '-extracted.pdf';
+            fileCount = 1;
+          } else if (currentMode === 'chunk') {
+            const chunkSize = parseInt(chunkInput.value, 10);
+            if (!chunkSize || chunkSize < 1) {
+              progressText.textContent = 'Please enter a valid chunk size.';
+              return;
+            }
+            progressText.textContent = 'Creating chunks...';
+            const chunks = [];
+            for (let i = 0; i < totalPages; i += chunkSize) {
+              chunks.push({ start: i, end: Math.min(i + chunkSize, totalPages) });
+            }
+            const zip = new JSZip();
+            for (let i = 0; i < chunks.length; i++) {
+              progressText.textContent = `Creating chunk ${i + 1} of ${chunks.length}...`;
+              const chunk = chunks[i];
+              const indices = [];
+              for (let j = chunk.start; j < chunk.end; j++) indices.push(j);
+              const newPdf = await PDFLib.PDFDocument.create();
+              const pages = await newPdf.copyPages(sourcePdf, indices);
+              pages.forEach(page => newPdf.addPage(page));
+              const bytes = await newPdf.save();
+              zip.file(`pages-${chunk.start + 1}-${chunk.end}.pdf`, bytes);
+            }
+            progressText.textContent = 'Building ZIP...';
+            outputBlob = await zip.generateAsync({ type: 'blob' });
+            outputName = currentFile.name.replace(/\.pdf$/i, '') + '-split.zip';
+            fileCount = chunks.length;
+          } else {
+            progressText.textContent = 'Extracting individual pages...';
+            if (totalPages > 200) {
+              alert('This PDF has too many pages. Maximum supported for extraction is 200 pages.');
+              progressArea.classList.add('hidden');
+              return;
+            }
+            const zip = new JSZip();
+            for (let i = 0; i < totalPages; i++) {
+              progressText.textContent = `Extracting page ${i + 1} of ${totalPages}...`;
+              const newPdf = await PDFLib.PDFDocument.create();
+              const [page] = await newPdf.copyPages(sourcePdf, [i]);
+              newPdf.addPage(page);
+              const bytes = await newPdf.save();
+              zip.file(`page-${i + 1}.pdf`, bytes);
+            }
+            progressText.textContent = 'Building ZIP...';
+            outputBlob = await zip.generateAsync({ type: 'blob' });
+            outputName = currentFile.name.replace(/\.pdf$/i, '') + '-pages.zip';
+            fileCount = totalPages;
+          }
+
+          if (downloadBtn._objUrl) URL.revokeObjectURL(downloadBtn._objUrl);
+          const url = URL.createObjectURL(outputBlob);
+          originalPagesEl.textContent = totalPages + ' page' + (totalPages !== 1 ? 's' : '');
+          outputFilesEl.textContent = fileCount + ' file' + (fileCount !== 1 ? 's' : '');
+          downloadBtn.href = url;
+          downloadBtn.download = outputName;
+          downloadBtn._objUrl = url;
+          downloadBtn.textContent = fileCount === 1 ? 'Download Extracted PDF' : 'Download ZIP Archive';
+
+          progressArea.classList.add('hidden');
+          resultArea.classList.remove('hidden');
+          resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+          console.error(err);
+          progressText.textContent = 'Split failed: ' + (err.message || 'Unknown error. Try a different file.');
+        }
+      });
+
+      function parseRange(input, maxPage) {
+        if (!input) return [];
+        const indices = new Set();
+        const parts = input.split(',');
+        for (const part of parts) {
+          const trimmed = part.trim();
+          if (!trimmed) continue;
+          if (trimmed.includes('-')) {
+            const [start, end] = trimmed.split('-').map(s => parseInt(s.trim(), 10));
+            if (isNaN(start) || isNaN(end)) continue;
+            for (let i = start; i <= end; i++) {
+              if (i >= 1 && i <= maxPage) indices.add(i - 1);
+            }
+          } else {
+            const num = parseInt(trimmed, 10);
+            if (!isNaN(num) && num >= 1 && num <= maxPage) indices.add(num - 1);
+          }
+        }
+        return Array.from(indices).sort((a, b) => a - b);
+      }
+    })();
+  </script>
+</BaseLayout>

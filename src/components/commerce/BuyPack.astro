@@ -1,0 +1,177 @@
+---
+/**
+ * BuyPack — the reusable buy button for any `download` product (skill packs, courses, template
+ * bundles). Drop it on a product page and it wires the whole money path:
+ *
+ *     <BuyPack productId="ai-video-voiceover" />
+ *
+ * Everything else is derived from src/data/catalog.mjs and the bouncer pack manifest, so a new
+ * product needs NO change to this file, no new checkout code, and no new download page.
+ *
+ * ── The one rule this component exists to enforce ───────────────────────────────────────────
+ * GATE THE BUTTON, NOT THE DOWNLOAD. Paddle takes the money before fulfillment can fail, so a
+ * buyer must never be able to pay for something the server cannot deliver. The button only turns
+ * into a real checkout when ALL of these hold, checked at BUILD time:
+ *     1. the catalog entry says live
+ *     2. the catalog carries a real pri_ price id
+ *     3. the bouncer pack manifest exists, and declares a price_id (a download product ROUTES on
+ *        it — without one, fulfillment falls back to browser-supplied data)
+ *     4. every artifact the manifest promises actually exists on disk
+ * Any failure renders an honest "not on sale yet" state instead of a button that takes money.
+ *
+ * Optional props let a page override the copy without touching the logic.
+ */
+import { productById } from '../../data/catalog.mjs';
+import kcAvailability from '../../data/kc-availability.json';
+
+interface Props {
+  /** Catalog id. Must match the bouncer pack directory name under kc-data/products/. */
+  productId: string;
+  /** Button label. Defaults to "Get the pack · $NN one-time". */
+  label?: string;
+  /** Small line under the button when the product IS buyable. */
+  note?: string;
+  /** Small line under the button when it is not yet buyable. */
+  pendingNote?: string;
+  /** Set false to render the button only, with no surrounding trust line. */
+  showTrustLine?: boolean;
+}
+
+const {
+  productId,
+  label,
+  note,
+  pendingNote = 'This pack is not on sale yet. Check back shortly.',
+  showTrustLine = true,
+} = Astro.props;
+
+const product = productById(productId);
+if (!product) {
+  throw new Error(
+    `BuyPack: no catalog entry for "${productId}". Add it to src/data/catalog.mjs first ` +
+      `(or run: npm run provision ${productId} download <priceUsd> "<Name>" <cta>).`
+  );
+}
+
+// ── Build-time availability, derived from the artifacts that actually deploy ────────────────
+// paddle-server/ is private (not in the public repo or CI), so scripts/kc-availability.mjs reads
+// the pack manifest + extras locally and snapshots the result. Missing entry -> not buyable.
+const pack = kcAvailability.packs?.[productId];
+// `price_id` may be a single string OR an array (a product carries its $1 smoke-test price
+// alongside the real one during a launch). Require the price we are ABOUT TO CHARGE to be
+// among them: a manifest that declares some other product's price would otherwise pass, and
+// the buyer would pay here and be fulfilled something else.
+const manifestHasPriceId = !!pack && pack.priceIds.includes(product.paddle?.priceId);
+const artifactsPresent = !!pack && pack.artifactsPresent === true;
+
+const PADDLE_ENV = import.meta.env.PUBLIC_PADDLE_ENV || 'sandbox';
+const PADDLE_CLIENT_TOKEN = import.meta.env.PUBLIC_PADDLE_CLIENT_TOKEN || '';
+const PRICE_ID = product.paddle?.priceId || '';
+
+const BUYABLE =
+  product.live === true &&
+  /^pri_[a-z0-9]+$/i.test(PRICE_ID) &&
+  manifestHasPriceId &&
+  artifactsPresent &&
+  PADDLE_CLIENT_TOKEN !== '';
+
+const BUTTON_LABEL = label || `Get the pack · $${product.priceUsd} one-time`;
+const BUY_NOTE = note || 'One-time purchase. No subscription, no seat pricing.';
+
+// Passed to the browser: publishable values only. No secret ever reaches the build.
+const CFG = {
+  env: PADDLE_ENV,
+  token: PADDLE_CLIENT_TOKEN,
+  price: PRICE_ID,
+  product: productId,
+  buyable: BUYABLE,
+};
+---
+
+<div class="not-prose" data-buypack={productId}>
+  <button
+    type="button"
+    id={`buypack-${productId}`}
+    class:list={[
+      'w-full sm:w-auto inline-flex items-center justify-center gap-2 text-sm font-semibold px-7 py-3.5 rounded-bae-sm transition-colors',
+      BUYABLE
+        ? 'bg-bae-primary text-white hover:bg-bae-accent cursor-pointer'
+        : 'bg-bae-border/50 text-bae-muted cursor-default',
+    ]}
+    disabled={!BUYABLE}
+    aria-disabled={!BUYABLE}
+  >
+    {BUYABLE ? BUTTON_LABEL : 'Coming soon'}
+  </button>
+
+  <p class="mt-3 text-xs text-bae-muted" id={`buypack-note-${productId}`}>
+    {BUYABLE ? BUY_NOTE : pendingNote}
+  </p>
+
+  {BUYABLE && showTrustLine && (
+    <p class="mt-2 text-xs text-bae-muted">
+      Secure checkout by <strong class="font-medium text-bae-ink">Paddle</strong>, our authorized
+      reseller and Merchant of Record. Card details are entered into Paddle's checkout and never
+      touch this website. Instant download after payment.
+    </p>
+  )}
+</div>
+
+{BUYABLE && (
+  <>
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js" is:inline></script>
+    <script is:inline define:vars={{ CFG }}>
+      (function () {
+        'use strict';
+        var btn = document.getElementById('buypack-' + CFG.product);
+        var note = document.getElementById('buypack-note-' + CFG.product);
+        if (!btn || !CFG.buyable) return;
+
+        var ready = false;
+        function setNote(msg) { if (note) note.textContent = msg; }
+
+        function initPaddle() {
+          if (ready || typeof Paddle === 'undefined' || !CFG.token) return;
+          try {
+            // Sandbox needs an explicit switch; live is Paddle.js's default. Go-live is an .env
+            // flip, never a code edit.
+            if (CFG.env === 'sandbox') Paddle.Environment.set('sandbox');
+            Paddle.Initialize({
+              token: CFG.token,
+              eventCallback: function (ev) {
+                if (!ev || !ev.name) return;
+                if (ev.name === 'checkout.completed' && ev.data && ev.data.transaction_id) {
+                  // The generic pack page asks the bouncer what this transaction entitles and
+                  // renders a button per file. Same page for every download product, forever.
+                  location.href = '/kc/pack/?txn=' + encodeURIComponent(ev.data.transaction_id);
+                } else if (ev.name === 'checkout.error' || ev.name === 'checkout.payment-error') {
+                  setNote('There was a problem with the checkout. Please try again, or contact support@bestanswerhub.com.');
+                }
+              },
+            });
+            ready = true;
+          } catch (e) { /* leave the button inert rather than half-wired */ }
+        }
+
+        btn.addEventListener('click', function () {
+          initPaddle();
+          if (typeof Paddle === 'undefined' || !ready) {
+            setNote('Checkout is still loading. Give it a second and try again.');
+            return;
+          }
+          try {
+            Paddle.Checkout.open({
+              items: [{ priceId: CFG.price, quantity: 1 }],
+              // Belt and braces. Fulfillment ROUTES on the price id inside the signed webhook
+              // body; this is only a fallback for a pack whose manifest price_id is not yet set,
+              // and it is ignored the moment the price resolves server-side.
+              customData: { assessment: CFG.product },
+            });
+          } catch (e) {
+            setNote('We could not open the checkout. Please refresh and try again.');
+          }
+        });
+      })();
+    </script>
+  </>
+)}

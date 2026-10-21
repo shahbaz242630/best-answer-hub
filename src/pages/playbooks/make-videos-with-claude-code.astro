@@ -1,0 +1,398 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-10-08T00:00:00+00:00';
+
+// RelatedPlaybooks is deliberately omitted: the skills track has one spoke so far,
+// so a related-links block would have nothing honest to show (§11.3 / §13.5 precedent).
+// Internal links ride the in-article .toolsrow instead.
+
+const faqs = [
+  { q: 'What is the Best Answer Hub guide to making videos with Claude Code?', a: 'This Best Answer Hub playbook is a vendor-neutral walkthrough of what it actually takes to produce a narrated video with an AI coding agent. It covers the three paths, the license threshold at four employees, the real render times, the timing drift nobody warns about, and the platform rules that decide monetization.' },
+  { q: 'Can Claude Code make videos?', a: 'Yes. Claude Code makes videos by writing code that a rendering framework turns into frames, most commonly Remotion, then encoding those frames with ffmpeg. It does not generate footage the way a video model does. What it produces is deterministic motion graphics: typography, charts, diagrams and animation you can re-edit line by line.' },
+  { q: 'Is Remotion free with Claude Code?', a: 'Remotion is free for an individual and for a for-profit organization with up to three employees, including commercial use, whether or not an agent writes the code. The agent makes no difference to the license. At four or more employees a paid company license is required, and it is billed by Remotion, not by the agent.' },
+  { q: 'Is Remotion free or paid?', a: 'Both, depending on who you are. The free license covers individuals, non-profits, for-profit organizations of up to three people, and anyone evaluating it. Above that, published pricing lists Remotion for Creators at $25 per seat per month and Remotion for Automators at $0.01 per render with a $100 monthly minimum. Enterprise starts at $500 a month.' },
+  { q: 'Do you need a Remotion license to make videos for a client?', a: 'Possibly, and the headcount rule is stricter than it first appears. Remotion\'s license FAQ states that freelancers, another studio, or a consulting agency helping operate the software on the same project aggregate with your own headcount toward the four-person threshold. A small team plus contractors can cross the line without hiring anyone.' },
+  { q: 'How do you install Claude Code skills from GitHub?', a: 'Either drop the skill folder into your skills directory, or install it through the agent\'s plugin system. Remotion\'s official skills install with <code>npx skills add remotion-dev/skills</code>. Its Claude Code plugin installs with <code>claude plugin marketplace add remotion-dev/claude-code-plugin</code> then <code>claude plugin install remotion@remotion</code>, followed by a restart.' },
+  { q: 'What is an agent skill, and how is it different from an agent?', a: 'An agent skill is a folder of instructions, and sometimes scripts, that an AI agent loads when a task matches it. The agent is the thing that reasons and runs commands. The skill is the knowledge it picks up for a specific job. Best Answer Hub sells skill packs of exactly this kind at the AI Agent Skills hub.' },
+  { q: 'Which AI agents work with Remotion, or is it Claude Code only?', a: 'Not Claude Code only, despite most coverage. Remotion\'s own documentation lists Claude Code, Codex, Kimi Code and Cursor as supported agents for its skills and plugins. The underlying work is writing React and running a render command, so any agent that can edit files and run a terminal is a candidate.' },
+  { q: 'How much does it cost to make an AI video with an agent?', a: 'For one person using a local voice and the free Remotion license, the software cost is zero. The floors above that, from published August 2026 prices, are $6 a month for a commercially licensed cloud voice, $18 a month for a hosted video agent, and a $100 monthly minimum once a team of four or more automates rendering.' },
+  { q: 'How do you add a voice-over to an AI video?', a: 'With a local speech model or a cloud text-to-speech API. Kokoro-82M is the common local choice: Apache 2.0, 54 voices, and fast enough on a processor that one project measured it at roughly five times real time. Cloud options sound excellent but add a per-use cost and a license to check.' },
+  { q: 'Can you use the ElevenLabs free plan for a monetized video?', a: 'No. ElevenLabs states that its free plan does not include a commercial license and cannot be used for any commercial purpose. The cheapest tier that grants one is Starter at $6 a month. An Apache 2.0 local model such as Kokoro-82M has no equivalent restriction, which is why license-aware pipelines default to running the voice locally.' },
+  { q: 'Why does the narration drift out of sync with the visuals?', a: 'Because text-to-speech does not deliver a predictable speaking rate, so a script timed for 50 seconds can return 40 to 45 seconds of audio. One toolkit reports roughly 30% drift on a five-second scene and 10% on a thirty-second one. The fix is structural: generate the audio first, then cue every visual to real word timestamps.' },
+  { q: 'How long does it take to render an AI-generated video?', a: 'Longer than the video itself, usually by a multiple. Frames are drawn one at a time, so 30 seconds at 30 frames per second means 900 renders. One production user reported roughly two to four times the video\'s length on an 8-core cloud machine. Blur, shadows and gradients are the most expensive effects.' },
+  { q: 'Can AI edit my existing video footage?', a: 'Partly, and this is the weakest area. A practitioner who published a complete agent video workflow describes editing existing footage as decent but far from perfect, with rough transitions. Code-rendered pipelines are built to compose new motion graphics, not to cut raw footage, and natural-language footage editing is a separate category of tool.' },
+  { q: 'Will YouTube demonetize AI-generated videos?', a: 'Not for using AI, but for the pattern careless automation produces. YouTube\'s monetization policy disallows AI-generated content made with generic or unoriginal templates that gives the impression of mass production without the creator\'s own insight, and requires that the substance of each video is materially varied. Low volume with a human in the loop is what stays compliant.' },
+];
+
+const seo = {
+  title: 'How to Make Videos With Claude Code: A Real Guide (2026)',
+  description: 'What it really takes to make a narrated video with Claude Code and Remotion: the three paths, the license trap, real render times, and what breaks.',
+  url: '/playbooks/make-videos-with-claude-code/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'How to Make Videos With Claude Code', url: '/playbooks/make-videos-with-claude-code/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+<div class="hero">
+  <span class="glow"></span>
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="masthead"><img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44"><span class="word">Best Answer Hub<i>.</i></span></div>
+      <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+    </div>
+    <span class="eyebrow">Best Answer Hub Playbooks &middot; AI Agent Skills</span>
+    <div class="cav">Before you install anything</div>
+    <h1>How Do You Actually Make Videos With <em>Claude Code?</em></h1>
+    <p class="dek">Yes, it works. But the tutorials skip the parts that decide whether it works for you: which of the three paths you are actually on, the license that quietly starts at four employees, why the narration drifts out of sync, and how long a render really takes.</p>
+    <div class="byline"><span><b>Best Answer Hub</b></span><span>~12 min read</span><span>Every figure sourced</span><span>No signup</span></div>
+    <div class="bandstrip">
+      <div class="seg b1">Code-rendered<small>You control every frame</small></div>
+      <div class="seg b2">Generated clip<small>Prompt straight to pixels</small></div>
+      <div class="seg b3">Video agent<small>Hosted, hands-off</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat"><div class="n">84%</div><div class="l">of US adults say they ever use YouTube</div><div class="src">Pew Research Center, 2025</div></div>
+  <div class="stat"><div class="n">$75,420</div><div class="l">median annual pay for a film and video editor</div><div class="src">US Bureau of Labor Statistics, May 2025</div></div>
+  <div class="stat"><div class="n">3</div><div class="l">employees: where Remotion's free license stops</div><div class="src">Remotion license, 2026</div></div>
+  <div class="stat"><div class="n">2-4&times;</div><div class="l">the video's own length, one reported render time</div><div class="src">Remotion issue #4783</div></div>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="On this page">
+    <div class="t">On this page</div>
+    <a href="#paths">Can it actually make videos?</a>
+    <a href="#how">How the pipeline works</a>
+    <a href="#remotion">Is Remotion free with Claude Code?</a>
+    <a href="#cost">What it costs</a>
+    <a href="#voice">Adding a voice-over</a>
+    <a href="#breaks">What goes wrong</a>
+    <a href="#youtube">Will YouTube demonetize it?</a>
+    <a href="#install">Installing the skills</a>
+    <a href="#notfor">What it is not good for</a>
+    <a href="#faq">FAQs</a>
+  </nav>
+
+  <article>
+
+    <p class="lead"><strong>Claude Code can make videos, and the honest answer is that it does it by writing code, not by imagining pictures.</strong> An AI coding agent already has the two things video production needs: it can write a script, and it can run software on your machine. Point it at a rendering framework and it will compose, narrate and render a finished MP4. What the tutorials leave out is the license, the cost, the render time, and the reason the audio never quite lines up.</p>
+
+    <div class="cav">Start here</div>
+    <h2 id="paths">Can Claude Code actually make videos?</h2>
+    <p>Yes, in three different ways, and choosing the wrong one is the most expensive mistake on this page. The three paths look similar in a demo and behave nothing alike in production. One writes code you own. One buys generated footage by the clip. One rents a hosted service that does the whole job.</p>
+
+    <table>
+      <thead><tr><th>Path</th><th>What you write</th><th>What comes out</th><th>Re-editable?</th><th>Marginal cost</th></tr></thead>
+      <tbody>
+        <tr><td class="band">Code-rendered</td><td>A prompt; the agent writes React or Python</td><td>Deterministic motion graphics, typography, charts</td><td>Yes, every frame is code</td><td>Your electricity</td></tr>
+        <tr><td class="band">Generated clip</td><td>A prompt to a video model</td><td>Photoreal or stylised footage, a few seconds at a time</td><td>No, regenerate and hope</td><td>Per clip, billed by the model</td></tr>
+        <tr><td class="band">Video agent</td><td>A brief to a hosted service</td><td>A finished video in the vendor's house style</td><td>Inside their editor only</td><td>Monthly subscription</td></tr>
+      </tbody>
+    </table>
+
+    <p>The code-rendered path is the one people mean when they say Claude Code makes videos. It is also the one worth understanding, because it is the only one where the output is a file you own outright, reproducible from source, and free of a per-video charge. A third-party Remotion skill puts the distinction bluntly: generative models <em>"generate pixels and hallucinate"</em>, while code produces <em>"deterministic, editable, brand-controlled motion graphics"</em>.</p>
+
+    <div class="callout sage"><div class="h">The distinction that decides your path</div><p>Code-rendered video is very good at anything with structure: explainers, data, product walkthroughs, anything that repeats with different numbers. It cannot invent footage of a real place or a real person. If you need a drone shot over a city, no amount of prompting a code framework will produce one, and that is a category limit rather than a skill gap.</p></div>
+
+    <div class="cav">The part nobody explains</div>
+    <h2 id="how">How does an AI agent turn a script into a finished video?</h2>
+    <p>Through six stages, and the order of the first two is the single most important thing on this page. Narration is generated <em>before</em> the visuals are finalized, so the pictures can be anchored to the real word-level timestamps of the real audio. Two unrelated open-source projects arrived at the same rule independently. One states it as <em>"audio is generated before the storyboard is finalized, so visuals synchronize to word-level timestamps of the real narration"</em>. The other puts it as <em>"generate audio first, then anchor visuals to actual timestamps rather than estimating durations upfront."</em></p>
+
+    <div class="sec">
+      <ul class="pillars">
+        <li><span class="dot">1</span><div><b>Research and script.</b> The agent gathers sources and drafts to a word budget. A rough guide used in practice: target seconds multiplied by 2.5 gives the word count, so a 15-second scene is about 34 words once a pause is subtracted.</div></li>
+        <li><span class="dot">2</span><div><b>Narration.</b> The script becomes audio, either locally or through a cloud voice. This happens second, not last, because everything downstream is timed against it.</div></li>
+        <li><span class="dot">3</span><div><b>Forced alignment.</b> A separate model reads the audio against the known transcript and returns the timestamp of every word. WhisperX and torchaudio's MMS_FA are the two common choices.</div></li>
+        <li><span class="dot">4</span><div><b>Composition.</b> The agent writes the actual scenes as code, cueing each reveal to a word timestamp rather than to a guess.</div></li>
+        <li><span class="dot">5</span><div><b>Render.</b> A headless browser or a Python renderer draws every frame, and ffmpeg encodes them into a file.</div></li>
+        <li><span class="dot">6</span><div><b>Quality gates.</b> The good pipelines check the output rather than trusting it: dead-air detection, minimum motion per scene, loudness, caption accuracy.</div></li>
+      </ul>
+    </div>
+
+    <p>Stage six is what separates a pipeline from a demo. One project runs dead-air detection with ffmpeg's <code>freezedetect</code> on the finished video, sampled at 2 to 4 frames per second, precisely because an agent that has been told a scene is fine will report that the scene is fine.</p>
+
+    <div class="cav">The expensive surprise</div>
+    <h2 id="remotion">Is Remotion free with Claude Code?</h2>
+    <p>It is free for an individual and for a for-profit organization of up to <strong>three employees</strong>, including commercial use. At four people it is not, and the price jumps a long way. This is the question almost nobody answers, and it is the one that turns a free workflow into a recurring bill.</p>
+
+    <p>Remotion's own license permits eligible users to <em>"use the software non-commercially or commercially for the purpose of creating videos and images"</em>. Above the free tier, its published pricing lists Remotion for Creators at <strong>$25 per seat per month</strong> and Remotion for Automators at <strong>$0.01 per render with a $100 per month minimum</strong>. Enterprise starts at $500 a month.</p>
+
+    <div class="callout"><div class="h">The clause small businesses get wrong</div><p>Headcount is not just your payroll. Remotion's license FAQ states that if you bring in <em>"another studio, freelancers, or a consulting agency to help operate the Remotion Software on the same project, their headcount aggregates with yours for the 4-person threshold."</em> A three-person company with two contractors on the project is a five-person team for licensing purposes.</p></div>
+
+    <p>There is one more thing worth knowing before building a business on it: Remotion's license file carries the note that <em>"In Remotion 5.0, the license will slightly change."</em> Check the current terms at the source rather than trusting any article, including this one, once version 5 lands.</p>
+
+    <div class="cav">Follow the money</div>
+    <h2 id="cost">How much does it cost to make an AI video this way?</h2>
+    <p>For one person, the software cost can genuinely be zero. The floor rises in steps as soon as a fourth person joins, a cloud voice is used commercially, or a hosted service replaces the local pipeline. Those four floors, all taken from published prices, are what the chart below compares.</p>
+
+    <div class="chart">
+      <div class="chart-title">The monthly floor, by who you are</div>
+      <svg viewBox="0 0 700 250" role="img" aria-label="Bar chart comparing monthly cost floors: individual or team of three $0, adding a commercial cloud voice $6, a hosted video agent $18, a team of four or more using Remotion for Automators $100.">
+        <defs><linearGradient id="cbar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C6603F"/><stop offset="100%" stop-color="#8a4429"/></linearGradient></defs>
+        <line x1="250" y1="18" x2="250" y2="222" stroke="#E1D4be" stroke-width="1"/>
+        <text x="242" y="42" text-anchor="end" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">Individual or team of 3</text>
+        <rect x="250" y="26" width="3" height="22" fill="url(#cbar)"/>
+        <text x="262" y="42" font-family="Bricolage Grotesque,sans-serif" font-size="15" font-weight="700" fill="#33302A">$0</text>
+        <text x="242" y="98" text-anchor="end" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">Plus a commercial cloud voice</text>
+        <rect x="250" y="82" width="26" height="22" fill="url(#cbar)"/>
+        <text x="286" y="98" font-family="Bricolage Grotesque,sans-serif" font-size="15" font-weight="700" fill="#33302A">$6</text>
+        <text x="242" y="154" text-anchor="end" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">Hosted video agent instead</text>
+        <rect x="250" y="138" width="77" height="22" fill="url(#cbar)"/>
+        <text x="337" y="154" font-family="Bricolage Grotesque,sans-serif" font-size="15" font-weight="700" fill="#33302A">$18</text>
+        <text x="242" y="210" text-anchor="end" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">Team of 4 or more, automated</text>
+        <rect x="250" y="194" width="428" height="22" fill="url(#cbar)"/>
+        <text x="250" y="238" font-family="Karla,sans-serif" font-size="12" fill="#847B6B">Published list prices, August 2026. Excludes the agent subscription and your own hardware.</text>
+        <text x="688" y="210" text-anchor="end" font-family="Bricolage Grotesque,sans-serif" font-size="15" font-weight="700" fill="#fff">$100</text>
+      </svg>
+      <div class="chart-src">Sources: Remotion license and pricing; ElevenLabs pricing; Synthesia pricing. All fetched August 2026.</div>
+    </div>
+
+    <p>Read left to right, those bars are <strong>$0</strong> for an individual or a team of three using the free Remotion license with a local voice; <strong>$6 a month</strong> if a commercially licensed cloud voice is added, which is ElevenLabs' cheapest paid tier; <strong>$18 a month</strong> for a hosted video agent, taking Synthesia's Starter plan billed yearly with its 120 minutes a year; and <strong>$100 a month</strong> as the minimum on Remotion for Automators once the team passes three people and the rendering is automated. None of these include the coding agent's own subscription, or the electricity to render.</p>
+
+    <p>Worth holding those numbers against the alternative. The US Bureau of Labor Statistics puts the median annual wage for a film and video editor at <strong>$75,420</strong> as of May 2025. A pipeline that costs nothing to run does not replace an editor's judgement, but it does change which videos are worth making at all: the ones that were never going to justify a day of someone's time.</p>
+
+    <div class="cav">The stage everyone skips</div>
+    <h2 id="voice">How do you add a voice-over to an AI video?</h2>
+    <p>Either locally with an open-weight model, or through a cloud API with your own key. The choice is mostly a licensing decision rather than a quality one. Remotion's own agent documentation does not cover audio at all, and the most popular third-party video skill explicitly excludes voiceover generation, which is why this stage is where most people stall.</p>
+
+    <p>The local option that matters is Kokoro-82M, an open-weight model published under Apache 2.0 with 54 voices across 8 languages, small enough to run on a processor rather than a graphics card. One project measured it at roughly five times faster than real time on a laptop and concluded it was <em>"not a bottleneck"</em>.</p>
+
+    <div class="callout peach"><div class="h">The free tier that cannot be used commercially</div><p>ElevenLabs is the default cloud recommendation, and its free plan explicitly does not include a commercial license. For a monetized video, the cheapest legal option there is the Starter plan at $6 a month. An Apache 2.0 model carries no such condition, which is the whole reason license-aware pipelines default to a local voice.</p></div>
+
+    <div class="cav">The honest part</div>
+    <h2 id="breaks">What goes wrong when an AI agent makes a video?</h2>
+    <p>Three things, reliably, and none of them appear in the tutorials. The narration drifts out of sync with the visuals, scenes end up holding still on screen with nothing happening, and the render takes far longer than anyone expects. All three are documented by the people who build these pipelines.</p>
+
+    <p><strong>Timing drift is the worst of them.</strong> Text-to-speech engines do not deliver a predictable words-per-minute rate, so a script written for 50 seconds can come back as 40 to 45 seconds of audio. The error is proportionally worse on short scenes: one toolkit's own documentation reports roughly <strong>30% drift on a five-second scene</strong> and around <strong>10% on a thirty-second scene</strong>. That is why the audio is generated first and the visuals are cut to it, rather than the other way around.</p>
+
+    <blockquote><span class="accent">Dead air is the second one.</span> One project measured 14 seconds of dead air in a generated deck and fixed it with a constant ambient motion layer, at roughly twice the render cost. An agent will happily produce a scene where nothing moves, because nothing in the code says a scene has to move.</blockquote>
+
+    <p><strong>Render time is the third.</strong> A code-rendered video is drawn one frame at a time by a headless browser: a 30-second clip at 30 frames per second means 900 screenshots. A production user filed an issue reporting that rendering animated JavaScript across a whole video took <em>"around ~2 to 4 x the length of the input video"</em> on an 8-core cloud machine. Remotion's own performance guidance names the expensive culprits directly, including <code>filter: blur()</code>, <code>box-shadow</code> and gradient backgrounds, and suggests replacing them with a precomputed image where possible.</p>
+
+    <div class="cav">The rule that decides monetization</div>
+    <h2 id="youtube">Will YouTube demonetize videos made this way?</h2>
+    <p>Not for being AI-made, but the policy targets the exact shape a careless pipeline produces. The stakes are worth stating plainly, because Pew Research Center found that <strong>84%</strong> of US adults say they ever use YouTube, which makes its rules the default rules for anyone publishing video at all. YouTube's monetization policy, updated in July 2025, was renamed from "repetitious content" to "inauthentic content" and now names as not allowed <em>"AI-generated content made with generic or unoriginal templates giving the impression of mass production without adding the creator's original, authentic insights or perspective."</em> The governing principle it states is that <em>"the substance of each video should be materially varied."</em></p>
+
+    <p>The most striking confirmation comes from a builder of one of these pipelines, who lists as a top risk in his own project documentation that <em>"one template + one voice + one look is the exact signature YouTube's 2025 inauthentic-content policy targets."</em> His mitigation is not a technical trick. It is low volume, a human in the loop, and genuine variation per video.</p>
+
+    <div class="cav">Getting set up</div>
+    <h2 id="install">How do you install Claude Code skills for video?</h2>
+    <p>Through the agent's own skill or plugin system, in one command. Remotion publishes official agent skills, installed with <code>npx skills add remotion-dev/skills</code>, and a Claude Code plugin installed with <code>claude plugin marketplace add remotion-dev/claude-code-plugin</code> followed by <code>claude plugin install remotion@remotion</code>. Restart the agent afterwards.</p>
+
+    <p>One caution worth repeating, because it wastes an afternoon: install commands for this stack have appeared in several different shapes across write-ups published within months of each other. Take the command from the vendor's current documentation rather than from an article. That advice applies to this page too.</p>
+
+    <p>The skills are not Claude Code only, despite most coverage. Remotion's documentation lists Claude Code, Codex, Kimi Code and Cursor. A genuinely cross-agent treatment is rare, which says more about how the coverage was written than about the tooling.</p>
+
+    <div class="cav">Knowing when to stop</div>
+    <h2 id="notfor">What is this approach not good for?</h2>
+    <p>Editing footage you already shot, and anything that needs to look photographed. Code-rendered video composes; it does not film. One practitioner who published a full workflow describes editing existing footage this way as <em>"decent but far from perfect"</em>, with rough transitions. Natural-language editing of raw footage is a different product category, not a prompt away.</p>
+
+    <div class="callout peach"><div class="h">A one-off creative piece is the wrong job for this</div><p>The strength of a code-rendered pipeline is repetition: the same format, run again with different content, looking identical every time. For a single hero video where every second is bespoke, the iteration cost of re-rendering outweighs the benefit, and a human editor in a timeline is still the faster tool.</p></div>
+
+    <div class="cta">
+      <span class="kicker">The pipeline, already assembled</span>
+      <h3>AI Video &amp; Voice-Over Skill Pack</h3>
+      <p>Five agent skills that carry a topic through research, script, voice-over, animation and the upload package, running on your own machine. Local, commercially licensed voice, no API key, no subscription, no watermark. One-time purchase.</p>
+      <a class="btn" href="/ai-agent-skills/video-voiceover/">Get the AI Video &amp; Voice-Over Skill Pack ($99)</a>
+    </div>
+
+    <div class="cav">Everything else people ask</div>
+    <h2 id="faq">Frequently asked questions</h2>
+
+    <div class="faq">
+      <div class="qa"><div class="q">What is the Best Answer Hub guide to making videos with Claude Code?</div><div class="a">This Best Answer Hub playbook is a vendor-neutral walkthrough of what it actually takes to produce a narrated video with an AI coding agent. It covers the three paths, the license threshold at four employees, the real render times, the timing drift nobody warns about, and the platform rules that decide monetization.</div></div>
+      <div class="qa"><div class="q">Can Claude Code make videos?</div><div class="a">Yes. Claude Code makes videos by writing code that a rendering framework turns into frames, most commonly Remotion, then encoding those frames with ffmpeg. It does not generate footage the way a video model does. What it produces is deterministic motion graphics: typography, charts, diagrams and animation you can re-edit line by line.</div></div>
+      <div class="qa"><div class="q">Is Remotion free with Claude Code?</div><div class="a">Remotion is free for an individual and for a for-profit organization with up to three employees, including commercial use, whether or not an agent writes the code. The agent makes no difference to the license. At four or more employees a paid company license is required, and it is billed by Remotion, not by the agent.</div></div>
+      <div class="qa"><div class="q">Is Remotion free or paid?</div><div class="a">Both, depending on who you are. The free license covers individuals, non-profits, for-profit organizations of up to three people, and anyone evaluating it. Above that, published pricing lists Remotion for Creators at $25 per seat per month and Remotion for Automators at $0.01 per render with a $100 monthly minimum. Enterprise starts at $500 a month.</div></div>
+      <div class="qa"><div class="q">Do you need a Remotion license to make videos for a client?</div><div class="a">Possibly, and the headcount rule is stricter than it first appears. Remotion's license FAQ states that freelancers, another studio, or a consulting agency helping operate the software on the same project aggregate with your own headcount toward the four-person threshold. A small team plus contractors can cross the line without hiring anyone.</div></div>
+      <div class="qa"><div class="q">How do you install Claude Code skills from GitHub?</div><div class="a">Either drop the skill folder into your skills directory, or install it through the agent's plugin system. Remotion's official skills install with <code>npx skills add remotion-dev/skills</code>. Its Claude Code plugin installs with <code>claude plugin marketplace add remotion-dev/claude-code-plugin</code> then <code>claude plugin install remotion@remotion</code>, followed by a restart.</div></div>
+      <div class="qa"><div class="q">What is an agent skill, and how is it different from an agent?</div><div class="a">An agent skill is a folder of instructions, and sometimes scripts, that an AI agent loads when a task matches it. The agent is the thing that reasons and runs commands. The skill is the knowledge it picks up for a specific job. Best Answer Hub sells skill packs of exactly this kind at the AI Agent Skills hub.</div></div>
+      <div class="qa"><div class="q">Which AI agents work with Remotion, or is it Claude Code only?</div><div class="a">Not Claude Code only, despite most coverage. Remotion's own documentation lists Claude Code, Codex, Kimi Code and Cursor as supported agents for its skills and plugins. The underlying work is writing React and running a render command, so any agent that can edit files and run a terminal is a candidate.</div></div>
+      <div class="qa"><div class="q">How much does it cost to make an AI video with an agent?</div><div class="a">For one person using a local voice and the free Remotion license, the software cost is zero. The floors above that, from published August 2026 prices, are $6 a month for a commercially licensed cloud voice, $18 a month for a hosted video agent, and a $100 monthly minimum once a team of four or more automates rendering.</div></div>
+      <div class="qa"><div class="q">How do you add a voice-over to an AI video?</div><div class="a">With a local speech model or a cloud text-to-speech API. Kokoro-82M is the common local choice: Apache 2.0, 54 voices, and fast enough on a processor that one project measured it at roughly five times real time. Cloud options sound excellent but add a per-use cost and a license to check.</div></div>
+      <div class="qa"><div class="q">Can you use the ElevenLabs free plan for a monetized video?</div><div class="a">No. ElevenLabs states that its free plan does not include a commercial license and cannot be used for any commercial purpose. The cheapest tier that grants one is Starter at $6 a month. An Apache 2.0 local model such as Kokoro-82M has no equivalent restriction, which is why license-aware pipelines default to running the voice locally.</div></div>
+      <div class="qa"><div class="q">Why does the narration drift out of sync with the visuals?</div><div class="a">Because text-to-speech does not deliver a predictable speaking rate, so a script timed for 50 seconds can return 40 to 45 seconds of audio. One toolkit reports roughly 30% drift on a five-second scene and 10% on a thirty-second one. The fix is structural: generate the audio first, then cue every visual to real word timestamps.</div></div>
+      <div class="qa"><div class="q">How long does it take to render an AI-generated video?</div><div class="a">Longer than the video itself, usually by a multiple. Frames are drawn one at a time, so 30 seconds at 30 frames per second means 900 renders. One production user reported roughly two to four times the video's length on an 8-core cloud machine. Blur, shadows and gradients are the most expensive effects.</div></div>
+      <div class="qa"><div class="q">Can AI edit my existing video footage?</div><div class="a">Partly, and this is the weakest area. A practitioner who published a complete agent video workflow describes editing existing footage as decent but far from perfect, with rough transitions. Code-rendered pipelines are built to compose new motion graphics, not to cut raw footage, and natural-language footage editing is a separate category of tool.</div></div>
+      <div class="qa"><div class="q">Will YouTube demonetize AI-generated videos?</div><div class="a">Not for using AI, but for the pattern careless automation produces. YouTube's monetization policy disallows AI-generated content made with generic or unoriginal templates that gives the impression of mass production without the creator's own insight, and requires that the substance of each video is materially varied. Low volume with a human in the loop is what stays compliant.</div></div>
+    </div>
+
+    <div class="cav">Where these numbers came from</div>
+    <h2 id="sources">Sources</h2>
+    <ul class="sources">
+      <li><a href="https://www.pewresearch.org/internet/2025/11/20/americans-social-media-use-2025/" target="_blank" rel="noopener noreferrer">Pew Research Center, Americans' Social Media Use 2025</a> (20 November 2025, n = 5,022 US adults): 84% of US adults ever use YouTube.</li>
+      <li><a href="https://www.bls.gov/ooh/media-and-communication/film-and-video-editors-and-camera-operators.htm" target="_blank" rel="noopener noreferrer">US Bureau of Labor Statistics, Occupational Outlook Handbook</a> (page modified 27 August 2026): median annual wage for film and video editors, $75,420, May 2025.</li>
+      <li><a href="https://github.com/remotion-dev/remotion/blob/main/LICENSE.md" target="_blank" rel="noopener noreferrer">Remotion license</a> and <a href="https://www.remotion.dev/docs/license/faq" target="_blank" rel="noopener noreferrer">Remotion license FAQ</a>: the three-employee free tier, the contractor aggregation clause, and the Remotion 5.0 notice.</li>
+      <li><a href="https://www.remotion.pro/license" target="_blank" rel="noopener noreferrer">Remotion pricing</a>: Creators $25 per seat per month, Automators $0.01 per render with a $100 monthly minimum, Enterprise from $500 a month.</li>
+      <li><a href="https://github.com/remotion-dev/remotion/issues/4783" target="_blank" rel="noopener noreferrer">Remotion issue #4783</a>: a production user's reported render time of roughly two to four times the input video length.</li>
+      <li><a href="https://www.remotion.dev/docs/performance" target="_blank" rel="noopener noreferrer">Remotion performance documentation</a>: blur, shadows and gradients named as GPU-expensive.</li>
+      <li><a href="https://www.remotion.dev/docs/ai/skills" target="_blank" rel="noopener noreferrer">Remotion Agent Skills</a> and <a href="https://www.remotion.dev/docs/ai/claude-code-plugin" target="_blank" rel="noopener noreferrer">the Claude Code plugin</a>: install commands and the supported agent list.</li>
+      <li><a href="https://huggingface.co/hexgrad/Kokoro-82M" target="_blank" rel="noopener noreferrer">Kokoro-82M model card</a>: Apache 2.0 license, 54 voices, 8 languages, 82 million parameters.</li>
+      <li><a href="https://elevenlabs.io/pricing" target="_blank" rel="noopener noreferrer">ElevenLabs pricing</a> and <a href="https://elevenlabs.io/docs/help-center/legal/can-i-publish-the-content-i-generate-on-the-platform" target="_blank" rel="noopener noreferrer">commercial license policy</a>: the free plan carries no commercial license; Starter is $6 a month.</li>
+      <li><a href="https://www.synthesia.io/pricing" target="_blank" rel="noopener noreferrer">Synthesia pricing</a>: Starter at $18 a month billed yearly, 120 minutes a year.</li>
+      <li><a href="https://support.google.com/youtube/answer/1311392" target="_blank" rel="noopener noreferrer">YouTube channel monetization policies</a> (updated 15 July 2025): the inauthentic content rule quoted above.</li>
+      <li><a href="https://github.com/nemock/video-explainer-system" target="_blank" rel="noopener noreferrer">nemock/video-explainer-system</a> and <a href="https://github.com/digitalsamba/claude-code-video-toolkit" target="_blank" rel="noopener noreferrer">digitalsamba/claude-code-video-toolkit</a>: the audio-first rule, timing drift figures, dead-air measurement and the template-signature risk note.</li>
+      <li><a href="https://github.com/haidrrrry/claude-remotion-skill" target="_blank" rel="noopener noreferrer">haidrrrry/claude-remotion-skill</a>: the deterministic-versus-generative framing quoted above.</li>
+    </ul>
+
+    <p class="toolsrow">Related reading from Best Answer Hub: <a href="/playbooks/ai-agents-vs-automation/">AI agents vs automation</a>, <a href="/playbooks/ai-tools-worth-paying-for/">which AI tools are worth paying for</a>, and the free <a href="/tools/">Best Answer Hub tools</a>. The finished pipeline lives at <a href="/ai-agent-skills/">AI Agent Skills</a>.</p>
+  </article>
+</div>
+  </div>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 11px;border-radius:999px;display:inline-block;white-space:nowrap;font-family:'Bricolage Grotesque',sans-serif}
+  .pb .lv1{background:var(--sage)}
+  .pb .lv2{background:var(--clay)}
+  .pb .lv3{background:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>
+</BaseLayout>

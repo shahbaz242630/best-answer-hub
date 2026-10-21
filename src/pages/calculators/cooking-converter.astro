@@ -1,0 +1,922 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Cooking Converter?',
+    a: 'The Best Answer Hub Cooking Converter is a free, privacy-first browser tool built for home bakers and cooks. It has two modes: an Ingredient Converter that converts between volume and weight using real ingredient densities (so 1 cup of flour gives a different gram weight than 1 cup of sugar) and a Recipe Scaler that adjusts any recipe up or down and outputs kitchen-friendly fractions like ⅔ and 1 ½ instead of decimals. Everything runs in your browser with no signup and no ads.',
+  },
+  {
+    q: 'How many grams is 1 cup of all-purpose flour?',
+    a: 'One US cup of spooned-and-leveled all-purpose flour weighs approximately 125 grams. If you scoop directly from the bag, it can be 140 to 150 grams because the flour gets compacted. The Best Answer Hub Cooking Converter uses 125 grams per US cup as the standard "spooned and leveled" measurement, which is what most professional recipes assume. For UK or metric cups, which are 250 milliliters instead of 236.6, the weight is about 132 grams.',
+  },
+  {
+    q: 'Why does 1 cup of flour weigh less than 1 cup of sugar?',
+    a: 'Flour is much less dense than sugar. All-purpose flour has a density of roughly 0.53 grams per milliliter, while granulated sugar is about 0.85 grams per milliliter. This means a cup of sugar weighs around 200 grams, while a cup of flour weighs about 125 grams. The difference matters in baking because using volume measurements for dry ingredients can lead to inconsistent results. Weight is far more reliable.',
+  },
+  {
+    q: 'How do I convert cups to grams for baking?',
+    a: 'Select your ingredient in the Best Answer Hub Cooking Converter, enter the amount in cups, and choose grams as the output unit. The tool uses the actual density of that specific ingredient (not a generic water conversion) so you get an accurate weight. For example, 2 cups of butter converts to 454 grams because butter is denser than flour. Always use the spoon-and-level method for flour and the packed method for brown sugar to match the densities in the Best Answer Hub Cooking Converter.',
+  },
+  {
+    q: 'How many tablespoons are in 1/3 cup?',
+    a: 'There are 5 tablespoons and 1 teaspoon in ⅓ cup. Since 1 US cup contains 16 tablespoons, dividing by 3 gives 5.33 tablespoons, which is 5 tablespoons plus 1 teaspoon. The Best Answer Hub Recipe Scaler outputs this exact kitchen fraction automatically so you never have to measure awkward decimals like 0.33 cup. For UK measurements, ⅓ of a 250-milliliter cup is about 4.7 UK tablespoons, since a UK tablespoon is 17.76 milliliters.',
+  },
+  {
+    q: 'What is the difference between a US cup and a UK cup?',
+    a: 'A US customary cup holds 236.6 milliliters, while a UK metric cup holds 250 milliliters. This 5.7% difference means that a UK cup of flour weighs about 132 grams, while a US cup weighs about 125 grams. UK tablespoons are also larger: about 18 milliliters compared to 15 milliliters in the US. The Best Answer Hub Cooking Converter includes a US/UK toggle so you can match the cup standard used in your recipe.',
+  },
+  {
+    q: 'How do I scale a recipe from 4 servings to 6?',
+    a: 'Use the Best Answer Hub Recipe Scaler mode. Enter 4 as the original servings and 6 as the desired servings. Then list each ingredient with its amount and unit. The tool multiplies every ingredient by 1.5 and displays the results in kitchen fractions. For example, 1 cup becomes 1 ½ cups, and 2 tablespoons become 3 tablespoons. You can add or remove ingredient rows as needed.',
+  },
+  {
+    q: 'How many grams is 1 tablespoon of butter?',
+    a: 'One US tablespoon of butter weighs approximately 14.2 grams. One stick of butter is 113 grams and equals exactly ½ cup or 8 tablespoons. The Best Answer Hub Cooking Converter handles butter conversions precisely because butter has a fixed density of about 0.96 grams per milliliter. If your recipe calls for tablespoons but you only have a scale, simply select Butter in the converter and switch from tablespoons to grams.',
+  },
+  {
+    q: 'What is the difference between packed and unpacked brown sugar?',
+    a: 'Packed brown sugar is pressed firmly into the measuring cup, squeezing out air gaps. This gives a density of about 0.93 grams per milliliter, or 220 grams per US cup. Unpacked or loosely spooned brown sugar has a density of about 0.68 grams per milliliter, or 160 grams per US cup. That is a 37% difference. The Best Answer Hub Cooking Converter offers both options so you can match the method your recipe author intended.',
+  },
+  {
+    q: 'How do I convert baking measurements without a scale?',
+    a: 'Use the Ingredient Converter in reverse. Enter the weight in grams and select the volume unit you want: cups, tablespoons, or teaspoons. The Best Answer Hub Cooking Converter tells you exactly how much to measure. For example, 250 grams of all-purpose flour equals 2 US cups. Keep in mind that measuring by volume is less accurate than weighing, especially for flour, which can vary by 20% or more depending on how you scoop it.',
+  },
+  {
+    q: 'How many milliliters in a US tablespoon?',
+    a: 'One US tablespoon contains exactly 14.787 milliliters. One US teaspoon contains 4.929 milliliters, which means there are exactly 3 teaspoons in 1 tablespoon. In the UK, a tablespoon is 17.758 milliliters and also holds 3 teaspoons, but larger ones of about 5.919 milliliters each. This is why a UK tablespoon is roughly 20% larger than a US tablespoon. (Australia uses a bigger 20-milliliter tablespoon equal to 4 metric teaspoons.) The Best Answer Hub Cooking Converter handles both US and UK standards.',
+  },
+  {
+    q: 'What is a kitchen fraction and why use it?',
+    a: 'A kitchen fraction is a common fractional measurement used in recipes, such as ½, ⅓, ¾, or 1 ½ cups. Most measuring cups and spoons are labeled with these fractions, not decimals. The Best Answer Hub Recipe Scaler automatically converts scaled amounts like 0.6667 cup into ⅔ cup, or 1.5 cups into 1 ½ cups. This makes it much easier to measure accurately with standard kitchen tools.',
+  },
+  {
+    q: 'How do I halve a recipe that calls for 1 egg?',
+    a: 'Half an egg equals about 2 tablespoons or 30 milliliters of beaten egg. The easiest method is to beat the egg in a small bowl, measure out 2 tablespoons, and use that in your halved recipe. You can save the remainder for scrambled eggs or brush it on pastry as an egg wash. The Best Answer Hub Recipe Scaler will show "0.5 egg" but the beaten-egg tablespoon method is recommended for accuracy.',
+  },
+  {
+    q: 'Why do European recipes use weight instead of volume?',
+    a: 'Weight is far more precise and repeatable than volume. A cup of flour can vary by 20 to 30 grams depending on humidity, scooping method, and how settled the flour is. A gram scale removes all of that uncertainty. This is why professional bakers and most European home cooks weigh ingredients. The Best Answer Hub Cooking Converter bridges the gap by giving you accurate gram weights for common volume measurements.',
+  },
+  {
+    q: 'How many ounces is 1 cup of shredded cheese?',
+    a: 'One US cup of shredded cheese weighs approximately 4 ounces, or 113 grams. The exact weight depends on how finely the cheese is shredded and how tightly it is packed into the cup. Coarsely shredded cheddar is about 100 grams per cup, while finely shredded parmesan can be 120 grams per cup. For the most consistent results in cooking, weighing cheese on a scale is recommended.',
+  },
+];
+
+const seo = {
+  title: 'Cooking Converter — Cups to Grams & Recipe Scaler (2026)',
+  description: 'Free cooking converter: cups to grams, tablespoons to ounces, and recipe scaling. Ingredient-aware density with US/UK toggle. No signup.',
+  url: '/calculators/cooking-converter/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-24T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Cooking Converter', url: '/calculators/cooking-converter/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated 2026 · Ingredient-Aware
+          </div>
+          <a href="/calculators/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Calculators
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Cooking Converter:<br/>
+          <em class="italic text-bae-primary">Cups to Grams & Scaler</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Convert between volume and weight using real ingredient densities, so 1 cup of flour gives a different result than 1 cup of sugar. Scale any recipe up or down with kitchen fractions. US and UK cup standards supported.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Cooking converter">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Mode Tabs -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-1.5 shadow-bae-sm">
+            <div class="flex gap-1" id="mode-tabs">
+              <button type="button" data-mode="ingredient" class="mode-btn active flex-1 text-sm font-semibold py-2 px-4 rounded-bae-sm bg-bae-primary text-white transition-colors">Ingredient Converter</button>
+              <button type="button" data-mode="recipe" class="mode-btn flex-1 text-sm font-semibold py-2 px-4 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors">Recipe Scaler</button>
+            </div>
+          </div>
+
+          <!-- Ingredient Converter Panel -->
+          <div id="ingredient-panel" class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <!-- Ingredient -->
+            <div class="mb-4">
+              <label class="text-sm font-semibold text-bae-ink block mb-2">Ingredient</label>
+              <select id="ingredient-select" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary"></select>
+              <p class="text-xs text-bae-muted mt-1.5" id="ingredient-note">Select an ingredient to see its density note.</p>
+            </div>
+
+            <!-- From -->
+            <div class="mb-4">
+              <label class="text-sm font-semibold text-bae-ink block mb-2">From</label>
+              <div class="flex gap-3">
+                <input type="number" id="ing-from-value" value="1" step="any" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary" />
+                <select id="ing-from-unit" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary"></select>
+              </div>
+            </div>
+
+            <!-- Swap -->
+            <div class="flex justify-center py-1">
+              <button type="button" id="ing-swap-btn" class="w-9 h-9 rounded-full bg-bae-primary text-white flex items-center justify-center hover:bg-bae-accent transition-colors shadow-bae-sm" aria-label="Swap units">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+              </button>
+            </div>
+
+            <!-- To -->
+            <div class="mb-4">
+              <label class="text-sm font-semibold text-bae-ink block mb-2">To</label>
+              <select id="ing-to-unit" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary"></select>
+            </div>
+
+            <!-- System Toggle -->
+            <div class="mt-4 pt-4 border-t border-bae-border">
+              <label class="text-sm font-semibold text-bae-ink block mb-2">Measurement System</label>
+              <div class="flex gap-2 p-1 bg-white rounded-bae-sm border border-bae-border">
+                <button type="button" data-system="us" class="sys-btn flex-1 text-sm font-semibold py-2 rounded-bae-sm bg-bae-primary text-white transition-colors">US Customary</button>
+                <button type="button" data-system="uk" class="sys-btn flex-1 text-sm font-semibold py-2 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors">UK / Metric</button>
+              </div>
+              <p class="text-xs text-bae-muted mt-2" id="system-desc">US cup = 236.6 ml. US tablespoon = 14.8 ml.</p>
+            </div>
+          </div>
+
+          <!-- Recipe Scaler Panel -->
+          <div id="recipe-panel" class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm hidden">
+            <!-- Servings -->
+            <div class="grid grid-cols-2 gap-4 mb-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Original Servings</label>
+                <input type="number" id="orig-servings" value="4" min="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Desired Servings</label>
+                <input type="number" id="new-servings" value="6" min="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+
+            <!-- Ingredient Rows -->
+            <label class="text-sm font-semibold text-bae-ink block mb-2">Ingredients</label>
+            <div id="recipe-rows" class="space-y-3"></div>
+
+            <!-- Row Controls -->
+            <div class="flex gap-2 mt-3">
+              <button type="button" id="add-row" class="text-sm font-semibold text-bae-primary hover:text-bae-accent transition-colors bg-transparent border-0 cursor-pointer px-0 py-0 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Add ingredient
+              </button>
+              <button type="button" id="remove-row" class="text-sm font-semibold text-bae-muted hover:text-red-500 transition-colors bg-transparent border-0 cursor-pointer px-0 py-0 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                Remove last
+              </button>
+            </div>
+          </div>
+
+          <!-- Reset -->
+          <div class="flex justify-end">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset converter
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <!-- Main Result -->
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4" id="result-title">Conversion Result</h3>
+            <div id="result-main" class="text-3xl font-bold font-serif mb-1">—</div>
+            <div id="result-equation" class="text-sm text-white/70 mb-3">Select an ingredient and enter an amount</div>
+            <div id="result-alt" class="text-sm text-bae-primary font-medium mb-4 hidden"></div>
+            <button type="button" id="copy-btn" class="w-full bg-bae-primary hover:bg-bae-accent text-white font-semibold text-sm py-2.5 rounded-bae-sm transition-colors">
+              Copy Result
+            </button>
+            <button type="button" id="pdf-btn" class="w-full mt-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm py-2.5 rounded-bae-sm transition-colors">
+              Download PDF Report
+            </button>
+          </div>
+
+          <!-- Show Your Work -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Show Your Work</h3>
+            <div class="space-y-2 text-sm" id="show-work-content">
+              <p class="text-bae-muted">Select an ingredient and enter a value to see the exact density and conversion math.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Choose your mode', text: 'Pick Ingredient Converter for cups-to-grams with real densities, or Recipe Scaler for adjusting serving sizes with kitchen fractions.' },
+    { name: 'Enter your details', text: 'Select the ingredient, input the amount, and choose US or UK cup standards. For recipes, list ingredients and set original and desired servings.' },
+    { name: 'Get precise results', text: 'See accurate weight conversions using actual ingredient densities, or a perfectly scaled recipe with fractions like ⅔ and 1 ½.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Choose your mode</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Pick Ingredient Converter for cups-to-grams with real densities, or Recipe Scaler for adjusting serving sizes with kitchen fractions.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter your details</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Select the ingredient, input the amount, and choose US or UK cup standards. For recipes, list ingredients and set original and desired servings.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Get precise results</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">See accurate weight conversions using actual ingredient densities, or a perfectly scaled recipe with fractions like ⅔ and 1 ½.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/unit-currency-converter/" class="text-bae-primary hover:underline">Unit Converter</a>, <a href="/calculators/tax-calculator/" class="text-bae-primary hover:underline">Tax Calculator</a>, and <a href="/calculators/" class="text-bae-primary hover:underline">Calculators Hub</a>.</p>
+        </div>
+        <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all calculators →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Real-World Conversions -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Real-world conversions</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Baking</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Cake flour measurement</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">2 cups flour = 250 grams</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Two US cups of spooned-and-leveled all-purpose flour equals 250 grams. If you scoop straight from the bag, the same 2 cups can weigh 280 to 300 grams. This 50-gram difference is enough to make a cake dry or dense.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Scaling</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Dinner party cookies</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">24 → 36 cookies = 1.5×</div>
+          <p class="text-sm text-bae-muted leading-relaxed">A recipe that makes 24 cookies can be scaled to 36 by multiplying every ingredient by 1.5. One cup becomes 1 ½ cups, and 2 tablespoons become 3 tablespoons. Our Recipe Scaler outputs these kitchen fractions automatically.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">International</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">UK baker, US recipe</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">US cup 125g vs UK cup 132g</div>
+          <p class="text-sm text-bae-muted leading-relaxed">A UK metric cup is 250 milliliters, while a US cup is 236.6 milliliters. For all-purpose flour, that means a UK cup weighs about 132 grams versus 125 grams in the US. Our system toggle prevents this 5.6% error that can ruin baked goods.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Sticky ingredients</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Honey measurement</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">¼ cup honey = 85 grams</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Honey is 43% denser than water, so a quarter cup weighs 85 grams rather than the 59 grams you might expect. Using a scale for honey is far more accurate than trying to level it in a measuring cup. Our converter knows honey's exact density.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Densities are based on standard cooking references. Actual weights vary by brand, humidity, and measuring technique. For best results, use a digital kitchen scale.</p>
+    </div>
+  </section>
+
+  <!-- Report Summary (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Cooking Report</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Cooking Conversion Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Mode</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-mode">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Date</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-date">—</p>
+            </div>
+          </div>
+          <div id="report-details"></div>
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>Densities are based on standard cooking references. Actual weights vary by brand, humidity, and measuring technique. For best results, use a digital kitchen scale.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      const INGREDIENTS = {
+        'flour-ap': { name: 'All-Purpose Flour', density: 0.528, note: 'Spooned and leveled. 125g per US cup.' },
+        'flour-bread': { name: 'Bread Flour', density: 0.538, note: '127g per US cup.' },
+        'flour-cake': { name: 'Cake Flour', density: 0.486, note: '115g per US cup.' },
+        'sugar-white': { name: 'Granulated Sugar', density: 0.845, note: '200g per US cup.' },
+        'sugar-brown-packed': { name: 'Brown Sugar (Packed)', density: 0.93, note: '220g per US cup. Packed firmly into cup.' },
+        'sugar-brown-loose': { name: 'Brown Sugar (Loose)', density: 0.676, note: '160g per US cup. Lightly spooned.' },
+        'sugar-powdered': { name: 'Powdered Sugar', density: 0.528, note: '125g per US cup. Sifted.' },
+        'butter': { name: 'Butter', density: 0.959, note: '227g per US cup. 1 stick = 113g = ½ cup.' },
+        'oil': { name: 'Vegetable Oil', density: 0.922, note: '218g per US cup.' },
+        'olive-oil': { name: 'Olive Oil', density: 0.918, note: '217g per US cup.' },
+        'milk': { name: 'Milk', density: 1.036, note: '245g per US cup.' },
+        'water': { name: 'Water', density: 1.0, note: '237g per US cup.' },
+        'honey': { name: 'Honey', density: 1.437, note: '340g per US cup.' },
+        'maple-syrup': { name: 'Maple Syrup', density: 1.325, note: '313g per US cup.' },
+        'cocoa': { name: 'Cocoa Powder', density: 0.359, note: '85g per US cup.' },
+        'oats': { name: 'Rolled Oats', density: 0.38, note: '90g per US cup.' },
+        'rice': { name: 'Rice (Uncooked)', density: 0.782, note: '185g per US cup.' },
+        'salt': { name: 'Table Salt', density: 1.154, note: '273g per US cup.' },
+        'kosher-salt': { name: 'Kosher Salt', density: 0.634, note: '150g per US cup.' },
+        'bp': { name: 'Baking Powder', density: 0.812, note: '192g per US cup.' },
+        'bs': { name: 'Baking Soda', density: 0.973, note: '230g per US cup.' },
+        'yeast': { name: 'Active Dry Yeast', density: 0.676, note: '160g per US cup.' },
+        'cream-cheese': { name: 'Cream Cheese', density: 0.996, note: '235g per US cup.' },
+        'sour-cream': { name: 'Sour Cream', density: 0.971, note: '230g per US cup.' },
+        'yogurt': { name: 'Yogurt', density: 1.023, note: '242g per US cup.' },
+        'cornstarch': { name: 'Cornstarch', density: 0.507, note: '120g per US cup.' },
+        'chocolate-chips': { name: 'Chocolate Chips', density: 0.676, note: '160g per US cup.' },
+      };
+
+      const VOLUME_ML = {
+        us: { cup: 236.588, tbsp: 14.787, tsp: 4.929, floz: 29.574 },
+        uk: { cup: 250, tbsp: 17.758, tsp: 5.919, floz: 28.413 }
+      };
+
+      const UNIT_LABELS = {
+        cup: 'cup', tbsp: 'tbsp', tsp: 'tsp', floz: 'fl oz',
+        ml: 'ml', g: 'g', oz: 'oz', lb: 'lb', pc: 'pc'
+      };
+
+      const RECIPE_UNITS = ['cup', 'tbsp', 'tsp', 'floz', 'ml', 'g', 'oz', 'lb', 'pc'];
+
+      let currentMode = 'ingredient';
+      let currentSystem = 'us';
+
+      function formatNumber(num) {
+        if (!isFinite(num)) return '—';
+        if (num === 0) return '0';
+        const abs = Math.abs(num);
+        if (abs >= 1e12) return num.toExponential(4);
+        if (abs < 1e-9) return num.toExponential(4);
+        let rounded;
+        if (abs >= 1000000) rounded = Math.round(num * 100) / 100;
+        else if (abs >= 1) rounded = Math.round(num * 10000) / 10000;
+        else rounded = Math.round(num * 1000000) / 1000000;
+        return parseFloat(rounded.toPrecision(8)).toLocaleString(undefined, { maximumFractionDigits: 6 });
+      }
+
+      function toKitchenFraction(value) {
+        if (value === 0) return '0';
+        if (!isFinite(value)) return '—';
+        const whole = Math.floor(value);
+        const frac = value - whole;
+        if (frac < 0.015) return whole.toString();
+        const common = [
+          { den: 2, num: 1, char: '½' },
+          { den: 3, num: 1, char: '⅓' },
+          { den: 3, num: 2, char: '⅔' },
+          { den: 4, num: 1, char: '¼' },
+          { den: 4, num: 3, char: '¾' },
+          { den: 8, num: 1, char: '⅛' },
+          { den: 8, num: 3, char: '⅜' },
+          { den: 8, num: 5, char: '⅝' },
+          { den: 8, num: 7, char: '⅞' },
+        ];
+        let best = null, bestErr = Infinity;
+        for (const c of common) {
+          const err = Math.abs(frac - c.num / c.den);
+          if (err < bestErr && err < 0.08) {
+            bestErr = err;
+            best = c;
+          }
+        }
+        if (!best) {
+          const dec = parseFloat(frac.toFixed(2));
+          if (whole === 0) return dec.toString();
+          return whole + ' ' + dec;
+        }
+        if (whole === 0) return best.char;
+        return whole + ' ' + best.char;
+      }
+
+      function unitLabel(value, unitKey) {
+        const label = UNIT_LABELS[unitKey] || unitKey;
+        if (unitKey === 'pc') return label; // piece doesn't pluralize by adding s
+        if (value !== 1) return label + 's';
+        return label;
+      }
+
+      function convertIngredient(amount, fromUnit, toUnit, ingredientKey, system) {
+        const density = INGREDIENTS[ingredientKey].density;
+        const vol = VOLUME_ML[system];
+        let grams;
+        if (fromUnit === 'g') grams = amount;
+        else if (fromUnit === 'oz') grams = amount * 28.3495;
+        else if (fromUnit === 'lb') grams = amount * 453.592;
+        else if (fromUnit === 'ml') grams = amount * density;
+        else if (vol[fromUnit]) grams = amount * vol[fromUnit] * density;
+        else grams = amount;
+        if (toUnit === 'g') return grams;
+        if (toUnit === 'oz') return grams / 28.3495;
+        if (toUnit === 'lb') return grams / 453.592;
+        if (toUnit === 'ml') return grams / density;
+        if (vol[toUnit]) return grams / (vol[toUnit] * density);
+        return grams;
+      }
+
+      function getUnitDisplayName(unitKey, system) {
+        if (unitKey === 'g') return 'grams';
+        if (unitKey === 'oz') return 'ounces';
+        if (unitKey === 'lb') return 'pounds';
+        if (unitKey === 'ml') return 'ml';
+        if (unitKey === 'pc') return 'pieces';
+        const suffix = system === 'us' ? ' (US)' : ' (UK)';
+        return UNIT_LABELS[unitKey] + suffix;
+      }
+
+      function populateIngredientSelect() {
+        const select = $('ingredient-select');
+        select.innerHTML = '';
+        Object.keys(INGREDIENTS).forEach(key => {
+          const opt = document.createElement('option');
+          opt.value = key;
+          opt.textContent = INGREDIENTS[key].name;
+          select.appendChild(opt);
+        });
+      }
+
+      function populateUnitSelects() {
+        const fromSelect = $('ing-from-unit');
+        const toSelect = $('ing-to-unit');
+        const units = ['cup', 'tbsp', 'tsp', 'floz', 'ml', 'g', 'oz', 'lb'];
+        fromSelect.innerHTML = '';
+        toSelect.innerHTML = '';
+        units.forEach((u, i) => {
+          const opt1 = document.createElement('option');
+          opt1.value = u;
+          opt1.textContent = getUnitDisplayName(u, currentSystem);
+          if (i === 0) opt1.selected = true;
+          fromSelect.appendChild(opt1);
+          const opt2 = document.createElement('option');
+          opt2.value = u;
+          opt2.textContent = getUnitDisplayName(u, currentSystem);
+          if (u === 'g') opt2.selected = true;
+          toSelect.appendChild(opt2);
+        });
+      }
+
+      function updateIngredientNote() {
+        const key = $('ingredient-select').value;
+        const ing = INGREDIENTS[key];
+        $('ingredient-note').textContent = ing.note;
+      }
+
+      function setMode(mode, doCalc) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+          if (btn.dataset.mode === mode) {
+            btn.classList.add('bg-bae-primary', 'text-white');
+            btn.classList.remove('text-bae-muted');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('text-bae-muted');
+          }
+        });
+        if (mode === 'ingredient') {
+          $('ingredient-panel').classList.remove('hidden');
+          $('recipe-panel').classList.add('hidden');
+          $('result-title').textContent = 'Conversion Result';
+        } else {
+          $('ingredient-panel').classList.add('hidden');
+          $('recipe-panel').classList.remove('hidden');
+          $('result-title').textContent = 'Scaled Recipe';
+        }
+        if (doCalc !== false) calculate();
+      }
+
+      function setSystem(sys) {
+        currentSystem = sys;
+        document.querySelectorAll('.sys-btn').forEach(btn => {
+          if (btn.dataset.system === sys) {
+            btn.classList.add('bg-bae-primary', 'text-white');
+            btn.classList.remove('text-bae-muted');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('text-bae-muted');
+          }
+        });
+        const desc = $('system-desc');
+        if (sys === 'us') desc.textContent = 'US cup = 236.6 ml. US tablespoon = 14.8 ml.';
+        else desc.textContent = 'UK cup = 250 ml. UK tablespoon = 17.8 ml.';
+        populateUnitSelects();
+        if (currentMode === 'ingredient') calculateIngredient();
+      }
+
+      function calculate() {
+        if (currentMode === 'ingredient') calculateIngredient();
+        else calculateRecipe();
+      }
+
+      function calculateIngredient() {
+        const ingredient = $('ingredient-select').value;
+        const amount = parseFloat($('ing-from-value').value);
+        const fromUnit = $('ing-from-unit').value;
+        const toUnit = $('ing-to-unit').value;
+        if (isNaN(amount)) {
+          $('result-main').textContent = '—';
+          $('result-equation').textContent = 'Enter a valid amount';
+          $('result-alt').classList.add('hidden');
+          $('show-work-content').innerHTML = '<p class="text-bae-muted">Enter a valid amount to see the conversion.</p>';
+          return;
+        }
+        const result = convertIngredient(amount, fromUnit, toUnit, ingredient, currentSystem);
+        const ing = INGREDIENTS[ingredient];
+        const cupMl = currentSystem === 'us' ? 236.588 : 250;
+        const gPerCup = ing.density * cupMl;
+        const fromName = getUnitDisplayName(fromUnit, currentSystem);
+        const toName = getUnitDisplayName(toUnit, currentSystem);
+        const resultLabel = unitLabel(result, toUnit);
+
+        $('result-main').textContent = formatNumber(result) + ' ' + resultLabel;
+        $('result-equation').textContent = amount + ' ' + fromName + ' of ' + ing.name + ' = ' + formatNumber(result) + ' ' + toName;
+
+        // Alternative formats
+        const altEl = $('result-alt');
+        if (toUnit === 'g') {
+          const oz = result / 28.3495;
+          const lb = result / 453.592;
+          altEl.textContent = formatNumber(result) + 'g = ' + formatNumber(oz) + ' oz = ' + formatNumber(lb) + ' lb';
+          altEl.classList.remove('hidden');
+        } else if (toUnit === 'oz' || toUnit === 'lb') {
+          const g = result * (toUnit === 'oz' ? 28.3495 : 453.592);
+          altEl.textContent = formatNumber(g) + ' grams';
+          altEl.classList.remove('hidden');
+        } else if (['cup', 'tbsp', 'tsp', 'floz', 'ml'].includes(toUnit)) {
+          const g = convertIngredient(amount, fromUnit, 'g', ingredient, currentSystem);
+          altEl.textContent = formatNumber(g) + ' grams';
+          altEl.classList.remove('hidden');
+        } else {
+          altEl.classList.add('hidden');
+        }
+
+        // Show Your Work
+        let work = '<p class="text-bae-muted">Density: ' + ing.density + ' g/ml (' + formatNumber(gPerCup) + 'g per ' + (currentSystem === 'us' ? 'US' : 'UK') + ' cup)</p>';
+        work += '<p class="text-bae-ink font-medium">' + amount + ' ' + fromName + ' &rarr; ' + formatNumber(result) + ' ' + toName + '</p>';
+        work += '<p class="text-xs text-bae-muted mt-2">' + ing.note + '</p>';
+        $('show-work-content').innerHTML = work;
+        updateURL();
+      }
+
+      function createRow(amount, unit, name) {
+        const div = document.createElement('div');
+        div.className = 'flex gap-3 recipe-row';
+        const aInput = document.createElement('input');
+        aInput.type = 'number';
+        aInput.step = 'any';
+        aInput.value = amount;
+        aInput.className = 'row-amount w-20 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary';
+        aInput.placeholder = 'Amt';
+        const uSelect = document.createElement('select');
+        uSelect.className = 'row-unit w-24 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary';
+        RECIPE_UNITS.forEach(u => {
+          const opt = document.createElement('option');
+          opt.value = u;
+          opt.textContent = UNIT_LABELS[u];
+          if (u === unit) opt.selected = true;
+          uSelect.appendChild(opt);
+        });
+        const nInput = document.createElement('input');
+        nInput.type = 'text';
+        nInput.value = name;
+        nInput.className = 'row-name flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary';
+        nInput.placeholder = 'Ingredient name';
+        div.appendChild(aInput);
+        div.appendChild(uSelect);
+        div.appendChild(nInput);
+        aInput.addEventListener('input', calculateRecipe);
+        uSelect.addEventListener('change', calculateRecipe);
+        nInput.addEventListener('input', calculateRecipe);
+        return div;
+      }
+
+      function initRecipeRows() {
+        const container = $('recipe-rows');
+        container.innerHTML = '';
+        container.appendChild(createRow('2', 'cup', 'All-Purpose Flour'));
+        container.appendChild(createRow('1', 'cup', 'Granulated Sugar'));
+        container.appendChild(createRow('0.5', 'cup', 'Butter'));
+        container.appendChild(createRow('1', 'tsp', 'Vanilla Extract'));
+      }
+
+      function calculateRecipe() {
+        const orig = parseFloat($('orig-servings').value) || 1;
+        const desired = parseFloat($('new-servings').value) || 1;
+        const ratio = desired / orig;
+        const rows = document.querySelectorAll('.recipe-row');
+        let listHtml = '';
+        rows.forEach(row => {
+          const amount = parseFloat(row.querySelector('.row-amount').value) || 0;
+          const unit = row.querySelector('.row-unit').value;
+          const name = row.querySelector('.row-name').value || 'Ingredient';
+          const scaled = amount * ratio;
+          const fraction = toKitchenFraction(scaled);
+          const uLabel = unitLabel(scaled, unit);
+          listHtml += '<div class="flex justify-between text-sm py-1.5 border-b border-white/10"><span class="text-white/70">' + name + '</span><span class="font-semibold">' + fraction + ' ' + uLabel + '</span></div>';
+        });
+        $('result-main').textContent = formatNumber(ratio) + '×';
+        $('result-equation').textContent = 'Scaling ' + orig + ' → ' + desired + ' servings';
+        $('result-alt').innerHTML = listHtml;
+        $('result-alt').classList.remove('hidden');
+        $('show-work-content').innerHTML = '<p class="text-bae-muted">Scaling factor = ' + desired + ' &divide; ' + orig + ' = ' + formatNumber(ratio) + '</p><p class="text-bae-ink font-medium">Every ingredient multiplied by ' + formatNumber(ratio) + '</p>';
+        updateURL();
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          const params = new URLSearchParams();
+          if (currentMode === 'recipe') {
+            params.set('mode', 'recipe');
+            params.set('orig', $('orig-servings').value);
+            params.set('new', $('new-servings').value);
+            const rows = document.querySelectorAll('.recipe-row');
+            const rVals = [];
+            rows.forEach(row => {
+              const a = row.querySelector('.row-amount').value;
+              const u = row.querySelector('.row-unit').value;
+              const n = row.querySelector('.row-name').value;
+              rVals.push(a + '|' + u + '|' + n);
+            });
+            params.set('r', rVals.join(','));
+          } else {
+            const val = parseFloat($('ing-from-value').value);
+            if (val !== 1) params.set('val', val);
+            const ing = $('ingredient-select').value;
+            if (ing !== 'flour-ap') params.set('ing', ing);
+            const from = $('ing-from-unit').value;
+            const to = $('ing-to-unit').value;
+            if (from !== 'cup') params.set('from', from);
+            if (to !== 'g') params.set('to', to);
+            if (currentSystem !== 'us') params.set('sys', currentSystem);
+          }
+          url.search = params.toString();
+          window.history.replaceState({}, '', url);
+        } catch (e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+          const mode = url.searchParams.get('mode');
+          if (mode === 'recipe') {
+            currentMode = 'recipe';
+            setMode('recipe', false);
+            const orig = url.searchParams.get('orig');
+            const nw = url.searchParams.get('new');
+            if (orig !== null) $('orig-servings').value = orig;
+            if (nw !== null) $('new-servings').value = nw;
+            const rParam = url.searchParams.get('r');
+            if (rParam) {
+              const items = rParam.split(',');
+              $('recipe-rows').innerHTML = '';
+              items.forEach(item => {
+                const parts = item.split('|');
+                if (parts.length >= 2) {
+                  const name = parts.slice(2).join('|');
+                  $('recipe-rows').appendChild(createRow(parts[0], parts[1], name));
+                }
+              });
+            }
+          } else {
+            const val = url.searchParams.get('val');
+            if (val !== null) $('ing-from-value').value = val;
+            const ing = url.searchParams.get('ing');
+            if (ing && INGREDIENTS[ing]) $('ingredient-select').value = ing;
+            const from = url.searchParams.get('from');
+            const to = url.searchParams.get('to');
+            if (from) $('ing-from-unit').value = from;
+            if (to) $('ing-to-unit').value = to;
+            const sys = url.searchParams.get('sys');
+            if (sys === 'uk') currentSystem = 'uk';
+          }
+        } catch (e) {}
+      }
+
+      // Event listeners
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => setMode(btn.dataset.mode));
+      });
+
+      document.querySelectorAll('.sys-btn').forEach(btn => {
+        btn.addEventListener('click', () => setSystem(btn.dataset.system));
+      });
+
+      $('ingredient-select').addEventListener('change', () => {
+        updateIngredientNote();
+        calculateIngredient();
+      });
+      $('ing-from-value').addEventListener('input', calculateIngredient);
+      $('ing-from-unit').addEventListener('change', calculateIngredient);
+      $('ing-to-unit').addEventListener('change', calculateIngredient);
+
+      $('ing-swap-btn').addEventListener('click', () => {
+        const from = $('ing-from-unit').value;
+        const to = $('ing-to-unit').value;
+        $('ing-from-unit').value = to;
+        $('ing-to-unit').value = from;
+        calculateIngredient();
+      });
+
+      $('orig-servings').addEventListener('input', calculateRecipe);
+      $('new-servings').addEventListener('input', calculateRecipe);
+
+      $('add-row').addEventListener('click', () => {
+        $('recipe-rows').appendChild(createRow('', 'cup', ''));
+        calculateRecipe();
+      });
+
+      $('remove-row').addEventListener('click', () => {
+        const rows = document.querySelectorAll('.recipe-row');
+        if (rows.length > 1) {
+          rows[rows.length - 1].remove();
+          calculateRecipe();
+        }
+      });
+
+      $('copy-btn').addEventListener('click', () => {
+        let text = '';
+        if (currentMode === 'ingredient') {
+          text = $('result-equation').textContent;
+        } else {
+          text = $('result-equation').textContent + '\n';
+          document.querySelectorAll('.recipe-row').forEach(row => {
+            const amount = row.querySelector('.row-amount').value;
+            const unit = row.querySelector('.row-unit').value;
+            const name = row.querySelector('.row-name').value;
+            text += amount + ' ' + UNIT_LABELS[unit] + ' ' + name + '\n';
+          });
+        }
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            const btn = $('copy-btn');
+            const orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = orig, 1500);
+          });
+        }
+      });
+
+      $('clear-btn').addEventListener('click', () => {
+        if (currentMode === 'ingredient') {
+          $('ing-from-value').value = 1;
+          $('ingredient-select').selectedIndex = 0;
+          $('ing-from-unit').value = 'cup';
+          $('ing-to-unit').value = 'g';
+          setSystem('us');
+        } else {
+          $('orig-servings').value = 4;
+          $('new-servings').value = 6;
+          initRecipeRows();
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+        calculate();
+      });
+
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const origText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        $('report-mode').textContent = currentMode === 'ingredient' ? 'Ingredient Converter' : 'Recipe Scaler';
+        $('report-date').textContent = new Date().toLocaleDateString();
+        const details = $('report-details');
+        details.innerHTML = '';
+        if (currentMode === 'ingredient') {
+          details.innerHTML = '<p class="text-sm text-bae-muted mb-2">' + $('result-equation').textContent + '</p><p class="text-sm text-bae-muted">' + $('show-work-content').textContent + '</p>';
+        } else {
+          let html = '<p class="text-sm text-bae-muted mb-2">' + $('result-equation').textContent + '</p>';
+          document.querySelectorAll('.recipe-row').forEach(row => {
+            const a = row.querySelector('.row-amount').value;
+            const u = row.querySelector('.row-unit').value;
+            const n = row.querySelector('.row-name').value;
+            html += '<p class="text-sm text-bae-muted">- ' + a + ' ' + UNIT_LABELS[u] + ' ' + n + '</p>';
+          });
+          details.innerHTML = html;
+        }
+
+        const element = $('print-report');
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'cooking-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = origText;
+          btn.disabled = false;
+        }
+      });
+
+      // Init
+      populateIngredientSelect();
+      populateUnitSelects();
+      initRecipeRows();
+      readURL();
+      document.querySelectorAll('.sys-btn').forEach(btn => {
+        if (btn.dataset.system === currentSystem) {
+          btn.classList.add('bg-bae-primary', 'text-white');
+          btn.classList.remove('text-bae-muted');
+        } else {
+          btn.classList.remove('bg-bae-primary', 'text-white');
+          btn.classList.add('text-bae-muted');
+        }
+      });
+      updateIngredientNote();
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+  </style>
+</BaseLayout>

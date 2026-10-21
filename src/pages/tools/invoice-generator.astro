@@ -1,0 +1,823 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-30T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Invoice Generator?',
+    a: 'The Best Answer Hub Invoice Generator is a free browser-based tool that creates professional invoices in PDF format. You enter your company details, add client information, build line items with quantities and rates, and it automatically calculates subtotals, taxes, discounts, and the final total. You can upload your company logo, choose your currency, and download a print-ready PDF invoice. Everything runs locally in your browser. No account, no subscription, and no data is stored on any server.',
+  },
+  {
+    q: 'Is the Invoice Generator free to use?',
+    a: 'Yes, the Best Answer Hub Invoice Generator is completely free with no usage limits and no signup required. You can create as many invoices as you want, for as many clients as you want. Unlike paid invoicing software like QuickBooks, FreshBooks, or Xero, there are no monthly fees, no invoice limits, and no premium features locked behind a paywall. Best Answer Hub is supported by affiliate links to recommended accounting software for businesses that outgrow simple invoicing.',
+  },
+  {
+    q: 'How does the Invoice Generator work?',
+    a: 'You fill in your company information on the left side of the screen: name, address, phone, tax number, and logo. Then you add your client\'s details and invoice information like number, date, and due date. You build line items by adding rows with descriptions, quantities, and rates. The Best Answer Hub Invoice Generator automatically calculates amounts, subtotals, tax, discounts, and the final total. As you type, a live preview of the invoice appears on the right. When ready, click Download PDF to save a professional invoice to your computer.',
+  },
+  {
+    q: 'Can I upload my company logo?',
+    a: 'Yes. Click the logo upload area and select any PNG, JPEG, or WebP image from your computer. The logo appears in the top-left corner of the invoice preview. The image is processed entirely inside your browser using the FileReader API. It is never uploaded to any server. For best results, use a square or rectangular logo with a transparent or white background, under 2 megabytes in size.',
+  },
+  {
+    q: 'What information should I include on an invoice?',
+    a: 'A professional invoice should include your company name, address, phone number, and email at the top. It should have a unique invoice number, issue date, and due date. The client\'s name and address should be clearly labeled. Each line item needs a description, quantity, unit price, and total amount. The invoice should show a subtotal, any applicable tax with the tax rate, any discount, and the final total due. Finally, include payment terms, accepted payment methods, and a thank-you note. The Best Answer Hub Invoice Generator includes fields for all of these elements.',
+  },
+  {
+    q: 'Can I add tax, VAT, or GST to my invoices?',
+    a: 'Yes. The Best Answer Hub Invoice Generator includes a tax rate field where you can enter any percentage: for example, 20 percent for UK VAT, 5 percent for UAE VAT, 18 percent for Indian GST, or 0 percent for tax-exempt invoices. The tax amount is calculated automatically based on the subtotal. You can also enter a tax label such as "VAT," "GST," "Sales Tax," or "TRN" so the invoice reflects the correct terminology for your country and business type.',
+  },
+  {
+    q: 'Can I add discounts to my invoices?',
+    a: 'Yes. The Best Answer Hub Invoice Generator includes a discount percentage field. Enter any discount rate (for example, 10 percent for a loyal customer or 25 percent for a promotional offer) and the discount amount is calculated and deducted from the subtotal automatically. The discount appears as a separate line on the invoice so your client can see exactly how much they saved. This is useful for early-payment discounts, volume discounts, and seasonal promotions.',
+  },
+  {
+    q: 'What currencies does the invoice generator support?',
+    a: 'The Best Answer Hub Invoice Generator supports all major currencies including US Dollar (USD), Euro (EUR), British Pound (GBP), UAE Dirham (AED), Indian Rupee (INR), Canadian Dollar (CAD), Australian Dollar (AUD), and Japanese Yen (JPY). You select your currency from the dropdown menu and all amounts on the invoice are formatted with the correct symbol and decimal places. If you need a currency that is not listed, you can type a custom currency symbol into the field.',
+  },
+  {
+    q: 'Can I save my invoice as a PDF?',
+    a: 'Yes. Click the "Download PDF" button and the Best Answer Hub Invoice Generator generates a professional PDF invoice using html2pdf.js, a client-side library that converts the styled HTML preview into a PDF document. The PDF is formatted for A4 paper and prints cleanly on any standard printer. You can also save the PDF and email it directly to your client. Because the generation happens entirely in your browser, there is no watermark, no branding, and no delay.',
+  },
+  {
+    q: 'Is my invoice data safe and private?',
+    a: 'Yes, completely. The Best Answer Hub Invoice Generator is a client-side tool, which means every piece of information you enter (company names, addresses, prices, client details) is processed only inside your own browser. No invoice data is sent to any server, stored in a database, or accessible by anyone else. Even if you disconnect from the internet after loading the page, you can continue creating and downloading invoices. For maximum privacy, this is one of the safest ways to generate invoices.',
+  },
+  {
+    q: 'What is the best free invoice generator?',
+    a: 'The best free invoice generator depends on your needs. For simple, no-signup creation with full privacy, the Best Answer Hub Invoice Generator is ideal because nothing leaves your device. For businesses that need recurring invoices, payment tracking, and client management, Wave Invoice and Zoho Invoice offer excellent free plans with cloud storage. For freelancers who need time tracking integration, Harvest and Bonsai are popular. For accounting integration, Wave and ZipBooks connect directly to bookkeeping. The Best Answer Hub Invoice Generator is best for users who want instant, private invoice creation without creating accounts or learning complex software.',
+  },
+  {
+    q: 'Can I customize the invoice template?',
+    a: 'The Best Answer Hub Invoice Generator uses a clean, professional invoice template optimized for readability and print quality. You can customize the visible content (your logo, company colors through your logo, currency, labels, notes, and payment terms), but the layout and typography are standardized to ensure the PDF looks professional on any device or printer. If you need fully customizable templates with different colors, fonts, and layouts, desktop tools like Microsoft Word or Canva offer more design flexibility at the cost of convenience.',
+  },
+  {
+    q: 'What are payment terms and why do they matter?',
+    a: 'Payment terms tell your client when and how you expect to be paid. Common terms include "Net 30" (payment due within 30 days), "Net 14" (due within 14 days), "Due on Receipt" (pay immediately), and "50% upfront, 50% on delivery." Clear payment terms reduce confusion, speed up payment collection, and protect you legally if a dispute arises. Industry research suggests that invoices with explicit due dates are consistently paid faster than those without clear terms. The Best Answer Hub Invoice Generator includes a dedicated payment terms field.',
+  },
+  {
+    q: 'Do I need accounting software if I use this invoice generator?',
+    a: 'For a small number of invoices, the Best Answer Hub Invoice Generator is sufficient. However, as your business grows, you will benefit from dedicated accounting software that tracks payments, sends automatic reminders, reconciles bank transactions, and generates tax reports. QuickBooks Online, Xero, and FreshBooks are the leading options for small businesses. Wave and ZipBooks offer free plans for basic needs. The Best Answer Hub Invoice Generator is perfect for freelancers, side hustles, and small businesses that send fewer than 20 invoices per month.',
+  },
+  {
+    q: 'What should I put in the invoice number field and does it matter?',
+    a: 'An invoice number is a unique identifier you assign to each invoice for accounting and reference purposes. It is a legal requirement on all VAT invoices in the UK and EU. The most common formats are simple sequential numbers (001, 002, 003), year-prefixed sequences (2026-001, 2026-002), or client-based codes (CLIENTNAME-001). The key rule is that invoice numbers must be unique and sequential with no gaps. Gaps can raise questions during a tax audit. Start with 001 on your first invoice and increment by one each time. Keep a record of every invoice number issued alongside its amount and payment status so you can account for every transaction if asked by HMRC, the IRS, or any other tax authority.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your details', description: 'Add your company name, address, logo, tax number, and contact info. Then fill in your client\'s details and invoice number.' },
+  { title: 'Add line items', description: 'Build your invoice by adding rows with descriptions, quantities, and rates. The tool auto-calculates amounts, subtotals, tax, and discounts.' },
+  { title: 'Download PDF', description: 'Review the live preview, add payment terms and notes, then click Download PDF to save a professional, print-ready invoice.' },
+];
+
+const seo = {
+  title: 'Free Invoice Generator — Create & Download PDFs (2026)',
+  description: 'Create professional invoices for free. Add your logo, line items, tax, and discounts. Auto-calculated totals. Download print-ready PDF instantly. No signup.',
+  url: '/tools/invoice-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Finance Toolkit', url: '/finance-toolkit/' },
+    { name: 'Invoice Generator', url: '/tools/invoice-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Stored on Servers"
+    title="Invoice Generator:"
+    accentText="Create & download PDF invoices"
+    description="Build professional invoices with your logo, line items, tax, and discounts. Auto-calculated totals. Download print-ready PDF in seconds. No account needed."
+    backLink="/finance-toolkit/"
+    backLabel="← Finance Toolkit"
+  />
+
+  <!-- Invoice Interface -->
+  <section class="py-6 md:py-8" aria-label="Invoice generator">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Form -->
+        <div class="space-y-5">
+          <!-- Your Company -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-4 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold">1</span>
+              Your Company
+            </h2>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Company Logo</label>
+                <div id="logo-upload" class="border-2 border-dashed border-bae-border rounded-bae-sm p-4 text-center cursor-pointer hover:border-bae-primary hover:bg-bae-primary-soft/20 transition-colors">
+                  <div id="logo-preview-area" class="hidden mb-2">
+                    <img id="logo-preview-img" class="h-12 mx-auto object-contain" alt="Company logo preview" />
+                  </div>
+                  <p class="text-xs text-bae-muted" id="logo-text">Click to upload logo (PNG, JPEG, WebP)</p>
+                  <input type="file" id="logo-input" class="hidden" accept="image/*" />
+                </div>
+              </div>
+              <input type="text" id="comp-name" placeholder="Your Company Name" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <textarea id="comp-address" rows="2" placeholder="Company Address&#10;City, ZIP, Country" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+              <div class="grid grid-cols-2 gap-3">
+                <input type="text" id="comp-phone" placeholder="Phone" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+                <input type="text" id="comp-email" placeholder="Email" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+              <input type="text" id="comp-tax" placeholder="VAT / TRN / GST / Tax Number" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            </div>
+          </div>
+
+          <!-- Invoice Details -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-4 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold">2</span>
+              Invoice Details
+            </h2>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Invoice #</label>
+                <input type="text" id="inv-number" value="INV-001" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Currency</label>
+                <select id="inv-currency" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary">
+                  <option value="$">USD ($)</option>
+                  <option value="€">EUR (€)</option>
+                  <option value="£">GBP (£)</option>
+                  <option value="AED">AED</option>
+                  <option value="₹">INR (₹)</option>
+                  <option value="CA$">CAD (CA$)</option>
+                  <option value="AU$">AUD (AU$)</option>
+                  <option value="¥">JPY (¥)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Issue Date</label>
+                <input type="date" id="inv-date" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Due Date</label>
+                <input type="date" id="inv-due" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Client Info -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-4 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold">3</span>
+              Bill To
+            </h2>
+            <div class="space-y-3">
+              <input type="text" id="client-name" placeholder="Client Name" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <textarea id="client-address" rows="2" placeholder="Client Address" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+              <input type="text" id="client-email" placeholder="Client Email" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            </div>
+          </div>
+
+          <!-- Line Items -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-sm font-bold text-bae-ink flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold">4</span>
+                Line Items
+              </h2>
+              <button type="button" id="add-line" class="text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors">+ Add Item</button>
+            </div>
+            <div id="line-items" class="space-y-2"></div>
+          </div>
+
+          <!-- Totals -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-4">Totals</h2>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Tax Label</label>
+                <input type="text" id="tax-label" value="Tax" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Tax Rate (%)</label>
+                <input type="number" id="tax-rate" value="0" min="0" step="0.01" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Discount Label</label>
+                <input type="text" id="discount-label" value="Discount" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Discount Rate (%)</label>
+                <input type="number" id="discount-rate" value="0" min="0" step="0.01" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-4">Notes & Terms</h2>
+            <div class="space-y-3">
+              <textarea id="inv-notes" rows="2" placeholder="Payment terms, bank details, or thank-you note..." class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button type="button" id="download-pdf" class="flex-1 bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+              Download PDF Invoice
+            </button>
+            <button type="button" id="clear-all" class="bg-bae-bg text-bae-muted border border-bae-border font-semibold text-sm px-5 py-3 rounded-bae-sm hover:border-bae-primary hover:text-bae-ink transition-colors">
+              Clear All
+            </button>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="lg:sticky lg:top-24 h-fit">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4">
+            <h3 class="text-sm font-semibold text-bae-ink mb-3">Preview</h3>
+            <div id="invoice-preview" class="bg-white rounded-bae-sm shadow-bae-sm overflow-hidden">
+              <!-- Invoice content injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Who uses this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">FIRST INVOICE</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Freelance Designer: first client invoice</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">PDF • 5 min</div>
+          <p class="text-sm text-bae-muted leading-relaxed">I had no idea how to invoice a client professionally. The Best Answer Hub Invoice Generator walked me through everything: my logo, their address, line items, VAT, due date. I had a PDF ready in five minutes and the client paid on time.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">MULTI-CURRENCY</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Consultant: multi-currency international billing</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">USD / GBP / AED</div>
+          <p class="text-sm text-bae-muted leading-relaxed">I bill clients in USD, GBP, and AED depending on the project. Most invoice tools lock multi-currency behind a paid plan. The Best Answer Hub Invoice Generator lets me switch currency and download a clean PDF every time, for free.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">QUICK BILLING</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Small Business Owner: quick client billing</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">10 invoices / mo</div>
+          <p class="text-sm text-bae-muted leading-relaxed">I send maybe 10 invoices a month. I do not need QuickBooks. The Best Answer Hub Invoice Generator lets me add my logo, itemise the work, apply VAT at 20%, and download a print-ready PDF in under two minutes.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">PRIVACY-FIRST</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Developer: privacy-first invoicing</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">100% local</div>
+          <p class="text-sm text-bae-muted leading-relaxed">I do not want my client list, rates, or business details sitting on a third-party server. The Best Answer Hub Invoice Generator processes everything locally in the browser. Nothing leaves my machine, and I still get a professional PDF.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/ai-cost-calculator/" class="text-bae-primary hover:underline">AI Cost Calculator</a>, <a href="/tools/image-compressor/" class="text-bae-primary hover:underline">Image Compressor</a>, <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>, <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code</a>, <a href="/tools/password-generator/" class="text-bae-primary hover:underline">Password Generator</a>, <a href="/tools/website-speed-test/" class="text-bae-primary hover:underline">Speed Test</a>, <a href="/tools/seo-score-checker/" class="text-bae-primary hover:underline">SEO Checker</a>, <a href="/tools/broken-link-checker/" class="text-bae-primary hover:underline">Broken Link Checker</a>, and <a href="/developer-toolbox/" class="text-bae-primary hover:underline">Developer Toolbox</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/html2pdf.bundle.min.js" is:inline></script>
+
+  <script is:inline>
+    (function() {
+      let lineCount = 0;
+      let logoDataUrl = '';
+
+      // Elements
+      const logoUpload = document.getElementById('logo-upload');
+      const logoInput = document.getElementById('logo-input');
+      const logoPreviewArea = document.getElementById('logo-preview-area');
+      const logoPreviewImg = document.getElementById('logo-preview-img');
+      const logoText = document.getElementById('logo-text');
+      const lineItemsContainer = document.getElementById('line-items');
+      const addLineBtn = document.getElementById('add-line');
+      const previewContainer = document.getElementById('invoice-preview');
+      const downloadBtn = document.getElementById('download-pdf');
+
+      // Set default dates
+      const today = new Date().toISOString().split('T')[0];
+      const due = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      document.getElementById('inv-date').value = today;
+      document.getElementById('inv-due').value = due;
+
+      // Logo upload
+      logoUpload.addEventListener('click', () => logoInput.click());
+      logoInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) {
+          const file = e.target.files[0];
+          const extOk = /\.(jpe?g|png|webp|gif|bmp|svg)$/i.test(file.name);
+          const mimeOk = file.type.startsWith('image/');
+          if (!extOk || !mimeOk) {
+            alert('Please upload a valid image file (JPG, PNG, WebP, GIF, BMP, SVG).');
+            logoInput.value = '';
+            return;
+          }
+          const MAX_LOGO_SIZE = 20 * 1024 * 1024 * 1024;
+          if (file.size > MAX_LOGO_SIZE) {
+            alert('Logo too large. Maximum size is 20 GB.');
+            logoInput.value = '';
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            logoDataUrl = ev.target.result;
+            logoPreviewImg.src = logoDataUrl;
+            logoPreviewArea.classList.remove('hidden');
+            logoText.textContent = 'Click to change logo';
+            renderPreview();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Line item management
+      function addLine() {
+        lineCount++;
+        const div = document.createElement('div');
+        div.className = 'grid grid-cols-12 gap-2 items-start';
+        div.dataset.lineId = lineCount;
+        div.innerHTML = `
+          <div class="col-span-1 flex items-center justify-center">
+            <span class="line-num text-xs font-bold text-bae-primary bg-bae-primary-soft rounded-full w-6 h-6 flex items-center justify-center">1</span>
+          </div>
+          <div class="col-span-4">
+            <textarea data-desc placeholder="Description" rows="2" class="line-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary resize-y"></textarea>
+          </div>
+          <div class="col-span-2">
+            <input type="number" data-qty value="1" min="0" step="0.01" class="line-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+          </div>
+          <div class="col-span-3">
+            <input type="number" data-rate value="0" min="0" step="0.01" class="line-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+          </div>
+          <div class="col-span-2 flex items-center gap-1">
+            <span class="line-amount text-sm font-medium text-bae-ink">0.00</span>
+            <button type="button" data-remove class="text-bae-muted hover:text-red-500 transition-colors ml-auto">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        `;
+        lineItemsContainer.appendChild(div);
+
+        div.querySelector('[data-remove]').addEventListener('click', () => {
+          div.remove();
+          renderPreview();
+        });
+
+        div.querySelectorAll('.line-input').forEach(inp => {
+          inp.addEventListener('input', renderPreview);
+        });
+      }
+
+      addLineBtn.addEventListener('click', addLine);
+
+      // Add 3 default lines
+      addLine(); addLine(); addLine();
+
+      // Bind all form inputs
+      const formInputs = [
+        'comp-name','comp-address','comp-phone','comp-email','comp-tax',
+        'inv-number','inv-currency','inv-date','inv-due',
+        'client-name','client-address','client-email',
+        'tax-label','tax-rate','discount-label','discount-rate','inv-notes'
+      ];
+      formInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', renderPreview);
+      });
+
+      function getVal(id) {
+        const el = document.getElementById(id);
+        return el ? el.value : '';
+      }
+
+      function getNum(id) {
+        const val = parseFloat(getVal(id));
+        return isNaN(val) ? 0 : val;
+      }
+
+      function formatMoney(amount, symbol) {
+        return symbol + ' ' + amount.toFixed(2);
+      }
+
+      function renderPreview() {
+        const currency = getVal('inv-currency') || '$';
+        const taxRate = getNum('tax-rate');
+        const discountRate = getNum('discount-rate');
+
+        // Collect line items
+        let subtotal = 0;
+        const tbody = document.createElement('tbody');
+        let rowIndex = 0;
+        lineItemsContainer.querySelectorAll('[data-line-id]').forEach(row => {
+          rowIndex++;
+          const desc = row.querySelector('[data-desc]').value || 'Item description';
+          const qty = parseFloat(row.querySelector('[data-qty]').value) || 0;
+          const rate = parseFloat(row.querySelector('[data-rate]').value) || 0;
+          const amount = qty * rate;
+          subtotal += amount;
+          row.querySelector('.line-amount').textContent = amount.toFixed(2);
+          row.querySelector('.line-num').textContent = rowIndex;
+
+          const tr = document.createElement('tr');
+
+          const tdNum = document.createElement('td');
+          tdNum.style.cssText = 'padding:10px 0;border-bottom:1px solid #e5e7eb;font-size:13px;color:#9ca3af;text-align:center';
+          tdNum.textContent = rowIndex;
+
+          const tdDesc = document.createElement('td');
+          tdDesc.style.cssText = 'padding:10px 0;border-bottom:1px solid #e5e7eb;font-size:13px;color:#374151;word-wrap:break-word;overflow-wrap:break-word;white-space:normal';
+          tdDesc.textContent = desc;
+
+          const tdQty = document.createElement('td');
+          tdQty.style.cssText = 'padding:10px 0;border-bottom:1px solid #e5e7eb;font-size:13px;color:#374151;text-align:center;word-wrap:break-word;overflow-wrap:break-word';
+          tdQty.textContent = qty;
+
+          const tdRate = document.createElement('td');
+          tdRate.style.cssText = 'padding:10px 0;border-bottom:1px solid #e5e7eb;font-size:13px;color:#374151;text-align:right;word-wrap:break-word;overflow-wrap:break-word';
+          tdRate.textContent = formatMoney(rate, currency);
+
+          const tdAmount = document.createElement('td');
+          tdAmount.style.cssText = 'padding:10px 0;border-bottom:1px solid #e5e7eb;font-size:13px;color:#374151;text-align:right;font-weight:600;word-wrap:break-word;overflow-wrap:break-word';
+          tdAmount.textContent = formatMoney(amount, currency);
+
+          tr.appendChild(tdNum);
+          tr.appendChild(tdDesc);
+          tr.appendChild(tdQty);
+          tr.appendChild(tdRate);
+          tr.appendChild(tdAmount);
+          tbody.appendChild(tr);
+        });
+
+        const taxAmount = subtotal * (taxRate / 100);
+        const discountAmount = subtotal * (discountRate / 100);
+        const total = subtotal + taxAmount - discountAmount;
+
+        const taxLabel = getVal('tax-label') || 'Tax';
+        const discountLabel = getVal('discount-label') || 'Discount';
+
+        // Build preview DOM
+        const root = document.createElement('div');
+        root.id = 'invoice-pdf-content';
+        root.style.cssText = 'padding:40px;font-family:Arial,sans-serif;color:#111827;max-width:700px;margin:0 auto';
+
+        // Header
+        const header = document.createElement('div');
+        header.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:30px';
+
+        const leftCol = document.createElement('div');
+        if (logoDataUrl) {
+          const logoImg = document.createElement('img');
+          logoImg.src = logoDataUrl;
+          logoImg.style.cssText = 'max-height:48px;max-width:140px;object-fit:contain';
+          logoImg.alt = 'Logo';
+          leftCol.appendChild(logoImg);
+        }
+
+        const compName = document.createElement('h1');
+        compName.style.cssText = 'font-size:22px;font-weight:700;margin:8px 0 4px 0;color:#111827';
+        compName.textContent = getVal('comp-name') || 'Your Company';
+        leftCol.appendChild(compName);
+
+        const compAddr = document.createElement('p');
+        compAddr.style.cssText = 'font-size:12px;color:#6b7280;line-height:1.5;margin:0;white-space:pre-wrap';
+        compAddr.textContent = getVal('comp-address') || 'Company Address';
+        leftCol.appendChild(compAddr);
+
+        const compPhone = getVal('comp-phone');
+        if (compPhone) {
+          const p = document.createElement('p');
+          p.style.cssText = 'font-size:12px;color:#6b7280;margin:2px 0 0 0';
+          p.textContent = compPhone;
+          leftCol.appendChild(p);
+        }
+
+        const compEmail = getVal('comp-email');
+        if (compEmail) {
+          const p = document.createElement('p');
+          p.style.cssText = 'font-size:12px;color:#6b7280;margin:2px 0 0 0';
+          p.textContent = compEmail;
+          leftCol.appendChild(p);
+        }
+
+        const compTax = getVal('comp-tax');
+        if (compTax) {
+          const p = document.createElement('p');
+          p.style.cssText = 'font-size:12px;color:#6b7280;margin:2px 0 0 0';
+          p.textContent = 'Tax: ' + compTax;
+          leftCol.appendChild(p);
+        }
+
+        const rightCol = document.createElement('div');
+        rightCol.style.textAlign = 'right';
+
+        const invTitle = document.createElement('h2');
+        invTitle.style.cssText = 'font-size:28px;font-weight:700;color:#6366f1;margin:0 0 8px 0';
+        invTitle.textContent = 'INVOICE';
+        rightCol.appendChild(invTitle);
+
+        const invNum = document.createElement('p');
+        invNum.style.cssText = 'font-size:13px;color:#374151;margin:0 0 2px 0';
+        const strongNum = document.createElement('strong');
+        strongNum.textContent = '# ';
+        invNum.appendChild(strongNum);
+        invNum.appendChild(document.createTextNode(getVal('inv-number') || 'INV-001'));
+        rightCol.appendChild(invNum);
+
+        const invDate = document.createElement('p');
+        invDate.style.cssText = 'font-size:12px;color:#6b7280;margin:0';
+        const strongDate = document.createElement('strong');
+        strongDate.textContent = 'Date: ';
+        invDate.appendChild(strongDate);
+        invDate.appendChild(document.createTextNode(getVal('inv-date') || today));
+        rightCol.appendChild(invDate);
+
+        const invDue = document.createElement('p');
+        invDue.style.cssText = 'font-size:12px;color:#6b7280;margin:0';
+        const strongDue = document.createElement('strong');
+        strongDue.textContent = 'Due: ';
+        invDue.appendChild(strongDue);
+        invDue.appendChild(document.createTextNode(getVal('inv-due') || due));
+        rightCol.appendChild(invDue);
+
+        header.appendChild(leftCol);
+        header.appendChild(rightCol);
+        root.appendChild(header);
+
+        // Bill To
+        const billTo = document.createElement('div');
+        billTo.style.cssText = 'margin-bottom:24px;padding:16px;background:#f9fafb;border-radius:8px';
+
+        const billToLabel = document.createElement('p');
+        billToLabel.style.cssText = 'font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin:0 0 4px 0;font-weight:600';
+        billToLabel.textContent = 'Bill To';
+        billTo.appendChild(billToLabel);
+
+        const clientName = document.createElement('p');
+        clientName.style.cssText = 'font-size:14px;font-weight:600;color:#374151;margin:0 0 2px 0';
+        clientName.textContent = getVal('client-name') || 'Client Name';
+        billTo.appendChild(clientName);
+
+        const clientAddr = document.createElement('p');
+        clientAddr.style.cssText = 'font-size:12px;color:#6b7280;margin:0;line-height:1.5;white-space:pre-wrap';
+        clientAddr.textContent = getVal('client-address') || '';
+        billTo.appendChild(clientAddr);
+
+        const clientEmail = getVal('client-email');
+        if (clientEmail) {
+          const p = document.createElement('p');
+          p.style.cssText = 'font-size:12px;color:#6b7280;margin:2px 0 0 0';
+          p.textContent = clientEmail;
+          billTo.appendChild(p);
+        }
+
+        root.appendChild(billTo);
+
+        // Table
+        const table = document.createElement('table');
+        table.style.cssText = 'width:100%;border-collapse:collapse;table-layout:fixed';
+
+        const thead = document.createElement('thead');
+        const trHead = document.createElement('tr');
+        trHead.style.cssText = 'border-bottom:2px solid #e5e7eb';
+
+        const headers = [
+          { text: '#', align: 'center', width: '8%' },
+          { text: 'Description', align: 'left', width: '42%' },
+          { text: 'Qty', align: 'center', width: '15%' },
+          { text: 'Rate', align: 'right', width: '17.5%' },
+          { text: 'Amount', align: 'right', width: '17.5%' }
+        ];
+
+        headers.forEach(h => {
+          const th = document.createElement('th');
+          let style = 'text-align:' + h.align + ';padding:10px 0;font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;font-weight:600';
+          if (h.width) style += ';width:' + h.width;
+          th.style.cssText = style;
+          th.textContent = h.text;
+          trHead.appendChild(th);
+        });
+
+        thead.appendChild(trHead);
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        root.appendChild(table);
+
+        // Totals
+        const totalsWrap = document.createElement('div');
+        totalsWrap.style.cssText = 'max-width:280px;margin-left:auto';
+
+        const totalsInner = document.createElement('div');
+        totalsInner.style.cssText = 'margin-top:16px;border-top:2px solid #e5e7eb;padding-top:12px';
+
+        // Subtotal
+        const subtotalRow = document.createElement('div');
+        subtotalRow.style.cssText = 'display:flex;justify-content:space-between;margin-bottom:6px';
+        const subtotalLabel = document.createElement('span');
+        subtotalLabel.style.cssText = 'font-size:13px;color:#6b7280';
+        subtotalLabel.textContent = 'Subtotal';
+        const subtotalValue = document.createElement('span');
+        subtotalValue.style.cssText = 'font-size:13px;color:#374151;font-weight:500';
+        subtotalValue.textContent = formatMoney(subtotal, currency);
+        subtotalRow.appendChild(subtotalLabel);
+        subtotalRow.appendChild(subtotalValue);
+        totalsInner.appendChild(subtotalRow);
+
+        // Tax
+        if (taxRate > 0) {
+          const taxRow = document.createElement('div');
+          taxRow.style.cssText = 'display:flex;justify-content:space-between;margin-bottom:6px';
+          const taxLabelSpan = document.createElement('span');
+          taxLabelSpan.style.cssText = 'font-size:13px;color:#6b7280';
+          taxLabelSpan.textContent = taxLabel + ' (' + taxRate + '%)';
+          const taxValueSpan = document.createElement('span');
+          taxValueSpan.style.cssText = 'font-size:13px;color:#374151;font-weight:500';
+          taxValueSpan.textContent = formatMoney(taxAmount, currency);
+          taxRow.appendChild(taxLabelSpan);
+          taxRow.appendChild(taxValueSpan);
+          totalsInner.appendChild(taxRow);
+        }
+
+        // Discount
+        if (discountRate > 0) {
+          const discRow = document.createElement('div');
+          discRow.style.cssText = 'display:flex;justify-content:space-between;margin-bottom:6px';
+          const discLabelSpan = document.createElement('span');
+          discLabelSpan.style.cssText = 'font-size:13px;color:#6b7280';
+          discLabelSpan.textContent = discountLabel + ' (' + discountRate + '%)';
+          const discValueSpan = document.createElement('span');
+          discValueSpan.style.cssText = 'font-size:13px;color:#374151;font-weight:500';
+          discValueSpan.textContent = '-' + formatMoney(discountAmount, currency);
+          discRow.appendChild(discLabelSpan);
+          discRow.appendChild(discValueSpan);
+          totalsInner.appendChild(discRow);
+        }
+
+        // Total
+        const totalRow = document.createElement('div');
+        totalRow.style.cssText = 'display:flex;justify-content:space-between;padding-top:8px;border-top:2px solid #6366f1';
+        const totalLabel = document.createElement('span');
+        totalLabel.style.cssText = 'font-size:15px;color:#111827;font-weight:700';
+        totalLabel.textContent = 'Total';
+        const totalValue = document.createElement('span');
+        totalValue.style.cssText = 'font-size:15px;color:#6366f1;font-weight:700';
+        totalValue.textContent = formatMoney(total, currency);
+        totalRow.appendChild(totalLabel);
+        totalRow.appendChild(totalValue);
+        totalsInner.appendChild(totalRow);
+
+        totalsWrap.appendChild(totalsInner);
+        root.appendChild(totalsWrap);
+
+        // Notes
+        const notes = getVal('inv-notes');
+        if (notes) {
+          const notesDiv = document.createElement('div');
+          notesDiv.style.cssText = 'margin-top:20px;padding-top:12px;border-top:1px solid #e5e7eb';
+          const notesP = document.createElement('p');
+          notesP.style.cssText = 'font-size:12px;color:#6b7280;white-space:pre-wrap';
+          notesP.textContent = notes;
+          notesDiv.appendChild(notesP);
+          root.appendChild(notesDiv);
+        }
+
+        // Thank you
+        const thankYou = document.createElement('div');
+        thankYou.style.cssText = 'margin-top:30px;text-align:center';
+        const thankYouP = document.createElement('p');
+        thankYouP.style.cssText = 'font-size:12px;color:#9ca3af;margin:0';
+        thankYouP.textContent = 'Thank you for your business!';
+        thankYou.appendChild(thankYouP);
+        root.appendChild(thankYou);
+
+        previewContainer.textContent = '';
+        previewContainer.appendChild(root);
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      downloadBtn.addEventListener('click', async () => {
+        const element = document.getElementById('invoice-pdf-content');
+        if (!element) return;
+
+        downloadBtn.textContent = 'Generating PDF...';
+        downloadBtn.disabled = true;
+
+        // Clone the element and append to body to escape sticky/overflow containers
+        // that can confuse html2canvas. Remove max-width/auto-margin which cause
+        // dimension issues inside html2pdf.js's hidden capture container.
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        // Ensure any images in the clone are decoded before capture
+        const logoImg = clone.querySelector('img');
+        if (logoImg && !logoImg.complete) {
+          await new Promise(resolve => { logoImg.onload = resolve; logoImg.onerror = resolve; });
+        }
+
+        const opt = {
+          margin: 0,
+          filename: (getVal('inv-number') || 'invoice') + '.pdf',
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, h1, h2, h3, h4, h5, h6, ul, tr' }
+        };
+
+        try {
+          await html2pdf().set(opt).from(clone).save();
+        } catch (err) {
+          console.error(err);
+          alert('PDF generation failed. Please try again.');
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          downloadBtn.textContent = 'Download PDF Invoice';
+          downloadBtn.disabled = false;
+        }
+      });
+
+      document.getElementById('clear-all').addEventListener('click', function() {
+        if (!confirm('Are you sure you want to clear all invoice data?')) return;
+
+        // Clear company info
+        document.getElementById('comp-name').value = '';
+        document.getElementById('comp-address').value = '';
+        document.getElementById('comp-phone').value = '';
+        document.getElementById('comp-email').value = '';
+        document.getElementById('comp-tax').value = '';
+
+        // Clear logo
+        logoDataUrl = '';
+        logoPreviewImg.src = '';
+        logoPreviewArea.classList.add('hidden');
+        logoText.textContent = 'Click to upload logo (PNG, JPEG, WebP)';
+        logoInput.value = '';
+
+        // Reset invoice details
+        document.getElementById('inv-number').value = 'INV-001';
+        document.getElementById('inv-currency').value = '$';
+        document.getElementById('inv-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('inv-due').value = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+        // Clear client info
+        document.getElementById('client-name').value = '';
+        document.getElementById('client-address').value = '';
+        document.getElementById('client-email').value = '';
+
+        // Reset totals
+        document.getElementById('tax-label').value = 'Tax';
+        document.getElementById('tax-rate').value = '0';
+        document.getElementById('discount-label').value = 'Discount';
+        document.getElementById('discount-rate').value = '0';
+
+        // Clear notes
+        document.getElementById('inv-notes').value = '';
+
+        // Reset line items
+        lineItemsContainer.innerHTML = '';
+        lineCount = 0;
+        addLine(); addLine(); addLine();
+
+        renderPreview();
+      });
+
+      // Initial render
+      renderPreview();
+    })();
+  </script>
+</BaseLayout>

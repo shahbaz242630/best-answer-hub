@@ -1,0 +1,123 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { SEOProps } from '../types';
+import { formatDate, estimateReadTime } from '../lib/seo';
+
+interface Props {
+  seo: SEOProps;
+  frontmatter: {
+    title: string;
+    category: string;
+    lastUpdated: string;
+    publishedDate: string;
+    author?: string;
+    topPick?: string;
+    budgetPick?: string;
+    beginnerPick?: string;
+    premiumPick?: string;
+    products?: string[];
+    readTime?: number;
+  };
+}
+
+const { seo, frontmatter } = Astro.props;
+
+const readTime = frontmatter.readTime || estimateReadTime(await Astro.slots.render('default'));
+---
+
+<BaseLayout seo={seo}>
+  <article class="py-12 md:py-16" itemscope itemtype="https://schema.org/Article">
+    <div class="container max-w-content mx-auto px-6">
+      <!-- Article Header -->
+      <header class="mb-10">
+        <div class="flex items-center gap-3 mb-4 text-sm text-bae-muted">
+          <span class="text-bae-primary font-semibold">{frontmatter.category}</span>
+          <span>·</span>
+          <time itemprop="datePublished" datetime={frontmatter.publishedDate}>
+            {formatDate(frontmatter.publishedDate)}
+          </time>
+          <span>·</span>
+          <span>{readTime} min read</span>
+        </div>
+        
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-bae-ink leading-tight mb-4" itemprop="headline">
+          {frontmatter.title}
+        </h1>
+        
+        <p class="text-lg text-bae-muted leading-relaxed mb-6" itemprop="description">
+          {seo.description}
+        </p>
+        
+        <!-- Affiliate Disclosure -->
+        <div class="bg-bae-primary-soft border border-bae-border rounded-bae-sm p-4 mb-8">
+          <p class="text-sm text-bae-muted">
+            <strong class="text-bae-ink">Affiliate Disclosure:</strong> We may earn a commission if you buy through links on this page. 
+            This does not affect our recommendations. <a href="/affiliate-disclosure/" class="text-bae-primary hover:underline">Learn more</a>.
+          </p>
+        </div>
+        
+        <!-- Quick Picks Bar -->
+        {(frontmatter.topPick || frontmatter.budgetPick || frontmatter.beginnerPick || frontmatter.premiumPick) && (
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+            {frontmatter.topPick && (
+              <div class="bg-bae-card border border-bae-border rounded-bae-sm p-3 text-center">
+                <span class="text-xs text-bae-muted uppercase font-semibold tracking-wider">Best Overall</span>
+                <p class="font-semibold text-bae-ink text-sm mt-1">{frontmatter.topPick}</p>
+              </div>
+            )}
+            {frontmatter.budgetPick && (
+              <div class="bg-bae-card border border-bae-border rounded-bae-sm p-3 text-center">
+                <span class="text-xs text-bae-muted uppercase font-semibold tracking-wider">Best Budget</span>
+                <p class="font-semibold text-bae-ink text-sm mt-1">{frontmatter.budgetPick}</p>
+              </div>
+            )}
+            {frontmatter.beginnerPick && (
+              <div class="bg-bae-card border border-bae-border rounded-bae-sm p-3 text-center">
+                <span class="text-xs text-bae-muted uppercase font-semibold tracking-wider">Best for Beginners</span>
+                <p class="font-semibold text-bae-ink text-sm mt-1">{frontmatter.beginnerPick}</p>
+              </div>
+            )}
+            {frontmatter.premiumPick && (
+              <div class="bg-bae-card border border-bae-border rounded-bae-sm p-3 text-center">
+                <span class="text-xs text-bae-muted uppercase font-semibold tracking-wider">Best Premium</span>
+                <p class="font-semibold text-bae-ink text-sm mt-1">{frontmatter.premiumPick}</p>
+              </div>
+            )}
+          </div>
+        )}
+        
+        <!-- Last Updated -->
+        <div class="flex items-center gap-2 text-sm text-bae-muted">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Last updated: <time itemprop="dateModified" datetime={frontmatter.lastUpdated}>{formatDate(frontmatter.lastUpdated)}</time></span>
+        </div>
+      </header>
+      
+      <!-- Article Body -->
+      <div class="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-bae-ink prose-headings:font-bold prose-p:text-bae-fg prose-p:leading-relaxed prose-a:text-bae-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-bae-ink prose-li:text-bae-fg prose-blockquote:border-l-bae-primary prose-blockquote:bg-bae-primary-soft prose-blockquote:py-2 prose-blockquote:px-4 prose-blockquote:rounded-r-bae-sm">
+        <slot />
+      </div>
+      
+      <!-- Products Mentioned -->
+      {frontmatter.products && frontmatter.products.length > 0 && (
+        <div class="mt-12 pt-8 border-t border-bae-border">
+          <h2 class="font-serif text-xl font-bold text-bae-ink mb-4">Products mentioned in this guide</h2>
+          <div class="flex flex-wrap gap-2">
+            {frontmatter.products.map((product) => (
+              <span class="inline-flex items-center gap-2 bg-bae-card border border-bae-border rounded-full px-4 py-2 text-sm font-medium text-bae-fg">
+                {product.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      <!-- Back to Best Picks -->
+      <div class="mt-8 pt-8 border-t border-bae-border">
+        <a href="/best/" class="inline-flex items-center gap-2 text-bae-primary font-semibold hover:underline">
+          ← Back to Best Picks
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

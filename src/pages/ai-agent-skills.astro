@@ -1,0 +1,203 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolHero from '../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../components/tools/ToolRelatedCTA.astro';
+
+const today = '2026-10-08T00:00:00+00:00';
+// Real content change: the video pack card and FAQs after the 8 Oct 2026 upgrade + free offer.
+const updated = '2026-10-08T00:00:00+00:00';
+
+const packs = [
+  {
+    href: '/ai-agent-skills/video-voiceover/',
+    badge: 'Video & Voice · $99 one-time',
+    title: 'AI Video & Voice-Over Skill Pack',
+    description: 'Five skills that carry a topic from research to a finished, narrated, animated video. Source-checked research, a script built in the shape of videos that already work, a local voice, an animation kit with a 9:16 reel of every video, and the upload package at the end.',
+    meta: '5 skills • runs locally, no GPU • works best with Claude Code • $99 one-time',
+    icon: '🎬',
+    live: true,
+  },
+  {
+    href: '/ai-agent-skills/research-report/',
+    badge: 'Research',
+    title: 'Research & Report Skill Pack',
+    description: 'Turn a question into a sourced, structured report: parallel research passes, source grading, primary-source chasing, and a formatted document where anything unverifiable is cut rather than hedged.',
+    meta: 'Research → verify → document',
+    icon: '🔍',
+    live: false,
+  },
+  {
+    href: '/ai-agent-skills/social-content/',
+    badge: 'Social',
+    title: 'Social Content Skill Pack',
+    description: 'Repurpose one long-form asset into platform-shaped posts: short-form cuts, carousels, and captions, each built to the aspect ratio and length the platform actually rewards.',
+    meta: 'One asset → many formats',
+    icon: '📣',
+    live: false,
+  },
+];
+
+const steps = [
+  { title: 'Buy the pack and download the folder', description: 'Checkout runs through Paddle, the merchant of record. The download is a plain folder of Markdown instructions and scripts, readable in any text editor before a single line of it runs.' },
+  { title: 'Point your agent at the folder', description: 'Unzip it anywhere and tell your AI agent to install the skills from that folder. It puts them where they belong itself. Nothing to configure, no paths to edit, no restart.' },
+  { title: 'Run the setup skill, then the pipeline', description: 'Setup installs the packages and proves the install by speaking a real sentence and rendering a real frame. After that: research, script, narration, picture, render, upload package, each pausing for review.' },
+];
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub AI Agent Skills hub?',
+    a: 'Best Answer Hub AI Agent Skills is a catalogue of ready-made skill packs for AI coding agents. Each pack is a folder of instructions and scripts that turns a repeatable job, such as producing a narrated video, into a few commands. Packs are one-time purchases with no subscription attached, and they sit alongside the free <a href="/tools/">Best Answer Hub tools</a> and the <a href="/knowledge-center/">Knowledge Center assessments</a>.',
+  },
+  {
+    q: 'What is an agent skill, and how is it different from a prompt or a template pack?',
+    a: 'Every Best Answer Hub AI Agent Skills pack ships as an agent skill: a folder holding a SKILL.md file, with YAML frontmatter naming the skill and Markdown instructions underneath. A prompt vanishes when the chat closes and a template still has to be filled in by hand, while a skill stays installed and loads itself whenever the job comes up. Agent Skills is an open standard, so a skill written once is portable rather than tied to one chat window.',
+  },
+  {
+    q: 'Which AI agents do these packs work with?',
+    a: 'Any agent that reads the Agent Skills standard. Best Answer Hub AI Agent Skills packs are plain Markdown and scripts in the published format, so an agent that supports skills can load them. The AI Video & Voice-Over pack is proven on Claude Code, and also loads in Claude Desktop and Cowork. Because it renders video, it needs an agent that can run scripts on your own machine rather than one confined to a sandbox with no network access.',
+  },
+  {
+    q: 'Do I need a paid plan for the agent itself?',
+    a: 'Usually yes, and that is separate from this purchase. A Best Answer Hub AI Agent Skills pack is bought once and used on whichever agent and plan you already hold. Anthropic\'s documentation states that Claude Code requires a Pro, Max, Team, Enterprise or Console account, with the free Claude plan excluded. As of August 2026 Claude Pro is listed at $20 a month billed monthly, or $17 a month billed annually.',
+  },
+  {
+    q: 'How do I install a skill pack after buying it?',
+    a: 'Unzip the folder anywhere on your machine and point your AI agent at it. Ask it to install the skills from that folder and it handles the rest, putting each one where that agent keeps its skills. There are no paths to edit by hand, no config file, and no restart. A Best Answer Hub AI Agent Skills pack is a normal folder, so it can also be dropped into a project so a whole team picks it up.',
+  },
+  {
+    q: 'Is it safe to install a third-party skill pack?',
+    a: 'Treat every skill pack as code, because it is: each Best Answer Hub AI Agent Skills pack ships as plain readable Markdown and scripts, with nothing compiled and nothing obfuscated, so the whole pack can be read before it is ever run. Anthropic warns that skills and plugins can execute code on your machine with your user privileges, and recommends installing only from trusted sources and auditing the bundled files first. That advice applies here too.',
+  },
+  {
+    q: 'Do I need to know how to code to use an agent skill pack?',
+    a: 'No. Using a Best Answer Hub AI Agent Skills pack means downloading a folder, pointing your agent at it, and asking for the job you want done. The agent does the reading, the file handling and the tool calls. Comfort with a terminal window helps, because most coding agents run there, but nothing in the pack has to be edited or written by hand.',
+  },
+  {
+    q: 'What is actually inside the AI Video and Voice-Over pack?',
+    a: 'Five skills, plus the runtime they drive. The Best Answer Hub AI Video & Voice-Over Skill Pack contains pack-setup, which installs the studio and proves it works; research-engine, which gathers and verifies the facts; video-script-writer, which rebuilds the shape of proven reference videos with your own facts; video-making, which owns the animation kit, the 9:16 reel and the render; and video-publishing, which produces the thumbnail, title, description, computed chapters and captions.',
+  },
+  {
+    q: 'What do I get when I buy a skill pack, and how is it delivered?',
+    a: 'A download, immediately after payment. Every Best Answer Hub AI Agent Skills pack is a folder of Markdown instruction files and the scripts they drive, delivered as a single zip with no installer and no license key to activate. Each pack page lists its own system requirements, because what a pack needs depends on what it does: writing needs nothing beyond the agent, while rendering video needs a working Python and Node.',
+  },
+  {
+    q: 'Can I edit a skill pack after buying it?',
+    a: 'Yes, and that is part of the point. A Best Answer Hub AI Agent Skills pack is plain Markdown, so the house rules inside it can be rewritten to match how you actually work: change the tone, swap a default, add a step your process needs. The agent reads whatever the file says. Nothing is compiled, locked, or hidden behind a license check.',
+  },
+  {
+    q: 'Does the voice-over cost extra, or need an API key?',
+    a: 'Neither. The Best Answer Hub AI Video & Voice-Over Skill Pack narrates with local speech models that run on your own processor: no account, no API key, no per-minute billing, and the text never leaves the machine. The house voice, alba, voiced by Alba MacKenna for Kyutai’s Pocket TTS, is CC BY 4.0 and clear for commercial use with a credit line, naming both, that the pack writes; the Kokoro-82M baseline is Apache-2.0 with 54 voices. Cloning a real person\'s voice is not part of the pack, and should never be done without that person\'s documented consent.',
+  },
+  {
+    q: 'Why pay $99 once when video tools start at around $29 a month?',
+    a: 'The Best Answer Hub AI Video & Voice-Over Skill Pack is a one-time $99 purchase that keeps working with no renewal. For comparison, as of August 2026 Synthesia lists Starter at $29 a month, HeyGen lists Creator at $29 a month, Pictory lists Starter at $29 a month, and Descript lists Creator at $24 a month. A single one of those passes $99 inside four months, and this pipeline runs on your own machine with your own files. For a wider view of what is worth a recurring bill, see <a href="/playbooks/ai-tools-worth-paying-for/">which AI tools are worth paying for</a>.',
+  },
+  {
+    q: 'Can I sell the videos, and does the animation engine need its own license?',
+    a: 'Videos made with the Best Answer Hub AI Video & Voice-Over Skill Pack are yours to use commercially, including for paying clients, with no royalty and no per-video fee. One condition sits outside this pack: the animation engine is Remotion, which is free for individuals, non-profits, and for-profit companies with up to three employees, while a for-profit company of four or more needs a paid Remotion company license. The pack states this at setup rather than after twenty videos exist. The skill files themselves cannot be resold or redistributed.',
+  },
+  {
+    q: 'Do I have to label AI-generated video on YouTube, TikTok and Instagram?',
+    a: 'It depends on what the video shows, and the blanket yes most pages give is wrong. YouTube requires disclosure when AI meaningfully alters or generates photorealistic content, and its own exemption list names cloning your own voice for voice overs or dubs, so synthetic narration over generated animation is not on that list. Meta is drafted more broadly and covers realistic-sounding generated audio. In the EU, Article 50 of the AI Act has applied since 2 August 2026. The Best Answer Hub AI Video & Voice-Over Skill Pack puts the check in its upload gate, so the call is made per video rather than forgotten.',
+  },
+  {
+    q: 'Can I get a refund on a downloadable skill pack?',
+    a: 'Checkout for Best Answer Hub AI Agent Skills runs through Paddle as merchant of record, and Paddle handles refunds under its published policy. Consumers in the UK, EU, EEA and Switzerland hold a 14-day statutory right to withdraw from digital content contracts, which is lost once the buyer expressly consents to immediate delivery and acknowledges losing that right, the mechanism set out in Regulation 37 of the UK Consumer Contracts Regulations 2013. That consent is collected at checkout before the download unlocks.',
+  },
+];
+
+const seo = {
+  title: 'AI Agent Skills: Skill Packs for Coding Agents (2026)',
+  description: 'Ready-made skill packs for AI coding agents, bought once. The AI Video and Voice-Over pack runs research, script, voice-over and render on your own machine.',
+  url: '/ai-agent-skills/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: updated,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'AI Agent Skills', url: '/ai-agent-skills/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Skill Packs for AI Coding Agents · One-Time Purchase"
+    title="AI Agent Skills:"
+    accentText="buy the workflow, not the subscription"
+    description="Ready-made skill packs that install by pointing your AI agent at a folder, turning a repeatable job into a repeatable command. Plain Markdown and scripts you can read before you run them, bought once, with no seat pricing and no monthly renewal."
+  />
+
+  <!-- Skill pack cards -->
+  <section class="py-6 md:py-8" aria-label="AI agent skill packs">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="skill-packs-grid">
+        {packs.map((item) => (
+          item.live ? (
+            <a href={item.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{item.badge}</span>
+                <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{item.icon}</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink mb-2">{item.title}</h2>
+              <p class="text-sm text-bae-muted line-clamp-3">{item.description}</p>
+              <p class="text-xs text-bae-muted mt-3 font-medium">{item.meta}</p>
+            </a>
+          ) : (
+            <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{item.badge}</span>
+                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink/70 mb-2">{item.title}</h2>
+              <p class="text-sm text-bae-muted/70 line-clamp-3">{item.description}</p>
+              <p class="text-xs text-bae-muted/60 mt-3 font-medium">{item.meta}</p>
+            </div>
+          )
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people build with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people build with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common uses from solo creators, small business owners, course builders, and in-house marketing teams.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Solo Creators</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Publish on a schedule without an editing suite</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Topic in, finished cut out</p>
+          <p class="text-sm text-bae-muted">The Best Answer Hub AI Video &amp; Voice-Over Skill Pack carries a topic through research, script, narration and assembly, so the slow middle of the process stops being the reason a video never ships. Every stage pauses for review, which means the script and the edit still sound like a person rather than a template.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Small Business Owners</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Replace a stack of monthly video subscriptions</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">$99 once, no seat pricing</p>
+          <p class="text-sm text-bae-muted">Explainers, product walkthroughs and onboarding clips usually mean a video subscription, a voice tool, and an editor. A one-time skill pack running through the AI agent you already pay for collapses that into software on your own machine, and the core pipeline has no recurring cost at all: the voice model is local and permissively licensed.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Course &amp; Content Builders</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Keep forty lessons looking like one course</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">One kit, every episode</p>
+          <p class="text-sm text-bae-muted">Consistency is what makes a library feel finished, and it is the first thing that slips across a long series. Because the animation kit lives inside the skill pack rather than in someone's memory, lesson forty is built from the same scenes, looks and pacing rules as lesson one.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Agencies &amp; In-House Teams</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Hand a process to the team, not a person</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Readable Markdown, editable steps</p>
+          <p class="text-sm text-bae-muted">A skill pack is a documented process that happens to be executable. Drop it into a project folder and every person on the team runs the same steps in the same order, and because it is plain Markdown the house rules can be edited straight into the file. Related reading: <a href="/playbooks/ai-agents-vs-automation/" class="text-bae-primary no-underline hover:underline">AI agents vs automation</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+</BaseLayout>

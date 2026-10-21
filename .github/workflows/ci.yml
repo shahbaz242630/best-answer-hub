@@ -1,0 +1,201 @@
+# CI + CD for www.bestanswerhub.com
+#
+# Every PR and every push to main: build exactly like a local build, run the
+# audits, scan for secrets. On push to main (after all checks pass): deploy
+# dist/ to Hostinger over FTPS and ping IndexNow for pages whose HTML changed.
+#
+# This repo is public. Paid products, the payment bouncer (paddle-server/),
+# PDF sources and internal docs are NOT in it and never touched by CI. The
+# bouncer is deployed manually from the owner's machine.
+#
+# Security posture:
+#   - every action pinned to a full commit SHA (Dependabot keeps them current)
+#   - workflow token is read-only; no job gets write scopes
+#   - FTP credentials live only in the `production` environment (main only)
+#   - the deploy job never runs install scripts (npm ci --ignore-scripts)
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 4 * * 1' # weekly: full-history secret scan + fresh dependency audit
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Build and audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      # PUBLIC_* values are publishable (they end up in the page HTML anyway),
+      # so they are repository variables, not secrets.
+      - name: Build
+        env:
+          PUBLIC_GA4_ID: ${{ vars.PUBLIC_GA4_ID }}
+          PUBLIC_GSC_VERIFICATION: ${{ vars.PUBLIC_GSC_VERIFICATION }}
+          PUBLIC_PADDLE_ENV: ${{ vars.PUBLIC_PADDLE_ENV }}
+          PUBLIC_PADDLE_CLIENT_TOKEN: ${{ vars.PUBLIC_PADDLE_CLIENT_TOKEN }}
+          PUBLIC_PADDLE_SMB_PRICE: ${{ vars.PUBLIC_PADDLE_SMB_PRICE }}
+          PUBLIC_PADDLE_AITEST_PRICE: ${{ vars.PUBLIC_PADDLE_AITEST_PRICE }}
+          PUBLIC_PADDLE_CAREER_PRICE: ${{ vars.PUBLIC_PADDLE_CAREER_PRICE }}
+          PUBLIC_PADDLE_VIBE_PRICE: ${{ vars.PUBLIC_PADDLE_VIBE_PRICE }}
+          PUBLIC_PADDLE_SKILLPACK_VIDEO_PRICE: ${{ vars.PUBLIC_PADDLE_SKILLPACK_VIDEO_PRICE }}
+        run: npm run build
+
+      # In CI, prebuild.mjs trusts the committed dates and must change nothing.
+      # A diff here means a page was committed without running the local build
+      # first (dates / publish registry / buy-gate snapshot are out of date).
+      - name: Committed build state is current
+        run: git diff --exit-code -- sitemap-dates.json page-published.json src/
+
+      - name: Site audit
+        run: npm run audit
+
+      - name: AI pricing calculator test
+        run: npm run test:pricing
+
+      # REPORT-ONLY for now: 26 pre-existing advisories (2026-10-21), mostly build-time
+      # tooling; the rest need the Astro 5->7 / Tailwind 3->4 majors. New high-severity
+      # dependencies are still blocked on PRs by the dependency-review job.
+      # Flip to blocking (drop continue-on-error) once the backlog is cleared.
+      - name: Dependency audit (production, high+, report-only)
+        continue-on-error: true
+        run: npm audit --omit=dev --audit-level=high
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist
+          path: dist/
+          include-hidden-files: true # keep .htaccess
+          retention-days: 7
+          if-no-files-found: error
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_CONFIG: .gitleaks.toml
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: false # public repo: never publish findings
+          GITLEAKS_ENABLE_COMMENTS: false
+
+  workflow-security:
+    name: Workflow security (zizmor)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          advanced-security: false # fail the job on findings instead of only uploading
+
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+
+  deploy:
+    name: Deploy to production
+    needs: [build, secrets, workflow-security]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://www.bestanswerhub.com
+    # Two deploys must never interleave (shared FTP target + state files).
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      # Only basic-ftp + dotenv are needed. No install scripts in a job holding secrets.
+      - name: Install (no scripts)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: dist
+          path: dist/
+
+      # Deploy + IndexNow baselines (content hashes). The newest cache wins;
+      # with none, the copies committed in the repo are the fallback seed.
+      - name: Restore deploy state
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .deploy-cache.json
+            .indexnow-state.json
+          key: deploy-state-${{ github.run_id }}
+          restore-keys: deploy-state-
+
+      - name: Deploy plan
+        run: node scripts/ci-deploy-plan.mjs
+
+      # Repo variable DEPLOY_ENABLED=true switches live deploys on. While it is
+      # unset, every run stops after the plan above (safe dry run).
+      - name: Upload to Hostinger and ping IndexNow
+        if: vars.DEPLOY_ENABLED == 'true'
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: node deploy.mjs
+
+      # Saved even after a failed upload: deploy.mjs records every file it
+      # finished, so the next run resumes instead of starting over.
+      - name: Save deploy state
+        if: always() && vars.DEPLOY_ENABLED == 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .deploy-cache.json
+            .indexnow-state.json
+          key: deploy-state-${{ github.run_id }}

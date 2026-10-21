@@ -1,0 +1,419 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RelatedPlaybooks from '../../components/playbooks/RelatedPlaybooks.astro';
+
+const today = '2026-09-14T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub AI Knowledge Test?', a: 'The Best Answer Hub AI Knowledge Test is a free, browser-based check of how much you really understand about AI. It serves 50 questions across five domains, then returns a 0 to 100 score and a level of Beginner, Intermediate or Advanced. There is no signup, no email capture, and no vendor agenda behind the result.' },
+  { q: 'How many AI researchers have quit over safety?', a: 'Ten have left a frontier laboratory and publicly cited safety since February 2024, by a count that requires each person\'s own words. The distribution is five in 2024, one in 2025 and four in 2026. Best Answer Hub verified each entry individually rather than relying on any existing list.' },
+  { q: 'Which AI lab has had the most safety departures?', a: 'OpenAI, by a clear margin. Six of the ten verified departures are from OpenAI, and until February 2026 every single one was. Anthropic accounts for three and Google DeepMind for one. Best Answer Hub counts only departures where the person publicly cited safety themselves.' },
+  { q: 'Did Ilya Sutskever quit OpenAI over safety?', a: 'Not by his own account. He left in May 2024 saying he was confident OpenAI would build AGI that is safe and beneficial, and that he was moving to a personally meaningful project. Best Answer Hub excludes him from the safety-departure count because his own words do not support it.' },
+  { q: 'What did Anthropic say about the resignations?', a: 'An unnamed spokesperson said the company builds models "with some of the strongest safeguards in the industry" and pointed to its interpretability research. Best Answer Hub notes the statement names no executive, names no researcher, and disputes no factual claim that was actually made.' },
+  { q: 'Did OpenAI respond to the resignation?', a: 'No source records OpenAI addressing it. TIME, NPR and Scientific American all reported that the company did not respond to requests for comment. Best Answer Hub treats that asymmetry as reportable in itself, since Anthropic did issue a statement and OpenAI did not.' },
+  { q: 'Does a safety resignation mean an AI lab is dangerous?', a: 'It is evidence about one person\'s judgment and an internal culture, not a measurement of a system. Anthropic\'s own July 2026 evaluation says its newest model does not cross its AI research automation threshold. Best Answer Hub presents both, because a resignation and a capability assessment answer different questions.' },
+  { q: 'What is the Right to Warn letter?', a: 'An open letter of 4 June 2024 signed by thirteen current and former OpenAI and Google DeepMind employees, seven by name and six anonymously, endorsed by Bengio, Hinton and Russell. Best Answer Hub treats it as stronger evidence of a pattern than any individual exit, because it is coordinated, signed and dated.' },
+  { q: 'What happened with OpenAI equity and non-disparagement?', a: 'In May 2024 reporting showed departing staff faced losing vested equity unless they signed a lifelong non-disparagement clause. OpenAI confirmed it would not enforce those terms and removed the language. Best Answer Hub notes Sam Altman said he had not known, while later-published documents carry authorizing signatures including his.' },
+  { q: 'Who are Joe Benton and Josh Engels?', a: 'Benton led a safety research team at Anthropic and Engels worked on Google DeepMind\'s AGI safety team. Both had recently left, went public on 10 September in separate interviews for the same NBC News report, and both joined the evaluations organization METR. Best Answer Hub counts this as one coordinated disclosure, not two.' },
+  { q: 'Has Anthropic changed its safety policy?', a: 'Its Responsible Scaling Policy has been through nine versions since September 2023, with version 3.0 in February 2026 a comprehensive rewrite. Best Answer Hub recommends comparing the commitment wording across versions directly, since the documents are public and dated and the changes are easy to verify.' },
+  { q: 'What is a capability threshold in AI safety?', a: 'It is a published level of capability at which a laboratory commits to additional safeguards or to stopping. Each lab defines its own. Best Answer Hub notes that no frontier lab publishing such a threshold for AI self-improvement has reported its newest model meeting it.' },
+  { q: 'Do AI labs have a way out of their safety commitments?', a: 'Both major frameworks contain conditions. OpenAI may adjust requirements if a rival ships a high-risk system without comparable safeguards, subject to stated checks. Anthropic says it cannot commit to its industry-wide recommendations unilaterally, and ties any coordinated pause to verification that others have slowed. Best Answer Hub regards these clauses as the substance of the race complaint.' },
+  { q: 'Is this the same as the Anthropic safety head who resigned in February?', a: 'That is a separate, earlier departure. Mrinank Sharma, an Anthropic AI safety lead, resigned in February 2026 writing that "the world is in peril." Best Answer Hub keeps the two apart, since headlines about an Anthropic safety head resigning usually refer to that February event.' },
+  { q: 'How can I judge AI safety claims for myself?', a: 'Ask whether a promise is a commitment or a goal, check the version and date of the document, find the escape clause, and look for the lab\'s own assessment of its newest model. The free <a href="/knowledge-center/ai-knowledge-test/">Best Answer Hub AI Knowledge Test</a> checks that kind of judgment in about 20 minutes.' },
+];
+
+const seo = {
+  title: 'Anthropic Researcher Quits: What It Means for AI Safety',
+  description: 'Ten frontier-lab staff have left publicly over safety since 2024. Their own words, the famous name that does not belong, and what the rules now say.',
+  url: '/playbooks/anthropic-researcher-quits-what-it-means/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Anthropic Researcher Quits: What It Means for AI Safety', url: '/playbooks/anthropic-researcher-quits-what-it-means/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead"><img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" /><span class="word">Best Answer Hub<i>.</i></span></div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · AI Knowledge</span>
+        <div class="cav">Let's look at the whole record</div>
+        <h1>Anthropic Researcher Quits: <em>What It Means for AI Safety</em></h1>
+        <p class="dek">Ten frontier-lab safety and research staff have now left publicly since 2024, three of them in one week. This is the documented record in their own words, the famous name that does not belong on the list and another that needs a caveat, and what the labs quietly changed in their own safety rules while it was happening.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~13 min read</span><span>Primary sources only</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">The record<small>ten departures, dated</small></div>
+          <div class="seg b2">The caveat<small>one misfit, one caveat</small></div>
+          <div class="seg b3">The documents<small>what the rules now say</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">10</div><div class="l">frontier-lab staff who have left publicly over safety since 2024</div><div class="src">Verified individually, see table</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">of them went public inside a single week in September 2026</div><div class="src">NBC News, Axios, 2026</div></div>
+      <div class="stat"><div class="n">9</div><div class="l">versions of Anthropic's Responsible Scaling Policy since September 2023</div><div class="src">Anthropic RSP update log</div></div>
+      <div class="stat"><div class="n">13</div><div class="l">people who signed the Right to Warn letter, named and anonymous</div><div class="src">righttowarn.ai, June 2024</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#happened">What happened</a>
+        <a href="#before">Has this happened before?</a>
+        <a href="#who">Who actually left over safety</a>
+        <a href="#notpattern">One misfit, one caveat</a>
+        <a href="#response">What the labs said</a>
+        <a href="#unsafe">Does it mean a lab is unsafe?</a>
+        <a href="#righttowarn">The Right to Warn letter</a>
+        <a href="#commitments">How to read a safety commitment</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead">A resignation is an anecdote. Ten of them, dated and quoted, is a record you can actually reason about. <strong>Since February 2024, ten people have left frontier AI laboratories and said publicly that safety was why. Three did it in one week in September 2026. One of the names most often added to that list does not belong on it, and another belongs only with a caveat. Getting those two right is what makes the rest credible.</strong></p>
+
+        <p>This guide from Best Answer Hub sets out the documented departures with each person's own words, separates the verified pattern from the assumed one, and then does the less comfortable part: reading what the laboratories' own safety documents said before and after. Every claim here is anchored to a primary source or a named byline. Where something is contested or unverified, it says so.</p>
+
+        <div class="cav">Start with the week itself</div>
+        <h2 id="happened">Anthropic researcher quits: what happened?</h2>
+
+        <p>On 8 September 2026 (US time), Jacob Coxon posted a seven-part thread announcing he had resigned from Anthropic that day, writing that Anthropic and OpenAI are "racing straight to self-improving superintelligence and gambling with our lives." He had been at Anthropic about four months, after roughly two years and eight months at OpenAI. The full text and the widely misreported ten percent figure are covered in the Best Answer Hub guide to <a href="/playbooks/why-jacob-coxon-resigned/">why Jacob Coxon resigned</a>.</p>
+
+        <p>Two days later, NBC News published interviews with two more researchers. Joe Benton had led a safety research team at Anthropic. Josh Engels had worked on Google DeepMind's AGI safety team. Both had recently left and chose that week to speak. Both joined METR, an independent AI evaluations organization.</p>
+
+        <table>
+          <thead><tr><th>Who</th><th>Lab and role</th><th>What they said</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Jacob Coxon<br><small>8 Sep, resigned same day</small></td><td>Anthropic, pretraining research, previously OpenAI</td><td>"Neither company is acting responsibly. They are racing straight to self-improving superintelligence and gambling with our lives."</td></tr>
+            <tr><td class="band">Joe Benton<br><small>10 Sep, recently left</small></td><td>Anthropic, led a safety research team</td><td>"I am worried that stuff might end up progressing too fast for us to get our act together in time."</td></tr>
+            <tr><td class="band">Josh Engels<br><small>10 Sep, recently left</small></td><td>Google DeepMind, AGI safety team</td><td>"There are no adults in the room. People are trying their best, but there is no one coming to save us."</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout"><div class="h">Be precise about what kind of event this was</div><p>Benton and Engels spoke to the same outlet on the same day. That is <b>one coordinated disclosure</b>, not two independent signals arriving by coincidence. Describing all three as a spontaneous wave overstates the evidence. Three frontier-lab researchers going public in one week is still unusual, and it is worth noting that two of the three moved to an evaluations organization rather than leaving the field.</p></div>
+
+        <div class="cav">The longer view</div>
+        <h2 id="before">Has this happened before at AI labs?</h2>
+
+        <p>Repeatedly, and mostly at OpenAI. Counting only people who left and publicly cited safety, the pattern runs <b>five departures in 2024, one in 2025, and four in 2026</b>. The 2024 cluster centered on OpenAI and the May 2024 break-up of its Superalignment team; the 2026 cluster is the one in progress.</p>
+
+        <div class="chart">
+          <div class="chart-title">Public safety departures from frontier AI labs, by year</div>
+          <svg viewBox="0 0 620 210" role="img" aria-label="Bar chart showing five public safety departures in 2024, one in 2025 and four in 2026">
+            <defs><linearGradient id="d1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <line x1="60" y1="165" x2="600" y2="165" stroke="#E1D4be" stroke-width="2"/>
+            <rect x="110" y="40" width="95" height="125" rx="4" fill="url(#d1)"/>
+            <rect x="275" y="140" width="95" height="25" rx="4" fill="url(#d1)"/>
+            <rect x="440" y="65" width="95" height="100" rx="4" fill="url(#d1)"/>
+            <text x="157" y="30" text-anchor="middle" font-family="'Bricolage Grotesque',sans-serif" font-size="22" font-weight="800" fill="#33302A">5</text>
+            <text x="322" y="130" text-anchor="middle" font-family="'Bricolage Grotesque',sans-serif" font-size="22" font-weight="800" fill="#33302A">1</text>
+            <text x="487" y="55" text-anchor="middle" font-family="'Bricolage Grotesque',sans-serif" font-size="22" font-weight="800" fill="#33302A">4</text>
+            <text x="157" y="186" text-anchor="middle" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">2024</text>
+            <text x="322" y="186" text-anchor="middle" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">2025</text>
+            <text x="487" y="186" text-anchor="middle" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">2026</text>
+            <text x="60" y="203" font-family="Karla,sans-serif" font-size="12" fill="#847B6B">Counting only departures where the person publicly cited safety, verified individually</text>
+          </svg>
+          <p class="chart-src">Compiled by Best Answer Hub from each person's own statement, official testimony, or named-byline reporting. Full list and quotes below.</p>
+        </div>
+
+        <div class="cav">Named, dated, quoted</div>
+        <h2 id="who">Which researchers actually left an AI lab over safety?</h2>
+
+        <p>Here is the full list, each entry anchored to the person's own words. Where the quote comes from sworn testimony or their own published post, that is noted.</p>
+
+        <table>
+          <thead><tr><th>Person</th><th>Lab, role, date</th><th>In their own words</th></tr></thead>
+          <tbody>
+            <tr><td class="band">William Saunders</td><td>OpenAI, technical staff<br><small>Feb 2024</small></td><td>"I resigned from OpenAI because I lost faith that by themselves they will make responsible decisions about AGI." <small>(Senate testimony)</small></td></tr>
+            <tr><td class="band">Daniel Kokotajlo</td><td>OpenAI, governance research<br><small>Apr 2024</small></td><td>Declined to sign the non-disparagement agreement, putting millions of dollars in equity at risk, and said OpenAI was "recklessly racing to be the first there."</td></tr>
+            <tr><td class="band">Jan Leike</td><td>OpenAI, head of alignment<br><small>May 2024</small></td><td>"Building smarter-than-human machines is an inherently dangerous endeavor. OpenAI is shouldering an enormous responsibility on behalf of all of humanity. But over the past years, safety culture and processes have taken a backseat to shiny products."</td></tr>
+            <tr><td class="band">Miles Brundage</td><td>OpenAI, AGI readiness<br><small>Oct 2024</small></td><td>"Neither OpenAI nor any other frontier lab is ready, and the world is also not ready." <small>(see the caveat below)</small></td></tr>
+            <tr><td class="band">Rosie Campbell</td><td>OpenAI, policy research<br><small>Dec 2024</small></td><td>"I've been unsettled by some of the shifts over the last ~year, and the loss of so many people who shaped our culture."</td></tr>
+            <tr><td class="band">Steven Adler</td><td>OpenAI, AI safety lead<br><small>Jan 2025 (left late 2024)</small></td><td>"No lab has a solution to AI alignment today. And the faster we race, the less likely that anyone finds one in time."</td></tr>
+            <tr><td class="band">Mrinank Sharma</td><td>Anthropic, AI safety lead<br><small>Feb 2026</small></td><td>"The world is in peril." He described "a whole series of interconnected crises."</td></tr>
+            <tr><td class="band">Jacob Coxon</td><td>Anthropic, pretraining<br><small>Sep 2026</small></td><td>"A hubristic gamble that should not be launched from a private company's Slack."</td></tr>
+            <tr><td class="band">Joe Benton</td><td>Anthropic, safety team lead<br><small>Sep 2026</small></td><td>"I am worried that stuff might end up progressing too fast for us to get our act together in time."</td></tr>
+            <tr><td class="band">Josh Engels</td><td>Google DeepMind, AGI safety<br><small>Sep 2026</small></td><td>"There are no adults in the room. People are trying their best, but there is no one coming to save us."</td></tr>
+          </tbody>
+        </table>
+
+        <p>Two structural facts stand out. Six of the ten are from OpenAI, and until February 2026 every single one was. And the destinations differ: Coxon says he is leaving the industry, while Benton and Engels both went to METR, which evaluates the models the labs build.</p>
+
+        <div class="cav">The part that gets left out</div>
+        <h2 id="notpattern">One famous name that does not belong, and one that needs a caveat</h2>
+
+        <p>Almost every account of the AI safety exodus includes Ilya Sutskever, and many include Miles Brundage as a straightforward safety rupture. Neither person's own words support that framing. Sutskever's do not support counting him at all, and Brundage's support counting him only with his own stated reasons attached. A list that quietly inflates itself is worth less than a shorter honest one.</p>
+
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">1</span><div><b>Ilya Sutskever did not cite safety on departure.</b> OpenAI's co-founder and chief scientist, who co-led the Superalignment team, left in May 2024 saying he was "confident that OpenAI will build AGI that is both safe and beneficial" and moving to a project "that is very personally meaningful to me." His role in the November 2023 board action is a separate matter. <b>He should not be counted as someone who publicly quit over safety.</b></div></li>
+            <li><span class="dot">2</span><div><b>Miles Brundage's stated reasons were independence, not rupture.</b> His assessment that nobody is ready is blunt and it is in the table above because it is real. But he left to be free to publish, and noted that the "not ready" view was <b>not controversial inside OpenAI leadership</b>. Presenting him as storming out misrepresents him.</div></li>
+          </ul>
+        </div>
+
+        <blockquote>The strongest evidence for a pattern is not the pile of individual exits. <span class="accent">It is one signed, dated document that thirteen people signed at once.</span></blockquote>
+
+        <div class="cav">Who answered, and who did not</div>
+        <h2 id="response">What did Anthropic say, and what did OpenAI say?</h2>
+
+        <p>The contrast is itself a finding. Anthropic responded. OpenAI, on the resignation, has not.</p>
+
+        <p>Anthropic issued a statement through an unnamed spokesperson saying the company has "always been transparent that AI will bring both enormous benefits and unprecedented risks" and that "to address these risks, we continue to build models with some of the strongest safeguards in the industry," pointing to its work on mechanistic interpretability. The statement names no executive, names no departing researcher, and disputes no factual claim that was made.</p>
+
+        <p>For OpenAI, TIME, NPR and Scientific American all reported that the company did not respond to their requests for comment. Sam Altman spoke publicly in the same week about pacing capability development, but no source records him or OpenAI addressing the resignation itself.</p>
+
+        <p>Four days after the thread, on 12 September, Anthropic's chief executive Dario Amodei published an essay stating "We must slow the pace at which we improve the capabilities of AI models." Altman said he agreed with it. No source establishes that any of this was caused by the resignations, and this guide does not assert it. The sequence is 8 September, 10 September, 12 September.</p>
+
+        <div class="cav">The honest answer</div>
+        <h2 id="unsafe">Does a safety resignation mean a lab is unsafe?</h2>
+
+        <p>No, and treating it that way will mislead you in both directions. A resignation is evidence about one person's judgment and their read of an internal culture. It is not a measurement of a system's safety, and the people best placed to see problems are also the people most likely to have joined because they were already worried.</p>
+
+        <p>There is a specific reason to hold the alarm loosely here. Anthropic's own published evaluation of Claude Opus 5, in July 2026, six weeks before Coxon resigned, states that the model "does not cross the automated AI R&amp;D capability threshold" and "does not seem close to being able to substitute for our Research Scientists and Research Engineers." That is the company's own assessment of the exact capability the resignations warn about, and it points the other way.</p>
+
+        <p>There is also a specific reason not to dismiss it. The people leaving are not outside critics. They led safety teams, they ran alignment research, and several went to organizations whose job is to test the same systems. What their departures are good evidence of is a disagreement about pace and governance inside the labs. What they are not evidence of is any particular technical capability existing today.</p>
+
+        <div class="cav">The document that actually shows a pattern</div>
+        <h2 id="righttowarn">What is the Right to Warn letter?</h2>
+
+        <p>On 4 June 2024, thirteen current and former employees of OpenAI and Google DeepMind signed an open letter asking AI companies for four specific protections. Seven signed by name, including Jacob Hilton, Daniel Kokotajlo, Ramana Kumar, Neel Nanda, William Saunders, Carroll Wainwright and Daniel Ziegler. Six signed anonymously, describing themselves as current or former OpenAI staff. It was endorsed by Yoshua Bengio, Geoffrey Hinton and Stuart Russell.</p>
+
+        <p>This matters more than any single resignation because it is coordinated, signed and dated, rather than a pattern assembled after the fact by someone counting exits. Its first principle is aimed directly at the equity mechanism that surfaced at OpenAI a month earlier:</p>
+
+        <blockquote>That the company will not enter into or enforce any agreement that prohibits <span class="accent">disparagement or criticism of the company for risk-related concerns</span>, nor retaliate for risk-related criticism by hindering any vested economic benefit.</blockquote>
+
+        <p>The background is documented. In May 2024, reporting showed OpenAI's off-boarding agreement carried a lifelong non-disparagement commitment, with vested equity at stake for anyone who declined to sign. OpenAI subsequently confirmed it would not enforce those provisions and removed the language from future paperwork. Sam Altman wrote at the time that it was "one of the few times I've been genuinely embarrassed running OpenAI" and said he had not known. Documents later published carry signatures authorizing the provisions, including his. Both things are on the record.</p>
+
+        <div class="callout peach"><div class="h">A distinction worth keeping straight</div><p>That 2024 episode concerned <b>vested</b> equity conditioned on signing a non-disparagement clause. Jacob Coxon's 2026 departure involved <b>unvested</b> equity, forfeited by leaving at four months against a six-month cliff, with no non-disparagement agreement verified in his case at all. The two stories are related in theme and different in fact.</p></div>
+
+        <div class="cav">Now read the actual documents</div>
+        <h2 id="commitments">How should you read a lab's safety commitments?</h2>
+
+        <p>Every frontier laboratory publishes a safety framework, and the frameworks are the most checkable thing in this entire debate because they are versioned. Reading what changed between versions tells you more than any statement to the press. Two things are worth knowing.</p>
+
+        <p><b>Anthropic's Responsible Scaling Policy has been through nine versions</b> since September 2023, and version 3.0 in February 2026 was a comprehensive rewrite. The commitment language before and after is publicly available in both documents.</p>
+
+        <table>
+          <thead><tr><th>Document</th><th>What it says</th></tr></thead>
+          <tbody>
+            <tr><td class="band">RSP v2.2<br><small>May 2025, superseded</small></td><td>Commits "not to train or deploy models capable of causing catastrophic harm unless we have implemented safety and security measures that will keep risks below acceptable levels"</td></tr>
+            <tr><td class="band">RSP v3.0 onward<br><small>Feb 2026, current line</small></td><td>Separates "plans as a company," which it expects to achieve "regardless of what any other company does," from "more ambitious industry-wide recommendations," of which it says: "But we cannot commit to following them unilaterally." It notes that the previous RSP committed to reducing risk "without regard to whether other frontier AI developers would do the same."</td></tr>
+            <tr><td class="band">RSP v3.0, on its Roadmaps<br><small>Feb 2026</small></td><td>Says the goals in its Frontier Safety Roadmaps "are not hard commitments but rather public goals against which we will openly grade our progress," and that it "will strive to avoid situations where we revise the goals in a less ambitious direction simply because we are unable to achieve them."</td></tr>
+          </tbody>
+        </table>
+
+        <p><b>OpenAI's Preparedness Framework contains a competitive clause</b> that is easy to miss and worth quoting in full, because it describes exactly the race dynamic the departing researchers describe: "If another frontier AI developer releases a high-risk system without comparable safeguards, we may adjust our requirements. However, we would first rigorously confirm that the risk landscape has actually changed, publicly acknowledge that we are making an adjustment, assess that the adjustment does not meaningfully increase the overall risk of severe harm, and still keep safeguards at a level more protective."</p>
+
+        <p>Anthropic's pause language carries a similar condition. Writing about systems that would let laboratories verify that others had actually slowed, the company said: "If such systems existed, we expect that we would slow down or temporarily pause, if other developers at or near the frontier also did so in a verifiable manner." Its current policy, version 3.4, adds that its scenario commitments "do not preclude us from taking cautionary action, such as refraining from training or deploying models, in other circumstances." The condition is not hidden and it is not unreasonable. It is also the substance of the complaint: the broadest promises, to slow or pause the frontier, are contingent on competitors, which is what the departing staff mean by a race.</p>
+
+        <div class="callout sage"><div class="h">Four questions to ask of any lab safety claim</div><p><b>One:</b> is this a commitment or a goal? Anthropic's RSP says its own roadmap targets are goals. <b>Two:</b> what is the version and date, and what did the previous version say? <b>Three:</b> what is the escape clause, and who decides when it applies? <b>Four:</b> has the lab published an assessment of its own newest model against its own threshold? On that last one, check which threshold. For AI self-improvement, no frontier lab has reported its newest model meeting its own line. On cybersecurity, OpenAI said in August 2026 that it could not rule out a Critical capability level for its upcoming model Astra.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Reading this kind of story is a skill</span>
+          <h3>How good is your AI knowledge, really?</h3>
+          <p>Telling a commitment from a goal, a quote from a headline, and a measurement from an opinion is what separates following AI news from understanding it. The free Best Answer Hub AI Knowledge Test checks where you stand across five domains in about 20 minutes. No signup, no email, nothing uploaded.</p>
+          <a class="btn" href="/knowledge-center/ai-knowledge-test/">Take the free AI Knowledge Test</a>
+        </div>
+
+        <div class="cav">The questions people ask</div>
+        <h2 id="faq">Common questions about AI safety resignations</h2>
+        <div class="faq">
+              {faqs.map((f) => (
+                <div class="qa">
+                  <div class="q" set:html={f.q}></div>
+                  <div class="a" set:html={f.a}></div>
+                </div>
+              ))}
+            </div><div class="cav" style="margin-top:38px">For the record</div>
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>NBC News, Jared Perlo, <a href="https://www.nbcnews.com/tech/security/two-ai-researchers-leave-anthropic-google-safety-concerns-rcna597086" target="_blank" rel="noopener noreferrer">Two AI researchers leave Anthropic, Google over safety concerns</a>, 10 September 2026 (Joe Benton and Josh Engels).</li>
+          <li>Axios, Madison Mills, <a href="https://www.axios.com/2026/09/09/anthropic-researcher-ai-warning-interview" target="_blank" rel="noopener noreferrer">Anthropic whistleblower gave up his equity to leave the company</a>, 9 September 2026.</li>
+          <li>TIME, Harry Booth, <a href="https://time.com/article/2026/09/09/ai-anthropic-openai-jacob-coxon/" target="_blank" rel="noopener noreferrer">He helped build powerful AI at OpenAI and Anthropic</a>, 9 September 2026.</li>
+          <li>CBS News, Megan Cerullo and Faris Tanyos, <a href="https://www.cbsnews.com/news/anthropic-researcher-jacob-coxon-ai-warning/" target="_blank" rel="noopener noreferrer">Ex-Anthropic researcher Jacob Coxon warns AI could grow 'smart enough to kill us'</a>, updated after publication to carry the Anthropic spokesperson statement.</li>
+          <li>William Saunders, <a href="https://www.judiciary.senate.gov/imo/media/doc/2024-09-17_pm_-_testimony_-_saunders.pdf" target="_blank" rel="noopener noreferrer">Written testimony, US Senate Judiciary Subcommittee</a>, 17 September 2024.</li>
+          <li>The New York Times, <a href="https://www.nytimes.com/2024/06/04/technology/openai-culture-whistleblowers.html" target="_blank" rel="noopener noreferrer">OpenAI insiders warn of a reckless race for dominance</a>, 4 June 2024 (Daniel Kokotajlo and the equity account).</li>
+          <li>CNN, <a href="https://www.cnn.com/2024/05/17/tech/openai-exec-exits-safety-concerns" target="_blank" rel="noopener noreferrer">OpenAI executives exit over safety concerns</a>, 17 May 2024 (Jan Leike's statement).</li>
+          <li>Miles Brundage, <a href="https://milesbrundage.substack.com/p/why-im-leaving-openai-and-what-im" target="_blank" rel="noopener noreferrer">Why I am leaving OpenAI and what I am doing next</a>, 23 October 2024 (his own post).</li>
+          <li>Rosie Campbell, <a href="https://www.rosiecampbell.xyz/p/leaving-openai" target="_blank" rel="noopener noreferrer">Leaving OpenAI</a>, 1 December 2024 (her own post).</li>
+          <li>Fortune, Beatrice Nolan, <a href="https://www.fortune.com/2025/01/28/openai-researcher-steven-adler-quit-ai-labs-taking-risky-gamble-humanity-agi" target="_blank" rel="noopener noreferrer">OpenAI safety researcher Steven Adler quits</a>, 28 January 2025.</li>
+          <li>Forbes, Conor Murray, <a href="https://www.forbes.com/sites/conormurray/2026/02/09/anthropic-ai-safety-researcher-warns-of-world-in-peril-in-resignation/" target="_blank" rel="noopener noreferrer">Anthropic AI safety researcher warns of world in peril in resignation</a>, 9 February 2026 (Mrinank Sharma).</li>
+          <li>Fortune, <a href="https://fortune.com/2024/05/17/openai-researcher-resigns-safety/" target="_blank" rel="noopener noreferrer">OpenAI researcher resigns over safety</a>, 17 May 2024 (includes Ilya Sutskever's own departure statement).</li>
+          <li><a href="https://righttowarn.ai/" target="_blank" rel="noopener noreferrer">A Right to Warn about Advanced Artificial Intelligence</a>, 4 June 2024 (the open letter and its signatories).</li>
+          <li>Anthropic, <a href="https://www.anthropic.com/rsp-updates" target="_blank" rel="noopener noreferrer">Responsible Scaling Policy update log</a> (the full version history, v1.0 September 2023 to v3.4 July 2026).</li>
+          <li>Anthropic, <a href="https://www.anthropic.com/responsible-scaling-policy/roadmap" target="_blank" rel="noopener noreferrer">Frontier Safety Roadmap</a> (the roadmap itself; its update log runs April to July 2026).</li>
+          <li>Anthropic, <a href="https://www-cdn.anthropic.com/e670587677525f28df69b59e5fb4c22cc5461a17.pdf" target="_blank" rel="noopener noreferrer">Responsible Scaling Policy, version 3.0</a> (PDF), 24 February 2026 (the company plans versus industry-wide recommendations split, and the "not hard commitments" sentence).</li>
+          <li>Anthropic, <a href="https://cdn.sanity.io/files/4zrzovbb/website/0bacdc8440ea96e62a8766d99ebe1d4eea6d5f3a.pdf" target="_blank" rel="noopener noreferrer">Responsible Scaling Policy, version 3.4</a> (PDF), 8 July 2026 (the current version, including the "cautionary action" sentence).</li>
+          <li>Anthropic, <a href="https://www-cdn.anthropic.com/c5fbac3f0b1280a933ebd26d3cb8bb9f5bdeaf48/Claude%20Opus%205%20System%20Card.pdf" target="_blank" rel="noopener noreferrer">Claude Opus 5 System Card</a> (PDF), 24 July 2026 (the automated AI R&amp;D threshold assessment).</li>
+          <li>OpenAI, <a href="https://openai.com/index/updating-our-preparedness-framework/" target="_blank" rel="noopener noreferrer">Updating our Preparedness Framework</a>, 15 April 2025 (version 2, including the competitive adjustment clause).</li>
+          <li>TechCrunch, Kirsten Korosec, <a href="https://techcrunch.com/2026/08/07/openai-says-it-slowed-astra-model-development-over-security-concerns/" target="_blank" rel="noopener noreferrer">report on OpenAI slowing development of its Astra model over security concerns</a>, 7 August 2026.</li>
+          <li>Anthropic, <a href="https://www.anthropic.com/institute/recursive-self-improvement" target="_blank" rel="noopener noreferrer">When AI builds itself</a>, May 2026 (the conditional pause language).</li>
+          <li>Dario Amodei, <a href="https://darioamodei.com/post/we-must-pace-the-frontier" target="_blank" rel="noopener noreferrer">We Must Pace the Frontier</a>, September 2026.</li>
+        </ul>
+        <RelatedPlaybooks track="aikt" currentHref={seo.url} />
+            <p class="toolsrow">More from Best Answer Hub: <a href="/playbooks/how-good-is-your-ai-knowledge/">How good is your AI knowledge</a>, <a href="/playbooks/how-to-tell-when-ai-is-wrong/">How to tell when AI is wrong</a>, <a href="/playbooks/the-biggest-myth-about-ai/">The biggest myth about AI</a>, and the free <a href="/knowledge-center/ai-knowledge-test/">AI Knowledge Test</a>.</p>
+  
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 11px;border-radius:999px;display:inline-block;white-space:nowrap;font-family:'Bricolage Grotesque',sans-serif}
+  .pb .lv1{background:var(--sage)}
+  .pb .lv2{background:var(--clay)}
+  .pb .lv3{background:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+  .pb .pill{display:inline-block;padding:3px 9px;border-radius:8px;font-size:.7rem;font-weight:700;color:#fff;white-space:nowrap;font-family:'Karla',sans-serif}
+  .pb .pill.lv1{background:var(--sage)}
+  .pb .pill.lv2{background:var(--clay)}
+  .pb .pill.lv3{background:var(--ink)}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

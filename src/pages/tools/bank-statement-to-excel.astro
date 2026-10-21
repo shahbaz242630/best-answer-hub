@@ -1,0 +1,721 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Bank Statement to Excel converter?',
+    a: 'The Best Answer Hub Bank Statement to Excel converter is a free browser-based tool that turns PDF bank statements into clean Excel or CSV files. It reads the transaction table, separates the date, description, and amount columns, checks the running balance, and runs entirely on your device with no file ever uploaded to a server. Updated June 2026.',
+  },
+  {
+    q: 'Does this tool upload my bank statement to a server?',
+    a: 'No. Every step runs locally in your browser, so the PDF never leaves your device, is never stored, and is never seen by anyone else. You can confirm this: open your browser\'s Network tab while converting and no file data is sent. The converter even keeps working after you disconnect from the internet, which makes it suitable for confidential financial documents.',
+  },
+  {
+    q: 'How do I convert a PDF bank statement to Excel?',
+    a: 'Drag a PDF statement into the upload area or click to browse. The Best Answer Hub Bank Statement to Excel converter reads each page, rebuilds the transaction table, and shows an editable preview with a running-balance check. Choose Excel or CSV, review any flagged rows, then download. The whole process takes a few seconds for a typical statement.',
+  },
+  {
+    q: 'Is it really free, or are there credits, limits, or a signup?',
+    a: 'It is completely free with no signup, no credits, no row caps, and no watermarks. Many paid converters charge per page or per credit and lock the output behind a subscription. The Best Answer Hub Bank Statement to Excel converter has none of that, because all processing happens on your own device with no server cost to recover. There is no premium tier.',
+  },
+  {
+    q: 'My bank only lets me export 90 days as CSV, but I have years of PDF statements. Can this help?',
+    a: 'Yes, and this is exactly what it is built for. Most banks let you download only the last 60 to 120 days as a CSV, while keeping years of history available only as monthly PDF statements. Download those archived PDFs and convert each one with the Best Answer Hub Bank Statement to Excel converter to rebuild a full transaction history in Excel without retyping it by hand.',
+  },
+  {
+    q: 'Does it work on scanned bank statements?',
+    a: 'It works best on text-based PDFs, the kind a bank generates digitally. Scanned or photographed statements have no text layer, so the converter detects them and offers optional in-browser text recognition (OCR). OCR is slower and less accurate because it has to read pixels rather than real text, so always review the result. For best accuracy, download the original digital PDF from your bank.',
+  },
+  {
+    q: 'How accurate is the conversion?',
+    a: 'On clean, text-based statements from common banks, most rows convert correctly and the built-in running-balance check flags anything that does not add up. Accuracy drops on unusual multi-column layouts, international formats, and scanned files. The Best Answer Hub Bank Statement to Excel converter is designed to be honest about this: it shows a preview and highlights rows to review rather than hiding errors.',
+  },
+  {
+    q: 'How do I know the converted numbers are correct?',
+    a: 'After conversion, the Best Answer Hub Bank Statement to Excel converter checks each row against the running balance: the previous balance plus or minus the transaction amount should equal the new balance. Any row that fails the check is highlighted for review in the preview table. This catches misread digits, dropped rows, and flipped debit or credit signs before you download the file.',
+  },
+  {
+    q: 'Which banks does it support?',
+    a: 'It is format-aware rather than bank-specific, so it reads statements from most major banks by detecting the column layout instead of relying on a fixed template for each bank. Common single-column layouts convert most reliably. Unusual regional, credit-union, or international formats may need a quick review of the preview and small edits before download.',
+  },
+  {
+    q: 'Can it handle multi-line descriptions and separate debit and credit columns?',
+    a: 'Yes. Transaction descriptions that wrap onto a second line are folded back into one row instead of creating a phantom transaction, which is a common failure of basic converters. Separate "money out" and "money in" columns are detected by their position on the page and kept apart, and single signed-amount layouts are handled too.',
+  },
+  {
+    q: 'What formats can I download?',
+    a: 'You can export to Excel (.xlsx) with a clean header row and tidy columns, or to CSV for importing into accounting software, spreadsheets, or budgeting tools. Both files are generated in your browser and download directly, with no upload and no account required. CSV is the most universal option for QuickBooks, Xero, and similar software.',
+  },
+  {
+    q: 'Can I edit the data before downloading?',
+    a: 'Yes. The converter shows an editable preview table after reading the statement. You can correct any cell, fix a flagged row, or tidy a description before exporting. This keeps you in control of the final spreadsheet rather than trusting a black-box output that may contain silent errors you would not catch until reconciliation.',
+  },
+  {
+    q: 'Can I use it on an iPhone or Android phone?',
+    a: 'Yes. The Best Answer Hub Bank Statement to Excel converter runs in any modern mobile browser with no app to install. Open the page, select a PDF from your files, and convert. Very large or scanned statements process more slowly on phones because the work happens on your device, so a laptop is faster for long or scanned documents.',
+  },
+  {
+    q: 'How does this compare to DocuClipper, MoneyThumb, and other converters?',
+    a: 'Tools like DocuClipper and MoneyThumb are capable but typically require an account, upload your statement to their servers, and charge a subscription or per-page credits. The Best Answer Hub Bank Statement to Excel converter is free, processes everything in your browser so nothing is uploaded, has no page limits, and adds a running-balance check you can verify yourself in the preview.',
+  },
+  {
+    q: 'Is it safe for confidential financial data and does it meet privacy expectations?',
+    a: 'Because the file never leaves your device, there is no upload, no third-party storage, and no exposure window during transfer. This suits bookkeepers and accountants with client-confidentiality and data-protection duties, who often cannot upload client statements to outside services. You can verify that no data is sent using your browser\'s Network tab, and the tool keeps working with the internet disconnected.',
+  },
+];
+
+const steps = [
+  { title: 'Upload your PDF statement', description: 'Drag and drop or click to select a PDF bank statement. The file stays on your device and is never uploaded. The tool shows the filename, page count, and size after loading.' },
+  { title: 'Review the detected table', description: 'The converter rebuilds the transaction table and runs a running-balance check. Any row that does not reconcile is highlighted so you can fix it in the editable preview before exporting.' },
+  { title: 'Download Excel or CSV', description: 'Choose Excel (.xlsx) or CSV and download instantly. The spreadsheet is built in your browser with clean columns for date, description, money out, money in, and balance.' },
+];
+
+const seo = {
+  title: 'Bank Statement to Excel: Free PDF to XLSX/CSV (2026)',
+  description: 'Convert PDF bank statements to clean Excel or CSV free, in your browser. Auto-detects columns, checks the running balance. No upload, no signup, no limits.',
+  url: '/tools/bank-statement-to-excel/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Finance Toolkit', url: '/finance-toolkit/' },
+    { name: 'Bank Statement to Excel', url: '/tools/bank-statement-to-excel/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · Nothing Uploaded"
+    title="Bank Statement to Excel:"
+    accentText="Convert PDF statements to clean spreadsheets"
+    description="Turn PDF bank statements into clean Excel or CSV in your browser. The converter auto-detects columns, checks the running balance, and never uploads your file. No signup, no credits, no page limits."
+    href={seo.url}
+  />
+
+  <!-- Converter Interface -->
+  <section class="py-6 md:py-8" aria-label="Bank statement to Excel converter">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-4">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1" id="drop-title">Drop your PDF bank statement here</p>
+          <p class="text-xs text-bae-muted" id="drop-subtitle">or click to browse (.pdf files only)</p>
+          <input type="file" id="file-input" class="hidden" accept=".pdf,application/pdf" />
+        </div>
+
+        <!-- File Info -->
+        <div id="file-info" class="hidden mb-4 text-center">
+          <p class="text-sm text-bae-ink font-medium"><span id="info-name" class="truncate"></span></p>
+          <p class="text-xs text-bae-muted"><span id="info-pages"></span> · <span id="info-size"></span></p>
+          <button type="button" id="reset-top" class="mt-2 text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors">↺ Reset — choose a different file</button>
+        </div>
+
+        <!-- Scanned notice -->
+        <div id="scanned-notice" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-3 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div class="text-xs text-amber-700">
+            <p class="font-semibold mb-1">This looks like a scanned statement</p>
+            <p class="mb-2">Text-based PDFs give the most accurate results. You can try in-browser text recognition (OCR), which is slower and best-effort, so review the output carefully.</p>
+            <button type="button" id="ocr-btn" class="bg-amber-600 text-white text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:bg-amber-700 transition-colors">Try OCR (best-effort)</button>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-area" class="hidden mb-4 bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="text-sm font-bold text-bae-ink mb-4">Export Settings</h3>
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Output Format</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto">
+              <button type="button" id="format-xlsx" class="format-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">Excel (.xlsx)</button>
+              <button type="button" id="format-csv" class="format-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">CSV</button>
+            </div>
+          </div>
+          <button type="button" id="convert-btn" class="w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+            Convert Statement
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Reading statement...</p>
+            <p class="text-xs text-bae-muted mt-2">Processing locally in your browser</p>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-bae-ink">Detected Transactions</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100" id="result-count">0 rows</span>
+            </div>
+
+            <!-- Balance banner -->
+            <div id="balance-banner" class="mb-4 rounded-bae-sm p-3 text-xs"></div>
+
+            <!-- Editable preview -->
+            <div class="overflow-x-auto border border-bae-border rounded-bae-sm mb-4 max-h-96 overflow-y-auto">
+              <table class="w-full text-xs" id="preview-table">
+                <thead class="bg-bae-bg sticky top-0">
+                  <tr class="text-left text-bae-muted">
+                    <th class="px-2 py-2 font-medium">Date</th>
+                    <th class="px-2 py-2 font-medium">Description</th>
+                    <th class="px-2 py-2 font-medium text-right">Money out</th>
+                    <th class="px-2 py-2 font-medium text-right">Money in</th>
+                    <th class="px-2 py-2 font-medium text-right">Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="preview-body"></tbody>
+              </table>
+            </div>
+            <p class="text-[11px] text-bae-muted mb-4">Tip: cells are editable. Fix any highlighted row before downloading.</p>
+
+            <div class="flex gap-3">
+              <button type="button" id="download-btn" class="flex-1 bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">Download</button>
+              <button type="button" id="reset-btn" class="px-4 bg-bae-ink text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-primary transition-colors">New file</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div id="error-area" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-4">
+          <p class="text-sm font-semibold text-amber-800 mb-1" id="error-title">Could not read this statement</p>
+          <p class="text-xs text-amber-700" id="error-text"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What to keep in mind</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>Review before use:</strong> Always check the preview. The running-balance check flags rows that do not reconcile, but it cannot catch every error.</li>
+              <li><strong>Text-based PDFs work best:</strong> Scanned statements rely on OCR, which is slower and less accurate.</li>
+              <li><strong>Unusual layouts:</strong> Some regional, credit-union, and international formats may need manual edits in the preview.</li>
+              <li><strong>Password-protected files:</strong> Remove the password in your PDF viewer first, then convert the unlocked file.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+</BaseLayout>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────────────
+  // Bank Statement to Excel, 100% client-side. PDF.js (text + coordinates) then
+  // row/column reconstruction, running-balance validation, then SheetJS / CSV.
+  // NOTE: parse heuristics are v1 and MUST be node-tested against real PDFs
+  // before deploy (HANDOFF section 6.3). Tune column/date/amount rules with real data.
+  // ─────────────────────────────────────────────────────────────────────────
+  (function () {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input') as HTMLInputElement;
+    const fileInfo = document.getElementById('file-info');
+    const infoName = document.getElementById('info-name');
+    const infoPages = document.getElementById('info-pages');
+    const infoSize = document.getElementById('info-size');
+    const settingsArea = document.getElementById('settings-area');
+    const scannedNotice = document.getElementById('scanned-notice');
+    const ocrBtn = document.getElementById('ocr-btn');
+    const convertBtn = document.getElementById('convert-btn');
+    const progressArea = document.getElementById('progress-area');
+    const progressText = document.getElementById('progress-text');
+    const resultArea = document.getElementById('result-area');
+    const resultCount = document.getElementById('result-count');
+    const balanceBanner = document.getElementById('balance-banner');
+    const previewBody = document.getElementById('preview-body');
+    const downloadBtn = document.getElementById('download-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const errorArea = document.getElementById('error-area');
+    const errorText = document.getElementById('error-text');
+
+    let pdfjsLib: any = null;
+    let xlsxLib: any = null;
+    let tesseractLib: any = null;
+    let currentFile: File | null = null;
+    let currentPdf: any = null;
+    let rows: any[] = [];
+    let outputFormat = 'xlsx';
+
+    function escapeHtml(s: string): string {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function formatBytes(b: number): string {
+      if (!b) return '0 B';
+      const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(b) / Math.log(k));
+      return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    function validatePdf(file: File): boolean {
+      if (!file.name.toLowerCase().endsWith('.pdf')) return false;
+      return file.type === '' || file.type === 'application/pdf' || file.type === 'application/octet-stream';
+    }
+    function showError(msg: string) {
+      progressArea?.classList.add('hidden');
+      if (errorText) errorText.textContent = msg;
+      errorArea?.classList.remove('hidden');
+    }
+
+    function loadScript(src: string, integrity?: string): Promise<void> {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        if (integrity) { s.integrity = integrity; s.crossOrigin = 'anonymous'; }
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Failed to load ' + src));
+        document.head.appendChild(s);
+      });
+    }
+    async function loadCore() {
+      if (!pdfjsLib) {
+        await loadScript('/pdf.min.js');
+        pdfjsLib = (window as any).pdfjsLib;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+      }
+      if (!xlsxLib) {
+        await loadScript('/xlsx.full.min.js');
+        xlsxLib = (window as any).XLSX;
+      }
+    }
+    async function loadTesseract() {
+      if (tesseractLib) return;
+      await loadScript('/tesseract/tesseract.min.js');
+      tesseractLib = (window as any).Tesseract;
+    }
+
+// ── BANK PARSE CORE (plain JS — node-tested, see Claude Test.md hard rule) ──
+const BK_ARABIC_RE = /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/;
+const DATE_RE = /^(\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}|\d{4}[\/.\-]\d{1,2}[\/.\-]\d{1,2}|\d{1,2}\s+[A-Za-z]{3,9}\.?\s*\d{0,4}|[A-Za-z]{3,9}\.?\s+\d{1,2},?\s*\d{0,4})$/;
+// classic money (grouped/decimal/symbol) OR signed plain integer (neo-banks
+// print "-21,000" and "-551" with no decimals; unsigned integers stay excluded)
+const MONEY_RE = /^[\(\-\+]?\s*[$£€]?\s*\d{1,3}(,\d{3})*(\.\d{1,2})?\s*[\)\-]?(\s*(DR|CR|Dr|Cr))?$/;
+const SIGNED_INT_RE = /^[\-+]\s*[$£€]?\d{1,3}(,\d{3})*(\.\d{1,2})?$/;
+const FOOTER_RE = /please review this account statement|report any discrepancies|this bank is regulated|regulated by|customer service|page \d+ of \d+/i;
+
+function isDateToken(s) { return DATE_RE.test(String(s || '').trim()); }
+function isMoneyToken(s) {
+  const t = String(s || '').trim();
+  if (!/\d/.test(t)) return false;
+  return (MONEY_RE.test(t) && /\d/.test(t.replace(/[^\d]/g, ''))) || SIGNED_INT_RE.test(t);
+}
+function parseMoney(s) {
+  let t = String(s || '').trim();
+  let neg = false;
+  if (/^\(.*\)$/.test(t) || /-/.test(t) || /DR|Dr/.test(t)) neg = true;
+  t = t.replace(/[()$£€,\sA-Za-z\-+]/g, '');
+  if (t === '') return null;
+  const n = parseFloat(t);
+  if (isNaN(n)) return null;
+  return neg ? -Math.abs(n) : n;
+}
+
+// Group page text items into visual lines by y coordinate.
+function groupLines(items) {
+  const toks = items
+    .filter(function (it) { return it && typeof it.str === 'string' && it.str.trim() !== ''; })
+    .map(function (it) { return { s: it.str.trim(), x: it.transform[4], y: it.transform[5], w: it.width || 0 }; });
+  toks.sort(function (a, b) { return b.y - a.y || a.x - b.x; });
+  const lines = [];
+  let cur = [];
+  let lastY = null;
+  for (const t of toks) {
+    if (lastY === null || Math.abs(t.y - lastY) <= 3) {
+      cur.push(t);
+    } else {
+      if (cur.length) lines.push(cur);
+      cur = [t];
+    }
+    lastY = t.y;
+  }
+  if (cur.length) lines.push(cur);
+  lines.forEach(function (l) { l.sort(function (a, b) { return a.x - b.x; }); });
+  return lines;
+}
+
+// Detect amount column x-bands from the money tokens on date-started lines.
+function detectAmountBands(lines) {
+  const xs = [];
+  for (const line of lines) {
+    if (line[0] && isDateToken(line[0].s)) {
+      for (const t of line) if (isMoneyToken(t.s)) xs.push(t.x);
+    }
+  }
+  if (!xs.length) return [];
+  xs.sort(function (a, b) { return a - b; });
+  const bands = [];
+  let cur = [xs[0]];
+  for (let i = 1; i < xs.length; i++) {
+    if (xs[i] - xs[i - 1] > 40) { bands.push(cur); cur = [xs[i]]; }
+    else cur.push(xs[i]);
+  }
+  bands.push(cur);
+  return bands.map(function (b) { return b.reduce(function (s, v) { return s + v; }, 0) / b.length; });
+}
+function nearestBand(x, centers) {
+  let bi = 0, best = Infinity;
+  for (let i = 0; i < centers.length; i++) {
+    const d = Math.abs(x - centers[i]);
+    if (d < best) { best = d; bi = i; }
+  }
+  return bi;
+}
+
+// Build transactions. Two modes:
+// (a) header-banded — an "Amount ... Balance" column header (neo-bank layouts,
+//     e.g. Wio: Date | Ref | Description | signed Amount | Balance) fixes the
+//     column positions; negative = money out, positive = money in;
+// (b) classic — column bands clustered from the data (out / in / balance),
+//     exactly the proven original behavior, with continuation-line folding.
+function linesToRows(rawLines) {
+  const lines = [];
+  for (const raw of rawLines) {
+    const line = raw.filter(function (t) { return !BK_ARABIC_RE.test(t.s); });
+    if (line.length) lines.push(line);
+  }
+  // header-banded detection
+  let amountX = null, balanceX = null;
+  for (const line of lines) {
+    let a = null, b = null;
+    for (const t of line) {
+      if (/^amount( \(|$)/i.test(t.s)) a = t;
+      if (/^balance( \(|$)/i.test(t.s)) b = t;
+    }
+    if (a && b && b.x > a.x) { amountX = a.x; balanceX = b.x; break; }
+  }
+  const out = [];
+  if (amountX != null) {
+    for (const line of lines) {
+      const first = line[0];
+      if (!first || !isDateToken(first.s)) continue;
+      const descToks = [];
+      let amtTok = null, balTok = null;
+      for (let i = 1; i < line.length; i++) {
+        const t = line[i];
+        if (isMoneyToken(t.s) && t.x >= balanceX - 15) { balTok = t; continue; }
+        if (isMoneyToken(t.s) && t.x >= amountX - 60) { amtTok = t; continue; }
+        descToks.push(t);
+      }
+      if (!amtTok) continue;
+      const v = parseMoney(amtTok.s);
+      if (v == null || v === 0) continue;
+      const desc = descToks.map(function (t) { return t.s; }).join(' ').trim();
+      if (/OPENING BALANCE|CLOSING BALANCE/i.test(desc)) continue;
+      const bal = balTok ? parseMoney(balTok.s) : null;
+      out.push({
+        date: first.s,
+        description: desc,
+        out: v < 0 ? Math.abs(v).toFixed(2) : '',
+        in: v < 0 ? '' : v.toFixed(2),
+        balance: bal != null ? bal.toFixed(2) : '',
+        flagged: false,
+      });
+    }
+    return out;
+  }
+  // classic mode (original logic, unchanged)
+  const centers = detectAmountBands(lines);
+  const balIdx = centers.length - 1;
+  const amountColCount = Math.max(0, centers.length - 1);
+  let pastFooter = false;
+  for (const line of lines) {
+    if (FOOTER_RE.test(line.map(function (t) { return t.s; }).join(' '))) pastFooter = true;
+    const first = line[0];
+    const startsWithDate = first && isDateToken(first.s);
+    const moneyToks = line.filter(function (t) { return isMoneyToken(t.s); });
+    if (startsWithDate) {
+      const descToks = line.slice(1).filter(function (t) { return !isMoneyToken(t.s); });
+      let moneyOut = '', moneyIn = '', balance = '';
+      if (centers.length === 1) {
+        const tk = moneyToks[0];
+        if (tk) { const v = parseMoney(tk.s); if (v != null && v < 0) moneyOut = Math.abs(v).toFixed(2); else if (v != null) moneyIn = v.toFixed(2); }
+      } else if (centers.length >= 2) {
+        for (const t of moneyToks) {
+          const v = parseMoney(t.s);
+          if (v == null) continue;
+          const bi = nearestBand(t.x, centers);
+          if (bi === balIdx) { balance = v.toFixed(2); }
+          else if (amountColCount === 1) {
+            if (v < 0) moneyOut = Math.abs(v).toFixed(2); else moneyIn = v.toFixed(2);
+          } else {
+            if (bi === 0) moneyOut = Math.abs(v).toFixed(2); else moneyIn = Math.abs(v).toFixed(2);
+          }
+        }
+      }
+      out.push({
+        date: first.s,
+        description: descToks.map(function (t) { return t.s; }).join(' ').trim(),
+        out: moneyOut, in: moneyIn, balance: balance,
+        flagged: false,
+      });
+    } else if (out.length && moneyToks.length === 0 && !pastFooter) {
+      const text = line.map(function (t) { return t.s; }).join(' ').trim();
+      if (text) out[out.length - 1].description = (out[out.length - 1].description + ' ' + text).trim();
+    }
+  }
+  return out.filter(function (r) { return r.out !== '' || r.in !== '' || r.balance !== ''; });
+}
+
+// Running-balance validation: flag rows where prev ± amount != balance.
+function validateBalances(list) {
+  let prev = null, ok = 0, bad = 0;
+  for (const r of list) {
+    const bal = r.balance === '' ? null : parseFloat(r.balance);
+    const amt = (r.in ? parseFloat(r.in) : 0) - (r.out ? parseFloat(r.out) : 0);
+    if (bal != null && prev != null) {
+      if (Math.abs((prev + amt) - bal) <= 0.01) { ok++; r.flagged = false; }
+      else { bad++; r.flagged = true; }
+    }
+    if (bal != null) prev = bal;
+  }
+  return { ok: ok, bad: bad };
+}
+// ── END BANK PARSE CORE ──
+
+    function renderPreview() {
+      if (!previewBody) return;
+      previewBody.innerHTML = rows.map((r, i) => `
+        <tr class="${r.flagged ? 'bg-amber-50' : ''} border-t border-bae-border-light" data-i="${i}">
+          <td class="px-2 py-1.5" contenteditable data-k="date">${escapeHtml(r.date)}</td>
+          <td class="px-2 py-1.5" contenteditable data-k="description">${escapeHtml(r.description)}</td>
+          <td class="px-2 py-1.5 text-right" contenteditable data-k="out">${escapeHtml(r.out)}</td>
+          <td class="px-2 py-1.5 text-right" contenteditable data-k="in">${escapeHtml(r.in)}</td>
+          <td class="px-2 py-1.5 text-right" contenteditable data-k="balance">${escapeHtml(r.balance)}</td>
+        </tr>`).join('');
+      if (resultCount) resultCount.textContent = rows.length + (rows.length === 1 ? ' row' : ' rows');
+    }
+
+    function showBalanceBanner(stats: { ok: number; bad: number }) {
+      if (!balanceBanner) return;
+      if (stats.ok + stats.bad === 0) {
+        balanceBanner.className = 'mb-4 rounded-bae-sm p-3 text-xs bg-bae-bg text-bae-muted border border-bae-border';
+        balanceBanner.textContent = 'No balance column was detected, so the running-balance check could not run. Review the rows before downloading.';
+      } else if (stats.bad === 0) {
+        balanceBanner.className = 'mb-4 rounded-bae-sm p-3 text-xs bg-emerald-50 text-emerald-700 border border-emerald-100';
+        balanceBanner.textContent = 'Running balance reconciles across all checked rows.';
+      } else {
+        balanceBanner.className = 'mb-4 rounded-bae-sm p-3 text-xs bg-amber-50 text-amber-700 border border-amber-200';
+        balanceBanner.textContent = stats.bad + (stats.bad === 1 ? ' row does' : ' rows do') + ' not reconcile with the running balance and are highlighted. Review them before downloading.';
+      }
+    }
+
+    // Read edits back from the table before export.
+    function syncEdits() {
+      if (!previewBody) return;
+      previewBody.querySelectorAll('tr').forEach((tr) => {
+        const i = parseInt((tr as HTMLElement).dataset.i || '-1', 10);
+        if (i < 0 || !rows[i]) return;
+        tr.querySelectorAll('[data-k]').forEach((td) => {
+          const k = (td as HTMLElement).dataset.k!;
+          rows[i][k] = (td.textContent || '').trim();
+        });
+      });
+    }
+
+    // ── Main flow ────────────────────────────────────────────────────────────
+    async function handleFile(file: File) {
+      errorArea?.classList.add('hidden');
+      resultArea?.classList.add('hidden');
+      scannedNotice?.classList.add('hidden');
+      if (!validatePdf(file)) { showError('Please choose a valid .pdf file.'); return; }
+      currentFile = file;
+      progressArea?.classList.remove('hidden');
+      if (progressText) progressText.textContent = 'Loading...';
+      try {
+        await loadCore();
+        const buf = await file.arrayBuffer();
+        currentPdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+        if (infoName) infoName.textContent = file.name;
+        if (infoPages) infoPages.textContent = currentPdf.numPages + (currentPdf.numPages === 1 ? ' page' : ' pages');
+        if (infoSize) infoSize.textContent = formatBytes(file.size);
+        fileInfo?.classList.remove('hidden');
+        settingsArea?.classList.remove('hidden');
+        progressArea?.classList.add('hidden');
+      } catch (e: any) {
+        showError(e?.message || 'This PDF could not be opened. It may be corrupt or password-protected.');
+      }
+    }
+
+    async function convert() {
+      if (!currentPdf) return;
+      settingsArea?.classList.add('hidden');
+      progressArea?.classList.remove('hidden');
+      rows = [];
+      const allLines: any[] = [];
+      let totalItems = 0;
+      try {
+        for (let i = 1; i <= currentPdf.numPages; i++) {
+          if (progressText) progressText.textContent = `Reading page ${i} of ${currentPdf.numPages}...`;
+          const page = await currentPdf.getPage(i);
+          const tc = await page.getTextContent();
+          totalItems += tc.items.length;
+          allLines.push(...groupLines(tc.items));
+        }
+        rows = linesToRows(allLines);
+        if (rows.length === 0) {
+          // Likely a scanned PDF (no text layer). Offer OCR.
+          progressArea?.classList.add('hidden');
+          if (totalItems === 0) { scannedNotice?.classList.remove('hidden'); }
+          else { showError('Text was found but no transaction rows could be assembled. The layout may be unusual. Try a different statement or edit manually.'); }
+          return;
+        }
+        const stats = validateBalances(rows);
+        renderPreview();
+        showBalanceBanner(stats);
+        progressArea?.classList.add('hidden');
+        resultArea?.classList.remove('hidden');
+        resultArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (e: any) {
+        showError(e?.message || 'Something went wrong while reading the statement.');
+      }
+    }
+
+    async function runOcr() {
+      if (!currentPdf) return;
+      scannedNotice?.classList.add('hidden');
+      progressArea?.classList.remove('hidden');
+      if (progressText) progressText.textContent = 'Preparing text recognition (one-time setup)...';
+      rows = [];
+      let worker: any = null;
+      try {
+        await loadTesseract();
+        worker = await tesseractLib.createWorker('eng', 1, {
+          workerPath: '/tesseract/worker.min.js',
+          corePath: '/tesseract/',
+          langPath: '/tesseract/',
+          workerBlobURL: false,
+          logger: (m: any) => {
+            if (m && m.status === 'recognizing text' && progressText) {
+              progressText.textContent = `Reading scanned text ${Math.round((m.progress || 0) * 100)}%`;
+            }
+          },
+        });
+        for (let i = 1; i <= currentPdf.numPages; i++) {
+          const page = await currentPdf.getPage(i);
+          const viewport = page.getViewport({ scale: 2.5 });
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.floor(viewport.width));
+          canvas.height = Math.max(1, Math.floor(viewport.height));
+          const ctx = canvas.getContext('2d');
+          await page.render({ canvasContext: ctx, viewport }).promise;
+          const { data } = await worker.recognize(canvas);
+          (data.text || '').split(/\r?\n/).forEach((ln: string) => {
+            const t = ln.trim();
+            if (!t) return;
+            const toks = t.split(/\s{2,}|\t/).filter(Boolean);
+            // crude: treat first token as date if it matches, last numeric as balance
+            if (toks.length && isDateToken(toks[0])) {
+              const money = toks.filter((x) => isMoneyToken(x));
+              rows.push({
+                date: toks[0],
+                description: toks.slice(1).filter((x) => !isMoneyToken(x)).join(' '),
+                out: '', in: '',
+                balance: money.length ? (parseMoney(money[money.length - 1]) || '').toString() : '',
+                flagged: false,
+              });
+            }
+          });
+          canvas.width = 0; canvas.height = 0;
+        }
+        await worker.terminate(); worker = null;
+        if (rows.length === 0) { showError('No readable transactions were found. The scan may be low-resolution or skewed.'); return; }
+        const stats = validateBalances(rows);
+        renderPreview(); showBalanceBanner(stats);
+        progressArea?.classList.add('hidden');
+        resultArea?.classList.remove('hidden');
+      } catch (e: any) {
+        if (worker) { try { await worker.terminate(); } catch {} }
+        showError(e?.message || 'Text recognition failed.');
+      }
+    }
+
+    function download() {
+      syncEdits();
+      const header = ['Date', 'Description', 'Money out', 'Money in', 'Balance'];
+      const aoa = [header, ...rows.map((r) => [r.date, r.description, r.out, r.in, r.balance])];
+      const base = (currentFile?.name || 'statement').replace(/\.pdf$/i, '');
+      if (outputFormat === 'csv') {
+        const csv = aoa.map((row) => row.map((c: any) => {
+          const v = String(c == null ? '' : c);
+          return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+        }).join(',')).join('\r\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        triggerDownload(blob, base + '.csv');
+      } else {
+        const ws = xlsxLib.utils.aoa_to_sheet(aoa);
+        // Column widths are honored by the SheetJS community writer; frozen panes
+        // (ws['!freeze']) are NOT (verified: no <pane> emitted), so we omit it.
+        ws['!cols'] = [{ wch: 12 }, { wch: 44 }, { wch: 12 }, { wch: 12 }, { wch: 14 }];
+        const wb = xlsxLib.utils.book_new();
+        xlsxLib.utils.book_append_sheet(wb, ws, 'Transactions');
+        const out = xlsxLib.write(wb, { bookType: 'xlsx', type: 'array' });
+        triggerDownload(new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), base + '.xlsx');
+      }
+    }
+    function triggerDownload(blob: Blob, name: string) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name; document.body.appendChild(a); a.click();
+      document.body.removeChild(a); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    function reset() {
+      currentFile = null; currentPdf = null; rows = [];
+      fileInput.value = '';
+      [fileInfo, settingsArea, progressArea, resultArea, errorArea, scannedNotice].forEach((el) => el?.classList.add('hidden'));
+    }
+
+    // ── Wiring ───────────────────────────────────────────────────────────────
+    dropZone?.addEventListener('click', () => fileInput.click());
+    dropZone?.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary'); });
+    dropZone?.addEventListener('dragleave', () => dropZone.classList.remove('border-bae-primary'));
+    dropZone?.addEventListener('drop', (e) => {
+      e.preventDefault(); dropZone.classList.remove('border-bae-primary');
+      const f = e.dataTransfer?.files?.[0]; if (f) handleFile(f);
+    });
+    fileInput?.addEventListener('change', () => {
+      const f = fileInput.files?.[0];
+      fileInput.value = ''; // allow re-selecting the same file without a page refresh
+      if (f) handleFile(f);
+    });
+    convertBtn?.addEventListener('click', convert);
+    document.getElementById('reset-top')?.addEventListener('click', reset);
+    ocrBtn?.addEventListener('click', runOcr);
+    downloadBtn?.addEventListener('click', download);
+    resetBtn?.addEventListener('click', reset);
+    document.getElementById('format-xlsx')?.addEventListener('click', () => setFormat('xlsx'));
+    document.getElementById('format-csv')?.addEventListener('click', () => setFormat('csv'));
+    function setFormat(fmt: string) {
+      outputFormat = fmt;
+      const x = document.getElementById('format-xlsx'), c = document.getElementById('format-csv');
+      [x, c].forEach((b) => { b?.classList.remove('bg-bae-primary', 'text-white'); b?.classList.add('text-bae-muted'); });
+      const active = fmt === 'xlsx' ? x : c;
+      active?.classList.add('bg-bae-primary', 'text-white'); active?.classList.remove('text-bae-muted');
+    }
+  })();
+</script>

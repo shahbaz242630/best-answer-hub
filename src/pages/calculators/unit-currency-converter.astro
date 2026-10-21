@@ -1,0 +1,877 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Unit Converter?',
+    a: 'The Best Answer Hub Unit Converter is a free, privacy-first browser tool that converts between length, weight, temperature, volume, speed, area, and currency. It runs entirely in your browser with no signup, no ads, and no data collection. Every conversion shows the exact formula so you know the math is correct. The volume category includes a US/UK/Metric system toggle to prevent the common confusion between US and Imperial gallons, pints, and fluid ounces.',
+  },
+  {
+    q: 'How many centimeters are in an inch?',
+    a: 'There are exactly 2.54 centimeters in one inch. This is a fixed international standard defined in 1959. To convert inches to centimeters, multiply the number of inches by 2.54. For example, 6 inches equals 15.24 centimeters, and 12 inches equals 30.48 centimeters. The Best Answer Hub Unit Converter pre-loads this factor and shows the exact math in the Show Your Work panel.',
+  },
+  {
+    q: 'What is 72 degrees Fahrenheit in Celsius?',
+    a: '72 degrees Fahrenheit equals 22.22 degrees Celsius. The exact formula is °C = (°F − 32) × 5/9. So (72 − 32) × 5/9 = 40 × 5/9 = 22.22°C. This is considered comfortable room temperature in the United States. The Best Answer Hub Unit Converter also displays the reverse formula and handles negative temperatures correctly, which matters for freezer settings and winter weather.',
+  },
+  {
+    q: 'How many pounds in a kilogram?',
+    a: 'One kilogram equals approximately 2.20462 pounds. To convert kilograms to pounds, multiply by 2.20462. For example, 75 kilograms is about 165.35 pounds. To convert pounds to kilograms, divide by 2.20462 or multiply by 0.453592. The Best Answer Hub Unit Converter shows both the decimal result and the stone-and-pounds combined format, which is how body weight is commonly expressed in the United Kingdom and Ireland.',
+  },
+  {
+    q: "What's 75 kg in pounds and stones?",
+    a: '75 kilograms is approximately 165.35 pounds, or 11 stone 11.3 pounds. One stone equals exactly 14 pounds. To convert from kilograms, first multiply by 2.20462 to get pounds, then divide by 14. The whole number is the stone value, and the remainder is the pounds. The Best Answer Hub Unit Converter automatically shows this combined format whenever you convert to stones, which is far more useful than the decimal equivalent of 11.81 stone.',
+  },
+  {
+    q: 'How many tablespoons are in a cup?',
+    a: 'In the US customary system, there are 16 US tablespoons in one US cup. In the metric system commonly used outside the United States, a cup is typically 250 milliliters, which equals approximately 16.67 metric tablespoons of 15 milliliters each. The Best Answer Hub Unit Converter includes a US/UK/Metric system toggle for volume so you always know which standard you are using. A UK imperial tablespoon is about 17.76 milliliters, so a 250-milliliter metric cup holds roughly 14 of them. The 20-milliliter tablespoon many people picture is actually the Australian standard, which gives 12.5 per cup.',
+  },
+  {
+    q: 'How many liters are in a gallon?',
+    a: 'A US gallon contains exactly 3.78541 liters. An Imperial UK gallon contains approximately 4.54609 liters. The UK gallon is about 20% larger than the US gallon. This difference causes frequent confusion, especially for fuel economy calculations and recipe conversions. The Best Answer Hub Unit Converter lets you switch between US Customary, UK Imperial, and Metric Only modes for volume so you never accidentally use the wrong gallon.',
+  },
+  {
+    q: 'How many teaspoons in a tablespoon US vs UK?',
+    a: 'A US tablespoon contains exactly 3 US teaspoons of about 4.93 milliliters each, or 14.79 milliliters total. A UK imperial tablespoon also holds 3 teaspoons, but larger ones of about 5.92 milliliters each, for roughly 17.76 milliliters total, which makes a UK tablespoon about 20% larger than a US tablespoon. The Australian tablespoon is larger still at 20 milliliters, equal to 4 metric teaspoons. If you follow a British recipe using US spoons, you will add too little of each ingredient. The Best Answer Hub Unit Converter labels every unit clearly with its origin system so you can match the spoon set you actually own.',
+  },
+  {
+    q: 'How many gigabytes are in a terabyte exactly?',
+    a: "In the decimal system used by storage manufacturers, one terabyte equals exactly 1,000 gigabytes. In the binary system used by Windows and most operating systems, one tebibyte equals 1,024 gibibytes. The gap is about 2.4% at the kilobyte level and compounds with each step, reaching roughly 7% by the gigabyte level, which is why a 1 TB drive shows as about 931 GB in Windows File Explorer. The Best Answer Hub Data Storage Converter covers this in depth.",
+  },
+  {
+    q: 'Why does my 1 TB hard drive only show 931 GB?',
+    a: 'Your operating system measures storage in binary gibibytes where 1 GiB = 1,024 MiB, while manufacturers market drives in decimal gigabytes where 1 GB = 1,000 MB. A 1,000 GB drive divided by 1.024 three times equals approximately 931 gibibytes. Both numbers are correct. They just use different counting systems. The IEC recommends using GiB for binary and GB for decimal, but most software still labels binary units as GB.',
+  },
+  {
+    q: 'How do I convert Mbps to MB/s?',
+    a: 'Divide the megabits per second by 8 to get megabytes per second. For example, a 100 Mbps internet connection equals 12.5 MB/s download speed. This confusion happens because file sizes are measured in bytes while internet speeds are marketed in bits. Internet service providers use megabits because the number is eight times larger and sounds more impressive. The Best Answer Hub Data Storage Converter handles this automatically.',
+  },
+  {
+    q: 'Why do currency exchange rates change every second?',
+    a: 'Currency rates fluctuate based on supply and demand in the global foreign exchange market, which operates 24 hours a day across London, New York, Tokyo, and Sydney. Factors include interest rate changes, inflation data, political events, and central bank policies. The rate you see on Google is the mid-market rate. Banks and payment services like PayPal and Western Union add their own markup of 1% to 5%, which is why the actual rate you get is always worse.',
+  },
+  {
+    q: 'How much is 1 Bitcoin in dollars right now?',
+    a: 'Bitcoin prices change continuously based on trading activity across exchanges like Coinbase, Binance, and Kraken. For a live price, check a crypto tracker. The Best Answer Hub Unit Converter lets you enter any exchange rate to see conversions, which is useful because the rate your exchange actually gives you often differs from the headline price by 1% to 3% due to spread and fees. Always check the final checkout price before confirming a trade.',
+  },
+  {
+    q: 'How many square feet in an acre?',
+    a: 'One acre contains exactly 43,560 square feet. This is a US customary unit of land area. One acre is also approximately 4,047 square meters, 0.4047 hectares, or roughly 90% of a standard American football field without the end zones. The Best Answer Hub Unit Converter handles acres, hectares, square meters, and square miles, common units for real estate listings in the US, Europe, and Asia.',
+  },
+  {
+    q: "What's the formula to convert Celsius to Fahrenheit?",
+    a: 'The formula is °F = (°C × 9/5) + 32. To convert Fahrenheit to Celsius, use °C = (°F − 32) × 5/9. For quick mental math, double the Celsius value and add 30 to get an approximate Fahrenheit value. This shortcut is accurate within a few degrees for everyday temperatures between 0°C and 30°C, which covers most weather and room temperature scenarios.',
+  },
+];
+
+const seo = {
+  title: 'Unit Converter — Length, Weight, Temp, Volume & More (2026)',
+  description: 'Free unit converter for length, weight, temperature, volume, speed, area, and currency. US/UK toggle and instant results. No signup, no ads.',
+  url: '/calculators/unit-currency-converter/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-24T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Unit Converter', url: '/calculators/unit-currency-converter/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated 2026 · 7 Categories
+          </div>
+          <a href="/calculators/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Calculators
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Unit Converter for<br/>
+          <em class="italic text-bae-primary">Length, Weight & More</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Convert between length, weight, temperature, volume, speed, area, and currency. Includes US/UK system toggle for volume, combined formats like stone+pounds, and exact formulas for every conversion. Your data never leaves your browser.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Unit converter">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Category Tabs -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-1.5 shadow-bae-sm overflow-x-auto">
+            <div class="flex gap-1 min-w-max" id="category-tabs">
+              <button type="button" data-cat="length" class="cat-btn active text-sm font-semibold py-2 px-4 rounded-bae-sm bg-bae-primary text-white transition-colors whitespace-nowrap">Length</button>
+              <button type="button" data-cat="weight" class="cat-btn text-sm font-semibold py-2 px-4 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors whitespace-nowrap">Weight</button>
+              <button type="button" data-cat="temperature" class="cat-btn text-sm font-semibold py-2 px-4 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors whitespace-nowrap">Temperature</button>
+              <button type="button" data-cat="volume" class="cat-btn text-sm font-semibold py-2 px-4 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors whitespace-nowrap">Volume</button>
+              <button type="button" data-cat="speed" class="cat-btn text-sm font-semibold py-2 px-4 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors whitespace-nowrap">Speed</button>
+              <button type="button" data-cat="area" class="cat-btn text-sm font-semibold py-2 px-4 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors whitespace-nowrap">Area</button>
+              <button type="button" data-cat="currency" class="cat-btn text-sm font-semibold py-2 px-4 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors whitespace-nowrap">Currency</button>
+            </div>
+          </div>
+
+          <!-- Conversion Card -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <!-- From -->
+            <div class="mb-2">
+              <label class="text-sm font-semibold text-bae-ink block mb-2">From</label>
+              <div class="flex gap-3">
+                <input type="number" id="from-value" value="1" step="any" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary" />
+                <select id="from-unit" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary"></select>
+              </div>
+            </div>
+
+            <!-- Swap -->
+            <div class="flex justify-center py-2">
+              <button type="button" id="swap-btn" class="w-9 h-9 rounded-full bg-bae-primary text-white flex items-center justify-center hover:bg-bae-accent transition-colors shadow-bae-sm" aria-label="Swap units">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+              </button>
+            </div>
+
+            <!-- To -->
+            <div>
+              <label class="text-sm font-semibold text-bae-ink block mb-2">To</label>
+              <div class="flex gap-3">
+                <div id="to-value-display" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-bae-bg text-bae-ink font-semibold flex items-center min-h-[42px]">—</div>
+                <select id="to-unit" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary"></select>
+              </div>
+            </div>
+
+            <!-- System Toggle (volume only) -->
+            <div id="system-toggle" class="hidden mt-5 pt-4 border-t border-bae-border">
+              <label class="text-sm font-semibold text-bae-ink block mb-2">Measurement System</label>
+              <div class="flex gap-2 p-1 bg-white rounded-bae-sm border border-bae-border">
+                <button type="button" data-system="us" class="sys-btn flex-1 text-sm font-semibold py-2 rounded-bae-sm bg-bae-primary text-white transition-colors">US Customary</button>
+                <button type="button" data-system="uk" class="sys-btn flex-1 text-sm font-semibold py-2 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors">UK Imperial</button>
+                <button type="button" data-system="metric" class="sys-btn flex-1 text-sm font-semibold py-2 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors">Metric Only</button>
+              </div>
+              <p class="text-xs text-bae-muted mt-2" id="system-desc">US Customary uses cups, pints, quarts, and gallons based on US standards. A US gallon is 3.785 liters.</p>
+            </div>
+
+            <!-- Currency Rate (currency only) -->
+            <div id="currency-panel" class="hidden mt-5 pt-4 border-t border-bae-border">
+              <label class="text-sm font-semibold text-bae-ink block mb-2">Exchange Rate</label>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-sm text-bae-muted">1</span>
+                <span id="rate-from-label" class="text-sm font-semibold text-bae-ink">USD</span>
+                <span class="text-sm text-bae-muted">=</span>
+                <input type="number" id="rate-value" value="1" step="any" class="w-28 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <span id="rate-to-label" class="text-sm font-semibold text-bae-ink">EUR</span>
+              </div>
+              <p class="text-xs text-bae-muted mt-2">Enter your actual bank or exchange rate. The mid-market rate you see on Google is not what banks charge. They typically add 1% to 3% markup. Our tool uses your rate so you see the real numbers.</p>
+            </div>
+          </div>
+
+          <!-- Reset -->
+          <div class="flex justify-end">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset converter
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <!-- Main Result -->
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Conversion Result</h3>
+            <div id="result-main" class="text-3xl font-bold font-serif mb-1">—</div>
+            <div id="result-equation" class="text-sm text-white/70 mb-3">Enter a value to see the conversion</div>
+            <div id="result-alt" class="text-sm text-bae-primary font-medium mb-4 hidden"></div>
+            <button type="button" id="copy-btn" class="w-full bg-bae-primary hover:bg-bae-accent text-white font-semibold text-sm py-2.5 rounded-bae-sm transition-colors">
+              Copy Result
+            </button>
+            <button type="button" id="pdf-btn" class="w-full mt-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm py-2.5 rounded-bae-sm transition-colors">
+              Download PDF Report
+            </button>
+          </div>
+
+          <!-- Show Your Work -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Show Your Work</h3>
+            <div class="space-y-2 text-sm" id="show-work-content">
+              <p class="text-bae-muted">Select a category and enter a value to see the exact formula and conversion factor.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Pick a category', text: 'Choose from length, weight, temperature, volume, speed, area, or currency. For volume, select US Customary, UK Imperial, or Metric to avoid unit confusion.' },
+    { name: 'Enter your value', text: 'Type the number you want to convert and select the source unit. Use the swap button to reverse the conversion direction instantly.' },
+    { name: 'See the result', text: 'Get your converted value instantly, plus the exact formula, alternative formats like stone+pounds or feet+inches, and a shareable link you can copy.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Pick a category</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Choose from length, weight, temperature, volume, speed, area, or currency. For volume, select US Customary, UK Imperial, or Metric to avoid unit confusion.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter your value</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Type the number you want to convert and select the source unit. Use the swap button to reverse the conversion direction instantly.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">See the result</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Get your converted value instantly, plus the exact formula, alternative formats like stone+pounds or feet+inches, and a shareable link you can copy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/tax-calculator/" class="text-bae-primary hover:underline">Tax Calculator</a>, <a href="/calculators/mortgage-calculator/" class="text-bae-primary hover:underline">Mortgage Calculator</a>, and <a href="/calculators/" class="text-bae-primary hover:underline">Calculators Hub</a>.</p>
+        </div>
+        <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all calculators →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Real-World Conversions -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Real-world conversions</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Travel</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Airline luggage limit</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">23 kg = 50.71 lb</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Most international airlines allow 23 kg checked bags. That is roughly 50.7 pounds. If you are flying within the US, the limit is often 50 pounds, so 23 kg is just over the typical domestic allowance.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Driving</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">European speed limit</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">120 km/h = 74.56 mph</div>
+          <p class="text-sm text-bae-muted leading-relaxed">The standard highway speed limit in France and Italy is 130 km/h, while Germany has unlimited sections. At 120 km/h, you are driving roughly 75 mph, comparable to typical US interstate speeds.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Home & DIY</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Room area conversion</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">120 sq ft = 11.15 sq m</div>
+          <p class="text-sm text-bae-muted leading-relaxed">A 12-foot by 10-foot bedroom is 120 square feet, or about 11.15 square meters. This is a small-to-medium bedroom size in both the US and Europe.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Shopping</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Clothing size check</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">42 in = 106.68 cm</div>
+          <p class="text-sm text-bae-muted leading-relaxed">A 42-inch chest measurement equals about 106.7 centimeters. Many international brands list sizes in centimeters, so this conversion helps when ordering from European or Asian retailers.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios use standard international conversion factors. Actual airline limits, speed laws, and sizing vary by carrier, jurisdiction, and brand. Always verify with official sources.</p>
+    </div>
+  </section>
+
+  <!-- Report Summary (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Conversion Report</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Unit Conversion Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Category</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-category">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Date</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-date">—</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">From</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-from">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">To</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-to">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Result</p>
+              <p class="text-3xl font-bold text-bae-primary" id="report-result">—</p>
+            </div>
+          </div>
+          <div class="text-sm text-bae-muted" id="report-formula"></div>
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>Conversion factors are based on international standards. For currency, the exchange rate is user-provided and reflects the rate entered at the time of conversion, not a live market rate. Always verify critical measurements with an authoritative source.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      const CATEGORIES = {
+        length: {
+          name: 'Length',
+          base: 'm',
+          units: {
+            mm: { name: 'Millimeters', factor: 0.001 },
+            cm: { name: 'Centimeters', factor: 0.01 },
+            m: { name: 'Meters', factor: 1 },
+            km: { name: 'Kilometers', factor: 1000 },
+            in: { name: 'Inches', factor: 0.0254 },
+            ft: { name: 'Feet', factor: 0.3048 },
+            yd: { name: 'Yards', factor: 0.9144 },
+            mi: { name: 'Miles', factor: 1609.344 },
+            nmi: { name: 'Nautical Miles', factor: 1852 },
+          }
+        },
+        weight: {
+          name: 'Weight',
+          base: 'g',
+          units: {
+            mg: { name: 'Milligrams', factor: 0.001 },
+            g: { name: 'Grams', factor: 1 },
+            kg: { name: 'Kilograms', factor: 1000 },
+            oz: { name: 'Ounces', factor: 28.3495 },
+            lb: { name: 'Pounds', factor: 453.592 },
+            st: { name: 'Stones', factor: 6350.29 },
+            mt: { name: 'Metric Tons', factor: 1000000 },
+          }
+        },
+        temperature: {
+          name: 'Temperature',
+          units: {
+            c: { name: 'Celsius' },
+            f: { name: 'Fahrenheit' },
+            k: { name: 'Kelvin' },
+          }
+        },
+        volume: {
+          name: 'Volume',
+          base: 'ml',
+          units: {
+            ml: { name: 'Milliliters', factor: 1, systems: ['us', 'uk', 'metric'] },
+            cl: { name: 'Centiliters', factor: 10, systems: ['metric'] },
+            dl: { name: 'Deciliters', factor: 100, systems: ['metric'] },
+            l: { name: 'Liters', factor: 1000, systems: ['us', 'uk', 'metric'] },
+            m3: { name: 'Cubic Meters', factor: 1000000, systems: ['metric'] },
+            ustsp: { name: 'US Teaspoons', factor: 4.92892, systems: ['us'] },
+            ustbsp: { name: 'US Tablespoons', factor: 14.7868, systems: ['us'] },
+            usfloz: { name: 'US Fluid Ounces', factor: 29.5735, systems: ['us'] },
+            uscup: { name: 'US Cups', factor: 236.588, systems: ['us'] },
+            uspt: { name: 'US Pints', factor: 473.176, systems: ['us'] },
+            usqt: { name: 'US Quarts', factor: 946.353, systems: ['us'] },
+            usgal: { name: 'US Gallons', factor: 3785.41, systems: ['us'] },
+            uktsp: { name: 'UK Teaspoons', factor: 5.91939, systems: ['uk'] },
+            uktbsp: { name: 'UK Tablespoons', factor: 17.7582, systems: ['uk'] },
+            ukfloz: { name: 'UK Fluid Ounces', factor: 28.4131, systems: ['uk'] },
+            ukpt: { name: 'UK Pints', factor: 568.261, systems: ['uk'] },
+            ukqt: { name: 'UK Quarts', factor: 1136.52, systems: ['uk'] },
+            ukgal: { name: 'UK Gallons', factor: 4546.09, systems: ['uk'] },
+          }
+        },
+        speed: {
+          name: 'Speed',
+          base: 'ms',
+          units: {
+            ms: { name: 'Meters per Second', factor: 1 },
+            kph: { name: 'Kilometers per Hour', factor: 0.277778 },
+            mph: { name: 'Miles per Hour', factor: 0.44704 },
+            knots: { name: 'Knots', factor: 0.514444 },
+            fps: { name: 'Feet per Second', factor: 0.3048 },
+          }
+        },
+        area: {
+          name: 'Area',
+          base: 'sqm',
+          units: {
+            sqmm: { name: 'Square Millimeters', factor: 0.000001 },
+            sqcm: { name: 'Square Centimeters', factor: 0.0001 },
+            sqm: { name: 'Square Meters', factor: 1 },
+            ha: { name: 'Hectares', factor: 10000 },
+            sqkm: { name: 'Square Kilometers', factor: 1000000 },
+            sqin: { name: 'Square Inches', factor: 0.00064516 },
+            sqft: { name: 'Square Feet', factor: 0.092903 },
+            sqyd: { name: 'Square Yards', factor: 0.836127 },
+            acre: { name: 'Acres', factor: 4046.86 },
+            sqmi: { name: 'Square Miles', factor: 2589988 },
+          }
+        },
+        currency: {
+          name: 'Currency',
+          units: {
+            usd: { name: 'USD: US Dollar' },
+            eur: { name: 'EUR: Euro' },
+            gbp: { name: 'GBP: British Pound' },
+            jpy: { name: 'JPY: Japanese Yen' },
+            cad: { name: 'CAD: Canadian Dollar' },
+            aud: { name: 'AUD: Australian Dollar' },
+            chf: { name: 'CHF: Swiss Franc' },
+            cny: { name: 'CNY: Chinese Yuan' },
+            inr: { name: 'INR: Indian Rupee' },
+            mxn: { name: 'MXN: Mexican Peso' },
+            brl: { name: 'BRL: Brazilian Real' },
+            sek: { name: 'SEK: Swedish Krona' },
+            nzd: { name: 'NZD: New Zealand Dollar' },
+            sgd: { name: 'SGD: Singapore Dollar' },
+            krw: { name: 'KRW: South Korean Won' },
+          }
+        }
+      };
+
+      const DEFAULTS = {
+        length: { from: 'm', to: 'ft' },
+        weight: { from: 'kg', to: 'lb' },
+        temperature: { from: 'c', to: 'f' },
+        volume: { us: { from: 'l', to: 'usgal' }, uk: { from: 'l', to: 'ukgal' }, metric: { from: 'l', to: 'm3' } },
+        speed: { from: 'kph', to: 'mph' },
+        area: { from: 'sqm', to: 'sqft' },
+        currency: { from: 'usd', to: 'eur' },
+      };
+
+      let currentCategory = 'length';
+      let currentSystem = 'us';
+
+      function formatNumber(num) {
+        if (!isFinite(num)) return '—';
+        if (num === 0) return '0';
+        const abs = Math.abs(num);
+        if (abs >= 1e12) return num.toExponential(4);
+        if (abs < 1e-9) return num.toExponential(4);
+        let rounded;
+        if (abs >= 1000000) rounded = Math.round(num * 100) / 100;
+        else if (abs >= 1) rounded = Math.round(num * 10000) / 10000;
+        else rounded = Math.round(num * 1000000) / 1000000;
+        return parseFloat(rounded.toPrecision(8)).toLocaleString(undefined, { maximumFractionDigits: 6 });
+      }
+
+      function formatCurrency(num) {
+        if (!isFinite(num)) return '—';
+        return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+
+      function convertTemperature(value, from, to) {
+        let c;
+        if (from === 'c') c = value;
+        else if (from === 'f') c = (value - 32) * 5 / 9;
+        else if (from === 'k') c = value - 273.15;
+        if (to === 'c') return c;
+        if (to === 'f') return c * 9 / 5 + 32;
+        if (to === 'k') return c + 273.15;
+        return c;
+      }
+
+      function getUnitName(cat, key) {
+        return CATEGORIES[cat].units[key]?.name || key;
+      }
+
+      function getUnitLabel(cat, key) {
+        if (cat === 'currency') return key.toUpperCase();
+        return CATEGORIES[cat].units[key]?.name || key;
+      }
+
+      function getUnitFactor(cat, key) {
+        return CATEGORIES[cat].units[key]?.factor || 1;
+      }
+
+      function formatStonesPounds(stonesValue) {
+        const stones = Math.floor(stonesValue);
+        const lbs = (stonesValue - stones) * 14;
+        return stones + ' stone ' + lbs.toFixed(1) + ' lbs';
+      }
+
+      function formatFeetInches(feetValue) {
+        const feet = Math.floor(feetValue);
+        const inches = (feetValue - feet) * 12;
+        return feet + ' ft ' + inches.toFixed(1) + ' in';
+      }
+
+      function getVisibleUnits(category) {
+        const cat = CATEGORIES[category];
+        if (category !== 'volume') {
+          return Object.keys(cat.units);
+        }
+        return Object.keys(cat.units).filter(key => cat.units[key].systems.includes(currentSystem));
+      }
+
+      function renderUnits() {
+        const fromSelect = $('from-unit');
+        const toSelect = $('to-unit');
+        const visible = getVisibleUnits(currentCategory);
+
+        const populate = (select, selectedKey) => {
+          select.innerHTML = '';
+          visible.forEach(key => {
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.textContent = CATEGORIES[currentCategory].units[key].name;
+            if (key === selectedKey) opt.selected = true;
+            select.appendChild(opt);
+          });
+        };
+
+        const defs = currentCategory === 'volume' ? DEFAULTS.volume[currentSystem] : DEFAULTS[currentCategory];
+        populate(fromSelect, defs.from);
+        populate(toSelect, defs.to);
+      }
+
+      function setCategory(cat) {
+        currentCategory = cat;
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+          if (btn.dataset.cat === cat) {
+            btn.classList.add('bg-bae-primary', 'text-white');
+            btn.classList.remove('text-bae-muted');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('text-bae-muted');
+          }
+        });
+
+        if (cat === 'volume') {
+          $('system-toggle').classList.remove('hidden');
+        } else {
+          $('system-toggle').classList.add('hidden');
+        }
+
+        if (cat === 'currency') {
+          $('currency-panel').classList.remove('hidden');
+        } else {
+          $('currency-panel').classList.add('hidden');
+        }
+
+        renderUnits();
+        calculate();
+      }
+
+      function setSystem(sys) {
+        currentSystem = sys;
+        document.querySelectorAll('.sys-btn').forEach(btn => {
+          if (btn.dataset.system === sys) {
+            btn.classList.add('bg-bae-primary', 'text-white');
+            btn.classList.remove('text-bae-muted');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('text-bae-muted');
+          }
+        });
+
+        const desc = $('system-desc');
+        if (sys === 'us') desc.textContent = 'US Customary uses cups, pints, quarts, and gallons based on US standards. A US gallon is 3.785 liters.';
+        else if (sys === 'uk') desc.textContent = 'UK Imperial uses pints, quarts, and gallons based on British standards. A UK gallon is 4.546 liters, about 20% larger than the US gallon.';
+        else desc.textContent = 'Metric Only shows milliliters, centiliters, deciliters, liters, and cubic meters. No imperial units are displayed.';
+
+        renderUnits();
+        calculate();
+      }
+
+      function calculate() {
+        const cat = currentCategory;
+        const fromUnit = $('from-unit').value;
+        const toUnit = $('to-unit').value;
+        const value = parseFloat($('from-value').value);
+        if (isNaN(value)) {
+          $('to-value-display').textContent = '—';
+          $('result-main').textContent = '—';
+          $('result-equation').textContent = 'Enter a valid number';
+          $('result-alt').classList.add('hidden');
+          $('show-work-content').innerHTML = '<p class="text-bae-muted">Enter a valid number to see the conversion.</p>';
+          return;
+        }
+
+        let result, equation, workHtml;
+        const isCurrency = cat === 'currency';
+        const displayResult = isCurrency ? formatCurrency(result) : formatNumber(result);
+
+        if (cat === 'temperature') {
+          result = convertTemperature(value, fromUnit, toUnit);
+          const unitLabel = getUnitLabel(cat, toUnit);
+          equation = value + '°' + fromUnit.toUpperCase() + ' = ' + formatNumber(result) + '°' + toUnit.toUpperCase();
+
+          let formula = '';
+          if (fromUnit === 'c' && toUnit === 'f') formula = '°F = (°C × 9/5) + 32';
+          else if (fromUnit === 'f' && toUnit === 'c') formula = '°C = (°F − 32) × 5/9';
+          else if (fromUnit === 'c' && toUnit === 'k') formula = 'K = °C + 273.15';
+          else if (fromUnit === 'k' && toUnit === 'c') formula = '°C = K − 273.15';
+          else if (fromUnit === 'f' && toUnit === 'k') formula = 'K = (°F − 32) × 5/9 + 273.15';
+          else if (fromUnit === 'k' && toUnit === 'f') formula = '°F = (K − 273.15) × 9/5 + 32';
+          else formula = 'Same unit, no conversion needed';
+
+          workHtml = '<p class="text-bae-muted">Formula: ' + formula + '</p>';
+          if (fromUnit !== toUnit) {
+            workHtml += '<p class="text-bae-ink font-medium">' + formula.replace('°C', value + '°C').replace('°F', value + '°F').replace('K', value + 'K') + ' = ' + formatNumber(result) + '°' + toUnit.toUpperCase() + '</p>';
+          }
+        } else if (cat === 'currency') {
+          const rate = parseFloat($('rate-value').value) || 0;
+          result = value * rate;
+          const fromName = fromUnit.toUpperCase();
+          const toName = toUnit.toUpperCase();
+          equation = value + ' ' + fromName + ' × ' + rate + ' = ' + formatCurrency(result) + ' ' + toName;
+          workHtml = '<p class="text-bae-muted">Exchange rate: 1 ' + fromName + ' = ' + rate + ' ' + toName + '</p>';
+          workHtml += '<p class="text-bae-ink font-medium">' + value + ' × ' + rate + ' = ' + formatCurrency(result) + ' ' + toName + '</p>';
+          workHtml += '<p class="text-xs text-bae-muted mt-2">Banks and payment services typically add 1%–3% markup above the mid-market rate. Enter your actual rate for accurate planning.</p>';
+        } else {
+          const fromFactor = getUnitFactor(cat, fromUnit);
+          const toFactor = getUnitFactor(cat, toUnit);
+          const baseValue = value * fromFactor;
+          result = baseValue / toFactor;
+          const factor = fromFactor / toFactor;
+          const fromName = getUnitName(cat, fromUnit);
+          const toName = getUnitName(cat, toUnit);
+          equation = value + ' ' + fromName + ' = ' + formatNumber(result) + ' ' + toName;
+          workHtml = '<p class="text-bae-muted">1 ' + fromName + ' = ' + formatNumber(factor) + ' ' + toName + '</p>';
+          workHtml += '<p class="text-bae-ink font-medium">' + value + ' × ' + formatNumber(factor) + ' = ' + formatNumber(result) + ' ' + toName + '</p>';
+          if (cat === 'volume') {
+            workHtml += '<p class="text-xs text-bae-muted mt-2">System: ' + (currentSystem === 'us' ? 'US Customary' : currentSystem === 'uk' ? 'UK Imperial' : 'Metric Only') + '</p>';
+          }
+        }
+
+        const finalDisplay = isCurrency ? formatCurrency(result) : formatNumber(result);
+        const unitLabel = getUnitLabel(cat, toUnit);
+        $('to-value-display').textContent = finalDisplay;
+        $('result-main').textContent = finalDisplay + ' ' + unitLabel;
+        $('result-equation').textContent = equation;
+
+        const altEl = $('result-alt');
+        if (cat === 'weight' && toUnit === 'st') {
+          altEl.textContent = formatStonesPounds(result);
+          altEl.classList.remove('hidden');
+        } else if (cat === 'length' && toUnit === 'ft') {
+          altEl.textContent = formatFeetInches(result);
+          altEl.classList.remove('hidden');
+        } else if (cat === 'length' && toUnit === 'in') {
+          altEl.textContent = formatFeetInches(result / 12);
+          altEl.classList.remove('hidden');
+        } else {
+          altEl.classList.add('hidden');
+        }
+
+        $('show-work-content').innerHTML = workHtml;
+        updateURL();
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          const params = new URLSearchParams();
+          if (currentCategory !== 'length') params.set('cat', currentCategory);
+          const val = parseFloat($('from-value').value);
+          if (val !== 1) params.set('val', val);
+          const from = $('from-unit').value;
+          const to = $('to-unit').value;
+          const defs = currentCategory === 'volume' ? DEFAULTS.volume[currentSystem] : DEFAULTS[currentCategory];
+          if (from !== defs.from) params.set('from', from);
+          if (to !== defs.to) params.set('to', to);
+          if (currentCategory === 'volume' && currentSystem !== 'us') params.set('sys', currentSystem);
+          if (currentCategory === 'currency') {
+            const rate = parseFloat($('rate-value').value);
+            if (rate !== 1) params.set('rate', rate);
+          }
+          url.search = params.toString();
+          window.history.replaceState({}, '', url);
+        } catch (e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+          const cat = url.searchParams.get('cat');
+          const sys = url.searchParams.get('sys');
+          if (sys && ['us', 'uk', 'metric'].includes(sys)) currentSystem = sys;
+          if (cat && CATEGORIES[cat]) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+              if (btn.dataset.cat === cat) {
+                btn.classList.add('bg-bae-primary', 'text-white');
+                btn.classList.remove('text-bae-muted');
+              } else {
+                btn.classList.remove('bg-bae-primary', 'text-white');
+                btn.classList.add('text-bae-muted');
+              }
+            });
+            if (cat === 'volume') $('system-toggle').classList.remove('hidden');
+            else $('system-toggle').classList.add('hidden');
+            if (cat === 'currency') $('currency-panel').classList.remove('hidden');
+            else $('currency-panel').classList.add('hidden');
+          }
+          document.querySelectorAll('.sys-btn').forEach(btn => {
+            if (btn.dataset.system === currentSystem) {
+              btn.classList.add('bg-bae-primary', 'text-white');
+              btn.classList.remove('text-bae-muted');
+            } else {
+              btn.classList.remove('bg-bae-primary', 'text-white');
+              btn.classList.add('text-bae-muted');
+            }
+          });
+
+          renderUnits();
+
+          const val = url.searchParams.get('val');
+          if (val !== null) $('from-value').value = val;
+          const from = url.searchParams.get('from');
+          const to = url.searchParams.get('to');
+          if (from) {
+            const opts = Array.from($('from-unit').options).map(o => o.value);
+            if (opts.includes(from)) $('from-unit').value = from;
+          }
+          if (to) {
+            const opts = Array.from($('to-unit').options).map(o => o.value);
+            if (opts.includes(to)) $('to-unit').value = to;
+          }
+          const rate = url.searchParams.get('rate');
+          if (rate !== null) $('rate-value').value = rate;
+        } catch (e) {}
+      }
+
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => setCategory(btn.dataset.cat));
+      });
+
+      document.querySelectorAll('.sys-btn').forEach(btn => {
+        btn.addEventListener('click', () => setSystem(btn.dataset.system));
+      });
+
+      $('from-value').addEventListener('input', calculate);
+      $('from-unit').addEventListener('change', calculate);
+      $('to-unit').addEventListener('change', calculate);
+      $('rate-value').addEventListener('input', calculate);
+
+      $('swap-btn').addEventListener('click', () => {
+        const fromVal = $('from-unit').value;
+        const toVal = $('to-unit').value;
+        const visible = getVisibleUnits(currentCategory);
+        if (visible.includes(toVal)) $('from-unit').value = toVal;
+        if (visible.includes(fromVal)) $('to-unit').value = fromVal;
+        calculate();
+      });
+
+      $('copy-btn').addEventListener('click', () => {
+        const text = $('result-equation').textContent;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            const btn = $('copy-btn');
+            const orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = orig, 1500);
+          });
+        }
+      });
+
+      $('clear-btn').addEventListener('click', () => {
+        $('from-value').value = 1;
+        $('rate-value').value = 1;
+        setCategory('length');
+        setSystem('us');
+        window.history.replaceState({}, '', window.location.pathname);
+        calculate();
+      });
+
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const orig = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        $('report-category').textContent = CATEGORIES[currentCategory].name;
+        $('report-date').textContent = new Date().toLocaleDateString();
+        $('report-from').textContent = $('from-value').value + ' ' + getUnitName(currentCategory, $('from-unit').value);
+        $('report-to').textContent = getUnitName(currentCategory, $('to-unit').value);
+        $('report-result').textContent = $('result-main').textContent;
+        $('report-formula').textContent = $('show-work-content').textContent;
+
+        const element = $('print-report');
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'conversion-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = orig;
+          btn.disabled = false;
+        }
+      });
+
+      readURL();
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,759 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolHero from '../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../components/tools/ToolRelatedCTA.astro';
+import { playbooks } from '../data/tools';
+
+const today = '2026-09-14T00:00:00+00:00';
+
+// Playbooks data is the single source of truth in src/data/tools.ts: the same
+// list feeds llms.txt and llms-full.txt. Add or flip articles there, not here.
+// Four tracks share the hub: the SMB track (default, funnels to the SMB AI
+// Readiness Score), the AI Knowledge Test track (track: 'aikt', funnels to
+// the free AI Knowledge Test), the Tools track (track: 'tools') and the Career
+// Strengths track (track: 'career', funnels to the free Work Signature
+// assessment). Entries with no `track` are treated as SMB.
+// The SMB filters deliberately keep the Tools entries (Malik confirmed the
+// duplicate Tools cards on 2026-07-02) but exclude 'aikt' and 'career', which
+// have their own sections.
+/**
+ * The SMB block is derived by EXCLUSION, so every new track must be listed here or its cards leak
+ * into the SMB section (§10.6 trap, hit once already). 'tools' is deliberately NOT excluded.
+ */
+const notSmb = (t?: string) => t === 'aikt' || t === 'career' || t === 'vibe' || t === 'skills';
+const smbPillar = playbooks.find((p) => p.kind === 'pillar' && !notSmb(p.track))!;
+const smbSpokes = playbooks.filter((p) => p.kind === 'spoke' && !notSmb(p.track));
+const aiktPillar = playbooks.find((p) => p.kind === 'pillar' && p.track === 'aikt');
+const aiktSpokes = playbooks.filter((p) => p.kind === 'spoke' && p.track === 'aikt');
+const toolsPillar = playbooks.find((p) => p.kind === 'pillar' && p.track === 'tools');
+const toolsSpokes = playbooks.filter((p) => p.kind === 'spoke' && p.track === 'tools');
+const careerPillar = playbooks.find((p) => p.kind === 'pillar' && p.track === 'career');
+const careerSpokes = playbooks.filter((p) => p.kind === 'spoke' && p.track === 'career');
+// Vibe coding track. Spoke-only for now, so its section renders on spokes alone rather than being
+// gated on a pillar the way the other tracks are; a pillar will slot in above them when one exists.
+const vibePillar = playbooks.find((p) => p.kind === 'pillar' && p.track === 'vibe');
+const vibeSpokes = playbooks.filter((p) => p.kind === 'spoke' && p.track === 'vibe');
+
+// Agent Skills track. Rendered on SPOKES ALONE: every other track gates its section on a
+// pillar existing, which would render nothing here until the pillar ships.
+const skillsPillar = playbooks.find((p) => p.kind === 'pillar' && p.track === 'skills');
+const skillsSpokes = playbooks.filter((p) => p.kind === 'spoke' && p.track === 'skills');
+
+// ---------------------------------------------------------------------------
+// Search index. The track sections below deliberately render the Tools entries
+// twice (Malik confirmed that duplication on 2026-07-02), so search results are
+// built from this deduplicated list instead, keyed by href. Everything here is
+// derived from `playbooks` in src/data/tools.ts, which stays the single source
+// of truth: add an entry there and it appears in search automatically.
+// ---------------------------------------------------------------------------
+const trackLabels: Record<string, string> = {
+  smb: 'Small business AI',
+  tools: 'Free tools',
+  aikt: 'AI knowledge',
+  career: 'Career strengths',
+  vibe: 'Building with AI',
+  skills: 'Agent skills',
+};
+
+const allPlaybooks = Array.from(
+  new Map(
+    playbooks
+      .filter((p) => p.live)
+      .map((p) => {
+        const trackKey = p.track ?? 'smb';
+        return [
+          p.href,
+          {
+            ...p,
+            trackKey,
+            // Precomputed lowercase haystack so the client script does no string work per keystroke.
+            pbText: [p.title, p.description, p.badge, p.meta ?? '', trackLabels[trackKey] ?? '']
+              .join(' ')
+              .toLowerCase(),
+          },
+        ] as const;
+      })
+  ).values()
+).sort((a, b) => a.title.localeCompare(b.title));
+
+const searchTracks = Object.keys(trackLabels).filter((k) => allPlaybooks.some((p) => p.trackKey === k));
+const guideCount = allPlaybooks.length;
+
+const chipBase = 'text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors cursor-pointer';
+const chipOff = 'border-bae-border text-bae-muted hover:border-bae-primary hover:text-bae-primary';
+const chipOn = 'border-bae-primary bg-bae-primary-soft text-bae-primary';
+
+const steps = [
+  { title: 'Search for your question', description: 'Every guide is listed on this page and the search box filters all of them as you type. Search by topic, by tool name, or by the problem you are trying to solve. Nothing is sent to a server, the filtering happens in the browser.' },
+  { title: 'Read the playbook', description: 'Each guide answers one practical question in plain English, with sources for every figure and no affiliate links. Guides are grouped into topic tracks so a small business owner, a jobseeker, and a developer each land on material written for them.' },
+  { title: 'Take the free check it links to', description: 'Most guides end with a free, no-signup assessment or a free tool that puts the advice to work: the SMB AI Readiness Score, the AI Knowledge Test, the Work Signature assessment, or the Vibe Coder Readiness Check. Results appear instantly in the browser.' },
+];
+
+const faqs = [
+  {
+    q: 'What is Best Answer Hub Playbooks?',
+    a: `Best Answer Hub Playbooks is a free library of ${guideCount} plain-English guides covering small business AI, the free Best Answer Hub tools, AI literacy, career strengths, building with AI coding agents, and AI agent skills. Use the search box at the top to filter every guide by topic or tool name. No signup, no email gate, no paywall.`,
+  },
+  {
+    q: 'How do I find the right playbook?',
+    a: `Type into the search box at the top of this page. It filters all ${guideCount} Best Answer Hub Playbooks instantly by title, topic, and description, and the topic chips narrow results to one track such as Free tools or Career strengths. The search runs entirely in the browser, so nothing about the query is uploaded.`,
+  },
+  {
+    q: 'Are the Best Answer Hub Playbooks free to read?',
+    a: 'Yes. Every guide in Best Answer Hub Playbooks is completely free with no account, no email capture, and no paywall. Reading any playbook costs nothing. The library is supported by optional one-time paid reports that some readers choose after taking one of the free assessments.',
+  },
+  {
+    q: 'What topics do the Playbooks cover?',
+    a: 'Best Answer Hub Playbooks are grouped into six tracks: small business AI readiness, the free Best Answer Hub tools explained one by one, AI knowledge and literacy for individuals, career strengths and the eight Work Signature types, shipping apps built with AI coding agents, and AI agent skills.',
+  },
+  {
+    q: 'How do the Playbooks relate to the free assessments?',
+    a: 'Each playbook answers a specific question and then points to the matching free assessment. Small business guides lead to the <a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a>, AI literacy guides to the <a href="/knowledge-center/ai-knowledge-test/">AI Knowledge Test</a>, and career guides to the <a href="/knowledge-center/career-strengths/">Work Signature assessment</a>. The guide gives context, the assessment gives a personal score.',
+  },
+  {
+    q: 'Are the Best Answer Hub Playbooks vendor-neutral?',
+    a: 'Yes. The guides carry no affiliate links and no paid placements. Tools appear only as plural example sets chosen by capability, with a clear no-affiliation note. This is deliberate, because the most common complaint about free AI advice is that it funnels readers toward whichever product the publisher is paid to sell.',
+  },
+  {
+    q: 'Who are the Best Answer Hub Playbooks written for?',
+    a: 'The library serves four groups: owners and operators of businesses with roughly 1 to 50 people, individuals building their own AI literacy or career, developers and non-coders shipping apps with AI agents, and anyone looking for a free tool that does not demand a signup. Each track is written for its own reader, not adapted from enterprise material.',
+  },
+  {
+    q: 'How do I know if my small business is ready for AI?',
+    a: 'A small business is ready for AI when its data, tools, processes, team skills, and basic governance can support it. The free <a href="/knowledge-center/smb-ai-readiness/">Best Answer Hub SMB AI Readiness Score</a> measures all five in about 15 minutes and returns a 0 to 100 score with the weakest pillars flagged for action.',
+  },
+  {
+    q: 'Which AI tools are worth paying for as a small business?',
+    a: 'The AI tools worth paying for are the ones tied to a task that costs real time or money each week, such as customer replies, scheduling, or document handling. Best Answer Hub Playbooks recommend tools by capability and fit, never by affiliate payout, and warn that a cheap monthly tool can cost far more once setup and training time are counted.',
+  },
+  {
+    q: 'Do I need an AI policy for my small business?',
+    a: 'If employees already use ChatGPT or other AI tools at work, a basic AI use policy is worth having. It sets out what data can be entered, which tools are approved, and who signs off on AI output. The Best Answer Hub AI policy playbook explains how to write a one-page version for a small team.',
+  },
+  {
+    q: 'What is the ROI of AI for a small business?',
+    a: 'AI returns value when saved time is reinvested into billable work, more customers, or lower costs, not when it simply makes a quiet week quieter. Best Answer Hub Playbooks show how to measure return beyond time saved, and the AI Readiness report includes a 90-day plan with a clear rule: if you cannot measure improvement by day 90, stop.',
+  },
+  {
+    q: 'Which free tools do the Playbooks explain?',
+    a: 'The Free tools track covers the Best Answer Hub toolbox one tool at a time, from PDF and file conversion to calculators, developer utilities, career tools, and finance tools. Every tool runs entirely in the browser with nothing uploaded, and each guide explains what the tool does, what it cannot do, and how rival sites differ. Start at the <a href="/tools/">tools hub</a>.',
+  },
+  {
+    q: 'What are the career strengths playbooks?',
+    a: 'The Career strengths track explains the eight Work Signature strength types, the modern roles that suit each one, and the blind spot each type carries. Every guide leads to the free <a href="/knowledge-center/career-strengths/">Best Answer Hub Work Signature assessment</a>, which scores a personal strengths profile in the browser with no signup.',
+  },
+  {
+    q: 'Is my data safe when I read a playbook or take an assessment?',
+    a: 'Yes. The playbooks are ordinary web pages, the search on this page filters in the browser, and every Best Answer Hub assessment runs client-side. Answers and scores are computed on the device and never uploaded. You can disconnect from the internet after a page loads and the assessment still works, which confirms nothing is sent to a server.',
+  },
+  {
+    q: 'How often are the Best Answer Hub Playbooks updated?',
+    a: 'The guides are reviewed and updated as AI tools, prices, and rules change, with a visible last-updated date on each page. Because the AI market moves quickly, Best Answer Hub Playbooks favor durable advice on how to decide over fast-aging tool lists, so the guidance stays useful as specific products come and go.',
+  },
+];
+
+const seo = {
+  title: 'Playbooks: Free Guides to AI, Tools and Careers',
+  description: 'Searchable library of free, vendor-neutral guides: small business AI, the free browser tools, AI literacy, career strengths, and AI agents. No signup.',
+  url: '/playbooks/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Guides · No Signup Required"
+    title="Playbooks:"
+    accentText="Plain-English guides to AI, free tools, and your career"
+    description="A searchable library of practical, vendor-neutral guides. Work out where to start with AI, which tools are worth paying for, what every free Best Answer Hub tool actually does, where your own strengths lie, and how to ship what you built with an AI coding agent. Every guide is free to read with no signup, and most lead to a free assessment or tool."
+  />
+
+  <!-- ------------------------------------------------------------------ -->
+  <!-- Search + topic filter. Client-side only, no dependencies, no network -->
+  <!-- request, nothing about the query leaves the browser. Results are     -->
+  <!-- rendered from the deduplicated `allPlaybooks` list so a Tools guide  -->
+  <!-- that appears in two track sections still matches only once here.     -->
+  <!-- ------------------------------------------------------------------ -->
+  <section class="pt-6 md:pt-8" aria-label="Search the playbooks">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <label for="pb-search" class="block text-xs font-semibold uppercase tracking-wider text-bae-primary mb-2">
+          Search {guideCount} free guides
+        </label>
+        <input
+          id="pb-search"
+          type="search"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Try pdf, resume, AI policy, mortgage, agent skills"
+          aria-describedby="pb-count"
+          class="w-full rounded-bae-sm border border-bae-border bg-white px-4 py-3 text-base text-bae-ink placeholder:text-bae-muted/70 focus:outline-none focus:border-bae-primary focus:ring-2 focus:ring-bae-primary/20"
+        />
+        <div class="flex flex-wrap gap-2 mt-4" id="pb-filters" role="group" aria-label="Filter guides by topic">
+          <button type="button" data-pb-filter="all" aria-pressed="true" class={`${chipBase} ${chipOn}`}>All</button>
+          {searchTracks.map((t) => (
+            <button type="button" data-pb-filter={t} aria-pressed="false" class={`${chipBase} ${chipOff}`}>{trackLabels[t]}</button>
+          ))}
+        </div>
+        <p class="text-sm text-bae-muted mt-4" id="pb-count" role="status" aria-live="polite"></p>
+      </div>
+
+      <div id="pb-results" hidden class="mt-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {allPlaybooks.map((item) => (
+            <a
+              href={item.href}
+              data-pb-card
+              data-pb-track={item.trackKey}
+              data-pb-text={item.pbText}
+              class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{item.badge}</span>
+                <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{item.icon}</span>
+              </div>
+              <h3 class="text-base font-semibold text-bae-ink mb-2">{item.title}</h3>
+              <p class="text-sm text-bae-muted line-clamp-3">{item.description}</p>
+              <p class="text-xs text-bae-muted mt-3 font-medium">{item.meta}</p>
+            </a>
+          ))}
+        </div>
+        <p id="pb-empty" hidden class="bg-bae-card border border-bae-border rounded-bae p-6 text-sm text-bae-muted">
+          No guide matches that yet. Try a shorter word, a tool name such as pdf or resume, or clear the box to browse every guide by topic.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured magnet: free tools overview (Tools track pillar) -->
+  {toolsPillar && (
+    <section class="py-6 md:py-8" aria-label="Start here: the free tools" data-pb-section>
+      <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Start here</span>
+          <h2 class="font-serif text-lg md:text-xl font-bold text-bae-ink mt-1">The free tools, explained</h2>
+          <p class="text-sm text-bae-muted mt-1 max-w-2xl">A plain-English tour of every Best Answer Hub tool and hub, and what makes them different. No signup, no ads, nothing uploaded.</p>
+        </div>
+        <a href={toolsPillar.href} class="group block bg-bae-card border border-bae-border rounded-bae p-6 md:p-8 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-start gap-5">
+            <span class="w-12 h-12 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xl font-bold flex items-center justify-center shrink-0">{toolsPillar.icon}</span>
+            <div>
+              <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{toolsPillar.badge}</span>
+              <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mt-1 mb-2">{toolsPillar.title}</h3>
+              <p class="text-sm md:text-base text-bae-muted">{toolsPillar.description}</p>
+              <p class="text-xs text-bae-muted mt-3 font-medium">{toolsPillar.meta}</p>
+            </div>
+          </div>
+        </a>
+        {toolsSpokes.length > 0 && (
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            {toolsSpokes.map((item) => (
+              item.live ? (
+                <a href={item.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{item.badge}</span>
+                    <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{item.icon}</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted mt-3 font-medium">{item.meta}</p>
+                </a>
+              ) : (
+                <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{item.badge}</span>
+                    <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink/70 mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted/70 line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted/60 mt-3 font-medium">{item.meta}</p>
+                </div>
+              )
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- Track 1: For your business (SMB AI Readiness) -->
+  <section class="py-6 md:py-8" aria-label="Small business AI readiness playbooks" data-pb-section>
+    <div class="container max-w-page mx-auto px-6">
+      <div class="mb-5">
+        <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">For your business</span>
+        <h2 class="font-serif text-lg md:text-xl font-bold text-bae-ink mt-1">Small business AI readiness</h2>
+        <p class="text-sm text-bae-muted mt-1 max-w-2xl">Plain-English guides for owners and operators, each leading to the free SMB AI Readiness Score.</p>
+      </div>
+
+      {smbPillar.live ? (
+        <a href={smbPillar.href} class="group block bg-bae-card border border-bae-border rounded-bae p-6 md:p-8 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-start gap-5">
+            <span class="w-12 h-12 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xl font-bold flex items-center justify-center shrink-0">{smbPillar.icon}</span>
+            <div>
+              <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{smbPillar.badge}</span>
+              <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mt-1 mb-2">{smbPillar.title}</h3>
+              <p class="text-sm md:text-base text-bae-muted">{smbPillar.description}</p>
+              <p class="text-xs text-bae-muted mt-3 font-medium">{smbPillar.meta}</p>
+            </div>
+          </div>
+        </a>
+      ) : (
+        <div class="block bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 md:p-8 cursor-not-allowed">
+          <div class="flex items-start gap-5">
+            <span class="w-12 h-12 rounded-bae-sm bg-bae-border/40 text-bae-muted text-xl font-bold flex items-center justify-center shrink-0">{smbPillar.icon}</span>
+            <div>
+              <div class="flex items-center gap-3 mb-1">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{smbPillar.badge}</span>
+                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+              </div>
+              <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink/70 mb-2">{smbPillar.title}</h3>
+              <p class="text-sm md:text-base text-bae-muted/70">{smbPillar.description}</p>
+              <p class="text-xs text-bae-muted/60 mt-3 font-medium">{smbPillar.meta}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4" id="playbooks-grid">
+        {smbSpokes.map((item) => (
+          item.live ? (
+            <a href={item.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{item.badge}</span>
+                <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{item.icon}</span>
+              </div>
+              <h3 class="text-base font-semibold text-bae-ink mb-2">{item.title}</h3>
+              <p class="text-sm text-bae-muted line-clamp-3">{item.description}</p>
+              <p class="text-xs text-bae-muted mt-3 font-medium">{item.meta}</p>
+            </a>
+          ) : (
+            <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{item.badge}</span>
+                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+              </div>
+              <h3 class="text-base font-semibold text-bae-ink/70 mb-2">{item.title}</h3>
+              <p class="text-sm text-bae-muted/70 line-clamp-3">{item.description}</p>
+              <p class="text-xs text-bae-muted/60 mt-3 font-medium">{item.meta}</p>
+            </div>
+          )
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Track 2: For you (AI Knowledge Test) -->
+  {aiktPillar && (
+    <section class="pb-6 md:pb-8 pt-8 border-t border-bae-border-light" aria-label="AI knowledge and literacy playbooks" data-pb-section>
+      <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">For you</span>
+          <h2 class="font-serif text-lg md:text-xl font-bold text-bae-ink mt-1">Grow your own AI skills</h2>
+          <p class="text-sm text-bae-muted mt-1 max-w-2xl">Guides for individuals who want to understand AI properly, each leading to the free AI Knowledge Test.</p>
+        </div>
+
+        {aiktPillar.live ? (
+          <a href={aiktPillar.href} class="group block bg-bae-card border border-bae-border rounded-bae p-6 md:p-8 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+            <div class="flex items-start gap-5">
+              <span class="w-12 h-12 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xl font-bold flex items-center justify-center shrink-0">{aiktPillar.icon}</span>
+              <div>
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{aiktPillar.badge}</span>
+                <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mt-1 mb-2">{aiktPillar.title}</h3>
+                <p class="text-sm md:text-base text-bae-muted">{aiktPillar.description}</p>
+                <p class="text-xs text-bae-muted mt-3 font-medium">{aiktPillar.meta}</p>
+              </div>
+            </div>
+          </a>
+        ) : (
+          <div class="block bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 md:p-8 cursor-not-allowed">
+            <div class="flex items-start gap-5">
+              <span class="w-12 h-12 rounded-bae-sm bg-bae-border/40 text-bae-muted text-xl font-bold flex items-center justify-center shrink-0">{aiktPillar.icon}</span>
+              <div>
+                <div class="flex items-center gap-3 mb-1">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{aiktPillar.badge}</span>
+                  <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+                </div>
+                <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink/70 mb-2">{aiktPillar.title}</h3>
+                <p class="text-sm md:text-base text-bae-muted/70">{aiktPillar.description}</p>
+                <p class="text-xs text-bae-muted/60 mt-3 font-medium">{aiktPillar.meta}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {aiktSpokes.length > 0 && (
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            {aiktSpokes.map((item) => (
+              item.live ? (
+                <a href={item.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{item.badge}</span>
+                    <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{item.icon}</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted mt-3 font-medium">{item.meta}</p>
+                </a>
+              ) : (
+                <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{item.badge}</span>
+                    <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink/70 mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted/70 line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted/60 mt-3 font-medium">{item.meta}</p>
+                </div>
+              )
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- Track 3: Your career strengths (Work Signature assessment) -->
+  {careerPillar && (
+    <section class="pb-6 md:pb-8 pt-8 border-t border-bae-border-light" aria-label="Career strengths playbooks" data-pb-section>
+      <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Your career</span>
+          <h2 class="font-serif text-lg md:text-xl font-bold text-bae-ink mt-1">Find your career strengths</h2>
+          <p class="text-sm text-bae-muted mt-1 max-w-2xl">Guides to the eight Work Signature strength types, the modern roles that fit each one, and the blind spot that comes with it. Every guide leads to the free Work Signature assessment, no signup.</p>
+        </div>
+
+        {careerPillar.live ? (
+          <a href={careerPillar.href} class="group block bg-bae-card border border-bae-border rounded-bae p-6 md:p-8 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+            <div class="flex items-start gap-5">
+              <span class="w-12 h-12 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xl font-bold flex items-center justify-center shrink-0">{careerPillar.icon}</span>
+              <div>
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{careerPillar.badge}</span>
+                <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mt-1 mb-2">{careerPillar.title}</h3>
+                <p class="text-sm md:text-base text-bae-muted">{careerPillar.description}</p>
+                <p class="text-xs text-bae-muted mt-3 font-medium">{careerPillar.meta}</p>
+              </div>
+            </div>
+          </a>
+        ) : (
+          <div class="block bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 md:p-8 cursor-not-allowed">
+            <div class="flex items-start gap-5">
+              <span class="w-12 h-12 rounded-bae-sm bg-bae-border/40 text-bae-muted text-xl font-bold flex items-center justify-center shrink-0">{careerPillar.icon}</span>
+              <div>
+                <div class="flex items-center gap-3 mb-1">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{careerPillar.badge}</span>
+                  <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+                </div>
+                <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink/70 mb-2">{careerPillar.title}</h3>
+                <p class="text-sm md:text-base text-bae-muted/70">{careerPillar.description}</p>
+                <p class="text-xs text-bae-muted/60 mt-3 font-medium">{careerPillar.meta}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {careerSpokes.length > 0 && (
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            {careerSpokes.map((item) => (
+              item.live ? (
+                <a href={item.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{item.badge}</span>
+                    <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{item.icon}</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted mt-3 font-medium">{item.meta}</p>
+                </a>
+              ) : (
+                <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{item.badge}</span>
+                    <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink/70 mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted/70 line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted/60 mt-3 font-medium">{item.meta}</p>
+                </div>
+              )
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  {(vibeSpokes.length > 0 || vibePillar) && (
+    <section class="pb-6 md:pb-8 pt-8 border-t border-bae-border-light" aria-label="Vibe coding playbooks" data-pb-section>
+      <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Building with AI</span>
+          <h2 class="font-serif text-lg md:text-xl font-bold text-bae-ink mt-1">Ship what you vibe-coded, safely</h2>
+          <p class="text-sm text-bae-muted mt-1 max-w-2xl">Guides for people building real apps with AI coding agents. What to check before real users arrive, what production ready actually means, and the tests you can run without reading code. Every guide leads to the free readiness check, no signup.</p>
+        </div>
+
+        {vibePillar && (
+          vibePillar.live ? (
+            <a href={vibePillar.href} class="group block bg-bae-card border border-bae-border rounded-bae p-6 md:p-8 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+              <div class="flex items-start gap-5">
+                <span class="w-12 h-12 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xl font-bold flex items-center justify-center shrink-0">{vibePillar.icon}</span>
+                <div>
+                  <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{vibePillar.badge}</span>
+                  <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mt-1 mb-2">{vibePillar.title}</h3>
+                  <p class="text-sm md:text-base text-bae-muted">{vibePillar.description}</p>
+                  <p class="text-xs text-bae-muted mt-3 font-medium">{vibePillar.meta}</p>
+                </div>
+              </div>
+            </a>
+          ) : (
+            <div class="block bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 md:p-8 cursor-not-allowed">
+              <div class="flex items-start gap-5">
+                <span class="w-12 h-12 rounded-bae-sm bg-bae-border/40 text-bae-muted text-xl font-bold flex items-center justify-center shrink-0">{vibePillar.icon}</span>
+                <div>
+                  <div class="flex items-center gap-3 mb-1">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{vibePillar.badge}</span>
+                    <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+                  </div>
+                  <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink/70 mb-2">{vibePillar.title}</h3>
+                  <p class="text-sm md:text-base text-bae-muted/70">{vibePillar.description}</p>
+                  <p class="text-xs text-bae-muted/60 mt-3 font-medium">{vibePillar.meta}</p>
+                </div>
+              </div>
+            </div>
+          )
+        )}
+
+        {vibeSpokes.length > 0 && (
+          <div class={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4${vibePillar ? ' mt-4' : ''}`}>
+            {vibeSpokes.map((item) => (
+              item.live ? (
+                <a href={item.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{item.badge}</span>
+                    <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{item.icon}</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted mt-3 font-medium">{item.meta}</p>
+                </a>
+              ) : (
+                <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{item.badge}</span>
+                    <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink/70 mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted/70 line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted/60 mt-3 font-medium">{item.meta}</p>
+                </div>
+              )
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  {(skillsSpokes.length > 0 || skillsPillar) && (
+    <section class="pb-6 md:pb-8 pt-8 border-t border-bae-border-light" aria-label="AI agent skills playbooks" data-pb-section>
+      <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Agent skills</span>
+          <h2 class="font-serif text-lg md:text-xl font-bold text-bae-ink mt-1">Make your coding agent produce finished work</h2>
+          <p class="text-sm text-bae-muted mt-1 max-w-2xl">Guides for people who already use an AI coding agent and want real output from it, not chat. What the licenses actually permit, what runs on the machine you own, and which platform rules decide whether the result can be published and paid for.</p>
+        </div>
+
+        {skillsPillar && (
+          skillsPillar.live ? (
+            <a href={skillsPillar.href} class="group block bg-bae-card border border-bae-border rounded-bae p-6 md:p-8 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+              <div class="flex items-start gap-4">
+                <span class="w-12 h-12 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xl font-bold flex items-center justify-center shrink-0">{skillsPillar.icon}</span>
+                <div>
+                  <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{skillsPillar.badge}</span>
+                  <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mt-1 mb-2">{skillsPillar.title}</h3>
+                  <p class="text-sm md:text-base text-bae-muted">{skillsPillar.description}</p>
+                  <p class="text-xs text-bae-muted mt-3 font-medium">{skillsPillar.meta}</p>
+                </div>
+              </div>
+            </a>
+          ) : (
+            <div class="group block bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 md:p-8 text-inherit cursor-not-allowed">
+              <div class="flex items-start gap-4">
+                <span class="w-12 h-12 rounded-bae-sm bg-bae-border/40 text-bae-muted text-xl font-bold flex items-center justify-center shrink-0">{skillsPillar.icon}</span>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{skillsPillar.badge}</span>
+                    <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+                  </div>
+                  <h3 class="font-serif text-xl md:text-2xl font-bold text-bae-ink/70 mb-2">{skillsPillar.title}</h3>
+                  <p class="text-sm md:text-base text-bae-muted/70">{skillsPillar.description}</p>
+                  <p class="text-xs text-bae-muted/60 mt-3 font-medium">{skillsPillar.meta}</p>
+                </div>
+              </div>
+            </div>
+          )
+        )}
+
+        <div class={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4${skillsPillar ? ' mt-4' : ''}`}>
+          {skillsSpokes.map((item) => (
+            item.live ? (
+                <a href={item.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{item.badge}</span>
+                    <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{item.icon}</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted mt-3 font-medium">{item.meta}</p>
+                </a>
+            ) : (
+                <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{item.badge}</span>
+                    <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+                  </div>
+                  <h3 class="text-base font-semibold text-bae-ink/70 mb-2">{item.title}</h3>
+                  <p class="text-sm text-bae-muted/70 line-clamp-3">{item.description}</p>
+                  <p class="text-xs text-bae-muted/60 mt-3 font-medium">{item.meta}</p>
+                </div>
+            )
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people use the Playbooks for -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people use the Playbooks for</h2>
+      <p class="text-sm text-bae-muted mb-8">Common reasons small business owners, operators, advisors, jobseekers, and builders reach for a playbook.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Small Business Owners</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Decide where to start with AI</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">From "AI-Curious" to a first move</p>
+          <p class="text-sm text-bae-muted">Best Answer Hub Playbooks cut through the noise and point to the one weekly task most worth testing AI against. The free SMB AI Readiness Score then shows which of the five pillars to fix first, so the first step is grounded in the business, not a tool advert.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Non-Technical Operators</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Cut through AI tool overwhelm</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Capability-first, not hype-first</p>
+          <p class="text-sm text-bae-muted">For operators who are not AI specialists, Best Answer Hub Playbooks explain agents versus automation in plain language and triage spend by capability. Tools appear as plural example sets chosen on fit, with a clear no-affiliation note, so there is no hidden push toward one product.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">MSPs & Client Advisors</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Give clients a neutral readiness check</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Free, vendor-neutral, shareable</p>
+          <p class="text-sm text-bae-muted">Advisors and managed-service providers share Best Answer Hub Playbooks and the free assessment with clients who keep asking whether they should be using AI yet. The score gives a neutral starting point for the conversation, with no signup and no enterprise framework that a small client cannot relate to.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Founders & Team Leads</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Set AI guardrails without a consultant</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">One-page policy in an afternoon</p>
+          <p class="text-sm text-bae-muted">When a team is already pasting work into ChatGPT, Best Answer Hub Playbooks show how to write a one-page AI use policy that covers approved tools, allowed data, and sign-off. It sets sensible guardrails without a costly consulting engagement or a forty-page enterprise template.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+
+  <script is:inline>
+    // Playbooks hub search. Filters the deduplicated results grid and collapses the
+    // browse-by-track sections while a query or topic filter is active. No network
+    // access, no storage, no dependencies. Degrades to plain browsing if JS is off,
+    // because the track sections render visible and the results grid renders hidden.
+    (function () {
+      var input = document.getElementById('pb-search');
+      var results = document.getElementById('pb-results');
+      var empty = document.getElementById('pb-empty');
+      var count = document.getElementById('pb-count');
+      if (!input || !results || !empty || !count) return;
+
+      var sections = Array.prototype.slice.call(document.querySelectorAll('[data-pb-section]'));
+      var chips = Array.prototype.slice.call(document.querySelectorAll('[data-pb-filter]'));
+      var cards = Array.prototype.slice.call(results.querySelectorAll('[data-pb-card]'));
+      var haystacks = cards.map(function (c) { return c.getAttribute('data-pb-text') || ''; });
+      var tracks = cards.map(function (c) { return c.getAttribute('data-pb-track') || ''; });
+      var total = cards.length;
+      var track = 'all';
+
+      var CHIP_BASE = 'text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors cursor-pointer';
+      var CHIP_OFF = 'border-bae-border text-bae-muted hover:border-bae-primary hover:text-bae-primary';
+      var CHIP_ON = 'border-bae-primary bg-bae-primary-soft text-bae-primary';
+
+      function matches(i, terms) {
+        if (track !== 'all' && tracks[i] !== track) return false;
+        for (var t = 0; t < terms.length; t++) {
+          if (haystacks[i].indexOf(terms[t]) === -1) return false;
+        }
+        return true;
+      }
+
+      function apply() {
+        var q = input.value.trim().toLowerCase();
+        var terms = q === '' ? [] : q.split(/\s+/);
+        var active = terms.length > 0 || track !== 'all';
+        var shown = 0;
+
+        if (active) {
+          for (var i = 0; i < total; i++) {
+            var hit = matches(i, terms);
+            cards[i].hidden = !hit;
+            if (hit) shown++;
+          }
+        }
+
+        results.hidden = !active;
+        empty.hidden = !(active && shown === 0);
+        for (var j = 0; j < sections.length; j++) sections[j].hidden = active;
+
+        if (!active) {
+          count.textContent = 'Browse all ' + total + ' guides by topic below, or type above to search.';
+        } else if (shown === 0) {
+          count.textContent = 'No matches';
+        } else if (shown === 1) {
+          count.textContent = '1 guide matches';
+        } else {
+          count.textContent = shown + ' guides match';
+        }
+      }
+
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var next = chip.getAttribute('data-pb-filter');
+          track = track === next ? 'all' : next;
+          chips.forEach(function (c) {
+            var on = c.getAttribute('data-pb-filter') === track;
+            c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            c.className = CHIP_BASE + ' ' + (on ? CHIP_ON : CHIP_OFF);
+          });
+          apply();
+        });
+      });
+
+      input.addEventListener('input', apply);
+      input.addEventListener('search', apply);
+
+      // Allow /playbooks/?q=pdf to open straight into a filtered view.
+      try {
+        var seeded = new URLSearchParams(window.location.search).get('q');
+        if (seeded) input.value = seeded;
+      } catch (e) { /* no-op */ }
+
+      apply();
+    })();
+  </script>
+</BaseLayout>

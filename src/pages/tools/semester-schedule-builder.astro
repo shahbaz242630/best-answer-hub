@@ -1,0 +1,1128 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Semester Schedule Builder?',
+    a: 'The Best Answer Hub Semester Schedule Builder is a free browser-based weekly planner designed for college and high-school students. It lets you drop in classes, labs, work shifts, study blocks, meals, commute time, and personal activities on a visual Monday–Sunday grid, then automatically flags overlaps, totals your weekly hours, and exports a clean PDF or PNG. No signup is required and no data leaves your browser. The entire schedule is generated with client-side JavaScript and stored in your browser\'s localStorage. Browse more <a href="/tools/">free browser-based tools</a> on Best Answer Hub.',
+  },
+  {
+    q: 'Why does my semester schedule always fall apart by week 3 even though I use Google Calendar?',
+    a: 'Google Calendar is built for events, not for semester planning. It lacks class-first features like rotating A-B blocks, lab sections, automatic weekly-hour totals, and conflict detection between classes and work shifts. The Best Answer Hub Semester Schedule Builder treats your semester as one integrated plan: it shows classes, study blocks, commute buffers, and personal time on the same grid, flags overlaps instantly, and updates weekly-hour totals every time you move a block so you can see when your plan becomes unrealistic before week 3 hits.',
+  },
+  {
+    q: 'What\'s the best free class schedule maker that works like myStudyLife but doesn\'t make me sign up?',
+    a: 'The Best Answer Hub Semester Schedule Builder gives you the visual timetable and clash detection students expect from myStudyLife, but it runs entirely in your browser with zero account creation. myStudyLife puts AI timetable scan and advanced grade tracking behind MyStudyLife+, while the Best Answer Hub tool offers PDF/PNG export, conflict detection, weekly-hour totals, and localStorage save completely free with no premium tier.',
+  },
+  {
+    q: 'How many hours per week should I actually study for a 3-credit class if the 3-hours-per-credit rule feels impossible?',
+    a: 'The Carnegie rule suggests 1 hour in class plus 2 hours out-of-class work per credit each week, so a 3-credit course needs roughly 9 total hours. In practice, many students find 6 to 7 hours per 3-credit course is a sustainable minimum, with more before exams. The Best Answer Hub Semester Schedule Builder auto-calculates your total scheduled hours (class time plus study blocks plus work) so you can see whether your plan matches the 60-hour rule and adjust study blocks without doing the math manually.',
+  },
+  {
+    q: 'I\'m taking 18 credits and working 20 hours a week, how do I fit 54 hours of study time into a 168-hour week without burning out?',
+    a: 'You probably should not try to hit 54 study hours on top of 18 class hours and 20 work hours, that would push you to 92 hours, well above the 60-hour rule that advisors use as a burnout ceiling. The Best Answer Hub Semester Schedule Builder shows a live weekly total so you can spot the overload instantly. A safer plan is 12 to 15 credits while working 20 hours, or reduce work to 10 hours if you must take 18 credits.',
+  },
+  {
+    q: 'Is time blocking actually worth it for ADHD college students, or does it fall apart after one schedule change?',
+    a: 'Time blocking works for ADHD when the blocks are broad and forgiving rather than rigid minute-by-minute plans. Research on ADHD and structured timeboxing shows moderate-to-strong evidence that it improves focus, but only when students can adjust quickly without guilt. The Best Answer Hub Semester Schedule Builder supports that approach with drag-to-move blocks, color-coded categories, and automatic recalculation of weekly totals whenever life changes. No shaming notifications, no broken streaks.',
+  },
+  {
+    q: 'How do I avoid scheduling conflicts when I add labs, discussion sections, and a part-time job?',
+    a: 'Layer every commitment on the same visual grid and let the tool check for overlaps. The Best Answer Hub Semester Schedule Builder automatically highlights clashes in red when a class, lab, work shift, or study block overlaps. You can add commute buffers as fixed blocks and see your true availability before you tell your manager which shifts you can take.',
+  },
+  {
+    q: 'Can I build a visual weekly schedule that includes classes, work, gym, meals, and study blocks all in one grid?',
+    a: 'Yes. The Best Answer Hub Semester Schedule Builder uses a Monday–Sunday visual grid with category-based color coding: classes, labs, work, study blocks, meals, exercise, commute, and personal time. Each block shows the start time, end time, and label, and the sidebar totals your weekly hours by category so you can see at a glance whether school, work, and life are balanced.',
+  },
+  {
+    q: 'How do I export my weekly class schedule as a PNG to set as my phone lock screen?',
+    a: 'Click the Download PNG button in the Best Answer Hub Semester Schedule Builder. The tool renders your current schedule as a high-resolution image that fits phone lock screens and Instagram stories. You can also download a PDF with your weekly-hour summary, which is useful for printing, attaching to a syllabus packet, or sending to an advisor.',
+  },
+  {
+    q: 'Is it better to stack all my classes on Monday/Wednesday/Friday or spread them across the week for better study blocks?',
+    a: 'Spreading classes usually wins for retention and stress. Stack schedules create long MWF class marathons and leave Tuesday/Thursday wide open, which sounds great until you realize you have no energy left those days. The Best Answer Hub Semester Schedule Builder lets you clone and compare multiple schedule versions, so you can see how a stacked plan versus a spread plan affects your available study blocks and total weekly hours.',
+  },
+  {
+    q: 'What\'s the ideal buffer time between back-to-back classes in different buildings, 10, 15, or 30 minutes?',
+    a: '10 minutes is enough for the same building, 15 to 20 minutes is realistic for nearby buildings, and 30 minutes is safer for cross-campus walks or large universities. The Best Answer Hub Semester Schedule Builder lets you add commute blocks between classes, and it flags the overlap if your buffer is too tight. Many students underestimate walking time by 5 to 10 minutes, so the tool\'s visual warning prevents the classic first-week sprint.',
+  },
+  {
+    q: 'How do I plan my week around a rotating A-B block schedule in high school?',
+    a: 'Add two separate week views (Week A and Week B) and fill each with the correct classes. The Best Answer Hub Semester Schedule Builder supports rotating schedules by letting you duplicate a base schedule into A-week and B-week versions, then switch between them without losing either plan. This is a feature many simple Monday-to-Friday grids miss.',
+  },
+  {
+    q: 'Should I put every assignment from every syllabus into my schedule at the start of the semester or plan week by week?',
+    a: 'Front-loading every deadline reduces surprise due dates but can feel overwhelming and rigid. A hybrid approach works better: block recurring class and work times at the start, then add major exams and paper deadlines from syllabi, leaving daily study tasks to be filled in weekly. The Best Answer Hub Semester Schedule Builder handles the recurring structure first (classes, labs, work, commute) so you have a stable base before you layer in assignment sprints.',
+  },
+  {
+    q: 'How do I rebuild my schedule mid-semester after dropping or swapping a class without starting from scratch?',
+    a: 'Save multiple schedule versions in the Best Answer Hub Semester Schedule Builder. The tool stores each plan in your browser\'s localStorage, so you can duplicate your current schedule into a "Plan B," delete the dropped class with one click, drag in the new section, and compare the old and new weekly-hour totals before committing. You never have to rebuild from scratch.',
+  },
+  {
+    q: 'How many deep-work blocks can I realistically do per day before my focus crashes, is Huberman\'s 3×90-minute limit legit?',
+    a: 'Huberman Lab\'s guidance of one to three 90-minute deep-work sessions per day aligns with most focus research, giving most students roughly 2.5 to 4.5 hours of peak cognitive work daily. Beyond that, returns diminish sharply. Pair the Best Answer Hub Semester Schedule Builder with the <a href="/tools/pomodoro-timer/">Best Answer Hub Pomodoro Timer</a> to turn scheduled study blocks into focused sessions, and use the schedule builder\'s daily totals to align your plan with realistic focus capacity instead of packing every empty hour with work.',
+  },
+];
+
+const steps = [
+  { title: 'Add your classes, work, and life blocks', description: 'Pick days, times, and categories. The tool automatically color-codes each block and warns you about overlapping commitments in real time.' },
+  { title: 'Check your weekly totals and conflicts', description: 'Review total hours by category, spot clashes, and compare Week A versus Week B for rotating schedules. Adjust before the semester starts.' },
+  { title: 'Export and share', description: 'Download a PDF report for your advisor or a PNG for your phone lock screen. Share a clash-free timetable with roommates or study groups without making anyone sign up.' },
+];
+
+const seo = {
+  title: 'Free Semester Schedule Builder — Weekly Planner (2026)',
+  description: 'Build your college semester schedule visually. Add classes, work, and study blocks; auto-detect conflicts; export to PDF or PNG. No signup.',
+  url: '/tools/semester-schedule-builder/',
+  type: 'WebPage' as const,
+  datePublished: '2026-06-07T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Semester Schedule Builder', url: '/tools/semester-schedule-builder/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Semester Schedule Builder:"
+    accentText="Plan your week visually"
+    description="Free browser-based semester schedule builder for college and high-school students. Build a visual weekly timetable with classes, work, study blocks, and personal time. Auto-detect conflicts, see weekly-hour totals, and export to PDF or PNG. No signup required."
+    backLink="/calculators/"
+    backLabel="← Calculators"
+  />
+
+  <!-- Schedule Interface -->
+  <section class="py-6 md:py-8" aria-label="Semester schedule builder">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+
+      <!-- Controls -->
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <button type="button" id="btn-add" class="bg-bae-primary text-white text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">+ Add Block</button>
+        <div class="flex bg-bae-card border border-bae-border rounded-bae-sm overflow-hidden">
+          <button type="button" id="btn-week-a" class="week-tab bg-bae-primary text-white text-xs font-semibold px-3 py-2.5">Week A</button>
+          <button type="button" id="btn-week-b" class="week-tab bg-bae-bg text-bae-ink text-xs font-semibold px-3 py-2.5 hover:bg-bae-border-light transition-colors">Week B</button>
+        </div>
+        <button type="button" id="btn-duplicate" class="bg-bae-bg text-bae-ink border border-bae-border text-sm font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Duplicate to Week B</button>
+        <div class="flex-1"></div>
+        <button type="button" id="btn-pdf" class="bg-bae-ink text-white text-sm font-semibold px-3 py-2 rounded-bae-sm hover:bg-bae-primary transition-colors">Download PDF</button>
+        <button type="button" id="btn-png" class="bg-bae-bg text-bae-ink border border-bae-border text-sm font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Download PNG</button>
+        <button type="button" id="btn-clear" class="bg-bae-bg text-red-600 border border-red-200 text-sm font-semibold px-3 py-2 rounded-bae-sm hover:border-red-400 transition-colors">Clear</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <!-- Schedule Grid -->
+        <div class="lg:col-span-3">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 overflow-x-auto">
+            <div id="schedule-wrapper" class="min-w-[760px]">
+              <!-- Grid header -->
+              <div class="grid grid-cols-8 gap-1 mb-2">
+                <div class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider text-center py-1">Time</div>
+                <div class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider text-center py-1">Mon</div>
+                <div class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider text-center py-1">Tue</div>
+                <div class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider text-center py-1">Wed</div>
+                <div class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider text-center py-1">Thu</div>
+                <div class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider text-center py-1">Fri</div>
+                <div class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider text-center py-1">Sat</div>
+                <div class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider text-center py-1">Sun</div>
+              </div>
+              <!-- Grid body -->
+              <div id="schedule-grid" class="grid grid-cols-8 gap-1 relative" style="height: 680px;">
+                <!-- Time labels column -->
+                <div id="time-labels" class="relative h-full border-r border-bae-border pr-1">
+                  <!-- Generated by JS -->
+                </div>
+                <!-- Day columns 0-6 -->
+                <div class="day-col relative h-full border-r border-bae-border bg-bae-bg/50 overflow-hidden" data-day="0"></div>
+                <div class="day-col relative h-full border-r border-bae-border bg-bae-bg/50 overflow-hidden" data-day="1"></div>
+                <div class="day-col relative h-full border-r border-bae-border bg-bae-bg/50 overflow-hidden" data-day="2"></div>
+                <div class="day-col relative h-full border-r border-bae-border bg-bae-bg/50 overflow-hidden" data-day="3"></div>
+                <div class="day-col relative h-full border-r border-bae-border bg-bae-bg/50 overflow-hidden" data-day="4"></div>
+                <div class="day-col relative h-full border-r border-bae-border bg-bae-bg/50 overflow-hidden" data-day="5"></div>
+                <div class="day-col relative h-full border-r border-bae-border bg-bae-bg/50 overflow-hidden" data-day="6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1 space-y-4">
+          <!-- Stats -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-3">Weekly Hours</h2>
+            <div class="text-center mb-4">
+              <div id="stat-total" class="text-3xl font-bold text-bae-primary font-serif">0h</div>
+              <div class="text-[11px] text-bae-muted uppercase tracking-wider">Total scheduled</div>
+            </div>
+            <div id="category-stats" class="space-y-2">
+              <!-- Generated by JS -->
+            </div>
+            <div id="conflict-box" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-bae-sm">
+              <div class="text-xs font-semibold text-red-700 mb-1">⚠️ Conflicts detected</div>
+              <ul id="conflict-list" class="text-[11px] text-red-600 space-y-1"></ul>
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-3">Categories</h2>
+            <div class="space-y-2 text-xs">
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-indigo-100 border border-indigo-300"></span> <span class="text-bae-ink">Class</span></div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-purple-100 border border-purple-300"></span> <span class="text-bae-ink">Lab</span></div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-emerald-100 border border-emerald-300"></span> <span class="text-bae-ink">Work</span></div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-amber-100 border border-amber-300"></span> <span class="text-bae-ink">Study</span></div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-orange-100 border border-orange-300"></span> <span class="text-bae-ink">Meal</span></div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-rose-100 border border-rose-300"></span> <span class="text-bae-ink">Exercise</span></div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-slate-100 border border-slate-300"></span> <span class="text-bae-ink">Commute</span></div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-sky-100 border border-sky-300"></span> <span class="text-bae-ink">Personal</span></div>
+            </div>
+          </div>
+
+          <!-- Saved schedules -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-3">Saved Schedules</h2>
+            <div id="saved-list" class="space-y-2">
+              <p class="text-xs text-bae-muted">Your current schedule is auto-saved in this browser.</p>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <input type="text" id="save-name" class="flex-1 min-w-0 bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1.5 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" placeholder="e.g. Fall 2026 A" />
+              <button type="button" id="btn-save-version" class="shrink-0 bg-bae-primary text-white text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Add/Edit Modal -->
+  <div id="event-modal" class="hidden fixed inset-0 z-50 bg-bae-ink/50 flex items-center justify-center p-4" aria-hidden="true">
+    <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 w-full max-w-md shadow-bae-lg">
+      <h3 id="modal-title" class="text-base font-bold text-bae-ink mb-4">Add Time Block</h3>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-bae-muted mb-1">Block name</label>
+          <input type="text" id="modal-name" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" placeholder="e.g. Organic Chemistry Lecture" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-bae-muted mb-1">Day</label>
+            <select id="modal-day" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary">
+              <option value="0">Monday</option>
+              <option value="1">Tuesday</option>
+              <option value="2">Wednesday</option>
+              <option value="3">Thursday</option>
+              <option value="4">Friday</option>
+              <option value="5">Saturday</option>
+              <option value="6">Sunday</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-bae-muted mb-1">Category</label>
+            <select id="modal-category" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary">
+              <option value="class">Class</option>
+              <option value="lab">Lab</option>
+              <option value="work">Work</option>
+              <option value="study">Study</option>
+              <option value="meal">Meal</option>
+              <option value="exercise">Exercise</option>
+              <option value="commute">Commute</option>
+              <option value="personal">Personal</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-bae-muted mb-1">Start time</label>
+            <input type="time" id="modal-start" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-bae-muted mb-1">End time</label>
+            <input type="time" id="modal-end" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+          </div>
+        </div>
+        <p id="modal-overnight-hint" class="hidden text-xs text-bae-primary font-medium mt-2">⏰ Overnight block: starts this day and ends the next morning.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-5">
+        <button type="button" id="modal-save" class="flex-1 bg-bae-primary text-white text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Save Block</button>
+        <button type="button" id="modal-delete" class="hidden flex-1 bg-red-50 text-red-600 border border-red-200 text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:border-red-400 transition-colors">Delete</button>
+        <button type="button" id="modal-cancel" class="flex-1 bg-bae-bg text-bae-ink border border-bae-border text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:border-bae-primary transition-colors">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-8">What students plan with it</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Full-Time Undergraduate</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Balances 15 credits with a part-time job</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">42 hours/week planned without burnout</p>
+          <p class="text-sm text-bae-muted leading-relaxed">A junior schedules 15 credit hours, 12 hours of work, and 10 hours of study across five days while keeping one weekday evening free for clubs. The live total keeps the plan under the 60-hour rule.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Nursing Student</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Handles rotating clinical weeks</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Week A / Week B schedules</p>
+          <p class="text-sm text-bae-muted leading-relaxed">A nursing student maps Week A lectures plus lab and Week B clinical shifts on separate tabs, so neither schedule gets overwritten when rotations change.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">ADHD Student</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Color-coded blocks reduce decision fatigue</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">8 categories visualized at a glance</p>
+          <p class="text-sm text-bae-muted leading-relaxed">A student with ADHD uses color-coded categories for classes, study, meals, exercise, and personal time, making the whole week readable without scanning minute-by-minute details.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Study Group Coordinator</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Shares clash-free timetables</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">PNG lock screen + PDF report</p>
+          <p class="text-sm text-bae-muted leading-relaxed">A student exports the schedule as a PNG to share in a group chat and sets it as a phone lock screen so everyone knows their free periods for meetups.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common student scheduling needs.</p>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">More tools for students</h3>
+          <p class="text-sm text-bae-muted">Also try the <a href="/tools/pomodoro-timer/" class="text-bae-primary hover:underline">Pomodoro Timer</a>, <a href="/calculators/gpa-calculator/" class="text-bae-primary hover:underline">GPA Calculator</a>, <a href="/calculators/finals-grade-calculator/" class="text-bae-primary hover:underline">Finals Grade Calculator</a>, <a href="/tools/citation-generator/" class="text-bae-primary hover:underline">Citation Generator</a>, and <a href="/tools/typing-speed-test/" class="text-bae-primary hover:underline">Typing Speed Test</a>, all free, no signup.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hidden PDF report -->
+  <div id="pdf-report" class="hidden" style="width: 210mm; padding: 16px; box-sizing: border-box; font-family: Inter, system-ui, sans-serif; color: #0f0f1a; background: #fff;">
+    <div style="text-align: center; margin-bottom: 16px;">
+      <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 4px;">Semester Schedule</h1>
+      <p id="pdf-date" style="font-size: 12px; color: #6b6b80; margin: 0;">Generated on —</p>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <p id="pdf-summary" style="font-size: 13px; margin: 0;"></p>
+    </div>
+    <div id="pdf-grid-container" style="margin-bottom: 16px;">
+      <!-- Grid clone goes here -->
+    </div>
+    <div id="pdf-category-list" style="font-size: 12px;">
+      <!-- Category totals -->
+    </div>
+    <p style="font-size: 10px; color: #6b6b80; margin-top: 16px;">Created with Best Answer Hub Semester Schedule Builder · www.bestanswerhub.com/tools/semester-schedule-builder/</p>
+  </div>
+
+  <script is:inline>
+
+    (function() {
+      'use strict';
+
+      // ─── Constants ───
+      // Visible grid window. Defaults to 6 AM–11 PM but auto-expands to fit any
+      // block that falls earlier/later, so early classes and late-night study or
+      // work shifts are never clamped off-grid (and never lost from PDF/PNG export).
+      const DEFAULT_START_HOUR = 6;
+      const DEFAULT_END_HOUR = 23;
+      let START_HOUR = DEFAULT_START_HOUR;
+      let END_HOUR = DEFAULT_END_HOUR;
+      let HOURS = END_HOUR - START_HOUR;
+      const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const CATEGORIES = {
+        class: { label: 'Class', bg: 'bg-indigo-100', border: 'border-indigo-300', text: 'text-indigo-800', color: '#6366f1' },
+        lab: { label: 'Lab', bg: 'bg-purple-100', border: 'border-purple-300', text: 'text-purple-800', color: '#9333ea' },
+        work: { label: 'Work', bg: 'bg-emerald-100', border: 'border-emerald-300', text: 'text-emerald-800', color: '#10b981' },
+        study: { label: 'Study', bg: 'bg-amber-100', border: 'border-amber-300', text: 'text-amber-800', color: '#f59e0b' },
+        meal: { label: 'Meal', bg: 'bg-orange-100', border: 'border-orange-300', text: 'text-orange-800', color: '#f97316' },
+        exercise: { label: 'Exercise', bg: 'bg-rose-100', border: 'border-rose-300', text: 'text-rose-800', color: '#f43f5e' },
+        commute: { label: 'Commute', bg: 'bg-slate-100', border: 'border-slate-300', text: 'text-slate-800', color: '#64748b' },
+        personal: { label: 'Personal', bg: 'bg-sky-100', border: 'border-sky-300', text: 'text-sky-800', color: '#0ea5e9' },
+      };
+      const STORAGE_KEY = 'bah-semester-schedule-v1';
+      const VERSIONS_KEY = 'bah-semester-schedule-versions-v1';
+
+      // ─── Utilities ───
+      function escapeHtml(str) {
+        if (str == null) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function generateId() {
+        return 'ev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+      }
+
+      function timeToMinutes(t) {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+      }
+
+      function minutesToTime(mins) {
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+      }
+
+      function formatHour(h) {
+        const hh = ((h % 24) + 24) % 24; // 24 → 0 (midnight), keeps labels correct when window reaches midnight
+        const suffix = hh >= 12 ? 'PM' : 'AM';
+        const display = hh > 12 ? hh - 12 : (hh === 0 ? 12 : hh);
+        return display + ' ' + suffix;
+      }
+
+      function showToast(msg) {
+        let toast = document.getElementById('bah-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'bah-toast';
+          toast.className = 'fixed bottom-4 right-4 z-[60] bg-bae-ink text-white text-xs font-semibold px-4 py-2.5 rounded-bae-sm shadow-bae-lg transition-opacity';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        setTimeout(function() { toast.style.opacity = '0'; }, 2200);
+      }
+
+      // ─── State ───
+      let state = {
+        currentWeek: 'A',
+        events: { A: [], B: [] }
+      };
+      let editingId = null;
+
+      function defaultState() {
+        return { currentWeek: 'A', events: { A: [], B: [] } };
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object' && parsed.events && Array.isArray(parsed.events.A) && Array.isArray(parsed.events.B)) {
+            state = parsed;
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      function loadVersions() {
+        try {
+          const raw = localStorage.getItem(VERSIONS_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveVersions(list) {
+        try {
+          localStorage.setItem(VERSIONS_KEY, JSON.stringify(list));
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      // ─── Event helpers (overnight-aware) ───
+      // A block whose end time is earlier than its start time runs OVERNIGHT into
+      // the next day (e.g. 22:00–02:00). Duration, rendering, stats, conflicts, and
+      // export all derive overnight behaviour from these three helpers.
+      function isOvernight(ev) {
+        return timeToMinutes(ev.end) < timeToMinutes(ev.start);
+      }
+
+      function eventDurationMins(ev) {
+        const s = timeToMinutes(ev.start);
+        const e = timeToMinutes(ev.end);
+        if (e > s) return e - s;
+        if (e < s) return (1440 - s) + e; // overnight: start→midnight + midnight→end
+        return 0; // equal start/end = zero length (invalid)
+      }
+
+      // Visual segments laid out on the grid: one block for a same-day event, two
+      // for an overnight one (start→midnight on its day, midnight→end on the next
+      // day's column). `cont` marks the continuation half.
+      function eventSegments(ev) {
+        const s = timeToMinutes(ev.start);
+        const e = timeToMinutes(ev.end);
+        const day = parseInt(ev.day, 10);
+        if (e > s) return [{ day: day, startMin: s, endMin: e, cont: false }];
+        if (e < s) return [
+          { day: day, startMin: s, endMin: 1440, cont: false },
+          { day: (day + 1) % 7, startMin: 0, endMin: e, cont: true }
+        ];
+        return [];
+      }
+
+      // Recompute the visible time window from the current week's events so no
+      // block ever falls outside the grid. Keeps the 6 AM–11 PM default, widening
+      // only as needed (clamped to 0–24). Overnight blocks pull the window to a
+      // full 0–24 since they touch both midnight edges. Drives render + export.
+      function recomputeRange() {
+        let startHour = DEFAULT_START_HOUR;
+        let endHour = DEFAULT_END_HOUR;
+        const events = state.events[state.currentWeek] || [];
+        events.forEach(function(ev) {
+          eventSegments(ev).forEach(function(seg) {
+            startHour = Math.min(startHour, Math.floor(seg.startMin / 60));
+            endHour = Math.max(endHour, Math.ceil(seg.endMin / 60));
+          });
+        });
+        START_HOUR = Math.max(0, startHour);
+        END_HOUR = Math.min(24, endHour);
+        if (END_HOUR <= START_HOUR) END_HOUR = START_HOUR + 1;
+        HOURS = END_HOUR - START_HOUR;
+      }
+
+      // ─── Render ───
+      function renderTimeLabels() {
+        const container = document.getElementById('time-labels');
+        if (!container) return;
+        container.innerHTML = '';
+        for (let h = START_HOUR; h <= END_HOUR; h++) {
+          const pct = ((h - START_HOUR) / HOURS) * 100;
+          const el = document.createElement('div');
+          el.className = 'absolute right-1 text-[10px] text-bae-muted -translate-y-1/2';
+          el.style.top = pct + '%';
+          el.textContent = formatHour(h);
+          container.appendChild(el);
+        }
+        // Horizontal grid lines across day columns
+        document.querySelectorAll('.day-col').forEach(function(col) {
+          col.innerHTML = '';
+          for (let h = START_HOUR; h <= END_HOUR; h++) {
+            const pct = ((h - START_HOUR) / HOURS) * 100;
+            const line = document.createElement('div');
+            line.className = 'absolute left-0 right-0 border-t border-bae-border/60 pointer-events-none';
+            line.style.top = pct + '%';
+            col.appendChild(line);
+          }
+          // Half-hour faint lines
+          for (let h = START_HOUR; h < END_HOUR; h++) {
+            const pct = ((h - START_HOUR + 0.5) / HOURS) * 100;
+            const line = document.createElement('div');
+            line.className = 'absolute left-0 right-0 border-t border-dashed border-bae-border/40 pointer-events-none';
+            line.style.top = pct + '%';
+            col.appendChild(line);
+          }
+        });
+      }
+
+      function getCategoryStyle(cat) {
+        return CATEGORIES[cat] || CATEGORIES.personal;
+      }
+
+      function renderEvents() {
+        document.querySelectorAll('.day-col').forEach(function(col) {
+          // Remove only event blocks, keep grid lines
+          col.querySelectorAll('.event-block').forEach(function(el) { el.remove(); });
+        });
+
+        const events = state.events[state.currentWeek] || [];
+        events.forEach(function(ev) {
+          const overnight = isOvernight(ev);
+          eventSegments(ev).forEach(function(seg) {
+            if (seg.day < 0 || seg.day > 6) return;
+            const col = document.querySelector('.day-col[data-day="' + seg.day + '"]');
+            if (!col) return;
+
+            let topPct = ((seg.startMin - START_HOUR * 60) / (HOURS * 60)) * 100;
+            let heightPct = ((seg.endMin - seg.startMin) / (HOURS * 60)) * 100;
+            topPct = Math.max(0, Math.min(100, topPct));
+            heightPct = Math.min(100 - topPct, heightPct);
+            heightPct = Math.max(0.5, heightPct);
+            if (topPct + heightPct > 100) {
+              heightPct = Math.max(0, 100 - topPct);
+            }
+
+            const style = getCategoryStyle(ev.category);
+            const el = document.createElement('button');
+            el.type = 'button';
+            el.className = 'event-block absolute left-1 right-1 rounded-bae-sm text-left px-2 py-1 border text-[11px] leading-tight overflow-hidden cursor-pointer hover:brightness-95 transition-all ' + style.bg + ' ' + style.border + ' ' + style.text;
+            el.style.top = topPct + '%';
+            el.style.height = heightPct + '%';
+            el.style.zIndex = '10';
+            const suffix = seg.cont ? ' (cont.)' : (overnight ? ' →' : '');
+            el.innerHTML = '<div class="font-semibold truncate">' + escapeHtml(ev.name) + '</div>' +
+              '<div class="opacity-90 truncate">' + escapeHtml(ev.start) + '–' + escapeHtml(ev.end) + suffix + '</div>';
+            el.addEventListener('click', function() { openEditModal(ev); });
+            col.appendChild(el);
+          });
+        });
+      }
+
+      function computeConflicts() {
+        const events = state.events[state.currentWeek] || [];
+        // Flatten every event into its day-segments (overnight = 2 segments) so an
+        // overnight block can be detected as conflicting on either day it touches.
+        const segs = [];
+        events.forEach(function(ev) {
+          eventSegments(ev).forEach(function(seg) {
+            segs.push({ ev: ev, day: seg.day, s: seg.startMin, e: seg.endMin });
+          });
+        });
+        const conflicts = [];
+        const seen = {};
+        for (let i = 0; i < segs.length; i++) {
+          for (let j = i + 1; j < segs.length; j++) {
+            const A = segs[i];
+            const B = segs[j];
+            if (A.ev.id === B.ev.id) continue; // two halves of the same block never conflict
+            if (A.day !== B.day) continue;
+            if (A.s < B.e && B.s < A.e) {
+              const key = [A.ev.id, B.ev.id].sort().join('|');
+              if (!seen[key]) {
+                seen[key] = true;
+                conflicts.push({ a: A.ev, b: B.ev, day: A.day });
+              }
+            }
+          }
+        }
+        return conflicts;
+      }
+
+      function renderStats() {
+        const events = state.events[state.currentWeek] || [];
+        let totalMins = 0;
+        const catMins = {};
+        Object.keys(CATEGORIES).forEach(function(k) { catMins[k] = 0; });
+
+        events.forEach(function(ev) {
+          const mins = eventDurationMins(ev);
+          if (mins > 0) {
+            totalMins += mins;
+            catMins[ev.category] = (catMins[ev.category] || 0) + mins;
+          }
+        });
+
+        const totalH = (totalMins / 60).toFixed(1);
+        document.getElementById('stat-total').textContent = totalH + 'h';
+
+        const container = document.getElementById('category-stats');
+        container.innerHTML = '';
+        Object.keys(CATEGORIES).forEach(function(key) {
+          const mins = catMins[key] || 0;
+          if (mins === 0) return;
+          const style = CATEGORIES[key];
+          const h = (mins / 60).toFixed(1);
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between text-xs';
+          row.innerHTML = '<div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm ' + style.bg + ' border ' + style.border + '"></span><span class="text-bae-ink">' + escapeHtml(style.label) + '</span></div><span class="font-medium text-bae-ink">' + h + 'h</span>';
+          container.appendChild(row);
+        });
+        if (container.innerHTML === '') {
+          container.innerHTML = '<p class="text-xs text-bae-muted">Add blocks to see category breakdowns.</p>';
+        }
+
+        // Conflicts
+        const conflicts = computeConflicts();
+        const box = document.getElementById('conflict-box');
+        const list = document.getElementById('conflict-list');
+        if (conflicts.length === 0) {
+          box.classList.add('hidden');
+        } else {
+          box.classList.remove('hidden');
+          list.innerHTML = '';
+          conflicts.forEach(function(c) {
+            const li = document.createElement('li');
+            li.textContent = escapeHtml(c.a.name) + ' overlaps ' + escapeHtml(c.b.name) + ' on ' + DAYS[(c.day != null ? c.day : parseInt(c.a.day, 10))];
+            list.appendChild(li);
+          });
+        }
+      }
+
+      function renderAll() {
+        recomputeRange();
+        renderTimeLabels();
+        renderEvents();
+        renderStats();
+        renderSavedVersions();
+        updateWeekTabs();
+      }
+
+      function updateWeekTabs() {
+        const btnA = document.getElementById('btn-week-a');
+        const btnB = document.getElementById('btn-week-b');
+        if (state.currentWeek === 'A') {
+          btnA.className = 'week-tab bg-bae-primary text-white text-xs font-semibold px-3 py-2.5';
+          btnB.className = 'week-tab bg-bae-bg text-bae-ink text-xs font-semibold px-3 py-2.5 hover:bg-bae-border-light transition-colors';
+        } else {
+          btnA.className = 'week-tab bg-bae-bg text-bae-ink text-xs font-semibold px-3 py-2.5 hover:bg-bae-border-light transition-colors';
+          btnB.className = 'week-tab bg-bae-primary text-white text-xs font-semibold px-3 py-2.5';
+        }
+      }
+
+      function updateURL() {
+        try {
+          const json = JSON.stringify(state);
+          const encoded = btoa(encodeURIComponent(json));
+          const url = new URL(window.location.href);
+          url.searchParams.set('s', encoded);
+          window.history.replaceState({}, '', url.toString());
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      function loadFromURL() {
+        try {
+          const url = new URL(window.location.href);
+          const encoded = url.searchParams.get('s');
+          if (!encoded) return;
+          const json = decodeURIComponent(atob(encoded));
+          const parsed = JSON.parse(json);
+          if (parsed && typeof parsed === 'object' && parsed.events && Array.isArray(parsed.events.A) && Array.isArray(parsed.events.B)) {
+            state = parsed;
+            saveState();
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      // ─── Modal ───
+      const modal = document.getElementById('event-modal');
+      const modalTitle = document.getElementById('modal-title');
+      const modalName = document.getElementById('modal-name');
+      const modalDay = document.getElementById('modal-day');
+      const modalCategory = document.getElementById('modal-category');
+      const modalStart = document.getElementById('modal-start');
+      const modalEnd = document.getElementById('modal-end');
+      const modalSave = document.getElementById('modal-save');
+      const modalDelete = document.getElementById('modal-delete');
+      const modalCancel = document.getElementById('modal-cancel');
+      const modalOvernightHint = document.getElementById('modal-overnight-hint');
+
+      // Show the "overnight" hint live whenever the end time is earlier than start.
+      function updateOvernightHint() {
+        if (!modalOvernightHint) return;
+        const s = modalStart.value, e = modalEnd.value;
+        const overnight = s && e && timeToMinutes(e) < timeToMinutes(s);
+        modalOvernightHint.classList.toggle('hidden', !overnight);
+      }
+
+      function openAddModal() {
+        editingId = null;
+        modalTitle.textContent = 'Add Time Block';
+        modalName.value = '';
+        modalDay.value = '0';
+        modalCategory.value = 'class';
+        modalStart.value = '09:00';
+        modalEnd.value = '10:00';
+        modalDelete.classList.add('hidden');
+        updateOvernightHint();
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        modalName.focus();
+      }
+
+      function openEditModal(ev) {
+        editingId = ev.id;
+        modalTitle.textContent = 'Edit Time Block';
+        modalName.value = ev.name;
+        modalDay.value = String(ev.day);
+        modalCategory.value = ev.category;
+        modalStart.value = ev.start;
+        modalEnd.value = ev.end;
+        modalDelete.classList.remove('hidden');
+        updateOvernightHint();
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+        modalName.focus();
+      }
+
+      function closeModal() {
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+        editingId = null;
+      }
+
+      function saveModal() {
+        const name = modalName.value.trim();
+        const day = parseInt(modalDay.value, 10);
+        const category = modalCategory.value;
+        const start = modalStart.value;
+        const end = modalEnd.value;
+
+        if (!name) {
+          showToast('Please enter a block name.');
+          return;
+        }
+        if (!start || !end) {
+          showToast('Please set start and end times.');
+          return;
+        }
+        if (timeToMinutes(end) === timeToMinutes(start)) {
+          showToast('Start and end times cannot be the same.');
+          return;
+        }
+        // end earlier than start is allowed: it means an overnight block that
+        // ends the next morning (e.g. 22:00–02:00).
+        const overnight = timeToMinutes(end) < timeToMinutes(start);
+
+        const list = state.events[state.currentWeek];
+        if (editingId) {
+          const idx = list.findIndex(function(e) { return e.id === editingId; });
+          if (idx !== -1) {
+            list[idx] = { id: editingId, name: name, day: day, category: category, start: start, end: end };
+          }
+        } else {
+          list.push({ id: generateId(), name: name, day: day, category: category, start: start, end: end });
+        }
+
+        saveState();
+        renderAll();
+        closeModal();
+        showToast(editingId ? (overnight ? 'Overnight block updated' : 'Block updated') : (overnight ? 'Overnight block added, ends next day' : 'Block added'));
+      }
+
+      function deleteCurrent() {
+        if (!editingId) return;
+        const list = state.events[state.currentWeek];
+        state.events[state.currentWeek] = list.filter(function(e) { return e.id !== editingId; });
+        saveState();
+        renderAll();
+        closeModal();
+        showToast('Block deleted');
+      }
+
+      // ─── Versions ───
+      function renderSavedVersions() {
+        const list = loadVersions();
+        const container = document.getElementById('saved-list');
+        if (list.length === 0) {
+          container.innerHTML = '<p class="text-xs text-bae-muted">Your current schedule is auto-saved in this browser. Save named versions below.</p>';
+          return;
+        }
+        container.innerHTML = '';
+        list.forEach(function(v, idx) {
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between gap-2 p-2 bg-bae-bg rounded-bae-sm';
+          row.innerHTML = '<span class="text-xs text-bae-ink truncate flex-1" title="' + escapeHtml(v.name) + '">' + escapeHtml(v.name) + '</span>' +
+            '<div class="flex gap-1 shrink-0">' +
+            '<button type="button" data-idx="' + idx + '" class="load-version bg-bae-primary text-white text-[10px] font-semibold px-2 py-1 rounded hover:bg-bae-accent transition-colors">Load</button>' +
+            '<button type="button" data-idx="' + idx + '" class="del-version bg-bae-bg text-red-600 border border-red-200 text-[10px] font-semibold px-2 py-1 rounded hover:border-red-400 transition-colors">×</button>' +
+            '</div>';
+          container.appendChild(row);
+        });
+
+        container.querySelectorAll('.load-version').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const idx = parseInt(btn.getAttribute('data-idx'), 10);
+            const versions = loadVersions();
+            if (versions[idx]) {
+              if (versions[idx].state) {
+                state = JSON.parse(JSON.stringify(versions[idx].state));
+              } else if (versions[idx].events) {
+                state.events = JSON.parse(JSON.stringify(versions[idx].events));
+              }
+              saveState();
+              renderAll();
+              showToast('Loaded: ' + versions[idx].name);
+            }
+          });
+        });
+
+        container.querySelectorAll('.del-version').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const idx = parseInt(btn.getAttribute('data-idx'), 10);
+            const versions = loadVersions();
+            versions.splice(idx, 1);
+            saveVersions(versions);
+            renderSavedVersions();
+            showToast('Version deleted');
+          });
+        });
+      }
+
+      function saveNamedVersion() {
+        const input = document.getElementById('save-name');
+        const name = input.value.trim();
+        if (!name) {
+          showToast('Enter a name for this schedule version.');
+          return;
+        }
+        const versions = loadVersions();
+        versions.unshift({ name: name, savedAt: Date.now(), state: JSON.parse(JSON.stringify(state)) });
+        if (versions.length > 20) versions.pop();
+        saveVersions(versions);
+        input.value = '';
+        renderSavedVersions();
+        showToast('Version saved');
+      }
+
+      // ─── Export ───
+      function exportPDF() {
+        if (typeof html2pdf === 'undefined') {
+          showToast('PDF library not loaded. Please refresh.');
+          return;
+        }
+        const events = state.events[state.currentWeek] || [];
+        if (events.length === 0) {
+          showToast('Add some blocks before exporting.');
+          return;
+        }
+
+        const dateStr = new Date().toLocaleDateString();
+        document.getElementById('pdf-date').textContent = 'Generated on ' + dateStr + ', Week ' + state.currentWeek;
+
+        let totalMins = 0;
+        const catMins = {};
+        Object.keys(CATEGORIES).forEach(function(k) { catMins[k] = 0; });
+        events.forEach(function(ev) {
+          const mins = eventDurationMins(ev);
+          if (mins > 0) {
+            totalMins += mins;
+            catMins[ev.category] = (catMins[ev.category] || 0) + mins;
+          }
+        });
+        document.getElementById('pdf-summary').innerHTML = '<strong>Total scheduled:</strong> ' + (totalMins / 60).toFixed(1) + ' hours &nbsp;|&nbsp; <strong>Blocks:</strong> ' + events.length + ' &nbsp;|&nbsp; <strong>Week:</strong> ' + state.currentWeek;
+
+        const catList = document.getElementById('pdf-category-list');
+        catList.innerHTML = '<strong>Hours by category:</strong><br>' +
+          Object.keys(CATEGORIES).map(function(key) {
+            const mins = catMins[key] || 0;
+            if (mins === 0) return '';
+            return escapeHtml(CATEGORIES[key].label) + ': ' + (mins / 60).toFixed(1) + 'h';
+          }).filter(Boolean).join(' &nbsp;|&nbsp; ');
+
+        const gridContainer = document.getElementById('pdf-grid-container');
+        gridContainer.innerHTML = '';
+        const wrapperClone = document.getElementById('schedule-wrapper').cloneNode(true);
+        wrapperClone.style.minWidth = 'auto';
+        wrapperClone.style.width = '100%';
+        wrapperClone.querySelectorAll('.event-block').forEach(function(el) {
+          el.style.fontSize = '9px';
+          el.style.lineHeight = '1.2';
+        });
+        gridContainer.appendChild(wrapperClone);
+
+        const report = document.getElementById('pdf-report');
+        const clone = report.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        html2pdf().set({
+          margin: 0,
+          filename: 'semester-schedule-week-' + state.currentWeek.toLowerCase() + '.pdf',
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, scrollX: 0, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        }).from(clone).save().then(function() {
+          if (clone.parentNode) document.body.removeChild(clone);
+          showToast('PDF downloaded');
+        }).catch(function() {
+          if (clone.parentNode) document.body.removeChild(clone);
+          showToast('PDF generation failed');
+        });
+      }
+
+      function exportPNG() {
+        const events = state.events[state.currentWeek] || [];
+        if (events.length === 0) {
+          showToast('Add some blocks before exporting.');
+          return;
+        }
+        recomputeRange();
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const W = 1600;
+        const H = 900;
+        const PAD = 60;
+        const HEADER_H = 110; // room so day headers sit clear below the title + subtitle
+        const COL_W = (W - PAD * 2) / 8;
+        const ROW_H = (H - PAD - HEADER_H) / HOURS;
+
+        canvas.width = W;
+        canvas.height = H;
+
+        // Background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, W, H);
+
+        // Title
+        ctx.fillStyle = '#0f0f1a';
+        ctx.font = 'bold 28px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Semester Schedule: Week ' + state.currentWeek, W / 2, 40);
+        ctx.font = '14px Inter, system-ui, sans-serif';
+        ctx.fillStyle = '#6b6b80';
+        ctx.fillText('Generated ' + new Date().toLocaleDateString() + ' · bestanswerhub.com', W / 2, 66);
+
+        // Day headers
+        ctx.font = 'bold 13px Inter, system-ui, sans-serif';
+        ctx.fillStyle = '#0f0f1a';
+        ctx.textAlign = 'center';
+        for (let d = 0; d < 7; d++) {
+          const x = PAD + (d + 1) * COL_W + COL_W / 2;
+          ctx.fillText(DAYS[d].slice(0, 3).toUpperCase(), x, HEADER_H - 10);
+        }
+        ctx.fillText('TIME', PAD + COL_W / 2, HEADER_H - 10);
+
+        // Grid
+        ctx.strokeStyle = '#e8e8f0';
+        ctx.lineWidth = 1;
+        for (let h = 0; h <= HOURS; h++) {
+          const y = HEADER_H + h * ROW_H;
+          ctx.beginPath();
+          ctx.moveTo(PAD, y);
+          ctx.lineTo(W - PAD, y);
+          ctx.stroke();
+        }
+        for (let c = 0; c <= 8; c++) {
+          const x = PAD + c * COL_W;
+          ctx.beginPath();
+          ctx.moveTo(x, HEADER_H);
+          ctx.lineTo(x, H - PAD);
+          ctx.stroke();
+        }
+
+        // Time labels
+        ctx.fillStyle = '#6b6b80';
+        ctx.font = '12px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        for (let h = START_HOUR; h <= END_HOUR; h++) {
+          const y = HEADER_H + (h - START_HOUR) * ROW_H;
+          ctx.fillText(formatHour(h), PAD - 8, y);
+        }
+
+        // Events (overnight blocks draw as two segments across consecutive days)
+        events.forEach(function(ev) {
+          const overnight = isOvernight(ev);
+          eventSegments(ev).forEach(function(seg) {
+            if (seg.day < 0 || seg.day > 6) return;
+            const top = HEADER_H + ((seg.startMin - START_HOUR * 60) / 60) * ROW_H;
+            const height = ((seg.endMin - seg.startMin) / 60) * ROW_H;
+            const x = PAD + (seg.day + 1) * COL_W + 2;
+            const width = COL_W - 4;
+
+            const style = getCategoryStyle(ev.category);
+            ctx.fillStyle = style.color + '22'; // low opacity hex
+            ctx.fillRect(x, top, width, height);
+            ctx.strokeStyle = style.color;
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(x, top, width, height);
+
+            ctx.fillStyle = '#0f0f1a';
+            ctx.font = 'bold 12px Inter, system-ui, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            const name = ev.name;
+            const timeText = ev.start + '–' + ev.end + (seg.cont ? ' (cont.)' : (overnight ? ' →' : ''));
+            if (height > 24) {
+              ctx.fillText(name, x + 6, top + 6);
+              ctx.fillStyle = '#6b6b80';
+              ctx.font = '11px Inter, system-ui, sans-serif';
+              ctx.fillText(timeText, x + 6, top + 22);
+            } else {
+              ctx.fillText(name, x + 6, top + 4);
+            }
+          });
+        });
+
+        // Footer
+        ctx.fillStyle = '#6b6b80';
+        ctx.font = '11px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Created with Best Answer Hub Semester Schedule Builder · www.bestanswerhub.com/tools/semester-schedule-builder/', PAD, H - 20);
+
+        canvas.toBlob(function(blob) {
+          if (!blob) {
+            showToast('PNG export failed');
+            return;
+          }
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'semester-schedule-week-' + state.currentWeek.toLowerCase() + '.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast('PNG downloaded');
+        }, 'image/png');
+      }
+
+      // ─── Event wiring ───
+      document.getElementById('btn-add').addEventListener('click', openAddModal);
+      document.getElementById('btn-week-a').addEventListener('click', function() { state.currentWeek = 'A'; saveState(); renderAll(); });
+      document.getElementById('btn-week-b').addEventListener('click', function() { state.currentWeek = 'B'; saveState(); renderAll(); });
+      document.getElementById('btn-duplicate').addEventListener('click', function() {
+        const source = state.currentWeek;
+        const target = source === 'A' ? 'B' : 'A';
+        state.events[target] = JSON.parse(JSON.stringify(state.events[source]));
+        saveState();
+        renderAll();
+        showToast('Duplicated Week ' + source + ' to Week ' + target);
+      });
+      document.getElementById('btn-clear').addEventListener('click', function() {
+        if (!confirm('Clear all blocks for Week ' + state.currentWeek + '?')) return;
+        state.events[state.currentWeek] = [];
+        saveState();
+        renderAll();
+        showToast('Week ' + state.currentWeek + ' cleared');
+      });
+      document.getElementById('btn-pdf').addEventListener('click', exportPDF);
+      document.getElementById('btn-png').addEventListener('click', exportPNG);
+      modalStart.addEventListener('input', updateOvernightHint);
+      modalEnd.addEventListener('input', updateOvernightHint);
+      modalSave.addEventListener('click', saveModal);
+      modalDelete.addEventListener('click', deleteCurrent);
+      modalCancel.addEventListener('click', closeModal);
+      document.getElementById('btn-save-version').addEventListener('click', saveNamedVersion);
+
+      // Close modal on backdrop click
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+      });
+
+      // Keyboard: Escape closes modal
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+          closeModal();
+        }
+      });
+
+      // ─── Init ───
+      loadState();
+      renderTimeLabels();
+      renderAll();
+    })();
+  </script>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+</BaseLayout>

@@ -1,0 +1,238 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Hash Generator?',
+    a: 'The Best Answer Hub Hash Generator is a free, browser-based developer tool that instantly computes cryptographic hashes like SHA-256 and SHA-512 from any text you enter. It uses the native Web Crypto API built into Chrome, Firefox, Safari, and Edge, so your data never leaves your computer. It is fast, private, and requires no signup.',
+  },
+  {
+    q: 'Is the Hash Generator free and safe?',
+    a: 'Yes, the Best Answer Hub Hash Generator is completely free and safe to use. All hash calculations happen locally inside your browser using the Web Crypto API from Google, Mozilla, Apple, and Microsoft engines. No input text, cookies, or telemetry are transmitted to any server or third party. Disconnect from the internet and the tool continues to work perfectly.',
+  },
+  {
+    q: 'What is hashing and how is it different from encryption?',
+    a: 'Hashing is a one-way mathematical function that turns input data into a fixed-length digest. Unlike encryption, which is reversible with a key, hashing cannot be undone. For example, AES encryption from NIST can be decrypted, but a SHA-256 hash from the same agency cannot be reversed to reveal the original password or file contents. The Best Answer Hub Hash Generator produces SHA-2 family digests using this same one-way principle.',
+  },
+  {
+    q: 'Which hash algorithms does this tool support?',
+    a: 'The Best Answer Hub Hash Generator supports the four most common Secure Hash Algorithm variants: SHA-1, SHA-256, SHA-384, and SHA-512. SHA-256 is selected by default because it offers an excellent balance of speed and security for everyday tasks. Switch algorithms instantly using the dropdown without reloading the page or losing your input.',
+  },
+  {
+    q: 'Which hash algorithm should I choose?',
+    a: 'Choose SHA-256 for general development, file verification, and Git commit identifiers. Choose SHA-512 when you need maximum collision resistance for high-security environments like certificate pinning. Avoid SHA-1 for new projects. Google and CWI Amsterdam proved it is vulnerable to practical collision attacks in 2017, and NIST officially deprecated it for digital signatures in 2022.',
+  },
+  {
+    q: 'Can I hash passwords with this tool?',
+    a: 'The Best Answer Hub Hash Generator can compute a hash, but raw SHA-256 or SHA-512 should not be used alone to store passwords in production. Instead, use dedicated algorithms like bcrypt, Argon2id (winner of the 2015 Password Hashing Competition), or PBKDF2, which include automatic salting and intentional computational slowness to resist brute-force attacks. This tool is ideal for debugging and learning, not for live authentication systems.',
+  },
+  {
+    q: 'What is a checksum and how do I use it?',
+    a: 'A checksum is a hash value used to verify data integrity during transfers or storage. Developers often publish an SHA-256 checksum alongside a software download from vendors like Ubuntu or Node.js. Paste the file contents into the Best Answer Hub Hash Generator to produce a hash and compare it against the publisher\'s published value to confirm the file is uncorrupted and untampered.',
+  },
+  {
+    q: 'Can I use the Hash Generator offline?',
+    a: 'Yes. The Best Answer Hub Hash Generator relies entirely on the browser\'s built-in Web Crypto API, so it works perfectly without an internet connection after the page loads. This makes it useful for air-gapped development machines or sensitive environments where sending data to cloud services like AWS or Azure is prohibited.',
+  },
+  {
+    q: 'What is the Web Crypto API?',
+    a: 'The Web Crypto API is a standardized JavaScript interface built into modern browsers by the W3C and WHATWG communities. It provides high-performance, native implementations of cryptographic primitives such as digest, sign, and encrypt operations. The Best Answer Hub Hash Generator uses its <code>crypto.subtle.digest</code> method so your CPU handles hashing directly without any server round-trips.',
+  },
+  {
+    q: 'How long can the input text be?',
+    a: 'The Best Answer Hub Hash Generator enforces no hard character limit. The practical ceiling depends on your device memory and browser implementation from Google Chrome or Mozilla Firefox. Most users can hash text containing millions of characters instantly. For extremely large inputs, performance remains smooth because the Web Crypto API is highly optimised.',
+  },
+  {
+    q: 'SHA-1 vs SHA-256 security comparison',
+    a: 'SHA-1 produces a 160-bit digest, while SHA-256 produces a 256-bit digest. In 2017, researchers at Google and CWI Amsterdam generated the first practical SHA-1 collision (the SHAttered attack), proving it is no longer safe for digital signatures. SHA-256 is currently recommended by NIST and forms part of the SHA-2 family used across TLS certificates, Git, and the Bitcoin blockchain.',
+  },
+  {
+    q: 'Can I hash files or only text?',
+    a: 'The Best Answer Hub Hash Generator is optimised for direct text input. To hash a file, you would need to read its binary contents first using a <code>FileReader</code> in JavaScript or tools like OpenSSL on the command line (<code>shasum -a 256 filename</code>). Explore the <a href="/developer-toolbox/">Best Answer Hub Developer Toolbox</a> for additional data utilities including converters and encoders.',
+  },
+  {
+    q: 'Is my input data sent to a server?',
+    a: 'No. Every hash is computed entirely inside your browser by the Web Crypto API. You can confirm this by opening Chrome DevTools Network tab and observing zero outbound requests while you type. Unlike online tools from some SaaS vendors, the Best Answer Hub Hash Generator never transmits, logs, or stores your input.',
+  },
+  {
+    q: 'Common use cases for hashing in development',
+    a: 'Developers use hashing for Git commit IDs, verifying Docker image layers, checking npm package integrity via SHA-512 manifests, creating cache keys in Redis, generating unique filenames for CDN assets, and comparing database records efficiently. The Best Answer Hub Hash Generator covers all of these with instant SHA-256 and SHA-512 output. Hashing is also foundational for blockchain ledgers like Bitcoin and Ethereum.',
+  },
+  {
+    q: 'What is HMAC and how is it different from a plain SHA-256 hash?',
+    a: 'HMAC (Hash-based Message Authentication Code) combines a cryptographic hash function with a secret key to produce a tamper-proof signature. Plain SHA-256 has no key, so anyone can recompute it. HMAC-SHA256 is the backbone of real-world API security: Stripe uses it to sign webhook payloads (the <code>Stripe-Signature</code> header), AWS Signature Version 4 chains four HMAC-SHA256 operations to authenticate every API call, and JWT\'s HS256 algorithm is HMAC-SHA256 applied to the base64url-encoded header and payload. The Best Answer Hub Hash Generator produces the raw SHA-256 digest; HMAC wraps that digest in a secret-key construction that proves both integrity and origin.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your text', description: 'Type or paste any string into the input field. The generator listens to every keystroke and updates the result instantly.' },
+  { title: 'Pick an algorithm', description: 'Select SHA-256, SHA-1, SHA-384, or SHA-512 from the dropdown. SHA-256 is the default recommended choice for most developers.' },
+  { title: 'Copy the result', description: 'Click the copy button next to the output field to save the hexadecimal hash to your clipboard for use in code, configs, or documentation.' },
+];
+
+const seo = {
+  title: 'Hash Generator (SHA-256, SHA-1, SHA-512) | Best Answer Hub',
+  description: 'Free browser-based hash generator supporting SHA-1, SHA-256, SHA-384, and SHA-512. Uses Web Crypto API. No data sent to servers.',
+  url: '/tools/hash-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Hash Generator', url: '/tools/hash-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]+>/g, '') })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Hash Generator:"
+    accentText="SHA-1, SHA-256, SHA-384, SHA-512"
+    description="Instantly generate cryptographic hashes from any text using SHA-1, SHA-256, SHA-384, or SHA-512. All computation happens locally in your browser via the Web Crypto API. No data ever leaves your device."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- Hash Generator Interface -->
+  <section class="py-6 md:py-8" aria-label="Hash generator">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Hash Generator</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
+          <input
+            id="hash-input"
+            type="text"
+            class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary"
+            placeholder="Type or paste text to hash..."
+          />
+          <select
+            id="hash-algo"
+            class="w-full sm:w-36 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary"
+          >
+            <option value="SHA-256" selected>SHA-256</option>
+            <option value="SHA-1">SHA-1</option>
+            <option value="SHA-384">SHA-384</option>
+            <option value="SHA-512">SHA-512</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-3 mt-4">
+          <input
+            id="hash-output"
+            type="text"
+            readonly
+            class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none"
+          />
+          <button
+            type="button"
+            id="hash-copy"
+            class="mt-5 bg-bae-ink text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-primary transition-colors shrink-0"
+          >
+            Copy
+          </button>
+        </div>
+        <p class="text-[11px] text-bae-muted mt-3">Hashes are generated using your browser's native Web Crypto API. No data is sent to any server.</p>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">When developers reach for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">DevOps Engineer, release pipeline</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Verifying file integrity</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Catch tampered files before production</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Paste the contents of a downloaded config, binary manifest, or deployment artifact and compare the SHA-256 output against the publisher's checksum. Catch corrupted or tampered files from Ubuntu ISOs to npm tarballs before they hit production.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Backend Developer, API caching layer</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Generating cache keys</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Deterministic keys in milliseconds</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Hash a query string, request body, or config object to create a deterministic, fixed-length cache key for Redis, Memcached, or a CDN. SHA-256 guarantees uniqueness across inputs while keeping key length uniform regardless of payload size.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Full-Stack Developer, payment integration</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Debugging webhook signatures</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Isolate encoding mismatches instantly</div>
+          <p class="text-sm text-bae-muted leading-relaxed">When a Stripe, GitHub, or Shopify webhook fails signature verification, hash the raw payload string here to see what digest your server should be computing. Identify encoding mismatches (UTF-8 vs Latin-1, trailing newlines) before chasing phantom key issues.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Systems Architect, content platform</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Creating content-addressed IDs</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Deduplicate without database lookups</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Generate a SHA-256 fingerprint for any content string (a user-submitted form, a document body, a code snippet) to use as a deduplication key or immutable identifier, mirroring how Git and IPFS address objects by their hash rather than by name.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Actual hashing performance depends on input size and browser implementation.</p>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, and <a href="/tools/timestamp-converter/" class="text-bae-primary hover:underline">Timestamp</a>. All free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+      const hashInput = document.getElementById('hash-input');
+      const hashAlgo = document.getElementById('hash-algo');
+      const hashOutput = document.getElementById('hash-output');
+      async function generateHash() {
+        const text = hashInput.value;
+        const algo = hashAlgo.value;
+        if (!text) { hashOutput.value = ''; return; }
+        try {
+          const encoder = new TextEncoder();
+          const data = encoder.encode(text);
+          const hashBuffer = await crypto.subtle.digest(algo, data);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          hashOutput.value = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        } catch (e) { hashOutput.value = 'Error: ' + e.message; }
+      }
+      hashInput.addEventListener('input', generateHash);
+      hashAlgo.addEventListener('change', generateHash);
+      document.getElementById('hash-copy').addEventListener('click', () => copyText(hashOutput.value));
+    })();
+  </script>
+</BaseLayout>

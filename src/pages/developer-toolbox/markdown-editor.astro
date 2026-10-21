@@ -1,0 +1,228 @@
+﻿---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Markdown Editor?',
+    a: 'The Best Answer Hub Markdown Editor is a free browser-based split-pane editor that lets you write Markdown on the left and see a live preview on the right. It supports GitHub Flavored Markdown including tables, task lists, fenced code blocks, strikethrough, and autolinks. You can export your work as a <code>.md</code> file or as styled <code>.html</code>. Everything runs locally in your browser, so your text is never sent to any server.',
+  },
+  {
+    q: 'Is the Markdown Editor free to use?',
+    a: 'Yes, the Best Answer Hub Markdown Editor is completely free with no usage limits, no signup, and no watermarks. You can write and export as many documents as you want. Unlike Typora, which costs $15 for the desktop app, or HackMD, which gates collaboration behind a paid plan, the Best Answer Hub Markdown Editor gives you full editing and export capabilities at zero cost.',
+  },
+  {
+    q: 'How do I use the Markdown Editor?',
+    a: 'Type or paste your Markdown into the left pane of the Best Answer Hub Markdown Editor. The right pane updates instantly as you type. Use the toolbar buttons to insert common formatting like bold, italic, headings, links, images, code blocks, and tables. Your work is auto-saved to your browser\'s localStorage every few seconds. When you are finished, click Download Markdown to save your <code>.md</code> file, or Download HTML to get a styled page you can publish anywhere.',
+  },
+  {
+    q: 'What is Markdown and why do developers use it?',
+    a: 'Markdown is a lightweight markup language created by John Gruber in 2004. It lets you format text using plain-text syntax like <code>**bold**</code>, <code>*italic*</code>, and <code># headings</code>. Developers love it because it is readable in raw form, works in every text editor, and converts cleanly to HTML. It is the standard format for README files on GitHub, documentation on GitLab, posts on Reddit and Stack Overflow, and notes in Notion and Obsidian. The Best Answer Hub Markdown Editor supports all standard syntax plus GFM extensions out of the box.',
+  },
+  {
+    q: 'Does this editor support GitHub Flavored Markdown?',
+    a: 'Yes. The Best Answer Hub Markdown Editor uses the <code>marked.js</code> parser with GitHub Flavored Markdown (GFM) enabled. This means tables, task lists, fenced code blocks with syntax highlighting, strikethrough, and autolinks all render correctly. The preview pane uses <code>github-markdown-css</code> to match GitHub\'s visual style as closely as possible, so you can preview your README before pushing it to a repository.',
+  },
+  {
+    q: 'Can I use this editor offline?',
+    a: 'Yes. After you load the page once, the Best Answer Hub Markdown Editor works without an internet connection. All parsing, previewing, and exporting happens locally using JavaScript. The only time you need a connection is for the initial page load, which downloads the <code>marked.js</code> and <code>highlight.js</code> libraries. Once cached, the tool works entirely offline.',
+  },
+  {
+    q: 'Is my text sent to a server?',
+    a: 'No. Your text never leaves your browser when using the Best Answer Hub Markdown Editor. The editor uses client-side JavaScript to parse Markdown and render HTML, with no network requests when you type, preview, or export. You can verify this by opening the Network tab in your browser\'s Developer Tools and confirming zero outgoing requests after the initial page load. This makes the editor safe for drafting sensitive documentation, private notes, or proprietary README files.',
+  },
+  {
+    q: 'How do I export my Markdown document?',
+    a: 'Click the Download Markdown button in the Best Answer Hub Markdown Editor to save your raw <code>.md</code> file, which you can open in any text editor or commit to Git. Click Download HTML to get a self-contained HTML file with GitHub-like styling and syntax highlighting that you can open in a browser, attach to an email, or host as a static page. You can also click Copy HTML to grab just the HTML body for pasting into a CMS or blog platform.',
+  },
+  {
+    q: 'What syntax highlighting languages are supported?',
+    a: 'The Best Answer Hub Markdown Editor uses <code>highlight.js</code> with its common language pack, covering JavaScript, TypeScript, Python, Java, C, C++, Go, Rust, Ruby, PHP, Bash, SQL, HTML, CSS, SCSS, JSON, YAML, and plain text. Use a fenced code block with a language tag like <code>```python</code> and the editor applies the correct color scheme automatically. If the language is not recognised, it falls back to automatic detection or plain text.',
+  },
+  {
+    q: 'Can I preview how my README will look on GitHub?',
+    a: 'Yes. That is one of the primary use cases for the Best Answer Hub Markdown Editor. The preview pane uses <code>github-markdown-css</code>, which replicates GitHub\'s typography, spacing, heading sizes, link colors, table borders, and code block styling. While no third-party preview can be pixel-perfect due to GitHub\'s internal theming engine, this tool gets you about 95 percent of the way there, the fastest way to catch formatting mistakes before you commit your README.',
+  },
+  {
+    q: 'How do I insert a table of contents?',
+    a: 'Click the TOC button in the Best Answer Hub Markdown Editor toolbar. The editor scans your document for headings, generates a nested list of anchor links, and inserts it at your cursor position. If you add or remove headings later, delete the old TOC and click again to regenerate it. The TOC uses standard Markdown link syntax like <code>[Heading](#heading)</code>, which works on GitHub, GitLab, and most static site generators including Hugo and Jekyll.',
+  },
+  {
+    q: 'Does the editor auto-save my work?',
+    a: 'Yes. The Best Answer Hub Markdown Editor saves your document to your browser\'s localStorage every 2 seconds while you type. If you close the tab or refresh the page, your text is restored automatically when you return. Auto-save is completely local, with nothing uploaded to a cloud server. If you want to start fresh, click the Clear button. Note that localStorage is cleared when you clear browser data or use incognito mode.',
+  },
+  {
+    q: 'Can I open an existing Markdown file?',
+    a: 'Yes. Click the Open File button in the Best Answer Hub Markdown Editor or drag and drop a <code>.md</code> or <code>.txt</code> file directly onto the editor pane. The file contents will replace the current document. There is a 1 MB file size limit to prevent browser performance issues. If you accidentally overwrite your content, use your browser\'s Undo shortcut or close the tab without saving, but localStorage updates every 2 seconds, so act quickly.',
+  },
+  {
+    q: 'What are the best Markdown editors in 2026?',
+    a: 'For desktop, Typora remains popular for its distraction-free WYSIWYG experience at $15. Obsidian is excellent for knowledge management with a free personal tier. For browser-based editing, Dillinger and StackEdit are the most established alternatives, but both push cloud sync and account creation. The Best Answer Hub Markdown Editor differentiates itself by being lighter, faster, fully offline-capable, and requiring zero accounts, ideal for quick drafts, README previews, and documentation work where privacy matters.',
+  },
+  {
+    q: 'What is the difference between CommonMark, GitHub Flavored Markdown, and standard Markdown?',
+    a: 'John Gruber created the original Markdown specification in 2004, but it left many edge cases undefined. CommonMark, launched in 2014 by a group including Jeff Atwood, standardised those ambiguities into a formal spec. GitHub Flavored Markdown (GFM) extends CommonMark with tables, task lists (<code>- [ ]</code> syntax), strikethrough, fenced code blocks, and autolinks. It is now the default on GitHub, GitLab, and Discourse. The Best Answer Hub Markdown Editor uses the <code>marked.js</code> GFM parser, so your tables, task lists, and fenced code blocks render exactly as they do on GitHub. Reddit uses a CommonMark dialect, while Hugo and Jekyll support configurable GFM subsets.',
+  },
+];
+
+const steps = [
+  { title: 'Write your Markdown', description: 'Type or paste Markdown into the left pane. Use the toolbar for quick formatting, or write raw syntax. Your work auto-saves every 2 seconds.' },
+  { title: 'Preview live', description: 'The right pane updates instantly with a GitHub-flavored preview. Syntax-highlighted code blocks, tables, and task lists render exactly as they will on GitHub.' },
+  { title: 'Export and publish', description: 'Download as raw .md for Git, styled .html for publishing, or copy the HTML snippet to paste into a CMS. Open existing files via drag-and-drop.' },
+];
+
+const seo = {
+  title: 'Free Markdown Editor — Live GitHub Preview, No Signup (2026)',
+  description: 'Free browser-based Markdown editor with live GitHub-flavored preview, syntax highlighting, and HTML export. Auto-saves locally. No data sent to servers.',
+  url: '/developer-toolbox/markdown-editor/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Developer Toolbox', url: '/developer-toolbox/' },
+    { name: 'Markdown Editor', url: '/developer-toolbox/markdown-editor/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <link rel="stylesheet" href="/github-markdown.min.css" />
+  <link rel="stylesheet" href="/github-highlight.min.css" />
+
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Markdown Editor:"
+    accentText="Live GitHub preview"
+    description="Write Markdown with instant preview. GitHub Flavored Markdown perfect tables, code blocks, and task lists. Export to HTML or Markdown. Auto-saves locally. No signup."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- Markdown Editor Interface -->
+  <section class="py-6 md:py-8" aria-label="Markdown editor">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-6xl mx-auto space-y-4">
+
+        <!-- Toolbar -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-3 flex flex-wrap items-center gap-1.5">
+          <button type="button" data-action="bold" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Bold (Ctrl+B)">B</button>
+          <button type="button" data-action="italic" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors italic" title="Italic (Ctrl+I)">I</button>
+          <button type="button" data-action="heading1" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Heading 1">H1</button>
+          <button type="button" data-action="heading2" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Heading 2">H2</button>
+          <button type="button" data-action="heading3" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Heading 3">H3</button>
+          <div class="w-px h-5 bg-bae-border mx-1"></div>
+          <button type="button" data-action="link" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Link">🔗</button>
+          <button type="button" data-action="image" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Image">🖼</button>
+          <button type="button" data-action="code" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Code block">&lt;/&gt;</button>
+          <button type="button" data-action="quote" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Quote">❝</button>
+          <div class="w-px h-5 bg-bae-border mx-1"></div>
+          <button type="button" data-action="ul" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Unordered list">• List</button>
+          <button type="button" data-action="ol" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Ordered list">1. List</button>
+          <button type="button" data-action="table" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Table">⊞</button>
+          <button type="button" data-action="hr" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Horizontal rule">—</button>
+          <button type="button" data-action="toc" class="md-tool-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors" title="Table of contents">TOC</button>
+          <div class="flex-1"></div>
+          <button type="button" id="md-open" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">Open File</button>
+          <input type="file" id="md-file-input" accept=".md,.txt,.markdown" class="hidden" />
+          <button type="button" id="md-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-2.5 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+        </div>
+
+        <!-- Editor + Preview -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Editor -->
+          <div class="bg-bae-card border border-bae-border rounded-bae flex flex-col h-[28rem] lg:h-[36rem]">
+            <div class="px-4 py-2 border-b border-bae-border flex items-center justify-between">
+              <span class="text-xs font-semibold text-bae-muted uppercase tracking-wider">Markdown</span>
+              <span class="text-[11px] text-bae-muted" id="md-status">Auto-saving…</span>
+            </div>
+            <textarea id="md-editor" class="flex-1 w-full bg-bae-bg px-4 py-3 text-sm text-bae-ink font-mono resize-none focus:outline-none" placeholder="# Start writing..." spellcheck="false"></textarea>
+          </div>
+
+          <!-- Preview -->
+          <div class="bg-bae-card border border-bae-border rounded-bae flex flex-col h-[28rem] lg:h-[36rem]">
+            <div class="px-4 py-2 border-b border-bae-border flex items-center justify-between">
+              <span class="text-xs font-semibold text-bae-muted uppercase tracking-wider">Preview</span>
+              <button type="button" id="md-copy-html" class="text-[11px] font-semibold text-bae-primary hover:underline">Copy HTML</button>
+            </div>
+            <div id="md-preview" class="flex-1 overflow-auto px-4 py-3">
+              <p class="text-sm text-bae-muted italic">Start typing to see the preview.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="bg-bae-card border border-bae-border rounded-bae px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-4 text-xs text-bae-muted">
+            <span id="md-wordcount">0 words</span>
+            <span id="md-readingtime">0 min read</span>
+            <span id="md-chars">0 chars</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="md-dl-md" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Download Markdown</button>
+            <button type="button" id="md-dl-html" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Download HTML</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink mb-2">When developers reach for this editor</h2>
+      <p class="text-bae-muted mb-8 max-w-2xl">From README files to internal wikis, here are the four situations where the Best Answer Hub Markdown Editor saves the most time.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-2xl mb-3">📄</div>
+          <h3 class="font-semibold text-bae-ink mb-2">Writing GitHub README files</h3>
+          <p class="text-sm text-bae-muted">Preview your <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">README.md</code> in GitHub-flavored style before committing. Catch broken tables, missing badge URLs, and heading hierarchy issues without a single <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">git push</code>.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-2xl mb-3">📚</div>
+          <h3 class="font-semibold text-bae-ink mb-2">Drafting docs for wikis</h3>
+          <p class="text-sm text-bae-muted">Write technical documentation for Confluence, GitLab Wiki, or Notion offline, then copy the styled HTML directly into your wiki. No account needed, no content sent to third-party servers.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-2xl mb-3">🚀</div>
+          <h3 class="font-semibold text-bae-ink mb-2">Writing for Hugo, Jekyll, or Astro</h3>
+          <p class="text-sm text-bae-muted">Draft blog posts and landing pages for static site generators. Export the raw <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">.md</code> file and drop it straight into your <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">content/</code> or <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">src/pages/</code> directory.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-2xl mb-3">📝</div>
+          <h3 class="font-semibold text-bae-ink mb-2">Quick notes without installing anything</h3>
+          <p class="text-sm text-bae-muted">Need a formatted note on a new machine? Open the browser, write in Markdown, download HTML or <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">.md</code>. No install, no login, no cloud sync. Works on any OS including ChromeOS and Linux.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON Formatter</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT Decoder</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex Tester</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash Generator</a>, <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL Encoder</a>, and <a href="/developer-toolbox/diff-checker/" class="text-bae-primary hover:underline">Diff Checker</a>.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <script src="/marked.min.js" is:inline></script>
+  <script src="/highlight.min.js" is:inline></script>
+  <script src="/js/markdown-editor.js" is:inline></script>
+</BaseLayout>

@@ -1,0 +1,336 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-04T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Mortgage Calculator?', a: 'The Best Answer Hub Mortgage Calculator is a free, browser-based tool that shows your true monthly payment, with principal, interest, property taxes, homeowners insurance, PMI, and HOA dues included. It estimates PMI, marks when it ends, compares loan terms, and models extra payments. It needs no account and sends nothing to a server.' },
+  { q: 'Why is my real mortgage payment higher than the calculator showed?', a: 'Most basic calculators show only principal and interest, the smaller part of the bill. The full payment adds property taxes, homeowners insurance, PMI if your down payment is under 20%, and any HOA dues. On a typical home these can add several hundred dollars a month. The Best Answer Hub Mortgage Calculator includes every part upfront.' },
+  { q: 'What does PITI mean?', a: 'PITI stands for Principal, Interest, Taxes, and Insurance, the four core parts of a monthly mortgage payment. The Consumer Financial Protection Bureau describes the total as principal and interest plus mortgage insurance if applicable plus escrow for taxes and insurance. The Best Answer Hub Mortgage Calculator shows all of it, plus PMI and HOA, in one figure.' },
+  { q: 'What is the 28/36 rule?', a: 'The 28/36 rule is a lender rule of thumb: keep your total housing payment under 28% of gross monthly income and all debt payments, including the mortgage, under 36%. It is guidance rather than a hard limit, and stronger applicants often qualify above it. The Best Answer Hub Mortgage Calculator lets you test these ratios against real figures.' },
+  { q: 'Do free mortgage calculators sell my data?', a: 'Many do. A large share are lead generators that capture your name, email, or financial details and sell them to lenders and brokers. The FTC has taken action against sites posing as free quote tools that harvested and resold visitor information. The Best Answer Hub Mortgage Calculator asks for none of this, so it has no lead to sell.' },
+  { q: 'Are my numbers uploaded when I use this calculator?', a: 'No. The Best Answer Hub Mortgage Calculator runs entirely in your browser, so your income, savings, and target price stay on your device and are never sent to a server. As the FTC notes, data that is not collected cannot be stolen. There is no account, no login, and no server-side copy of your finances.' },
+  { q: 'What is PMI and when does it stop?', a: 'Private mortgage insurance is charged on conventional loans with less than 20% down, and it protects the lender rather than you. Under the federal Homeowners Protection Act it cancels automatically at 78% of the original value, and you can request cancellation at 80%. The Best Answer Hub Mortgage Calculator estimates PMI and marks the month it ends.' },
+  { q: 'How much PMI will I pay?', a: 'PMI is commonly cited at around 0.3% to 1.5% of the loan a year, depending on your down payment and credit. On a $270,000 loan at 0.5%, that is about $112 a month. A larger down payment or higher credit score lowers it. The Best Answer Hub Mortgage Calculator estimates PMI from your down payment percentage automatically.' },
+  { q: 'What is the difference between PMI and FHA mortgage insurance?', a: 'PMI applies to conventional loans under 20% down and cancels at 78% to 80% of the original value. FHA insurance carries a 1.75% upfront premium plus an annual premium, and on FHA loans with under 10% down it lasts the whole loan term, under the current HUD schedule. For buyers who can reach 20% equity, cancellable PMI is often cheaper long term.' },
+  { q: 'Should I choose a 15-year or 30-year mortgage?', a: 'A 15-year loan has a higher monthly payment, often around a third more, but saves a large amount of interest and builds equity faster. A 30-year loan lowers the payment and adds flexibility to invest or handle a shock. Neither is always right. The Best Answer Hub Mortgage Calculator compares both side by side for your exact numbers.' },
+  { q: 'How much can extra payments save me?', a: 'A lot, and sooner than most expect. On a $350,000 loan at 7% over 30 years, an extra $100 a month saves about $71,000 in interest and clears it roughly 3.7 years early; $200 a month saves about $122,000 and over six years. The Best Answer Hub Mortgage Calculator shows your interest and years saved instantly.' },
+  { q: 'How much does a 1% higher interest rate cost?', a: 'A lot over time. On a $400,000 loan over 30 years, a 1% higher rate adds roughly $263 to the monthly principal and interest and about $95,000 in total interest across the loan. This is why comparing rates and improving your credit before applying matters so much. The Best Answer Hub Mortgage Calculator lets you toggle rates to see the difference.' },
+  { q: 'Why did my fixed-rate payment go up?', a: 'A fixed rate locks your principal and interest, but most payments run through an escrow account for property taxes and homeowners insurance. When your home is reassessed higher or your insurance premium rises, the escrow portion goes up to cover it, and lenders keep a cushion, so a tax jump can hit twice. Only refinancing or modifying the loan changes the principal and interest.' },
+  { q: 'What are typical closing costs?', a: 'Closing costs cover the appraisal, title insurance, loan fees, prepaid interest, and an escrow cushion for taxes and insurance, and for a purchase they commonly run a few percent of the price, often estimated at 2% to 5%. Freddie Mac puts refinancing costs at 3% to 6% of the principal. Budgeting for them alongside the down payment avoids a surprise at closing.' },
+  { q: 'How is this different from a bank mortgage calculator?', a: 'A bank calculator usually aims to move you toward its own loan and often captures your contact details as a lead. The Best Answer Hub Mortgage Calculator sells nothing and recommends no lender: it shows the full payment, the PMI drop-off, and your extra-payment savings, and it keeps every figure in your browser rather than on a server.' },
+];
+
+const seo = {
+  title: 'What Your Mortgage Payment Really Includes (2026)',
+  description: 'A principal-and-interest quote hides taxes, insurance, and PMI. See what your true monthly mortgage payment includes, then calculate it free and privately.',
+  url: '/playbooks/mortgage-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Mortgage Calculator', url: '/playbooks/mortgage-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · Finance</span>
+        <div class="cav">The number most calculators hide</div>
+        <h1>What Your Mortgage Payment <em>Really Includes</em></h1>
+        <p class="dek">A plain guide to the true monthly cost of a home: what a principal-and-interest quote leaves out, how PMI and escrow really work, and why so many free mortgage calculators are lead-capture forms in disguise. The Best Answer Hub Mortgage Calculator shows the full payment and sends nothing to a server.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~11 min read</span><span>Full PITI</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">True payment<small>PITI, PMI, and HOA</small></div>
+          <div class="seg b2">Private<small>nothing uploaded</small></div>
+          <div class="seg b3">Free<small>no lead capture</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">$650</div><div class="l">taxes, insurance, and PMI add to a sample payment</div><div class="src">illustrative, $400k home</div></div>
+      <div class="stat"><div class="n">84%</div><div class="l">of loan applications sold to marketers, not lenders</div><div class="src">FTC v. ITMedia, 2022</div></div>
+      <div class="stat"><div class="n">$5.56M</div><div class="l">average financial-sector data breach</div><div class="src">IBM, 2025</div></div>
+      <div class="stat"><div class="n">$0</div><div class="l">of your numbers sent to a server</div><div class="src">runs in your browser</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#hidden">The hidden 20 to 40%</a>
+        <a href="#leadgen">Are they really free</a>
+        <a href="#private">Where your numbers go</a>
+        <a href="#rules">Affordability and PMI</a>
+        <a href="#extra">Extra payments</a>
+        <a href="#different">Versus other calculators</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub Mortgage Calculator is a free, browser-based tool that shows your true monthly payment, not just principal and interest, but the full amount including property taxes, homeowners insurance, PMI, and HOA dues.</strong> This guide explains what a bare principal-and-interest quote leaves out, why a surprising number of free mortgage calculators exist mainly to capture and sell your details, how private mortgage insurance and escrow actually work, and how much a few extra dollars a month can save you.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Mortgage Calculator?</h2>
+        <p>The Best Answer Hub <a href="/calculators/mortgage-calculator/">Mortgage Calculator</a> is a single-page tool that turns a home price, down payment, interest rate, and loan term into your full monthly payment, with property taxes, homeowners insurance, PMI, and HOA dues added in rather than left out. It estimates PMI automatically when your down payment is under 20%, shows the month that PMI falls away, compares a 15-year against a 30-year loan side by side, and models extra payments so you can watch the interest and the years drop. Every calculation runs as JavaScript on your own device, so the figures you type, your income, your savings, your target price, are never uploaded and no account is asked for. The tool sits in the Best Answer Hub <a href="/finance-toolkit/">Finance Toolkit</a> next to a compound interest calculator and a tax calculator, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising or lead sales.</p>
+
+        <div class="cav">The part quotes skip</div>
+        <h2 id="hidden">Why is your real payment higher than the calculator said?</h2>
+        <p>Because most calculators show only principal and interest, which is the smaller half of the story. The full monthly figure, often called PITI, is Principal, Interest, Taxes, and Insurance, and the real total climbs higher still once PMI and any HOA dues are added. The Consumer Financial Protection Bureau puts it plainly: many buyers look at just the principal and interest payment and get an unpleasant surprise when they learn the total is much higher, because the total also includes mortgage insurance if applicable and escrow for homeowners insurance and taxes. On a sample $400,000 home with 10% down, principal and interest come to about $2,259 a month, while taxes, insurance, and PMI add roughly $650 more, pushing the true payment near $2,909. That hidden slice is about 22% of the payment here and often runs to 40% in high-tax areas. The Best Answer Hub Mortgage Calculator adds every part upfront so the number you plan around is the number you actually pay.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">A principal-and-interest quote shows less than four-fifths of the bill</figcaption>
+          <svg viewBox="0 0 600 300" role="img" aria-label="Stacked bar: on a sample 400,000 dollar home the true monthly payment of about 2,909 dollars is principal and interest 2,259, taxes and insurance about 500, and PMI about 150">
+            <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <text x="70" y="34" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">Sample $400,000 home, 10% down, 6.43% over 30 years</text>
+            <text x="70" y="86" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">P&amp;I-only quote</text>
+            <rect x="70" y="96" width="270" height="34" rx="6" fill="url(#bg)"/>
+            <text x="352" y="118" font-family="Bricolage Grotesque, sans-serif" font-size="16" font-weight="800" fill="#33302A">$2,259</text>
+            <text x="70" y="176" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">True payment</text>
+            <rect x="70" y="186" width="270" height="34" rx="6" fill="url(#bg)"/>
+            <rect x="342" y="186" width="60" height="34" fill="#6F8A6A"/>
+            <rect x="404" y="186" width="18" height="34" fill="#E2B79f"/>
+            <text x="434" y="208" font-family="Bricolage Grotesque, sans-serif" font-size="16" font-weight="800" fill="#33302A">$2,909</text>
+            <rect x="70" y="250" width="13" height="13" rx="3" fill="url(#bg)"/><text x="90" y="261" font-family="Karla, sans-serif" font-size="12.5" fill="#4f4940">Principal &amp; interest $2,259</text>
+            <rect x="290" y="250" width="13" height="13" rx="3" fill="#6F8A6A"/><text x="310" y="261" font-family="Karla, sans-serif" font-size="12.5" fill="#4f4940">Taxes &amp; insurance ~$500</text>
+            <rect x="490" y="250" width="13" height="13" rx="3" fill="#E2B79f"/><text x="510" y="261" font-family="Karla, sans-serif" font-size="12.5" fill="#4f4940">PMI ~$150</text>
+          </svg>
+          <p class="chart-src">Illustrative example computed with a standard amortization formula at the 30-year rate of 6.43% (Freddie Mac PMMS, week of July 2, 2026). Taxes, insurance, and PMI vary by location, home value, and credit; PMI shown at a commonly cited 0.5% of the loan a year.</p>
+        </figure>
+
+        <div class="cav">Read the fine print</div>
+        <h2 id="leadgen">Are free mortgage calculators actually free?</h2>
+        <p>Often the price is your personal data, which is why the Best Answer Hub Mortgage Calculator asks for no name, no email, and no phone number. A large share of mortgage and affordability tools online are built as lead generators: enter your details to see a result or a rate, and those details are packaged and sold to lenders and brokers. This is not a fringe worry. In 2024 the Federal Trade Commission settled with a lead generator that ran more than 50 sites, including one dressed up as a refinance quote tool, where a button reading GET YOUR FAST FREE QUOTE simply captured the visitor information to sell on. The agency called the sites consent farms using deceptive dark patterns, and said many or all of the people who handed over their information never received a quote at all. Between 2019 and 2022 the operation sold millions of deceptively collected leads.</p>
+        <blockquote>A calculator that needs your email before it will show a number is not a calculator. <span class="accent">It is a form, and you are the product being sold.</span></blockquote>
+        <p>An earlier FTC case makes the scale clear. A network of loan-application sites promised to connect people with trusted lenders, but 84% of the applications collected since January 2016 were not sold to lenders at all: they went to marketers, debt-relief and credit-repair sellers, and firms that resold the information, right down to Social Security and bank account numbers. The Best Answer Hub Mortgage Calculator has no lead to sell. It does not ask who you are, so there is nothing to package, forward, or leak.</p>
+
+        <div class="cav">The honest part</div>
+        <h2 id="private">Where do the numbers you type go?</h2>
+        <p>Nowhere, because the Best Answer Hub Mortgage Calculator runs entirely in your browser and uploads nothing. The figures a mortgage tool collects are sensitive: your income, your savings, the price you can stretch to, sometimes your credit band. When a tool sends those to a server, they become one more record that can be stored, shared, or breached. Financial services is a costly place for that to happen, with the average breach in the sector reaching USD 5.56 million in 2025, the second-highest of any industry, according to IBM Cost of a Data Breach Report. The most reliable defense is to never collect the data in the first place, a point the FTC makes bluntly in its guidance for business: if it is not in your system, it cannot be stolen by hackers. Computing the payment on your own device means there is no server-side copy of your finances to protect, and nothing to sell.</p>
+
+        <div class="cav">The rules of thumb</div>
+        <h2 id="rules">How much can you afford, and what is PMI?</h2>
+        <p>A common starting point is the 28/36 rule, and the Best Answer Hub Mortgage Calculator lets you test it against real numbers instead of a guess. As banks such as Chase describe it, the rule of thumb keeps your total housing payment under 28% of gross monthly income and all your debt payments, housing included, under 36%. It is guidance, not law: lenders weigh your full profile, and a strong applicant can go higher. Private mortgage insurance is the other line most buyers underestimate. On a conventional loan with less than 20% down you usually pay PMI, and as the CFPB notes, it protects the lender, not you. The good news is that it ends. Under the federal Homeowners Protection Act, PMI cancels automatically once your balance reaches 78% of the original value, and you can request cancellation at 80%, so extra payments that reach that line sooner retire it years early. The calculator estimates PMI from your down payment and marks the month it disappears.</p>
+        <div class="callout sage"><div class="h">PMI is not the same as FHA insurance</div><p>Conventional PMI cancels at 78% to 80% of the home original value. FHA mortgage insurance is different: it carries a 1.75% upfront premium plus an annual premium, and on FHA loans with less than 10% down it lasts the entire loan term and never drops off, per the current HUD rate schedule. For many buyers who can reach 20% equity, a conventional loan with cancellable PMI ends up cheaper over time.</p></div>
+
+        <div class="cav">Small money, big years</div>
+        <h2 id="extra">How much can extra payments save you?</h2>
+        <p>More than most people expect, and the Best Answer Hub Mortgage Calculator shows the exact interest and years saved the moment you add an amount. On a $350,000 loan at 7% over 30 years, paying an extra $100 a month saves about $71,000 in interest and clears the loan roughly 3.7 years early. Double it to $200 a month and the savings jump to about $122,000 and more than six years off the term. The loan term itself is the biggest lever of all. Comparing a 15-year against a 30-year loan on a $400,000 balance at the July 2026 Freddie Mac survey rates, the 15-year payment is about 33% higher each month, near $3,330 against $2,510, but it saves roughly $304,000 in total interest over the life of the loan. There is no single right answer: a lower 30-year payment leaves room to invest or absorb a shock, while a 15-year builds equity fast. Seeing both sets of numbers side by side is what makes the choice concrete.</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from other mortgage calculators?</h2>
+        <p>The difference is that the Best Answer Hub Mortgage Calculator shows the whole payment, asks for nothing about you, and keeps every figure on your device, while many free calculators show a partial number and treat your details as inventory. The table sets the usual experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical free calculator</th></tr></thead>
+          <tbody>
+            <tr><td>Email or phone to see results</td><td class="band">Never asked</td><td>Common, to capture a lead</td></tr>
+            <tr><td>What the payment shows</td><td class="band">Full PITI, PMI, and HOA</td><td>Often principal and interest only</td></tr>
+            <tr><td>PMI drop-off month</td><td class="band">Shown</td><td>Rarely shown</td></tr>
+            <tr><td>Extra-payment savings</td><td class="band">Interest and years, instant</td><td>Often missing</td></tr>
+            <tr><td>15 vs 30-year compare</td><td class="band">Side by side</td><td>Varies</td></tr>
+            <tr><td>Your figures</td><td class="band">Stay in your browser</td><td>May be sent to a server</td></tr>
+          </tbody>
+        </table>
+        <p>None of this makes the arithmetic special, because the amortization math is the same everywhere. What differs is what a tool does around the math: whether it shows you the real number, and whether it quietly turns your visit into a lead. The Best Answer Hub Mortgage Calculator does the first and refuses the second.</p>
+        <div class="callout"><div class="h">Plan the whole purchase</div><p>A mortgage is one piece of the math. Pair it with the Best Answer Hub <a href="/calculators/compound-interest/">Compound Interest Calculator</a> to see how the down payment could grow if invested instead, the <a href="/calculators/tax-calculator/">Tax Calculator</a> to check your take-home, and the <a href="/tools/bank-statement-to-excel/">Bank Statement to Excel</a> converter to total your real spending before you commit, all free and all in your browser.</p></div>
+
+        <div class="cta">
+          <span class="kicker">See your true payment</span>
+          <h3>Open the Mortgage Calculator</h3>
+          <p>Free, no signup, and nothing uploaded. Get the full monthly payment with taxes, insurance, and PMI, plus your extra-payment savings and PMI drop-off month.</p>
+          <a class="btn" href="/calculators/mortgage-calculator/">Calculate my payment</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about mortgage payments</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-finance-tools/">Free Finance Tools, Nothing Uploaded</a></b> The full Finance Toolkit guide: mortgage, compound interest, tax, ROI, and the bank statement converter.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/bank-statement-to-excel/">Turn a Bank Statement Into Excel, Privately</a></b> Total your real spending before you decide what you can afford.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to PDFs.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/ai-roi-small-business/">Working Out the ROI of a Big Decision</a></b> How to weigh cost against payoff before you commit money.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/ask-cfpb/on-a-mortgage-whats-the-difference-between-my-principal-and-interest-payment-and-my-total-monthly-payment-en-1941/" target="_blank" rel="noopener noreferrer">Principal and interest vs total monthly payment</a>, 2023 (the total also includes mortgage insurance and escrow; buyers who look at P&amp;I alone get an unpleasant surprise).</li>
+          <li>Consumer Financial Protection Bureau, <a href="https://www.consumerfinance.gov/ask-cfpb/what-is-private-mortgage-insurance-en-122/" target="_blank" rel="noopener noreferrer">What is private mortgage insurance?</a>, 2023 (PMI on conventional loans under 20% down; protects the lender, not you).</li>
+          <li>Federal Trade Commission, <a href="https://www.ftc.gov/news-events/news/press-releases/2024/01/california-based-lead-generator-agrees-settlement-banning-it-making-or-assisting-others-making" target="_blank" rel="noopener noreferrer">Lead generator settlement over refinance quote sites</a>, 2024 (consent farms and dark patterns; millions of leads sold 2019 to 2022).</li>
+          <li>Federal Trade Commission, <a href="https://www.ftc.gov/news-events/news/press-releases/2022/01/lead-generator-deceptively-solicited-loan-applications-millions-consumers-indiscriminately-shared" target="_blank" rel="noopener noreferrer">Lead generator that deceptively solicited loan applications</a>, 2022 (84% of applications sold to marketers, not lenders).</li>
+          <li>Federal Trade Commission, <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">Protecting Personal Information: A Guide for Business</a>, 2016 (if it is not in your system, it cannot be stolen by hackers).</li>
+          <li>IBM, <a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">Cost of a Data Breach Report</a>, 2025 (global average USD 4.44M; financial-sector average USD 5.56M).</li>
+          <li>U.S. Department of Housing and Urban Development, <a href="https://www.hud.gov/sites/dfiles/OCHCO/documents/2023-05hsgml.pdf" target="_blank" rel="noopener noreferrer">Mortgagee Letter 2023-05</a>, 2023 (FHA upfront 1.75%; annual MIP; life-of-loan for under 10% down).</li>
+          <li>Freddie Mac, <a href="https://www.freddiemac.com/pmms" target="_blank" rel="noopener noreferrer">Primary Mortgage Market Survey</a>, week of July 2, 2026 (30-year 6.43%, 15-year 5.79%), and <a href="https://myhome.freddiemac.com/refinancing/costs-of-refinancing" target="_blank" rel="noopener noreferrer">Costs of refinancing</a> (3% to 6% of principal).</li>
+          <li>Chase, <a href="https://www.chase.com/personal/mortgage/education/buying-a-home/28-36-rule" target="_blank" rel="noopener noreferrer">The 28/36 rule</a> (housing under 28%, total debt under 36% of gross income; a rule of thumb).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/calculators/mortgage-calculator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Mortgage Calculator</a>, <a href="/finance-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Finance Toolkit</a>, <a href="/calculators/compound-interest/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Compound Interest Calculator</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

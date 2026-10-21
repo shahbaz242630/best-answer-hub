@@ -1,0 +1,519 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Diff Checker?',
+    a: 'The Best Answer Hub Diff Checker is a free browser-based text comparison tool that shows the differences between two pieces of text side by side. It highlights lines that have been added, removed, or changed using color-coded output: green for additions, red for deletions, and neutral for unchanged text. You can switch between line-level and word-level diffing, and choose a split view or unified view. Everything runs 100% in your browser, so no text is ever uploaded to a server.',
+  },
+  {
+    q: 'Is the Diff Checker free and safe to use?',
+    a: 'Yes. The Best Answer Hub Diff Checker is completely free with no usage limits and no signup required. It is safe because all comparison logic runs locally inside your browser using vanilla JavaScript. Your text, code, or configuration data is never sent to a server, stored in a database, or logged anywhere. You can verify this by disconnecting from the internet after loading the page. The tool will continue to work perfectly.',
+  },
+  {
+    q: 'How does the Diff Checker work?',
+    a: 'The Best Answer Hub Diff Checker uses a longest common subsequence (LCS) algorithm to compare two texts line by line. It identifies which lines appear in both versions unchanged, which lines were removed from the original, and which lines were added in the modified version. When you switch to word-level mode, it further breaks down changed lines into individual words to show exactly which words differ. The entire process happens instantly in your browser with zero network requests.',
+  },
+  {
+    q: 'What is the difference between Split view and Unified view?',
+    a: 'In the Best Answer Hub Diff Checker, Split view shows the original text on the left and the modified text on the right in two parallel columns. This is ideal for comparing larger documents where you want to see both versions simultaneously. Unified view shows all changes in a single column: removed lines appear in red with a minus sign, added lines appear in green with a plus sign, and unchanged lines appear in gray. Unified view is compact and works well for smaller snippets or when you want a quick overview of all changes.',
+  },
+  {
+    q: 'What is the difference between Line diff and Word diff?',
+    a: 'The Best Answer Hub Diff Checker offers two modes. Line diff compares entire lines and marks each as added, removed, or unchanged, which is fast and ideal for code, logs, and structured text. Word diff goes one step further: when a line has both additions and removals, it breaks the line into individual words and highlights only the changed words. Word diff gives a more granular view of edits and is especially useful for prose, documentation, and legal text where only a few words change per sentence.',
+  },
+  {
+    q: 'Can I use the Diff Checker offline?',
+    a: 'Yes. The Best Answer Hub Diff Checker works offline after the first page load. It is built entirely with vanilla JavaScript and uses only browser-native APIs, with no external library downloads, no CDN dependencies, and no server-side processing. This makes it ideal for comparing sensitive code or configuration files on corporate laptops, restricted networks, and air-gapped environments.',
+  },
+  {
+    q: 'Is my text sent to a server?',
+    a: 'No. At Best Answer Hub, your text never leaves your browser. The Best Answer Hub Diff Checker uses only client-side JavaScript to compare your inputs, with no network requests, no analytics pings containing your data, and no cloud processing. You can verify this by opening your browser\'s Network tab in Developer Tools while running a comparison: you will see zero outgoing requests.',
+  },
+  {
+    q: 'What types of text can I compare?',
+    a: 'The Best Answer Hub Diff Checker accepts any plain text: source code in any programming language, JSON, XML, YAML, SQL queries, Terraform and Kubernetes manifests, configuration files, log files, legal documents, essays, Markdown, and CSV data. The diff engine treats all input as plain text, so it works equally well for Python, JavaScript, HTML, or natural language prose. For JSON-specific formatting and validation, use the <a href="/tools/json-formatter/">Best Answer Hub JSON Formatter</a>.',
+  },
+  {
+    q: 'How do I copy the diff results?',
+    a: 'After running a comparison in the Best Answer Hub Diff Checker, click the "Copy Result" button below the diff output. This copies a plain-text version of the diff to your clipboard, including the plus and minus indicators for added and removed lines. You can paste this into emails, pull request descriptions, code review comments, documentation, or Slack messages to share changes with your team.',
+  },
+  {
+    q: 'Does the Diff Checker support large files?',
+    a: 'Yes. The Best Answer Hub Diff Checker can handle texts up to several megabytes in size, limited only by your browser\'s memory and JavaScript engine. For files under 1 MB, comparison is effectively instant on any modern device. For very large files over 5 MB, you may notice a brief processing delay because the LCS algorithm runs in the main thread. If you regularly compare large SQL dumps, Terraform state files, or full log outputs, split them into smaller sections for faster results.',
+  },
+  {
+    q: 'Why should I use this instead of Diffchecker.com?',
+    a: 'Diffchecker.com uploads your text to their cloud servers for processing, which means proprietary code, API keys, or sensitive configuration data leaves your device. A privacy audit confirmed the URL changes to /unsaved/{unique-id} after each comparison, meaning the diff is transmitted to and stored on Diffchecker\'s servers. Diffchecker\'s own desktop app markets itself as "Your diffs never leave your computer", an implicit admission the web version does the opposite. The Best Answer Hub Diff Checker never uploads anything: all processing is local, with no ads and no signup.',
+  },
+  {
+    q: 'Can I compare code from Git repositories?',
+    a: 'The Best Answer Hub Diff Checker compares plain text you paste into the input boxes. It does not connect to GitHub, GitLab, or Bitbucket directly. To compare code from a Git repository, copy the file contents from two different commits or branches and paste them into the Original and Modified fields. For files not in version control, this is often faster than setting up <code>git diff --no-index</code>. For full repository-native diff views, GitHub\'s built-in diff, GitKraken, and Sourcetree are the right tools.',
+  },
+  {
+    q: 'Does the Diff Checker create shareable links?',
+    a: 'Not currently. Cloud-based diff tools like Diffchecker.com encode your text into a URL stored on their servers. Diffchecker Pro charges $15/month for persistent shareable links. The Best Answer Hub Diff Checker prioritises privacy over shareability: no text is ever sent to a server, so there is nothing to store. To share a diff, use the "Copy Result" button and paste the plain-text output into an email, Slack message, or pull request description.',
+  },
+  {
+    q: 'What diff algorithm does this tool use?',
+    a: 'The Best Answer Hub Diff Checker uses a longest common subsequence (LCS) algorithm, the same fundamental approach used by Git, VS Code, and most professional diff tools. LCS finds the longest sequence of lines that appears in both texts in the same order, then infers additions and deletions from the remaining lines. Git also supports patience diff (<code>git diff --diff-algorithm=patience</code>), which produces more human-readable output for large refactors by prioritising unique lines as anchors before filling gaps.',
+  },
+  {
+    q: "What is the difference between Myers diff, patience diff, and LCS?",
+    a: "These are three strategies for deciding which lines changed. Myers diff (Git's default, introduced by Eugene Myers in 1986) minimises the total number of added and removed lines, fast and correct, but can produce noisy output when code is heavily rearranged. Patience diff anchors the comparison on unique lines first, then fills gaps, producing more readable diffs for large refactors and is available in Git via <code>git diff --diff-algorithm=patience</code>. LCS (longest common subsequence) maximises the unchanged lines between two versions, which is what the Best Answer Hub Diff Checker uses. All three produce valid diffs; the difference is readability for complex changes.",
+  },
+];
+
+const steps = [
+  { title: 'Paste both versions', description: 'Copy your original text into the left box and your modified text into the right box. The tool accepts any plain text: code, configs, logs, or documents.' },
+  { title: 'Choose your view', description: 'Select Line or Word diff mode, then pick Split or Unified view. Click "Compare" to run the diff instantly in your browser.' },
+  { title: 'Review and copy', description: 'Scan the color-coded output for additions and deletions. Click "Copy Result" to grab a plain-text diff you can paste anywhere.' },
+];
+
+const seo = {
+  title: 'Free Diff Checker — Compare Text Online, No Upload (2026)',
+  description: 'Free online diff checker. Compare two texts side by side with line and word-level highlighting. 100% client-side — no data sent to servers. No signup.',
+  url: '/developer-toolbox/diff-checker/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Developer Toolbox', url: '/developer-toolbox/' },
+    { name: 'Diff Checker', url: '/developer-toolbox/diff-checker/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Diff Checker:"
+    accentText="Compare text instantly"
+    description="Spot every change between two versions of text, code, or config. Side-by-side or unified view, line-level or word-level diff. All processing happens in your browser, and nothing is uploaded."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- Diff Checker Interface -->
+  <section class="py-6 md:py-8" aria-label="Diff checker">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Diff Checker</h2>
+
+        <!-- Inputs -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Original</label>
+            <textarea id="diff-left" class="w-full h-48 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Paste original text here..." spellcheck="false"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Modified</label>
+            <textarea id="diff-right" class="w-full h-48 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Paste modified text here..." spellcheck="false"></textarea>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          <button type="button" id="diff-compare" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Compare</button>
+          <button type="button" id="diff-sample" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Sample Data</button>
+          <button type="button" id="diff-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+          <button type="button" id="diff-copy" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy Result</button>
+
+          <div class="hidden sm:block w-px h-5 bg-bae-border mx-1"></div>
+
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs text-bae-muted">Mode:</span>
+            <select id="diff-mode" class="bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+              <option value="line">Line</option>
+              <option value="word">Word</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs text-bae-muted">View:</span>
+            <select id="diff-view" class="bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+              <option value="split">Split</option>
+              <option value="unified">Unified</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <p id="diff-stats" class="text-xs text-bae-muted mb-3 hidden"></p>
+
+        <!-- Output -->
+        <div>
+          <label class="block text-xs font-medium text-bae-muted mb-1.5">Diff Output</label>
+          <div id="diff-output" class="w-full min-h-[12rem] max-h-[32rem] bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm font-mono overflow-auto">
+            <p class="text-bae-muted text-xs italic">Click "Compare" to see the diff.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people use it for -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people use it for</h2>
+      <p class="text-sm text-bae-muted mb-8">Common workflows from developers, DevOps engineers, technical writers, and legal teams.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Code Review</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Compare two config files or SQL migrations before deploying</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">No Git required, paste and compare in seconds</p>
+          <p class="text-sm text-bae-muted">Paste the old and new versions of a config file, SQL migration script, or Terraform variable file into the Best Answer Hub Diff Checker. Switch to Word diff mode to catch a single changed value inside a long block. No Git repository needed, useful for files pulled from servers over SSH, copied from staging, or received from a colleague over Slack.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">DevOps & Infrastructure</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Spot config drift between environments: staging vs production</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">YAML, .env, Kubernetes manifests, Ansible playbooks</p>
+          <p class="text-sm text-bae-muted">Copy a YAML manifest or .env file from two different environments and run them through the Best Answer Hub Diff Checker in Split view. Missing environment variables, changed resource limits, and key renames show up instantly in red and green. Works on corporate networks where uploading to Diffchecker.com is blocked by security policy. Nothing leaves your browser.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">API Debugging</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Compare two API responses to find what changed between versions</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">JSON responses, REST payloads, GraphQL output</p>
+          <p class="text-sm text-bae-muted">Paste the response from staging and production (or v1 and v2 of the same endpoint) into the two input boxes. The Best Answer Hub Diff Checker highlights added fields, removed keys, and changed values line by line. Combine with the <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">Best Answer Hub JSON Formatter</a> to beautify minified responses before comparing.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Legal & Documents</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Compare contract versions or document drafts without uploading to a cloud tool</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Contracts, policies, terms of service, academic drafts</p>
+          <p class="text-sm text-bae-muted">Paste two versions of a contract, privacy policy, or terms document into the Best Answer Hub Diff Checker and switch to Word diff mode to see exactly which clauses, numbers, and obligations changed. Because processing is entirely local, sensitive legal text never touches an external server, important for NDA-covered drafts and client-confidential documents.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, and <a href="/tools/timestamp-converter/" class="text-bae-primary hover:underline">Timestamp</a>, all free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      // --- Utility ---
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+
+      // --- Diff Engine (LCS) ---
+      function lcsDiff(a, b, equalsFn) {
+        const m = a.length, n = b.length;
+        const dp = new Array(m + 1);
+        for (let i = 0; i <= m; i++) {
+          dp[i] = new Uint32Array(n + 1);
+        }
+        for (let i = 1; i <= m; i++) {
+          for (let j = 1; j <= n; j++) {
+            if (equalsFn(a[i - 1], b[j - 1])) {
+              dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+              dp[i][j] = dp[i - 1][j] > dp[i][j - 1] ? dp[i - 1][j] : dp[i][j - 1];
+            }
+          }
+        }
+        const result = [];
+        let i = m, j = n;
+        while (i > 0 || j > 0) {
+          if (i > 0 && j > 0 && equalsFn(a[i - 1], b[j - 1])) {
+            result.unshift({ type: 'same', oldItem: a[i - 1], newItem: b[j - 1] });
+            i--; j--;
+          } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
+            result.unshift({ type: 'add', newItem: b[j - 1] });
+            j--;
+          } else {
+            result.unshift({ type: 'remove', oldItem: a[i - 1] });
+            i--;
+          }
+        }
+        return result;
+      }
+
+      function diffLines(oldText, newText) {
+        const oldLines = oldText.split('\n');
+        const newLines = newText.split('\n');
+        return lcsDiff(oldLines, newLines, (a, b) => a === b);
+      }
+
+      function diffWords(oldLine, newLine) {
+        const oldWords = oldLine.split(/(\s+)/);
+        const newWords = newLine.split(/(\s+)/);
+        return lcsDiff(oldWords, newWords, (a, b) => a === b);
+      }
+
+      // --- Rendering ---
+      function renderSplit(diff, mode) {
+        const container = document.createElement('div');
+        container.className = 'grid grid-cols-2 gap-0 border border-bae-border rounded-bae-sm overflow-hidden';
+
+        const leftCol = document.createElement('div');
+        const rightCol = document.createElement('div');
+        leftCol.className = 'border-r border-bae-border';
+
+        let added = 0, removed = 0, same = 0;
+
+        diff.forEach(item => {
+          if (item.type === 'same') {
+            same++;
+            leftCol.appendChild(makeRow(item.oldItem, 'same', ''));
+            rightCol.appendChild(makeRow(item.newItem, 'same', ''));
+          } else if (item.type === 'remove') {
+            removed++;
+            leftCol.appendChild(makeRow(item.oldItem, 'remove', '-'));
+            rightCol.appendChild(makeEmptyRow());
+          } else if (item.type === 'add') {
+            added++;
+            leftCol.appendChild(makeEmptyRow());
+            rightCol.appendChild(makeRow(item.newItem, 'add', '+'));
+          } else if (item.type === 'change') {
+            removed++; added++;
+            leftCol.appendChild(makeWordRow(item.words, 'old'));
+            rightCol.appendChild(makeWordRow(item.words, 'new'));
+          }
+        });
+
+        container.appendChild(leftCol);
+        container.appendChild(rightCol);
+        return { el: container, stats: { added, removed, same } };
+      }
+
+      function renderUnified(diff, mode) {
+        const container = document.createElement('div');
+        container.className = 'border border-bae-border rounded-bae-sm overflow-hidden';
+
+        let added = 0, removed = 0, same = 0;
+
+        diff.forEach(item => {
+          if (item.type === 'same') {
+            same++;
+            container.appendChild(makeUnifiedRow(item.oldItem, 'same', ' '));
+          } else if (item.type === 'remove') {
+            removed++;
+            container.appendChild(makeUnifiedRow(item.oldItem, 'remove', '-'));
+          } else if (item.type === 'add') {
+            added++;
+            container.appendChild(makeUnifiedRow(item.newItem, 'add', '+'));
+          } else if (item.type === 'change') {
+            removed++; added++;
+            container.appendChild(makeWordRow(item.words, 'old'));
+            container.appendChild(makeWordRow(item.words, 'new'));
+          }
+        });
+
+        return { el: container, stats: { added, removed, same } };
+      }
+
+      function makeRow(text, type, sign) {
+        const row = document.createElement('div');
+        let bgClass = '';
+        let signColor = 'text-bae-muted';
+        if (type === 'add') { bgClass = 'bg-green-100 border-l-2 border-l-green-500'; signColor = 'text-green-700'; }
+        if (type === 'remove') { bgClass = 'bg-red-100 border-l-2 border-l-red-500'; signColor = 'text-red-700'; }
+        if (type === 'same') { bgClass = 'bg-bae-bg'; }
+        row.className = 'flex items-start px-2 py-0.5 text-xs font-mono border-b border-bae-border/50 ' + bgClass;
+
+        const signEl = document.createElement('span');
+        signEl.className = 'w-4 shrink-0 ' + signColor;
+        signEl.textContent = sign;
+        row.appendChild(signEl);
+
+        const textEl = document.createElement('span');
+        textEl.className = 'text-bae-ink whitespace-pre-wrap break-words';
+        textEl.textContent = text;
+        row.appendChild(textEl);
+
+        return row;
+      }
+
+      function makeEmptyRow() {
+        const row = document.createElement('div');
+        row.className = 'px-2 py-0.5 text-xs font-mono border-b border-bae-border/50 bg-bae-bg h-5';
+        row.innerHTML = '&nbsp;';
+        return row;
+      }
+
+      function makeUnifiedRow(text, type, sign) {
+        const row = document.createElement('div');
+        let bgClass = '';
+        let signColor = 'text-bae-muted';
+        if (type === 'add') { bgClass = 'bg-green-100 border-l-2 border-l-green-500'; signColor = 'text-green-700'; }
+        if (type === 'remove') { bgClass = 'bg-red-100 border-l-2 border-l-red-500'; signColor = 'text-red-700'; }
+        if (type === 'same') { bgClass = 'bg-bae-bg'; }
+        row.className = 'flex items-start px-2 py-0.5 text-xs font-mono border-b border-bae-border/50 ' + bgClass;
+
+        const signEl = document.createElement('span');
+        signEl.className = 'w-4 shrink-0 ' + signColor;
+        signEl.textContent = sign;
+        row.appendChild(signEl);
+
+        const textEl = document.createElement('span');
+        textEl.className = 'text-bae-ink whitespace-pre-wrap break-words';
+        textEl.textContent = text;
+        row.appendChild(textEl);
+
+        return row;
+      }
+
+      // Renders one side of a changed line with inline word-level highlighting.
+      // side 'old' shows unchanged + removed words (sign -); 'new' shows
+      // unchanged + added words (sign +).
+      function makeWordRow(words, side) {
+        const isOld = side === 'old';
+        const row = document.createElement('div');
+        const bgClass = isOld ? 'bg-red-50 border-l-2 border-l-red-400' : 'bg-green-50 border-l-2 border-l-green-400';
+        row.className = 'flex items-start px-2 py-0.5 text-xs font-mono border-b border-bae-border/50 ' + bgClass;
+
+        const signEl = document.createElement('span');
+        signEl.className = 'w-4 shrink-0 ' + (isOld ? 'text-red-700' : 'text-green-700');
+        signEl.textContent = isOld ? '-' : '+';
+        row.appendChild(signEl);
+
+        const textEl = document.createElement('span');
+        textEl.className = 'whitespace-pre-wrap break-words';
+        words.forEach(w => {
+          if (w.type === 'same') {
+            const s = document.createElement('span');
+            s.className = 'text-bae-ink';
+            s.textContent = w.oldItem;
+            textEl.appendChild(s);
+          } else if (isOld && w.type === 'remove') {
+            const s = document.createElement('span');
+            s.className = 'bg-red-200 text-red-900 rounded-sm';
+            s.textContent = w.oldItem;
+            textEl.appendChild(s);
+          } else if (!isOld && w.type === 'add') {
+            const s = document.createElement('span');
+            s.className = 'bg-green-200 text-green-900 rounded-sm';
+            s.textContent = w.newItem;
+            textEl.appendChild(s);
+          }
+          // old side ignores 'add' words; new side ignores 'remove' words
+        });
+        row.appendChild(textEl);
+        return row;
+      }
+
+      function buildCopyText(items) {
+        let out = '';
+        items.forEach(it => {
+          if (it.type === 'same') out += ' ' + it.oldItem + '\n';
+          else if (it.type === 'remove') out += '-' + it.oldItem + '\n';
+          else if (it.type === 'add') out += '+' + it.newItem + '\n';
+          else if (it.type === 'change') { out += '-' + it.oldItem + '\n'; out += '+' + it.newItem + '\n'; }
+        });
+        return out;
+      }
+
+      let lastCopyText = '';
+
+      // --- Main Controller ---
+      const leftInput = document.getElementById('diff-left');
+      const rightInput = document.getElementById('diff-right');
+      const output = document.getElementById('diff-output');
+      const statsEl = document.getElementById('diff-stats');
+      const modeSelect = document.getElementById('diff-mode');
+      const viewSelect = document.getElementById('diff-view');
+
+      function runDiff() {
+        const oldText = leftInput.value;
+        const newText = rightInput.value;
+        const mode = modeSelect.value;
+        const view = viewSelect.value;
+
+        if (!oldText && !newText) {
+          output.innerHTML = '<p class="text-bae-muted text-xs italic">Enter text in both boxes and click Compare.</p>';
+          statsEl.classList.add('hidden');
+          return;
+        }
+
+        const lineDiff = diffLines(oldText, newText);
+        let items = lineDiff;
+
+        if (mode === 'word') {
+          // Pair each adjacent remove+add (a changed line) into a single
+          // 'change' item carrying an inline word-level diff.
+          items = [];
+          for (let k = 0; k < lineDiff.length; k++) {
+            const cur = lineDiff[k], next = lineDiff[k + 1];
+            if (cur.type === 'remove' && next && next.type === 'add') {
+              items.push({ type: 'change', oldItem: cur.oldItem, newItem: next.newItem, words: diffWords(cur.oldItem, next.newItem) });
+              k++;
+            } else {
+              items.push(cur);
+            }
+          }
+        }
+
+        const result = view === 'split' ? renderSplit(items) : renderUnified(items);
+
+        output.innerHTML = '';
+        output.appendChild(result.el);
+        lastCopyText = buildCopyText(items);
+
+        statsEl.textContent = result.stats.added + ' added, ' + result.stats.removed + ' removed, ' + result.stats.same + ' unchanged lines';
+        statsEl.classList.remove('hidden');
+      }
+
+      document.getElementById('diff-compare').addEventListener('click', runDiff);
+
+      document.getElementById('diff-clear').addEventListener('click', function() {
+        leftInput.value = '';
+        rightInput.value = '';
+        output.innerHTML = '<p class="text-bae-muted text-xs italic">Click "Compare" to see the diff.</p>';
+        statsEl.classList.add('hidden');
+        lastCopyText = '';
+      });
+
+      document.getElementById('diff-sample').addEventListener('click', function() {
+        leftInput.value = "function greet(name) {\n  console.log('Hello, ' + name);\n}\n\nfunction farewell(name) {\n  console.log('Goodbye, ' + name);\n}";
+        rightInput.value = "function greet(name) {\n  console.log('Hello, ' + name + '!');\n}\n\nfunction welcome(name) {\n  console.log('Welcome, ' + name);\n}\n\nfunction farewell(name) {\n  console.log('Goodbye, ' + name);\n}";
+        runDiff();
+      });
+
+      document.getElementById('diff-copy').addEventListener('click', function() {
+        copyText(lastCopyText);
+      });
+    })();
+  </script>
+</BaseLayout>

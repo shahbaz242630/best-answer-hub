@@ -1,0 +1,370 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Number Base Converter?', a: 'The Best Answer Hub Number Base Converter is a free, browser-based tool that converts a number between any bases from 2 to 36 with arbitrary-precision arithmetic. It shows the common bases at once, detects 0x, 0b, and 0o prefixes, and includes a twos-complement mode with a selectable bit width. Nothing is uploaded.' },
+  { q: 'How do you convert binary to decimal?', a: 'Multiply each binary digit by 2 raised to the power of its position, then add. So 100101 is 32 plus 4 plus 1, which is 37. The Best Answer Hub Number Base Converter does this instantly and shows the result in decimal, hex, and octal at the same time, so you do not have to work it out by hand.' },
+  { q: 'Why is one hex digit four bits?', a: 'Because 16 is 2 to the fourth power, so each hexadecimal digit from 0 to F stands for exactly four binary digits. That makes hex a compact way to write bytes: 8 bits is two hex digits. The Best Answer Hub Number Base Converter shows the binary and hex forms side by side so the mapping is clear.' },
+  { q: 'Why does a color code use hexadecimal?', a: 'Because each color channel is one byte, from 0 to 255, which is exactly two hex digits. A code like #C60018 sets red, green, and blue as three two-digit hex values. The Best Answer Hub Number Base Converter converts each channel between hex and decimal so you can read or build a color code.' },
+  { q: 'What is twos complement?', a: 'It is how computers store signed integers in binary. The most significant bit carries a negative place value, so the pattern encodes negative numbers. Because of this, a negative value needs a fixed bit width. The Best Answer Hub Number Base Converter includes a twos-complement mode where you set that width.' },
+  { q: 'Why does my negative number look different at 8 and 16 bits?', a: 'Because twos complement depends on the bit width. Minus one is 11111111 in 8 bits but 1111111111111111 in 16 bits. There is no single binary form for a negative number without a width. The Best Answer Hub Number Base Converter asks for the width so the answer is always correct.' },
+  { q: 'How do I read a chmod number like 755?', a: 'It is octal, base 8. Each digit adds read (4), write (2), and execute (1) for the owner, group, and others. So 755 means rwxr-xr-x. The Best Answer Hub Number Base Converter converts between octal and binary, which is how permission bits are actually stored, so 755 becomes 111101101.' },
+  { q: 'What bases does the converter support?', a: 'Any base from 2 to 36, using the digits 0 to 9 and then A to Z. That covers binary, octal, decimal, and hexadecimal, plus less common bases like base 32. Most free converters stop at hex, but the Best Answer Hub Number Base Converter handles the full range and shows the common ones together.' },
+  { q: 'Can it handle very large numbers?', a: 'Yes. The Best Answer Hub Number Base Converter uses arbitrary-precision arithmetic, so numbers far beyond the usual 64-bit limit convert exactly with no rounding or overflow. This matters for cryptographic values, large hex dumps, and any case where a standard calculator would silently lose digits.' },
+  { q: 'What is the difference between signed and unsigned?', a: 'An unsigned number is always zero or positive and uses every bit for magnitude. A signed number uses twos complement, so the top bit marks it negative, which halves the positive range. The Best Answer Hub Number Base Converter lets you switch between the two, so the same bits can be read either way.' },
+  { q: 'Why is my binary number rejected?', a: 'Usually because it contains a digit that is not valid for base 2, which only allows 0 and 1. A stray 2 or 9 is not binary. The Best Answer Hub Number Base Converter flags digits that are invalid for the chosen base rather than producing a wrong answer, so you catch the typo immediately.' },
+  { q: 'Do I need to add a 0x or 0b prefix?', a: 'You can, and the Best Answer Hub Number Base Converter auto-detects 0x for hex, 0b for binary, and 0o for octal. You can also just pick the base from the menu and type the digits. Either way, the converter shows the value across the other bases at the same time.' },
+  { q: 'Is my data uploaded to a server?', a: 'No. The Best Answer Hub Number Base Converter runs entirely in your browser, so the numbers you convert never leave your device. There is no signup and no server-side processing, which is consistent with how every Best Answer Hub tool is built. The conversion is exact arithmetic done locally.' },
+  { q: 'Does it work offline?', a: 'Yes. Once the Best Answer Hub Number Base Converter page has loaded, it works with no internet connection, because base conversion is deterministic arithmetic that needs no external data. That makes it reliable on a locked-down machine or anywhere a connection is not available.' },
+  { q: 'Is the Number Base Converter free?', a: 'Yes. The Best Answer Hub Number Base Converter is completely free with no usage limits, no watermarks, and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so it carries no ads and never gates a conversion behind an upgrade.' },
+];
+
+const seo = {
+  title: 'Binary, Hex, and Octal: How Base Conversion Works',
+  description: 'How number bases convert, why one hex digit is four bits, and the twos-complement bit-width trap that makes a negative number look different at 8 and 16 bits.',
+  url: '/playbooks/number-base-converter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Number Base Converter', url: '/playbooks/number-base-converter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Developer Tools</span>
+        <div class="cav">Same number, many faces</div>
+        <h1>Binary, Hex, and Octal: <em>How Base Conversion Works</em></h1>
+        <p class="dek">The number 37 can be written as 100101, 45, 37, or 25 depending on the base. Converting between them is simple arithmetic until negative numbers show up, where the answer depends on how many bits you are using. Here is how base conversion works, why one hex digit is exactly four bits, and the two's-complement trap that catches people out.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Developer tools</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Convert<small>any base, 2 to 36</small></div>
+          <div class="seg b2">Understand<small>hex, binary, octal</small></div>
+          <div class="seg b3">Signed<small>two's complement</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">4</div><div class="l">bits in one hexadecimal digit</div><div class="src">Princeton COS 217</div></div>
+      <div class="stat"><div class="n">2 to 36</div><div class="l">bases this converter handles</div><div class="src">Best Answer Hub</div></div>
+      <div class="stat"><div class="n">8 vs 16</div><div class="l">bit widths that change a negative number</div><div class="src">Univ. of Oregon</div></div>
+      <div class="stat"><div class="n">755</div><div class="l">the octal chmod for rwxr-xr-x</div><div class="src">Linux man page</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#how">How conversion works</a>
+        <a href="#hex">Why hex exists</a>
+        <a href="#twos">The two's complement trap</a>
+        <a href="#uses">Where you use each base</a>
+        <a href="#different">Why this tool</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>Number base conversion is positional arithmetic: each digit is worth the base raised to the power of its position, so the same value can be written in binary, octal, decimal, or hexadecimal without changing what it is.</strong> The one place it gets subtle is negative numbers, where the binary form depends on the bit width you choose. The Best Answer Hub <a href="/calculators/stem-suite/number-base-converter/">Number Base Converter</a> converts across bases 2 to 36 at once, handles two's complement with an explicit bit width, and runs in your browser.</p>
+
+        <p>This guide covers how base conversion actually works, why hexadecimal is the compact shorthand for binary, the two's-complement bit-width trap, and where each base turns up in real work. The tool sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> and its STEM calculator suite, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Number Base Converter?</h2>
+        <p>The Best Answer Hub Number Base Converter is a free, browser-based tool that converts a number between any bases from 2 to 36, using arbitrary-precision arithmetic so large values stay exact. It shows all the common bases at once, auto-detects the <code>0x</code>, <code>0b</code>, and <code>0o</code> prefixes, and includes a two's-complement mode with a selectable bit width for signed numbers. Everything runs in your browser with no signup and nothing uploaded.</p>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">1</span><div><b>Any base, all at once.</b> Convert across bases 2 to 36 and see binary, octal, decimal, and hex together, not one at a time.</div></li>
+            <li><span class="dot">2</span><div><b>Signed numbers done right.</b> A two's-complement mode with an explicit bit width, so a negative value is never ambiguous.</div></li>
+            <li><span class="dot">3</span><div><b>Exact at any size.</b> Arbitrary-precision arithmetic means very large numbers convert without rounding.</div></li>
+          </ul>
+        </div>
+
+        <div class="cav">The mechanics</div>
+        <h2 id="how">How does base conversion work?</h2>
+        <p>Every number is a sum of its digits, each multiplied by the base raised to the power of its position. In base 2, the number 100101 is 1 times 32, plus 1 times 4, plus 1 times 1, which is 37 (<a href="https://www.cs.princeton.edu/courses/archive/spr19/cos217/lectures/05_NumberSystems.pdf" target="_blank" rel="noopener noreferrer">Princeton COS 217</a>). To go the other way, from decimal to another base, you divide repeatedly by the target base and read the remainders from bottom to top. The four common bases just use different digit sets.</p>
+        <table>
+          <thead><tr><th>Base</th><th>Name</th><th>Digits</th><th>37 looks like</th></tr></thead>
+          <tbody>
+            <tr><td class="band">2</td><td>Binary</td><td>0-1</td><td><code>100101</code></td></tr>
+            <tr><td class="band">8</td><td>Octal</td><td>0-7</td><td><code>45</code></td></tr>
+            <tr><td class="band">10</td><td>Decimal</td><td>0-9</td><td><code>37</code></td></tr>
+            <tr><td class="band">16</td><td>Hexadecimal</td><td>0-9, A-F</td><td><code>25</code></td></tr>
+          </tbody>
+        </table>
+        <div class="codebox">
+          <div class="dt">Positional notation, worked out</div>
+          <div class="codelines">100101 (base 2)
+  = 1x32 + 0x16 + 0x8 + 1x4 + 0x2 + 1x1
+  = 32 + 4 + 1
+  = 37 (base 10)</div>
+          <p class="codenote">The same method works for any base: multiply each digit by the base to the power of its position, then add. Source: Princeton COS 217.</p>
+        </div>
+
+        <div class="cav">The compact one</div>
+        <h2 id="hex">Why does hexadecimal exist?</h2>
+        <p>Because one hex digit maps exactly to four binary digits, making hex a tidy shorthand for binary. Since 16 is 2 to the fourth power, every hex digit from 0 to F stands for a group of four bits, so a byte (8 bits) is just two hex digits (<a href="https://www.cs.princeton.edu/courses/archive/spr19/cos217/lectures/05_NumberSystems.pdf" target="_blank" rel="noopener noreferrer">Princeton COS 217</a>). That is why hex shows up wherever raw bytes do, including CSS colors, where each of the red, green, and blue channels is a two-digit hex value from 00 to ff (<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/hex-color" target="_blank" rel="noopener noreferrer">MDN</a>).</p>
+        <figure class="chart">
+          <figcaption class="chart-title">One hex digit equals four bits</figcaption>
+          <svg viewBox="0 0 600 150" role="img" aria-label="The hex value C6 maps to the binary 1100 0110, which is 198 in decimal. Each hex digit becomes exactly four bits.">
+            <rect x="20" y="45" width="120" height="60" rx="10" fill="#C6603F"/>
+            <text x="80" y="72" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="22" font-weight="800" fill="#fff">C6</text>
+            <text x="80" y="92" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#f3ddd2">hexadecimal</text>
+            <path d="M144 75 L184 75" stroke="#C6603F" stroke-width="2.5"/><path d="M178 69 l8 6 -8 6" fill="none" stroke="#C6603F" stroke-width="2.5"/>
+            <rect x="190" y="45" width="105" height="60" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="242" y="72" text-anchor="middle" font-family="ui-monospace, monospace" font-size="17" font-weight="700" fill="#8a4429">1100</text>
+            <text x="242" y="93" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">C = 12</text>
+            <rect x="300" y="45" width="105" height="60" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="352" y="72" text-anchor="middle" font-family="ui-monospace, monospace" font-size="17" font-weight="700" fill="#8a4429">0110</text>
+            <text x="352" y="93" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">6 = 6</text>
+            <path d="M409 75 L449 75" stroke="#C6603F" stroke-width="2.5"/><path d="M443 69 l8 6 -8 6" fill="none" stroke="#C6603F" stroke-width="2.5"/>
+            <rect x="455" y="45" width="125" height="60" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="517" y="72" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="22" font-weight="800" fill="#33302A">198</text>
+            <text x="517" y="92" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#5a7355">decimal</text>
+          </svg>
+          <p class="chart-src">Each hex digit expands to exactly four bits (C = 1100, 6 = 0110), so C6 is 11000110, which is 198. Source: Princeton COS 217; MDN.</p>
+        </figure>
+
+        <div class="cav">The gotcha</div>
+        <h2 id="twos">The two's complement trap: why bit width matters</h2>
+        <p>A negative number has no single binary form: it depends on how many bits you are using. Computers store signed integers in two's complement, where the top bit carries a negative place value, so the same value fills a different pattern at 8, 16, or 32 bits. As one university course puts it, "when we describe the representation of a negative binary number, we need to say how many bits are in the representation," noting that minus one is 11111111 in 8 bits but 1111111111111111 in 16 bits (<a href="https://uo-cis211.github.io/chapters/06_2_NegBits.html" target="_blank" rel="noopener noreferrer">University of Oregon, CIS 211</a>).</p>
+        <div class="codebox">
+          <div class="dt">The same negative, at different widths</div>
+          <div class="codelines">-1 as  8-bit twos complement  =  11111111
+-1 as 16-bit twos complement  =  11111111 11111111
+
+-8 as  4-bit twos complement  =  1000   (the lowest 4-bit value)
++7 as  4-bit twos complement  =  0111   (the highest 4-bit value)</div>
+          <p class="codenote">A converter that ignores bit width cannot answer "what is -1 in binary" correctly. The Best Answer Hub Number Base Converter asks for the width. Source: University of Oregon, CIS 211.</p>
+        </div>
+        <p>This is the single most common base-conversion mistake, and it is why the Best Answer Hub Number Base Converter makes you pick a bit width for signed values instead of guessing. It also flags digits that are invalid for a base, so a stray 2 in a binary number does not silently produce a wrong answer.</p>
+
+        <div class="cav">In the wild</div>
+        <h2 id="uses">Where do you actually use each base?</h2>
+        <p>Each base earns its keep in a different corner of computing. Hexadecimal writes colors and bytes, octal sets file permissions, and binary underlies logic and networking. If you have ever run <code>chmod 755</code>, you have used octal: each digit is read (4) plus write (2) plus execute (1) for owner, group, and others, so 755 means <code>rwxr-xr-x</code> (<a href="https://man7.org/linux/man-pages/man1/chmod.1.html" target="_blank" rel="noopener noreferrer">Linux man page</a>).</p>
+        <table>
+          <thead><tr><th>Base</th><th>Where it shows up</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Binary</td><td>Digital logic, bitmasks, IP subnetting</td></tr>
+            <tr><td class="band">Octal</td><td>Unix file permissions (chmod 755)</td></tr>
+            <tr><td class="band">Hexadecimal</td><td>CSS colors, memory addresses, byte dumps</td></tr>
+          </tbody>
+        </table>
+        <p>Because these come up constantly and are easy to get slightly wrong, a converter that shows every base at once and is strict about bit width and valid digits saves real debugging time.</p>
+
+        <div class="cav">Why this one</div>
+        <h2 id="different">How is Best Answer Hub different from other converters?</h2>
+        <p>The difference is range and rigor. Many free converters only do binary, octal, decimal, and hex; the Best Answer Hub Number Base Converter handles any base from 2 to 36, shows them together, and treats signed numbers properly with an explicit bit width. It uses arbitrary-precision arithmetic so large values do not lose accuracy, and it runs entirely in your browser.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical converter</th></tr></thead>
+          <tbody>
+            <tr><td>Bases supported</td><td class="band">2 to 36</td><td>Often just 2, 8, 10, 16</td></tr>
+            <tr><td>Two's complement with bit width</td><td class="band">Yes, explicit</td><td>Often missing</td></tr>
+            <tr><td>Large-number precision</td><td class="band">Arbitrary precision</td><td>Can overflow</td></tr>
+            <tr><td>Signup or ads</td><td class="band">None, in browser</td><td>Varies</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cta">
+          <span class="kicker">Convert across every base</span>
+          <h3>Try the free Number Base Converter</h3>
+          <p>Binary, octal, decimal, hex, and any base to 36, with two's complement and arbitrary precision. No signup, in your browser.</p>
+          <a class="btn" href="/calculators/stem-suite/number-base-converter/">Open the Number Base Converter</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Frequently asked questions about number bases</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/hash-generator/">Generate a Hash (SHA-256), Nothing Uploaded</a></b> Another low-level explainer, done in the browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/molecular-weight-calculator/">How to Calculate the Molar Mass of Any Formula</a></b> The other STEM-suite tool, for chemistry.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>Princeton University, <a href="https://www.cs.princeton.edu/courses/archive/spr19/cos217/lectures/05_NumberSystems.pdf" target="_blank" rel="noopener noreferrer">COS 217, Number Systems</a>, 2019 (positional notation; 1 hex digit = 4 bits).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/hex-color" target="_blank" rel="noopener noreferrer">hex-color</a>, 2026 (each color channel is two hex digits, 00 to ff).</li>
+          <li>University of Oregon, <a href="https://uo-cis211.github.io/chapters/06_2_NegBits.html" target="_blank" rel="noopener noreferrer">CIS 211, Negative Binary Numbers</a>, 2020 (two's complement needs a bit width).</li>
+          <li>Linux man pages, <a href="https://man7.org/linux/man-pages/man1/chmod.1.html" target="_blank" rel="noopener noreferrer">chmod(1)</a>, 2025 (octal file permissions; 4, 2, 1 bits).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">More free developer tools: <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, <a href="/tools/hash-generator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Hash Generator</a>, <a href="/tools/color-palette-generator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Color Palette Generator</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all free tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.9rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

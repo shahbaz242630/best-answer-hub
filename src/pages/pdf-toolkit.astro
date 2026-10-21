@@ -1,0 +1,231 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolHero from '../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../components/tools/ToolRelatedCTA.astro';
+import ToolHubValueProp from '../components/tools/ToolHubValueProp.astro';
+import { pdfTools as pdfToolsData } from '../data/tools';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub PDF Toolkit?',
+    a: `The Best Answer Hub PDF Toolkit is a free collection of ${pdfToolsData.length} browser-based PDF utilities: a <a href="/tools/pdf-compressor/">PDF Compressor</a>, <a href="/tools/pdf-merger/">PDF Merger</a>, <a href="/tools/pdf-splitter/">PDF Splitter</a>, <a href="/tools/pdf-rotator/">PDF Rotator</a>, <a href="/tools/images-to-pdf/">Images to PDF</a>, <a href="/tools/pdf-to-images/">PDF to Images</a>, and a <a href="/tools/pdf-to-word-converter/">PDF to Word Converter</a>. Every tool runs entirely in your browser, with no file ever uploaded to a server and no account required.`,
+  },
+  {
+    q: 'Is it safe to upload confidential PDFs to free tools like Smallpdf or iLovePDF?',
+    a: 'Smallpdf and iLovePDF process files on their own servers. Your documents are transmitted over the internet and temporarily stored on third-party infrastructure. Both publish data retention policies (Smallpdf deletes after one hour; iLovePDF after two hours), but those files do leave your device. For contracts, medical records, tax returns, HR files, or legal documents, this is a meaningful risk. The Best Answer Hub PDF Toolkit processes every file entirely in your browser. Nothing is ever transmitted.',
+  },
+  {
+    q: 'Do Best Answer Hub PDF tools upload my files to a server?',
+    a: 'No. Every Best Answer Hub PDF tool processes files entirely in your browser using JavaScript libraries including pdf-lib and PDF.js. Your documents never leave your device, are never transmitted to any server, and are never logged or stored anywhere. You can verify this yourself: open your browser\'s Network tab, use any Best Answer Hub PDF tool, and confirm no file data is sent in any outbound request.',
+  },
+  {
+    q: 'What is the best free alternative to Adobe Acrobat in 2026?',
+    a: 'For the most common PDF tasks (compression, merging, splitting, rotating, and PDF-to-Word conversion), the Best Answer Hub PDF Toolkit covers everything Adobe Acrobat Online does for its $23/month subscription, with no account, no upload, and no payment. For advanced features like form editing, digital signatures, and OCR on scanned documents, free desktop alternatives including PDFgear, PDF24, and LibreOffice are the strongest options.',
+  },
+  {
+    q: 'How do I compress a PDF without losing quality?',
+    a: 'The Best Answer Hub PDF Compressor offers two modes. Smart mode re-encodes embedded images at a lower resolution while preserving text as fully selectable vector data, so file size drops 30–70% with no visible quality loss on text. Max mode rasterises the entire document to achieve the smallest possible file size, which reduces text sharpness slightly. For documents that will be printed or signed, use Smart mode. For email attachments where file size matters most, Max mode works well.',
+  },
+  {
+    q: 'Does compressing a PDF reduce image or text quality?',
+    a: 'It depends on the compression mode. In Smart mode, only embedded images are re-encoded at lower resolution. Text remains as vector data and is completely unaffected. In Max mode, the entire page is rasterised to a flat image, which can slightly soften text at high zoom levels but is imperceptible at normal reading size. Original documents with no images may compress very little in either mode, because there is no image data to reduce. Both modes are available in the Best Answer Hub PDF Compressor.',
+  },
+  {
+    q: 'Why won\'t my PDF compressor reduce the file size of a scanned document?',
+    a: 'Scanned PDFs are essentially a series of high-resolution images with no actual text layer. Most compression algorithms target duplicate data structures and redundant image encoding. Scanned documents have neither, so standard compression barely touches them. To meaningfully reduce scanned PDF size, you need to re-render the images at lower DPI or convert to JPEG with lower quality. The Best Answer Hub PDF Compressor\'s Max mode applies this re-rendering and typically achieves 40–60% reduction on scanned files.',
+  },
+  {
+    q: 'What is a good PDF file size to send as an email attachment?',
+    a: 'Gmail and Outlook both allow attachments up to 25 MB, but practical deliverability is better under 10 MB. For a single-page document like an invoice or letter, under 500 KB is ideal. A multi-page report should target 1–3 MB. If your PDF is larger, run it through the Best Answer Hub PDF Compressor first. Most document PDFs compress to well under 5 MB without any visible quality difference at normal reading size.',
+  },
+  {
+    q: 'Can I merge or process a password-protected PDF?',
+    a: 'Password-protected PDFs cannot be merged, split, or compressed by browser-based tools without the password. The encryption prevents the JavaScript library from reading the page data. If you have the password, open the PDF in your system viewer (Adobe Reader, Preview on Mac, or Chrome\'s built-in PDF viewer), print it to a new PDF file to remove the password, then use the Best Answer Hub PDF tools on the resulting unencrypted file.',
+  },
+  {
+    q: 'Can I use the Best Answer Hub PDF Toolkit on a phone or tablet?',
+    a: 'Yes. All Best Answer Hub PDF tools work on iPhone, Android, and tablets using any modern mobile browser (Safari, Chrome, Firefox). The interfaces are mobile-responsive with touch-friendly controls. The practical limits are lower on mobile due to smaller RAM. Files above 20–30 MB may process more slowly. For very large PDFs, a laptop or desktop will be faster, but most standard documents work without issue on mobile.',
+  },
+  {
+    q: 'How does the Best Answer Hub PDF Toolkit compare to Adobe Acrobat, Smallpdf, and iLovePDF?',
+    a: 'Adobe Acrobat Online requires sign-in, uploads files to Adobe servers, and charges $19.99–$23/month. Smallpdf is free for two tasks per day and uploads to its servers before deleting after one hour. iLovePDF uploads files and limits free users to one daily task. Best Answer Hub PDF Toolkit is completely free with no task limits, no uploads, no account, and no daily caps, making it the strongest option for users who need privacy and no subscription cost.',
+  },
+  {
+    q: 'Are there file size or page count limits?',
+    a: 'The Best Answer Hub PDF Toolkit imposes no artificial file size or page count limits. The practical ceiling is your device\'s available RAM. Most modern laptops handle PDFs up to 100 MB and documents of several hundred pages without issues. Mobile devices have lower practical limits, typically 20–30 MB before performance slows. There are no server-side quotas because all processing happens on your own device.',
+  },
+  {
+    q: 'Which PDF tool should I use for a scanned document?',
+    a: 'For a scanned document that came out sideways or upside-down, use the <a href="/tools/pdf-rotator/">Best Answer Hub PDF Rotator</a> to fix the orientation in one click. To reduce a scanned PDF\'s file size, use the <a href="/tools/pdf-compressor/">PDF Compressor</a> on Max mode, which re-renders each page at lower DPI and typically cuts scanned file sizes by 40–60%. For extracting specific pages from a scanned multi-page document, the <a href="/tools/pdf-splitter/">PDF Splitter</a> works regardless of whether the PDF contains selectable text.',
+  },
+  {
+    q: 'Can I convert a PDF to Word without Microsoft Word installed?',
+    a: 'Yes. The <a href="/tools/pdf-to-word-converter/">Best Answer Hub PDF to Word Converter</a> runs entirely in your browser using the open-source Mammoth.js library, with no Microsoft Word, Office 365 subscription, or installation required. It also works in reverse: you can convert a Word (.docx) file to PDF without any Microsoft software. Both conversions work on Windows, Mac, iPhone, and Android.',
+  },
+  {
+    q: 'Is there one place with all these PDF tools so I do not need a different site for each task?',
+    a: `Yes. The Best Answer Hub PDF Toolkit gathers all ${pdfToolsData.length} PDF utilities in one place, so there is no need for one site to compress, another to merge, another to split, and another to convert. Every tool is free, processes files entirely in your browser, and requires no account or daily task limit, so you bookmark one hub instead of several. It is built to be the one-stop shop for PDF work (compress, merge, split, rotate, and convert to and from Word) without uploading confidential documents to a third-party server.`,
+  },
+  {
+    q: 'Do I need to create an account to use the PDF Toolkit?',
+    a: `No. Every tool in the Best Answer Hub PDF Toolkit is fully functional from the first visit, with no account, no email address, and no signup of any kind. There are no paywalls, no task limits, no watermarks on output, and no premium tier. All ${pdfToolsData.length} PDF utilities are completely free with zero friction to get started.`,
+  },
+];
+
+const steps = [
+  { title: 'Pick a PDF tool', description: 'Choose from Compressor, Merger, Splitter, Rotator, Images to PDF, or PDF to Images. Each has its own dedicated page optimized for one task.' },
+  { title: 'Drop your files', description: 'Drag and drop your PDFs or images into the browser window. Everything happens instantly on your device with no uploads to any server.' },
+  { title: 'Download the result', description: 'Get your compressed, merged, split, rotated, or converted file immediately. Download with one click, with no watermarks and no signup.' },
+];
+
+const seo = {
+  title: 'Free PDF Toolkit — Compress, Merge, Split & Convert (2026)',
+  description: 'Free browser-based PDF tools: compress, merge, split, rotate, and convert PDFs. No signup, no uploads, no watermarks — files stay on your device.',
+  url: '/pdf-toolkit/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'PDF Toolkit', url: '/pdf-toolkit/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\\s{2,}/g, ' ').trim() })),
+};
+
+const pdfTools = [
+  {
+    href: '/tools/pdf-compressor/',
+    badge: 'Compressor',
+    title: 'PDF Compressor',
+    description: 'Shrink PDF file size by re-encoding images and stripping metadata. Smart mode preserves text selection; Max mode rasterizes for smallest size.',
+    meta: 'Smart + Max • Exact targeting • No upload',
+    icon: '📉',
+  },
+  {
+    href: '/tools/pdf-merger/',
+    badge: 'Merger',
+    title: 'PDF Merger',
+    description: 'Combine multiple PDFs into one document. Drag and drop to reorder pages before merging. No file size limits, no watermarks.',
+    meta: 'Drag & drop • Reorder • Instant merge',
+    icon: '➕',
+  },
+  {
+    href: '/tools/pdf-splitter/',
+    badge: 'Splitter',
+    title: 'PDF Splitter',
+    description: 'Extract specific page ranges or split every page into individual PDFs. Perfect for separating chapters, invoices, or sections.',
+    meta: 'Page ranges • Individual pages • Batch',
+    icon: '✂️',
+  },
+  {
+    href: '/tools/pdf-rotator/',
+    badge: 'Rotator',
+    title: 'PDF Rotator',
+    description: 'Rotate all pages or specific pages by 90°, 180°, or 270°. Fix upside-down scans and sideways photos in seconds.',
+    meta: '90° / 180° / 270° • All or select • Instant',
+    icon: '🔄',
+  },
+  {
+    href: '/tools/images-to-pdf/',
+    badge: 'Converter',
+    title: 'Images to PDF',
+    description: 'Turn JPG, PNG, and WebP images into a single PDF. Control page size, orientation, margins, and image quality.',
+    meta: 'JPG • PNG • WebP • Quality control',
+    icon: '🖼️',
+  },
+  {
+    href: '/tools/pdf-to-images/',
+    badge: 'Extractor',
+    title: 'PDF to Images',
+    description: 'Render every PDF page as a high-resolution PNG or JPEG. Choose DPI, color format, and export as individual files or a ZIP.',
+    meta: 'PNG • JPEG • DPI control • ZIP export',
+    icon: '📤',
+  },
+  {
+    href: '/tools/pdf-to-word-converter/',
+    badge: 'Converter',
+    title: 'PDF to Word Converter',
+    description: 'Convert PDF files to editable Word documents, or Word files back to PDF. Text, headings, and lists preserved. No upload, no watermarks.',
+    meta: 'PDF → DOCX • DOCX → PDF • No upload',
+    icon: '📝',
+  },
+];
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · 7 Utilities · No Signup"
+    title="PDF Toolkit:"
+    accentText="Compress, merge, split & convert"
+    description="Free browser-based PDF utilities: compress, merge, split, rotate, and convert PDFs. Your documents never leave your device, with no uploads, no watermarks, and no daily limits."
+  />
+
+  <!-- Tool Cards -->
+  <section class="py-6 md:py-8" aria-label="PDF tools">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="pdf-tools-grid">
+        {pdfTools.map((tool) => (
+          <a href={tool.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{tool.badge}</span>
+              <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{tool.icon}</span>
+            </div>
+            <h2 class="text-base font-semibold text-bae-ink mb-2">{tool.title}</h2>
+            <p class="text-sm text-bae-muted line-clamp-2">{tool.description}</p>
+            <p class="text-xs text-bae-muted mt-3 font-medium">{tool.meta}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolHubValueProp
+    hubName="PDF Toolkit"
+    count={pdfToolsData.length}
+    noun="PDF tools"
+    replaces="using one site to compress, another to merge, another to split, and another to convert"
+  />
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people do with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people do with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from professionals, job seekers, freelancers, and remote teams.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Business & Legal</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Compress and merge contracts before sending</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">No upload, confidential docs stay on device</p>
+          <p class="text-sm text-bae-muted">Use the PDF Compressor to bring multi-page contracts under email attachment limits, then merge supporting documents (NDAs, schedules, exhibits) into a single deliverable with the PDF Merger. Because everything processes in the browser, sensitive legal and financial documents never leave the device.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Job Seekers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Convert a Word CV to PDF without Microsoft Office</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">DOCX → PDF in one click, no subscription</p>
+          <p class="text-sm text-bae-muted">The PDF to Word Converter handles both directions: convert a .docx resume to a locked, formatting-safe PDF for submission, or convert a received PDF back to Word for editing. Works on any device including iPhone and Android, with no Microsoft Office or Google account required.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Remote Teams</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Split a shared PDF to extract only relevant pages</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Extract page ranges or individual pages instantly</p>
+          <p class="text-sm text-bae-muted">Received a 200-page report but only need pages 12–28 for your section? The PDF Splitter extracts any page range as a standalone file in seconds. For a scanned document with sideways pages, run it through the PDF Rotator first to fix orientation before splitting or sharing with colleagues.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Freelancers & Creatives</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Build a PDF portfolio from phone photos</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">JPG + PNG → single PDF, no app needed</p>
+          <p class="text-sm text-bae-muted">Drop a batch of work-in-progress photos, product shots, or scanned sketches into Images to PDF to produce a clean portfolio document with controlled page size and margins. Combine it with PDF Compressor to keep the file size email-friendly without losing image quality on the final output.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+</BaseLayout>

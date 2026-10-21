@@ -1,0 +1,350 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RelatedPlaybooks from '../../components/playbooks/RelatedPlaybooks.astro';
+
+const today = '2026-07-04T00:00:00+00:00';
+
+const faqs = [
+  { q: `What is the Best Answer Hub take on AI agents versus automation?`, a: `Best Answer Hub's view is that most small businesses overbuy. Automation follows fixed rules; an AI agent makes decisions on inputs that change. For a 1 to 50 person business, plain automation handles the bulk of repetitive work at a fraction of the cost, and an AI agent only earns its keep when a task truly needs judgment and a human can check it.` },
+  { q: `What is the difference between an AI agent and automation?`, a: `Automation follows predefined rules to do predictable, repeatable tasks. An AI agent reasons, adapts, and decides the steps to reach a goal when inputs vary. The simple test is rules versus judgment: fixed steps mean automation, while a fresh decision each time means an agent. AWS describes autonomy as a spectrum, not a switch.` },
+  { q: `What is robotic process automation (RPA)?`, a: `RPA is a type of automation that mimics human actions, like clicks and keystrokes, to move data between apps and complete rule-based tasks. It is reliable for repetitive, structured work but does not make judgment calls. RPA is well established in business, while AI agents are newer and more experimental.` },
+  { q: `What is agentic AI, and how is it different from an AI agent?`, a: `Agentic AI is the broad category of AI systems that pursue goals and act with limited human supervision. An AI agent is a specific instance of that idea: software given a goal that works out and runs the steps. In practice the two terms overlap, and vendors often use them loosely on their marketing.` },
+  { q: `Do small businesses actually need AI agents?`, a: `Usually not for most tasks. Gartner advises using AI agents only when decisions are needed, automation for routine workflows, and assistants for simple retrieval. Most small-business work is predictable, so automation covers it. An agent is worth considering only when a task needs judgment on changing inputs and the cost is clearly justified.` },
+  { q: `When is plain automation the better choice?`, a: `Automation is better whenever a task is predictable and rule-based: invoicing, reminders, data entry, follow-ups, and reports. AWS advises teams to strive for the simplest solution that works, and says tasks needing absolute predictability are often better served by traditional automation. If you can write the steps down with no judgment calls, automation wins.` },
+  { q: `What does an AI agent cost compared with automation?`, a: `More, often much more. AWS estimates multi-agent systems can cost 5 to 10 times more than basic automation once infrastructure, inference, oversight, and maintenance are counted. Agents also add latency and a constant supervision burden. Automation usually runs unattended after setup, which is why it is cheaper for predictable work.` },
+  { q: `Why do so many AI agent projects get canceled?`, a: `Gartner predicts more than 40% of agentic AI projects will be canceled by the end of 2027, due to escalating costs, unclear business value, and weak risk controls. Many are early experiments driven by hype. For a small business, a failed initiative wastes capacity it cannot spare, so it pays to confirm the need first.` },
+  { q: `What is "agent washing"?`, a: `Agent washing is Gartner's term for vendors rebranding existing products, such as chatbots, assistants, and RPA, as "agents" without real agentic capability. Gartner estimates only about 130 of the thousands of self-described agentic vendors are genuine. For buyers, it means the word "agent" on a sales page is not proof the tool makes autonomous decisions.` },
+  { q: `Can an AI agent replace my Zapier or Make workflows?`, a: `Sometimes, but often it should not. If your workflow is a fixed sequence that already works, an agent adds cost and unpredictability for no benefit. Agents help when a workflow keeps breaking because it needs judgment that rigid rules cannot handle. Match the tool to the task rather than upgrading by default.` },
+  { q: `Are AI agents reliable enough to run without supervision?`, a: `Not yet for most business-critical work. In buyer interviews, reliability was the top concern, with accuracy dropping sharply on complex tasks. AWS recommends human oversight that scales with the agent's autonomy. Treat an agent as a capable assistant that needs checking, not a set-and-forget system, until it has proven itself on low-stakes work.` },
+  { q: `Is an AI agent just rebranded automation?`, a: `Not always, but the label is often loose. A true agent makes decisions and adapts, while rebranded automation follows fixed rules under a new name. Gartner coined "agent washing" precisely because many products marketed as agents lack real autonomy. Judge a tool by whether it makes decisions on changing inputs, not by what the marketing calls it.` },
+  { q: `How do I decide whether my business needs an agent or automation?`, a: `Write the task down. If the steps are the same every time, automate it. If it needs judgment on inputs that change, and a person can check the output, an agent may fit. If the stakes are high with nobody to review, keep it deterministic. Then confirm the savings clearly beat the agent's cost and oversight.` },
+  { q: `Do I need technical skills to use automation or AI agents?`, a: `No coding is needed for most small-business automation, since no-code workflow builders handle it. The skill that matters is describing the task clearly and checking the result. Agents need a little more care because you are overseeing decisions rather than fixed steps, but the core skill is judgment, not programming.` },
+  { q: `How do I know which tasks to automate first?`, a: `Start with the task that wastes the most time each week and follows clear, repeatable rules. Automate that one, measure the result, then move to the next. Avoid handing a messy, undefined process to any tool, since it will only repeat the confusion faster. The free Best Answer Hub SMB AI Readiness Score helps pinpoint where to start.` },
+];
+
+const seo = {
+  title: 'AI Agents vs Automation for Small Business (2026)',
+  description: 'The real difference between automation and an AI agent, what each one costs, why most small businesses overbuy, and how to decide which you actually need.',
+  url: '/playbooks/ai-agents-vs-automation/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'AI Agents vs Automation', url: '/playbooks/ai-agents-vs-automation/' },
+  ],
+  faq: faqs.map((f) => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · Decision Guide</span>
+        <h1>AI Agents vs Automation: <em>What Do You Actually Need?</em></h1>
+        <p class="dek">A plain-English decision guide for small and medium businesses. The real difference between automation and an AI agent, what each one costs, why most owners overbuy, and a simple flowchart to tell which your business actually needs.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Vendor-neutral</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg s1">Rules / Script<small>fixed steps</small></div>
+          <div class="seg s2">RPA<small>mimics clicks</small></div>
+          <div class="seg s3">AI Agent<small>makes decisions</small></div>
+          <div class="seg s4">Agentic AI<small>sets its own goals</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">40%+</div><div class="l">of agentic AI projects canceled by end of 2027</div><div class="src">Gartner, 2025 forecast</div></div>
+      <div class="stat"><div class="n">5–10x</div><div class="l">the cost of multi-agent systems vs basic automation</div><div class="src">AWS, 2026</div></div>
+      <div class="stat"><div class="n">~130</div><div class="l">of thousands of "agentic" vendors are real</div><div class="src">Gartner, 2025</div></div>
+      <div class="stat"><div class="n">19%</div><div class="l">of organizations had made a significant agent investment</div><div class="src">Gartner poll, Jan 2025</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#difference">The real difference</a>
+        <a href="#terms">The four terms</a>
+        <a href="#need">Do you need an agent?</a>
+        <a href="#automation-enough">When automation is enough</a>
+        <a href="#cost">What an agent really costs</a>
+        <a href="#fail">Why projects get canceled</a>
+        <a href="#decide">How to decide</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead">For most small businesses, the honest answer is <strong>automation, not an AI agent</strong>. The difference is simple: automation follows fixed rules, while an AI agent makes decisions on inputs that change. Agents are powerful, but they cost more, break more, and need supervision. Before you pay for autonomy, it is worth checking whether plain automation already does the job.</p>
+
+        <p>That matters because the hype is running ahead of the need. Gartner predicts more than 40% of agentic AI projects will be canceled by the end of 2027, blaming escalating costs, unclear business value, and inadequate risk controls (<a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027" target="_blank" rel="noopener noreferrer">Gartner, 2025</a>). The same analysts put it bluntly: "Many use cases positioned as agentic today don't require agentic implementations." For a business with 1 to 50 people, the goal is not the most advanced tool. It is the cheapest one that solves the problem.</p>
+
+        <h2 id="difference">What is the difference between automation and an AI agent?</h2>
+        <div class="chaprule"></div>
+        <p>Automation follows a set of predefined rules to complete tasks, fast, consistent, and predictable. An AI agent works differently: it can reason, adapt, and make decisions based on inputs that change, as AWS's Generative AI Innovation Center describes it (<a href="https://aws.amazon.com/executive-insights/content/agents-vs-automation-a-strategic-guide-for-business-leaders/" target="_blank" rel="noopener noreferrer">AWS, 2026</a>). The practical line is rules versus judgment. If a task runs the same way every time, like moving an invoice or sending a reminder, automation handles it. If a task needs a fresh decision each time, like reading an unusual customer email and deciding what to do, that is agent territory. AWS frames autonomy as a spectrum, not a switch, running from simple scripts up to systems that set their own goals. Most small-business work sits at the predictable end, which is why automation covers the majority of it.</p>
+
+        <h2 id="terms">Automation, RPA, AI agent, agentic AI: which is which?</h2>
+        <div class="chaprule"></div>
+        <p>Four terms get used interchangeably, and that blur is where overbuying starts. Automation is the umbrella: rules that trigger actions. RPA (robotic process automation) is a kind of automation that mimics human clicks and keystrokes across apps, suited to repetitive, rule-based work (<a href="https://www.ibm.com/think/topics/ai-agents" target="_blank" rel="noopener noreferrer">IBM, 2026</a>). An AI agent is software that pursues a goal and works out the steps to reach it (<a href="https://cloud.google.com/discover/what-are-ai-agents" target="_blank" rel="noopener noreferrer">Google Cloud</a>). Agentic AI is the broader category of systems that act toward goals with limited supervision. The table sorts them by how they work, what they suit, and what they cost to run.</p>
+        <table>
+          <thead><tr><th>Approach</th><th>How it works</th><th>Best for</th><th>Cost &amp; oversight</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Automation</td><td>Fixed "if this, then that" rules</td><td>Predictable, repeatable tasks</td><td><span class="score sc1">Low</span></td></tr>
+            <tr><td class="band">RPA</td><td>Mimics human clicks across apps</td><td>Moving data between systems</td><td><span class="score sc2">Low–med</span></td></tr>
+            <tr><td class="band">AI agent</td><td>Decides the steps to reach a goal</td><td>Judgment on changing inputs</td><td><span class="score sc3">High</span></td></tr>
+            <tr><td class="band">Agentic AI</td><td>Acts toward goals, limited supervision</td><td>Complex, multi-step problems</td><td><span class="score sc4">Highest</span></td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="need">Do you actually need an AI agent?</h2>
+        <div class="chaprule"></div>
+        <p>Probably not for most tasks, and that is not a knock on your business. Gartner's own guidance is to use "AI agents when decisions are needed, automation for routine workflows and assistants for simple retrieval" (<a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027" target="_blank" rel="noopener noreferrer">Gartner, 2025</a>). The flowchart below turns that into three questions. If the steps are the same every time, automation wins on cost and reliability. If the work needs judgment on changing inputs, an agent may fit, but only when a wrong call is low-stakes and a human can check the output. When the stakes are high and nobody is reviewing, keeping the process deterministic is the safer call.</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">Agent or automation? A three-question decision flow</figcaption>
+          <svg viewBox="0 0 640 470" role="img" aria-label="Decision flowchart. Start with a task you want to take off your plate. Question one: are the steps the same every time with clear rules? If yes, use plain automation or RPA, the cheapest and most reliable option. If no, question two: does it need judgment when inputs change? If no, a template or simple automation is enough. If yes, question three: is a wrong call low-stakes with a human to check it? If yes, an AI agent can earn its keep with human oversight. If no, keep it deterministic for now because agent risk is too high.">
+            <defs>
+              <marker id="arrow" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b9bdd6"></path></marker>
+            </defs>
+            <rect x="180" y="14" width="280" height="44" rx="10" fill="#0f0f1a"></rect>
+            <text x="320" y="41" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#fff">A task you want to take off your plate</text>
+            <line x1="170" y1="58" x2="170" y2="86" stroke="#b9bdd6" stroke-width="2" marker-end="url(#arrow)"></line>
+            <rect x="20" y="86" width="300" height="58" rx="10" fill="#fff" stroke="#6366f1" stroke-width="2"></rect>
+            <text x="170" y="110" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#0f0f1a">Are the steps the same every time,</text>
+            <text x="170" y="128" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#0f0f1a">with clear rules?</text>
+            <line x1="320" y1="115" x2="340" y2="115" stroke="#b9bdd6" stroke-width="2" marker-end="url(#arrow)"></line>
+            <text x="332" y="108" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#2E7D5B">Yes</text>
+            <rect x="340" y="86" width="282" height="58" rx="10" fill="#eef0fe" stroke="#6366f1" stroke-width="1"></rect>
+            <text x="481" y="110" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#312e81">Plain automation or RPA.</text>
+            <text x="481" y="128" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#3a3640">Cheapest, most reliable.</text>
+            <line x1="170" y1="144" x2="170" y2="172" stroke="#b9bdd6" stroke-width="2" marker-end="url(#arrow)"></line>
+            <text x="158" y="162" text-anchor="end" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#6b6b80">No</text>
+            <rect x="20" y="172" width="300" height="58" rx="10" fill="#fff" stroke="#6366f1" stroke-width="2"></rect>
+            <text x="170" y="196" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#0f0f1a">Does it need judgment when</text>
+            <text x="170" y="214" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#0f0f1a">the inputs change?</text>
+            <line x1="320" y1="201" x2="340" y2="201" stroke="#b9bdd6" stroke-width="2" marker-end="url(#arrow)"></line>
+            <text x="332" y="194" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#6b6b80">No</text>
+            <rect x="340" y="172" width="282" height="58" rx="10" fill="#eef0fe" stroke="#6366f1" stroke-width="1"></rect>
+            <text x="481" y="196" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#312e81">A template or simple</text>
+            <text x="481" y="214" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#3a3640">automation is enough.</text>
+            <line x1="170" y1="230" x2="170" y2="258" stroke="#b9bdd6" stroke-width="2" marker-end="url(#arrow)"></line>
+            <text x="158" y="248" text-anchor="end" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#2E7D5B">Yes</text>
+            <rect x="20" y="258" width="300" height="66" rx="10" fill="#fff" stroke="#6366f1" stroke-width="2"></rect>
+            <text x="170" y="284" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#0f0f1a">Is a wrong call low-stakes,</text>
+            <text x="170" y="302" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#0f0f1a">with a human to check it?</text>
+            <line x1="320" y1="291" x2="340" y2="291" stroke="#b9bdd6" stroke-width="2" marker-end="url(#arrow)"></line>
+            <text x="332" y="284" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#2E7D5B">Yes</text>
+            <rect x="340" y="258" width="282" height="66" rx="10" fill="#eef0fe" stroke="#6366f1" stroke-width="1"></rect>
+            <text x="481" y="284" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#312e81">An AI agent can earn its keep,</text>
+            <text x="481" y="302" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#3a3640">with human oversight.</text>
+            <line x1="170" y1="324" x2="170" y2="352" stroke="#b9bdd6" stroke-width="2" marker-end="url(#arrow)"></line>
+            <text x="158" y="342" text-anchor="end" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#6b6b80">No</text>
+            <rect x="20" y="352" width="300" height="58" rx="10" fill="#f4ecec" stroke="#B23A36" stroke-width="1"></rect>
+            <text x="170" y="376" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#7a2622">Keep it deterministic for now.</text>
+            <text x="170" y="394" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#3a3640">Agent risk is too high.</text>
+          </svg>
+          <p class="chart-src">Decision logic adapted from Gartner's guidance (use agents when decisions are needed, automation for routine workflows) and the AWS four-factor framework, 2025–2026.</p>
+        </figure>
+
+        <h2 id="automation-enough">When is plain automation enough?</h2>
+        <div class="chaprule"></div>
+        <p>Automation is enough whenever the task is predictable, which covers most day-to-day small-business work: invoicing, appointment reminders, data entry between apps, follow-up emails, and report generation. AWS advises teams to "strive for the simplest solution that works," and notes that "critical applications that require absolute predictability may be better served by traditional automation" (<a href="https://aws.amazon.com/executive-insights/content/agents-vs-automation-a-strategic-guide-for-business-leaders/" target="_blank" rel="noopener noreferrer">AWS, 2026</a>). The tell is repeatability. If you can write the task down as a set of if-this-then-that steps with no judgment calls, you do not need an agent, and adding one introduces cost, latency, and a new way to fail for no gain.</p>
+        <div class="callout"><div class="h">A real example of automation winning</div>When AWS helped HERE Technologies build a coding assistant, the team chose a fixed, sequential approach over autonomous agents because the job needed to be consistent and fast. It reached 87.5% accuracy with responses in under 24 seconds. The predictable design was the right tool, not the most advanced one.</div>
+
+        <h2 id="cost">What does an AI agent really cost?</h2>
+        <div class="chaprule"></div>
+        <p>More than the subscription, and often far more than automation. AWS warns that "multi-agent systems can multiply these costs 5-10x over more basic solutions" once you count infrastructure, inference, DevOps, and human oversight (<a href="https://aws.amazon.com/executive-insights/content/agents-vs-automation-a-strategic-guide-for-business-leaders/" target="_blank" rel="noopener noreferrer">AWS, 2026</a>). Agents also add latency, since each task can mean several reasoning steps and API calls, and they carry a constant supervision cost. AWS compares it to "the difference between managing a team of employees versus maintaining automated equipment." Both need oversight, but an agent needs clear lines of responsibility, defined boundaries, and audit trails. For a business with 1 to 50 people and no dedicated tech staff, that oversight burden is the hidden line item. Automation, by contrast, mostly runs unattended once it is set up.</p>
+
+        <blockquote>"Many use cases positioned as agentic today <span class="accent">don't require agentic implementations.</span>"<span class="cite">Anushree Verma, Senior Director Analyst, Gartner, 2025</span></blockquote>
+
+        <h2 id="fail">Why do so many agent projects get canceled?</h2>
+        <div class="chaprule"></div>
+        <p>Mostly for business reasons, not technical ones. Gartner predicts more than 40% of agentic AI projects will be canceled by the end of 2027, citing escalating costs, unclear business value, and inadequate risk controls (<a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027" target="_blank" rel="noopener noreferrer">Gartner, 2025</a>). Part of the problem is hype. A January 2025 Gartner poll of 3,412 attendees found only 19% had made significant investments in agentic AI, while 42% stayed conservative and another 31% were still waiting. The other part is "agent washing," Gartner's term for vendors rebranding old chatbots, assistants, and RPA as "agents" with no real agentic capability. Gartner estimates only about 130 of the thousands of self-described agentic vendors are genuine. The lesson for a small buyer: a label on a pricing page is not proof of autonomy.</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">How much had organizations invested in agentic AI?</figcaption>
+          <svg viewBox="0 0 600 250" role="img" aria-label="Bar chart of a January 2025 Gartner poll of 3,412 webinar attendees. Conservative investment 42 percent. Wait-and-see or unsure 31 percent. Significant investment 19 percent. No investment 8 percent.">
+            <defs><linearGradient id="bargrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6366f1"></stop><stop offset="1" stop-color="#6366f1"></stop></linearGradient></defs>
+            <text x="208" y="44" text-anchor="end" font-family="Inter,sans-serif" font-size="13" fill="#1a1a2e">Conservative</text>
+            <rect x="220" y="30" width="319" height="26" rx="5" fill="url(#bargrad)"></rect>
+            <text x="548" y="48" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#0f0f1a">42%</text>
+            <text x="208" y="98" text-anchor="end" font-family="Inter,sans-serif" font-size="13" fill="#1a1a2e">Wait and see / unsure</text>
+            <rect x="220" y="84" width="236" height="26" rx="5" fill="url(#bargrad)" opacity="0.82"></rect>
+            <text x="465" y="102" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#0f0f1a">31%</text>
+            <text x="208" y="152" text-anchor="end" font-family="Inter,sans-serif" font-size="13" fill="#1a1a2e">Significant</text>
+            <rect x="220" y="138" width="145" height="26" rx="5" fill="url(#bargrad)" opacity="0.66"></rect>
+            <text x="374" y="156" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#0f0f1a">19%</text>
+            <text x="208" y="206" text-anchor="end" font-family="Inter,sans-serif" font-size="13" fill="#1a1a2e">None</text>
+            <rect x="220" y="192" width="61" height="26" rx="5" fill="url(#bargrad)" opacity="0.5"></rect>
+            <text x="290" y="210" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#0f0f1a">8%</text>
+          </svg>
+          <p class="chart-src">Source: Gartner poll of 3,412 webinar attendees, January 2025. Self-reported level of investment in agentic AI.</p>
+        </figure>
+
+        <h2 id="decide">How to decide what your business needs</h2>
+        <div class="chaprule"></div>
+        <p>Start with the task, not the tool, and pick the simplest thing that solves it. Write the task down. If it runs the same way every time, automate it. If it needs judgment on changing inputs, and a person can check the result, an agent might be worth a small trial. Then size the gap honestly: an agent only pays off when the time it saves clearly beats its cost and oversight. The fastest way to know where your business actually stands, across data, tools, process, skills, and governance, is to score your readiness before you buy anything.</p>
+        <div class="cta">
+          <span class="kicker">Before you buy a tool</span>
+          <h3>Take the free SMB AI Readiness Score</h3>
+          <p>30 questions, about 15 minutes, no signup and no email. See your weakest areas and where automation or an agent would actually help, computed in your browser and never uploaded.</p>
+          <a class="btn" href="/knowledge-center/smb-ai-readiness/">Start the free assessment</a>
+        </div>
+
+        <h2 id="faq">Common questions about AI agents and automation</h2>
+        <div class="chaprule"></div>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <h2>Sources</h2>
+        <div class="chaprule"></div>
+        <ul class="sources">
+          <li>Gartner, <a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027" target="_blank" rel="noopener noreferrer">Over 40% of Agentic AI Projects Will Be Canceled by End of 2027</a>, press release, June 25, 2025.</li>
+          <li>AWS Executive Insights (Generative AI Innovation Center), <a href="https://aws.amazon.com/executive-insights/content/agents-vs-automation-a-strategic-guide-for-business-leaders/" target="_blank" rel="noopener noreferrer">AI Agents vs. Automation: A Leader's Guide</a>, 2026.</li>
+          <li>IBM, <a href="https://www.ibm.com/think/topics/ai-agents" target="_blank" rel="noopener noreferrer">What are AI agents?</a>, 2026.</li>
+          <li>Google Cloud, <a href="https://cloud.google.com/discover/what-are-ai-agents" target="_blank" rel="noopener noreferrer">What are AI agents?</a></li>
+          <li>McKinsey, <a href="https://www.mckinsey.com/featured-insights/mckinsey-explainers/what-is-an-ai-agent" target="_blank" rel="noopener noreferrer">What is an AI agent?</a>, 2025.</li>
+        </ul>
+              <RelatedPlaybooks track="smb" currentHref={seo.url} />
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Try our free tools: <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">All Tools</a>, <a href="/calculators/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Calculators</a>, <a href="/career-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Career Toolkit</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, and the <a href="/pdf-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Toolkit</a>.</p>
+</article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --primary:#6366f1; --accent:#8b5cf6; --accent-warm:#c4b5fd; --ink:#0f0f1a; --fg:#1a1a2e;
+    --muted:#6b6b80; --card:#fff; --border:#e8e8f0; --border-light:#f0f0f6;
+  }
+  .pb a{color:var(--primary)}
+  .pb .hero{background:radial-gradient(1200px 500px at 75% -10%,rgba(139,92,246,.35),transparent 60%),linear-gradient(160deg,#15152a 0%,#0f0f1a 100%);color:#fff;padding:28px 0 86px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-120px;top:30px;width:380px;height:380px;background:radial-gradient(circle,rgba(99,102,241,.45),transparent 70%);filter:blur(20px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:center;align-items:center;min-height:44px;margin:4px 0 34px}
+  .pb .masthead{display:flex;justify-content:center;align-items:center;gap:12px;margin:0}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;color:#fff;letter-spacing:.01em}
+  .pb .masthead .word i{font-style:normal;color:var(--accent-warm)}
+  .pb .backnav{position:absolute;right:0;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:7px;font-size:.8rem;font-weight:600;letter-spacing:.02em;color:var(--accent-warm);text-decoration:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:6px 13px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-warm);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:6px 14px;border-radius:999px}
+  .pb h1{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(2.3rem,5.4vw,3.5rem);line-height:1.14;margin:22px 0 16px;padding-bottom:.12em;letter-spacing:-.015em;max-width:15em;color:#fff}
+  .pb h1 em{font-style:italic;background:linear-gradient(90deg,#a5b4fc,#c4b5fd);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding-bottom:.06em}
+  .pb .dek{font-size:1.18rem;color:#c9c9d6;max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:24px;font-size:.85rem;color:#9a9ab0}
+  .pb .byline b{color:#fff}
+  .pb .bandstrip{display:flex;gap:4px;margin-top:30px;max-width:680px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:10px 4px;border-radius:8px;font-size:.72rem;font-weight:600;color:#fff;border:1px solid rgba(255,255,255,.16)}
+  .pb .seg.s1{background:rgba(99,102,241,.28)}
+  .pb .seg.s2{background:rgba(99,102,241,.45)}
+  .pb .seg.s3{background:rgba(99,102,241,.66)}
+  .pb .seg.s4{background:rgba(99,102,241,.9)}
+  .pb .seg small{display:block;font-weight:500;opacity:.82;font-size:.64rem;margin-top:2px}
+  .pb .stat-grid{max-width:1080px;margin:-56px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 14px;text-align:center;box-shadow:0 14px 44px rgba(15,15,26,.12)}
+  .pb .stat .n{font-family:'Playfair Display',serif;font-weight:700;font-size:1.9rem;color:var(--primary);line-height:1}
+  .pb .stat .l{font-size:.76rem;color:var(--fg);margin-top:7px;font-weight:600}
+  .pb .stat .src{font-size:.64rem;color:var(--muted);margin-top:5px}
+  .pb .layout{max-width:1080px;margin:0 auto;padding:48px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--muted);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s}
+  .pb .toc a:hover{color:var(--primary);border-left-color:var(--primary)}
+  .pb .toc a.active{color:var(--primary);border-left-color:var(--primary);font-weight:600}
+  .pb article{min-width:0;max-width:740px}
+  .pb .lead{font-size:1.2rem;color:var(--ink);margin:0 0 26px}
+  .pb .lead strong{font-weight:700}
+  .pb h2{font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;color:var(--ink);margin:40px 0 6px;letter-spacing:-.01em;scroll-margin-top:88px}
+  .pb .chaprule{height:3px;width:54px;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:2px;margin:0 0 16px}
+  .pb p{margin:14px 0}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:10px 0;font-size:.9rem}
+  .pb th{background:var(--ink);color:#fff;text-align:left;padding:11px 13px;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em}
+  .pb th:first-child{border-top-left-radius:10px}
+  .pb th:last-child{border-top-right-radius:10px}
+  .pb td{padding:12px 13px;border-top:1px solid var(--border-light);vertical-align:top;background:var(--card)}
+  .pb td.band{font-weight:700;color:var(--ink)}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 10px;border-radius:6px;display:inline-block;white-space:nowrap;letter-spacing:.01em}
+  .pb .sc1{background:#6366f1}
+  .pb .sc2{background:#4f46e5}
+  .pb .sc3{background:#4338ca}
+  .pb .sc4{background:#312e81}
+  .pb .callout{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:12px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-weight:700;color:var(--ink);margin-bottom:6px;font-size:.98rem}
+  .pb .callout ul{margin:6px 0 0 18px}
+  .pb .callout li{margin:4px 0}
+  .pb blockquote{font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;line-height:1.42;color:var(--ink);background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.18);border-left:4px solid var(--primary);border-radius:12px;padding:24px 28px;margin:28px 0}
+  .pb blockquote .accent{color:var(--primary)}
+  .pb blockquote .cite{display:block;font-family:'Inter',sans-serif;font-style:normal;font-size:.82rem;color:var(--muted);margin-top:10px}
+  .pb .cta{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);color:var(--ink);border-radius:16px;padding:32px;margin:24px 0;text-align:center}
+  .pb .cta .kicker{font-size:.76rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--primary)}
+  .pb .cta h3{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;margin:8px 0 6px;color:var(--ink)}
+  .pb .cta p{margin:0 auto 20px;color:var(--muted);max-width:32em}
+  .pb .btn{display:inline-block;background:var(--primary);color:#fff;text-decoration:none;font-weight:700;font-size:.95rem;padding:14px 30px;border-radius:12px}
+  .pb .faq .q{font-weight:700;color:var(--ink);margin-top:18px}
+  .pb .faq .a{color:var(--fg);font-size:.96rem;margin-top:4px}
+  .pb .chart{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .pb .chart-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.08rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:12px;align-items:flex-start;min-height:0;margin:4px 0 28px}.pb .hero-top .masthead{justify-content:flex-start}.pb .backnav{position:static;transform:none}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

@@ -1,0 +1,240 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub URL Encoder/Decoder?',
+    a: 'The Best Answer Hub URL Encoder/Decoder is a free browser-based utility that converts plain text into URL-safe strings and back. It supports both component-level encoding via encodeURIComponent and full-URL encoding via encodeURI. Unlike many online converters that send data to remote servers, everything happens locally in your browser, making it ideal for developers working with APIs, query strings, and web forms.',
+  },
+  {
+    q: 'Is the URL Encoder free and safe?',
+    a: 'Yes, the Best Answer Hub URL Encoder is completely free with no signup required. Your data never leaves your device because the tool runs entirely in your browser using vanilla JavaScript. There is no server-side processing, no tracking cookies, and no data storage. This makes it safer than many online tools that route sensitive URLs through cloud infrastructure like AWS or Google Cloud.',
+  },
+  {
+    q: 'What is URL encoding and why is it needed?',
+    a: 'URL encoding is the process of converting characters into a format that can be transmitted over the internet. It replaces unsafe ASCII characters with a percent sign followed by two hexadecimal digits. Browsers like Chrome and Firefox require this for special characters in web addresses. Without it, spaces, ampersands, and unicode symbols would break links and server requests. Use the Best Answer Hub URL Encoder to apply RFC 3986 percent-encoding in your browser instantly.',
+  },
+  {
+    q: 'encodeURIComponent vs encodeURI difference',
+    a: 'encodeURIComponent encodes every character except A-Z, a-z, 0-9, and - _ . ! ~ * \' ( ), making it perfect for query parameters. encodeURI leaves reserved characters like ; , / ? : @ & = + $ # intact, so it is designed for complete URLs. Using the wrong one can break your links, which is why the Best Answer Hub URL Encoder offers both modes side by side.',
+  },
+  {
+    q: 'When to use Component mode vs Full URL mode',
+    a: 'Use Component mode when encoding individual query parameters, form values, or path segments that will be inserted into a larger URL. Use Full URL mode when you need to encode an entire web address while keeping structural characters like slashes, question marks, and hash symbols functional. The Best Answer Hub URL Encoder labels both modes clearly to prevent malformed API requests and broken links.',
+  },
+  {
+    q: 'Can this tool decode URL-encoded strings?',
+    a: 'Absolutely. The Best Answer Hub URL Encoder functions as both an encoder and decoder. Paste any percent-encoded string into the input field, select the appropriate mode, and click Decode. It uses JavaScript\'s native decodeURIComponent and decodeURI functions, so it handles standard RFC 3986 encoding as well as unicode sequences produced by modern frameworks like React and Next.js.',
+  },
+  {
+    q: 'What characters get encoded in URLs?',
+    a: 'Reserved characters such as spaces, ampersands, equals signs, plus signs, and percent symbols are always encoded. Non-ASCII characters including emojis and accented letters are converted into UTF-8 byte sequences preceded by percent signs. The Best Answer Hub URL Encoder reflects RFC 3986 character classification in both modes: structural characters like forward slashes remain untouched in Full URL mode but are encoded in Component mode.',
+  },
+  {
+    q: 'Can I use the URL Encoder offline?',
+    a: 'Yes, because all encoding and decoding logic runs client-side, the Best Answer Hub URL Encoder keeps working after you disconnect from Wi-Fi. Once the page loads, the tool requires no internet connection. This is especially useful for developers working in secure environments or on airplanes where network access is restricted.',
+  },
+  {
+    q: 'URL encoding vs Base64 difference',
+    a: 'URL encoding makes strings safe for web addresses by using percent signs and hex values, while Base64 uses a 64-character alphabet including plus signs and slashes. Base64 is better for binary data and file encoding, whereas URL encoding is designed specifically for text in web contexts. For text conversion, try the <a href="/tools/base64-encoder/">Best Answer Hub Base64 Encoder</a> instead.',
+  },
+  {
+    q: 'Why do spaces become %20 or +?',
+    a: 'In standard RFC 3986 URL encoding, spaces become %20. However, HTML form submissions using the application/x-www-form-urlencoded format convert spaces to plus signs. Modern JavaScript encodeURIComponent produces %20, while older server-side languages like PHP may expect plus signs in POST data. The Best Answer Hub URL Encoder uses %20 to match browser standards.',
+  },
+  {
+    q: 'How does this tool handle Unicode in URLs?',
+    a: 'The Best Answer Hub URL Encoder converts unicode characters into UTF-8 byte sequences, just like Chrome and Node.js do. For example, an emoji becomes a series of percent-encoded bytes. Both Component and Full URL modes support full unicode input. This ensures compatibility with internationalized domain names and modern REST APIs that accept multilingual query parameters.',
+  },
+  {
+    q: 'Is my URL data sent to a server?',
+    a: 'No, absolutely not. The Best Answer Hub URL Encoder performs all operations locally inside your browser. There are no AJAX requests, no analytics pings capturing your input, and no cloud databases. This zero-server architecture guarantees privacy for sensitive URLs, API keys, and internal development links that you would never want exposed to third-party services.',
+  },
+  {
+    q: 'Common URL encoding mistakes',
+    a: 'The most common mistake is double-encoding, where an already encoded %20 gets converted to %2520. Another error is using encodeURI on query parameters, which leaves ampersands unencoded and breaks key-value pairs. Developers also frequently confuse plus signs with spaces. Always verify your output and use Component mode for query strings. The Best Answer Hub URL Encoder\'s real-time output makes these verification steps straightforward.',
+  },
+  {
+    q: 'How does this compare to JavaScript\'s encodeURIComponent?',
+    a: 'The Best Answer Hub URL Encoder\'s Component mode uses the exact same encodeURIComponent algorithm built into JavaScript engines like V8 and SpiderMonkey. The difference is convenience: you get a visual interface, decode support, copy-to-clipboard, and error handling without opening browser DevTools. It is essentially a user-friendly wrapper around native browser functionality.',
+  },
+  {
+    q: 'What is Punycode and how does it relate to URL encoding?',
+    a: 'Punycode (RFC 3492) is a Bootstring algorithm that converts internationalized domain names (IDNs) containing non-ASCII characters into ASCII-compatible encoding (ACE) required by DNS. Labels are prefixed with xn--; for example, m\xfcnchen.de becomes xn--mnchen-3ya.de. ICANN\'s IDNA 2003 (RFC 3490) first standardized the process, with IDNA 2008 (RFC 5891) updating it to track modern Unicode. Browsers display the Unicode form but transmit Punycode to DNS. Punycode applies only to hostname labels; percent-encoding (RFC 3986), as applied by the Best Answer Hub URL Encoder, handles paths, query strings, and fragments. In Node.js, use url.domainToASCII() rather than the deprecated node:punycode module.',
+  },
+];
+
+
+const steps = [
+  { title: 'Paste your text or URL', description: 'Copy the string you want to encode or decode into the left input area. You can enter plain text, query parameters, or a complete web address.' },
+  { title: 'Choose a mode and convert', description: 'Select Component mode for query strings and form values, or Full URL mode for entire addresses. Click Encode or Decode to transform your input instantly.' },
+  { title: 'Copy the result', description: 'Your converted output appears in the right panel. Click Copy to save it to your clipboard, or Clear to start over with a new string.' },
+];
+
+const seo = {
+  title: 'URL Encoder / Decoder — Free Online Tool',
+  description: 'Free URL encoder and decoder. Component & full URL modes. Works offline, no signup, no data sent to servers.',
+  url: '/tools/url-encoder/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'URL Encoder', url: '/tools/url-encoder/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="URL Encoder / Decoder:"
+    accentText="Component & full URL modes"
+    description="Encode and decode URLs instantly with support for both component-level and full-URL modes. Perfect for API development, query strings, and web form debugging."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- URL Encoder Interface -->
+  <section class="py-6 md:py-8" aria-label="URL encoder decoder">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">URL Encoder / Decoder</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Input</label>
+            <textarea id="url-input" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Paste text or URL to encode or decode..." spellcheck="false"></textarea>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button type="button" id="url-encode" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Encode</button>
+              <button type="button" id="url-decode" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Decode</button>
+              <button type="button" id="url-copy" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy</button>
+              <button type="button" id="url-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+            </div>
+            <div class="flex flex-wrap gap-4 mt-3">
+              <label class="inline-flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+                <input type="radio" name="url-mode" value="component" id="url-mode-component" checked class="accent-bae-primary" />
+                Component
+              </label>
+              <label class="inline-flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+                <input type="radio" name="url-mode" value="full" id="url-mode-full" class="accent-bae-primary" />
+                Full URL
+              </label>
+            </div>
+            <p id="url-error" class="text-xs text-red-500 mt-2 hidden"></p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Output</label>
+            <textarea id="url-output" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none resize-y" readonly spellcheck="false"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people encode with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from developers and QA engineers.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">API DEVELOPMENT</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Building safe query string parameters</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Prevents broken REST endpoints from unescaped characters</p>
+          <p class="text-sm text-bae-muted">Developers paste raw query values (user input, search terms, filter arrays) into Component mode to generate properly escaped parameters before appending them to API endpoints.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">AUTHENTICATION</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Encoding OAuth 2.0 redirect_uri values</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">RFC 6749 requires percent-encoded redirect URIs in authorization requests</p>
+          <p class="text-sm text-bae-muted">Engineers constructing OAuth 2.0 authorization URLs encode the redirect_uri and scope parameters in Component mode to satisfy RFC 6749 requirements and prevent authorization server rejection.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">DEBUGGING</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Diagnosing double-encoded production URLs</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Catches %2520 errors before they reach end users</p>
+          <p class="text-sm text-bae-muted">QA teams paste suspect URLs from error logs to check for double-encoding artifacts like %2520 or %252F, then decode them step by step to pinpoint where the extra encoding was introduced.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">WEB SCRAPING</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Constructing search engine query URLs</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Encodes multilingual search terms for automated requests</p>
+          <p class="text-sm text-bae-muted">Scrapers and automation scripts use Component mode to encode multilingual search queries, pagination tokens, and filter parameters before embedding them into Google, Bing, or custom search API URLs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, and <a href="/tools/timestamp-converter/" class="text-bae-primary hover:underline">Timestamp</a>, all free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+      function showError(el, msg) {
+        if (!msg) { el.classList.add('hidden'); el.textContent = ''; return; }
+        el.textContent = msg;
+        el.classList.remove('hidden');
+      }
+      const urlInput = document.getElementById('url-input');
+      const urlOutput = document.getElementById('url-output');
+      const urlError = document.getElementById('url-error');
+      document.getElementById('url-encode').addEventListener('click', () => {
+        try {
+          const text = urlInput.value;
+          const mode = document.querySelector('input[name="url-mode"]:checked').value;
+          urlOutput.value = mode === 'component' ? encodeURIComponent(text) : encodeURI(text);
+          showError(urlError, '');
+        } catch (e) { showError(urlError, 'Encoding failed: ' + e.message); }
+      });
+      document.getElementById('url-decode').addEventListener('click', () => {
+        try {
+          const text = urlInput.value.trim();
+          const mode = document.querySelector('input[name="url-mode"]:checked').value;
+          urlOutput.value = mode === 'component' ? decodeURIComponent(text) : decodeURI(text);
+          showError(urlError, '');
+        } catch (e) { showError(urlError, 'Decoding failed: ' + e.message); }
+      });
+      document.getElementById('url-copy').addEventListener('click', () => copyText(urlOutput.value));
+      document.getElementById('url-clear').addEventListener('click', () => { urlInput.value = ''; urlOutput.value = ''; showError(urlError, ''); });
+    })();
+  </script>
+</BaseLayout>

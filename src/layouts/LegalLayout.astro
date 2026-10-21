@@ -1,0 +1,46 @@
+﻿---
+import BaseLayout from './BaseLayout.astro';
+import type { SEOProps } from '../types';
+
+interface Props {
+  seo: SEOProps;
+  title: string;
+  lastUpdated: string;
+}
+
+const { seo, title, lastUpdated } = Astro.props;
+
+// Keep the JSON-LD dateModified in sync with the visible "Last updated" date.
+// Parsed from the display string (deterministic, TZ-safe via local getters) and
+// only applied when the page didn't set dateModified explicitly.
+let seoForLayout = seo;
+if (!seo.dateModified) {
+  const parsed = new Date(lastUpdated);
+  if (!isNaN(parsed.getTime())) {
+    const y = parsed.getFullYear();
+    const m = String(parsed.getMonth() + 1).padStart(2, '0');
+    const d = String(parsed.getDate()).padStart(2, '0');
+    seoForLayout = { ...seo, dateModified: `${y}-${m}-${d}T00:00:00+00:00` };
+  }
+}
+---
+
+<BaseLayout seo={seoForLayout}>
+  <div class="py-12 md:py-16">
+    <div class="container max-w-content mx-auto px-6">
+      <header class="mb-10">
+        <a href="/" class="text-bae-primary text-sm font-semibold hover:underline mb-4 inline-block">
+          ← Back to Best Answer Hub
+        </a>
+        <h1 class="font-serif text-3xl md:text-4xl font-bold text-bae-ink leading-tight mb-2">
+          {title}
+        </h1>
+        <p class="text-sm text-bae-muted">Last updated: {lastUpdated}</p>
+      </header>
+      
+      <div class="prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-bae-ink prose-headings:font-bold prose-p:text-bae-fg prose-p:leading-relaxed prose-a:text-bae-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-bae-ink prose-li:text-bae-fg">
+        <slot />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

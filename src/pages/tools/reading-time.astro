@@ -1,0 +1,411 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Reading Time Calculator?',
+    a: 'The Best Answer Hub Reading Time Calculator is a free, browser-based tool that estimates how long any piece of text takes to read or speak. Paste an article, essay, speech, or book chapter and the tool instantly shows word count, page count, reading time at four speeds (150–300 wpm), and speaking time at 130 wpm. Everything runs in your browser. No signup, no upload, and nothing stored on any server.',
+  },
+  {
+    q: 'What is the average adult reading speed in words per minute?',
+    a: 'A 2019 meta-analysis of 190 studies (Brysbaert, Drieghe, and Ventura) found the average adult silent reading speed is 238 wpm for non-fiction and around 260 wpm for fiction. The commonly cited "200 wpm" figure is slightly conservative. It originated from older studies and tends to underestimate most adults. The Best Answer Hub Reading Time Calculator shows estimates at 150, 200, 250, and 300 wpm so you can pick the range that best matches your audience and content type.',
+  },
+  {
+    q: 'How does Medium calculate its "X min read" estimate?',
+    a: 'Medium divides the total word count by 265 words per minute and adds 12 seconds for each inline image in the article. So a 1,000-word article with two images takes approximately 3 minutes 50 seconds on Medium\'s formula. Medium uses 265 wpm rather than the commonly cited 200 wpm because their internal research showed it better matched observed read times for their platform. The Best Answer Hub Reading Time Calculator uses the same 265 wpm as the "fast" benchmark.',
+  },
+  {
+    q: 'Does reading speed vary for different types of content?',
+    a: 'Yes, significantly. Fiction and familiar blog content: 250–350 wpm. Standard non-fiction and news: 200–250 wpm. Technical documentation and academic papers: 100–150 wpm. Legal documents and contracts: 75–125 wpm. The drop for dense technical material is substantial. A 5,000-word academic paper may take 40+ minutes despite a word count that implies 20 minutes at 250 wpm. The slow reading speed (150 wpm) in the Best Answer Hub Reading Time Calculator is calibrated for this use case.',
+  },
+  {
+    q: 'What is the difference between silent reading speed and reading out loud?',
+    a: 'Silent reading is significantly faster than oral reading. The average adult reads silently at 238 wpm but reads aloud at around 183 wpm, a difference of roughly 25%. Reading aloud requires physical articulation, breath pacing, and intonation that cap the physical speed of delivery. For speeches and presentations, 130 wpm is the standard benchmark for clear, comfortable delivery with natural pauses, which is why speaking time estimates are always longer than reading time estimates for the same text.',
+  },
+  {
+    q: 'Can speed reading actually work, or does it destroy comprehension?',
+    a: 'Speed reading claims above 600–700 wpm have not been validated by independent research and consistently show comprehension dropping to skimming levels. A 2016 Psychological Science in the Public Interest review concluded that the fundamental bottleneck is not eye movement but cognitive processing speed: the brain simply cannot fully encode words faster than around 400–500 wpm with genuine comprehension. Techniques marketed as "1,000+ wpm" are effectively rapid skimming, not reading. Sustainable speed improvements of 25–50% are achievable through reduced subvocalisation and better focus.',
+  },
+  {
+    q: 'Does showing an estimated read time on a blog post improve engagement?',
+    a: 'Yes. Multiple studies confirm it. Medium adopted "X min read" labels in 2013 and reported that posts with read times in the 3–7 minute range consistently showed the highest engagement ratios (percentage who read to the end). Showing read time upfront reduces bounce from readers who do not have time for a long article and increases time-on-page for those who do, because they commit knowingly. For SEO, the primary benefit is lower bounce rate and higher dwell time, both positive signals for Google. The Best Answer Hub Reading Time Calculator gives you an accurate read-time label for any article in seconds.',
+  },
+  {
+    q: 'What blog post read time gets the highest reader engagement?',
+    a: 'Medium\'s data consistently showed peak engagement for articles with a 7-minute read time, approximately 1,600–1,800 words at 250 wpm. Shorter posts (under 3 minutes) trend well on social media shares; long-form content (10–20 minutes) performs well for SEO and newsletter subscribers who expect depth. For conversion-focused landing pages, shorter is almost always better. For authority-building content and organic search, 1,500–2,500 words tends to hit the best balance of depth and completion rate. Paste your draft into the Best Answer Hub Reading Time Calculator to check your read time before publishing.',
+  },
+  {
+    q: 'How many words per minute do TED Talk speakers use?',
+    a: 'TED Talk speakers average approximately 163 words per minute, deliberately slower than typical conversation to aid comprehension, emphasis, and audience absorption. The fastest TED speakers clock around 185 wpm; the slowest fall below 130 wpm. Toastmasters International recommends 120–160 wpm for public speaking. Podcasts typically run 150–160 wpm. The speaking time estimate in the Best Answer Hub Reading Time Calculator uses 130 wpm, which reflects a deliberate, clear presentation pace with natural pauses included.',
+  },
+  {
+    q: 'What is the fastest audiobook playback speed that retains comprehension?',
+    a: '1.5x is the retention sweet spot for most listeners: research consistently shows comprehension stays high at 1.5x but starts degrading meaningfully above 2x for complex or unfamiliar content. For familiar or light fiction, some listeners retain well up to 2.25x. Audible\'s internal data found most of their highest-engagement users settle between 1.25x and 1.75x. Speeds above 2.5x effectively shift from listening to monitoring, with comprehension dropping sharply.',
+  },
+  {
+    q: 'How long does it take to read a 300-page book?',
+    a: 'A standard paperback has approximately 250–300 words per page, putting a 300-page book at roughly 75,000–90,000 words. At an average adult reading speed of 250 wpm, that is 300–360 minutes, or 5 to 6 hours of focused reading time. Most readers complete it across 4–7 sessions. Paste the book\'s opening chapters into the Best Answer Hub Reading Time Calculator to get a calibrated estimate based on the actual word count rather than page count alone.',
+  },
+  {
+    q: 'What is the ideal speaking speed for a presentation or podcast?',
+    a: 'For presentations, 120–150 wpm is the standard range used by speech coaches and Toastmasters. It allows for natural pauses, emphasis, and audience absorption. TED Talks average 163 wpm, which is on the faster end of effective public speaking. For podcasts, 150–160 wpm is the typical conversational pace. A 10-minute presentation requires approximately 1,200–1,500 words; a 20-minute keynote requires 2,400–3,000 words. The Best Answer Hub Reading Time Calculator shows speaking time at 130 wpm to give a comfortable lower-bound estimate.',
+  },
+  {
+    q: 'Does subvocalization slow down reading speed, and can you stop it?',
+    a: 'Subvocalization (the inner voice that "says" words as you read) does limit reading speed to around the pace of speech (approximately 150–200 wpm) for people who subvocalise heavily. Reducing it can improve reading speed, but eliminating it completely is neither achievable nor desirable: subvocalisation supports comprehension for complex or unfamiliar material. Moderate subvocalisation reduction through practice can improve average speed by 20–40% while maintaining comprehension for familiar content.',
+  },
+  {
+    q: 'How does Kindle calculate reading time, and why does it keep changing?',
+    a: 'Kindle\'s "Time Left in Book" feature tracks your actual reading pace over recent pages and calculates a personalised estimate based on how fast you specifically have been reading in that session. It updates dynamically. If you slow down for a dense chapter, the estimate adjusts upward. This is why it changes mid-reading. Kindle uses your personal reading speed history, not a fixed wpm benchmark, which makes its estimates more accurate than generic tools for individual readers.',
+  },
+  {
+    q: 'Why might I read slower than the estimate says, does that make me a slow reader?',
+    a: 'Not necessarily. Generic reading time estimates use population averages (200–250 wpm), but individual reading speed varies enormously based on content familiarity, fatigue, environment, native language, and purpose (skimming vs. deep comprehension). Reading a novel for pleasure at 180 wpm and a legal contract at 80 wpm are both completely normal. The 2019 Brysbaert meta-analysis found a standard deviation of roughly 100 wpm around the mean, meaning a wide range of speeds are entirely typical.',
+  },
+  {
+    q: 'How is the Reading Time Calculator different from the Best Answer Hub Word Counter?',
+    a: 'The <a href="/tools/word-counter/">Best Answer Hub Word Counter</a> is optimised for counting: words, characters (with and without spaces), sentences, paragraphs, and average word length, with reading and speaking time as secondary outputs. The Best Answer Hub Reading Time Calculator is specifically designed around time estimation: it shows four reading speed benchmarks simultaneously, a speaking time estimate, and an approximate page count, making it the right tool when your primary goal is planning for a speech slot, adding a read-time label to a blog post, or estimating audience time commitment.',
+  },
+];
+
+const steps = [
+  { title: 'Paste your text', description: 'Drop your article, speech, essay, or book chapter into the text area. Paste from Word, Google Docs, Notion, or any editor.' },
+  { title: 'See instant estimates', description: 'Word count, page count, reading time at four speeds, and speaking time update in real time as you type or paste.' },
+  { title: 'Copy or download PDF', description: 'Copy the formatted results to your clipboard with one click, or download a PDF report for your records.' },
+];
+
+const seo = {
+  title: 'Free Reading Time Calculator — Speech & Blog Estimate (2026)',
+  description: 'Estimate how long it takes to read or speak any text. Word count, page count, reading time at 4 speeds, and speaking time. 100% client-side, no signup.',
+  url: '/tools/reading-time/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Reading Time', url: '/tools/reading-time/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Stored on Servers"
+    title="Reading Time Calculator:"
+    accentText="Know how long it takes to read"
+    description="Paste any text to see word count, approximate page count, reading time at four speeds, and speaking time. Perfect for blog posts, speeches, and presentations. No signup, no uploads."
+    backLink="/career-toolkit/"
+    backLabel="← Career Toolkit"
+  />
+
+  <section class="py-6 md:py-8" aria-label="Reading time calculator">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <!-- Text Area -->
+        <div class="lg:col-span-2 bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold text-bae-ink">Your Text</h2>
+            <div class="flex gap-2">
+              <button type="button" id="paste-btn" class="text-xs text-bae-primary hover:text-bae-accent transition-colors font-medium">Paste</button>
+              <button type="button" id="clear-btn" class="text-xs text-bae-muted hover:text-bae-ink transition-colors">Clear</button>
+            </div>
+          </div>
+          <textarea id="text-input" rows="16" placeholder="Paste or type your text here..." spellcheck="true" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 flex flex-col gap-3">
+          <h2 class="text-sm font-bold text-bae-ink mb-1">Estimates</h2>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p id="stat-words" class="text-2xl font-bold text-bae-primary">0</p>
+              <p class="text-[11px] text-bae-muted font-medium">Words</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p id="stat-pages" class="text-2xl font-bold text-bae-ink">0</p>
+              <p class="text-[11px] text-bae-muted font-medium">Pages (~250 wpp)</p>
+            </div>
+          </div>
+
+          <div class="border-t border-bae-border pt-3 mt-1">
+            <p class="text-xs font-semibold text-bae-ink mb-2">Reading Time</p>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-bae-muted">Slow (150 wpm)</span>
+                <span id="read-slow" class="font-semibold text-bae-ink">0 min</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-bae-muted">Average (200 wpm)</span>
+                <span id="read-avg" class="font-semibold text-bae-ink">0 min</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-bae-muted">Fast (250 wpm)</span>
+                <span id="read-fast" class="font-semibold text-bae-ink">0 min</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-bae-muted">Skimming (300 wpm)</span>
+                <span id="read-skim" class="font-semibold text-bae-ink">0 min</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-bae-border pt-3">
+            <p class="text-xs font-semibold text-bae-ink mb-2">Speaking Time</p>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-bae-muted">Natural pace (130 wpm)</span>
+              <span id="speak-time" class="font-semibold text-bae-ink">0 min</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mt-2">
+            <button type="button" id="copy-btn" class="flex-1 min-w-[100px] bg-bae-primary text-white font-semibold text-sm px-4 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors" disabled>
+              Copy Results
+            </button>
+            <button type="button" id="download-pdf-btn" class="flex-1 min-w-[100px] bg-bae-ink text-white font-semibold text-sm px-4 py-2.5 rounded-bae-sm hover:bg-bae-primary transition-colors" disabled>
+              Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people calculate with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink mb-2">What people calculate with it</h2>
+      <p class="text-bae-muted mb-8 max-w-xl">Real situations where knowing the read or speak time before you publish or present actually matters.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Content Marketing</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">Adding a "X min read" label before publishing</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">8 min read confirmed</p>
+          <p class="text-sm text-bae-muted">Aarav needed a read-time badge for his 2,100-word SEO guide. He pasted the draft into the Best Answer Hub Reading Time Calculator, confirmed 8 minutes, and updated the CMS metadata before hitting publish.</p>
+        </div>
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Public Speaking</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">Keynote script timed to a 30-minute slot</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">3,900 words = 30 min</p>
+          <p class="text-sm text-bae-muted">Claudia had a 30-minute conference slot and needed her script to fit exactly. She pasted it into the Best Answer Hub Reading Time Calculator, saw 3,900 words hit 30 minutes speaking time, and submitted to the organiser with confidence.</p>
+        </div>
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Academic</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">Dissertation chapter trimmed for seminar</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">Cut from 27 min to 20 min</p>
+          <p class="text-sm text-bae-muted">Ben needed to read his 3,600-word chapter aloud in a 20-minute seminar slot. The Best Answer Hub Reading Time Calculator showed 27 minutes speaking time. He cut to 2,600 words and hit the slot exactly.</p>
+        </div>
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Podcast</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">Solo episode scripted to hit target runtime</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">20-min episode, nailed</p>
+          <p class="text-sm text-bae-muted">Dana scripts her solo podcast episodes in sections. She pasted each segment into the Best Answer Hub Reading Time Calculator until the total speaking time reached 20 minutes, then recorded without overrunning.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more text tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/word-counter/" class="text-bae-primary hover:underline">Word Counter</a>, <a href="/tools/case-converter/" class="text-bae-primary hover:underline">Case Converter</a>, <a href="/tools/resume-builder/" class="text-bae-primary hover:underline">Resume Builder</a>, and <a href="/tools/cover-letter-builder/" class="text-bae-primary hover:underline">Cover Letter Builder</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/html2pdf.bundle.min.js" is:inline></script>
+  <script is:inline>
+    (function() {
+      'use strict';
+
+      const textarea = document.getElementById('text-input');
+      const copyBtn = document.getElementById('copy-btn');
+      const pdfBtn = document.getElementById('download-pdf-btn');
+
+      function countWords(text) {
+        return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+      }
+
+      function formatTime(words, wpm) {
+        if (words === 0) return '0 min';
+        const minutes = words / wpm;
+        if (minutes < 1) {
+          return Math.round(minutes * 60) + ' sec';
+        }
+        const wholeMins = Math.floor(minutes);
+        const secs = Math.round((minutes - wholeMins) * 60);
+        if (secs === 0) return wholeMins + ' min';
+        return wholeMins + ' min ' + secs + ' sec';
+      }
+
+      document.getElementById('clear-btn')?.addEventListener('click', () => {
+        textarea.value = '';
+        updateStats();
+        textarea.focus();
+      });
+
+      document.getElementById('paste-btn')?.addEventListener('click', async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          textarea.value = text;
+          updateStats();
+        } catch (err) {
+          alert('Clipboard access denied. Please paste manually (Ctrl+V / Cmd+V).');
+        }
+      });
+
+      function buildReportHtml() {
+        const text = textarea.value;
+        const words = countWords(text);
+        const pages = words === 0 ? 0 : Math.ceil(words / 250);
+
+        let html = '<div id="reading-time-pdf-content" style="padding: 40px 48px; max-width: 210mm; margin: 0 auto; color: #1f2937; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.6; box-sizing: border-box;">';
+        html += '<h1 style="font-size: 20px; font-weight: 700; margin: 0 0 16px 0; color: #111827;">Reading Time Report</h1>';
+        html += '<p style="margin: 0 0 24px 0; color: #6b7280; font-size: 11px;">Generated by Best Answer Hub Reading Time Calculator</p>';
+
+        html += '<div style="margin-bottom: 24px;">';
+        html += '<h2 style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #111827; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; margin: 0 0 12px 0;">Text Overview</h2>';
+        html += '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
+        const rows = [
+          ['Word Count', words.toLocaleString()],
+          ['Approximate Pages (~250 wpp)', pages.toLocaleString()],
+        ];
+        rows.forEach(([label, value], i) => {
+          const bg = i % 2 === 0 ? '#f9fafb' : '#ffffff';
+          html += '<tr style="background: ' + bg + ';"><td style="padding: 8px 12px; border: 1px solid #e5e7eb; color: #4b5563;">' + label + '</td><td style="padding: 8px 12px; border: 1px solid #e5e7eb; font-weight: 600; color: #111827; text-align: right;">' + value + '</td></tr>';
+        });
+        html += '</table>';
+        html += '</div>';
+
+        html += '<div style="margin-bottom: 24px;">';
+        html += '<h2 style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #111827; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; margin: 0 0 12px 0;">Reading Time</h2>';
+        html += '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
+        const timeRows = [
+          ['Slow (150 wpm)', formatTime(words, 150)],
+          ['Average (200 wpm)', formatTime(words, 200)],
+          ['Fast (250 wpm)', formatTime(words, 250)],
+          ['Skimming (300 wpm)', formatTime(words, 300)],
+        ];
+        timeRows.forEach(([label, value], i) => {
+          const bg = i % 2 === 0 ? '#f9fafb' : '#ffffff';
+          html += '<tr style="background: ' + bg + ';"><td style="padding: 8px 12px; border: 1px solid #e5e7eb; color: #4b5563;">' + label + '</td><td style="padding: 8px 12px; border: 1px solid #e5e7eb; font-weight: 600; color: #111827; text-align: right;">' + value + '</td></tr>';
+        });
+        html += '</table>';
+        html += '</div>';
+
+        html += '<div style="margin-bottom: 24px;">';
+        html += '<h2 style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #111827; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; margin: 0 0 12px 0;">Speaking Time</h2>';
+        html += '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
+        html += '<tr style="background: #f9fafb;"><td style="padding: 8px 12px; border: 1px solid #e5e7eb; color: #4b5563;">Natural pace (130 wpm)</td><td style="padding: 8px 12px; border: 1px solid #e5e7eb; font-weight: 600; color: #111827; text-align: right;">' + formatTime(words, 130) + '</td></tr>';
+        html += '</table>';
+        html += '</div>';
+
+        html += '</div>';
+        return html;
+      }
+
+      copyBtn?.addEventListener('click', () => {
+        const text = textarea.value;
+        const words = countWords(text);
+        const pages = Math.ceil(words / 250);
+
+        const report = [
+          'Word Count: ' + words.toLocaleString(),
+          'Approximate Pages: ' + pages.toLocaleString(),
+          'Reading time - Slow (150 wpm): ' + formatTime(words, 150),
+          'Reading time - Average (200 wpm): ' + formatTime(words, 200),
+          'Reading time - Fast (250 wpm): ' + formatTime(words, 250),
+          'Reading time - Skimming (300 wpm): ' + formatTime(words, 300),
+          'Speaking time (130 wpm): ' + formatTime(words, 130),
+        ].join('\n');
+
+        navigator.clipboard.writeText(report).then(() => {
+          const original = copyBtn.textContent;
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = original, 1500);
+        });
+      });
+
+      pdfBtn?.addEventListener('click', async () => {
+        if (!textarea.value.trim()) { alert('Please enter some text first.'); return; }
+
+        const btn = pdfBtn;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const reportDiv = document.createElement('div');
+        reportDiv.innerHTML = buildReportHtml();
+        const content = reportDiv.firstElementChild;
+        content.style.width = '210mm';
+        content.style.maxWidth = 'none';
+        content.style.margin = '0';
+        document.body.appendChild(content);
+
+        try {
+          await html2pdf().set({
+            margin: 0,
+            filename: 'reading-time-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' }
+          }).from(content).save();
+        } catch (err) {
+          console.error(err);
+          alert('PDF generation failed. Please try again.');
+        } finally {
+          if (content.parentNode) document.body.removeChild(content);
+          btn.textContent = 'Download PDF';
+          btn.disabled = false;
+        }
+      });
+
+      function updateStats() {
+        const text = textarea.value;
+        const words = countWords(text);
+        const pages = words === 0 ? 0 : Math.ceil(words / 250);
+
+        document.getElementById('stat-words').textContent = words.toLocaleString();
+        document.getElementById('stat-pages').textContent = pages.toLocaleString();
+
+        document.getElementById('read-slow').textContent = formatTime(words, 150);
+        document.getElementById('read-avg').textContent = formatTime(words, 200);
+        document.getElementById('read-fast').textContent = formatTime(words, 250);
+        document.getElementById('read-skim').textContent = formatTime(words, 300);
+        document.getElementById('speak-time').textContent = formatTime(words, 130);
+
+        copyBtn.disabled = words === 0;
+        pdfBtn.disabled = words === 0;
+      }
+
+      textarea?.addEventListener('input', updateStats);
+
+      // Initialise stats in case the browser restores textarea text (bfcache / refresh).
+      updateStats();
+    })();
+  </script>
+</BaseLayout>

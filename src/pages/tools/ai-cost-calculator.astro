@@ -1,0 +1,1070 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import pricingData from '../../data/ai-pricing.json';
+
+const { subscriptionTools, apiPlatforms, usagePresets, currencies } = pricingData;
+
+// One source for the freshness claim: the same field the disclaimer and the table use.
+const verifiedOn = new Date(pricingData.lastUpdated + 'T00:00:00Z').toLocaleDateString('en-GB', {
+  day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+});
+const apiModelCount = apiPlatforms.reduce((n, p) => n + p.models.length, 0);
+
+const faqList = [
+  {
+    question: 'What is the Best Answer Hub AI Cost Calculator?',
+    answer: 'The Best Answer Hub AI Cost Calculator is a free, privacy-first browser tool that estimates your true monthly spend across AI subscriptions and API platforms. It covers ChatGPT, Claude, Cursor, GitHub Copilot, OpenAI API, DeepSeek, Kimi, and more than 20 models. Select your stack, choose usage presets or enter raw token counts, toggle between personal and business mode, and see your cost breakdown in USD, EUR, or GBP. Everything runs instantly in your browser. No signup, no server, no data collection.'
+  },
+  {
+    question: 'How accurate are these AI cost estimates?',
+    answer: 'Estimates are based on publicly published pricing verified in August 2026. Subscription costs are exact because they are fixed monthly fees. API costs depend on actual token counts, which vary by prompt length, context window usage, and retry behavior. The Best Answer Hub AI Cost Calculator adds a 15% buffer to all API estimates to account for real-world overage, so most users find the final bill falls within the predicted range.'
+  },
+  {
+    question: 'What is the difference between subscription and API costs?',
+    answer: 'Subscriptions are flat monthly fees charged per user or account. For example, ChatGPT Plus costs $20 per month regardless of how much you use it. API costs are pay-as-you-go based on tokens processed: input tokens carry your prompt and context, while output tokens carry the AI-generated response. API bills scale directly with usage, making them unpredictable for heavy users but very cheap for light automation.'
+  },
+  {
+    question: 'How many tokens does a typical coding session use?',
+    answer: 'A typical vibe-coding session with an AI IDE like Cursor or GitHub Copilot uses 3,000 to 8,000 input tokens for code context and prompts, plus 2,000 to 4,000 output tokens for generated code. A deep research task analyzing large documents can consume 50,000 or more input tokens. The Best Answer Hub AI Cost Calculator includes preset profiles for common workflows so you do not need to count tokens manually.'
+  },
+  {
+    question: 'Why is Cursor cheaper with BYOK?',
+    answer: 'BYOK stands for Bring Your Own Key. When you use Cursor with BYOK, you pay Cursor\'s base subscription fee plus the direct API costs to Anthropic or OpenAI at raw token rates. Cursor\'s managed plans include bundled API credits that come with a markup. For light users, the bundled credits are enough. For heavy users who process millions of tokens per month, BYOK eliminates the markup and can reduce total cost by 30 to 60 percent.'
+  },
+  {
+    question: 'How can I reduce my AI API bill by 50–90%?',
+    answer: 'Switch to smaller models for simple tasks: Claude Haiku 4.5 instead of Opus 4.7, or GPT-5.4 Nano instead of GPT-5.4. Enable prompt caching on Claude and OpenAI to reuse context without re-billing. Use batch APIs for non-urgent work to get 50% discounts. Keep prompts concise to reduce input tokens. For high-volume automation, DeepSeek V4 Flash costs $0.14 per million input tokens, making it the cheapest mainstream option. Together, these tactics typically cut API spend by half or more.'
+  },
+  {
+    question: 'Does the calculator include VAT or sales tax?',
+    answer: 'No. All prices shown are pre-tax in USD, EUR, or GBP equivalents. Sales tax and VAT depend on your billing country and are added at checkout by each provider. For example, EU customers typically pay 20% VAT on top of the listed subscription price. Always check your invoice for the final tax-inclusive total.'
+  },
+  {
+    question: 'What is the cheapest AI model for high-volume tasks in 2026?',
+    answer: 'DeepSeek V4 Flash is the cheapest mainstream model at $0.14 per million input tokens and $0.28 per million output tokens. For OpenAI users, GPT-5.4 Nano costs $0.20 per million input tokens and $1.25 per million output tokens, though it has lower capability. Claude Haiku 4.5 is the most affordable Anthropic model at $1 per million input tokens and $5 per million output tokens. For pure cost efficiency on simple automation, DeepSeek V4 Flash offers the best price-to-performance ratio.'
+  },
+  {
+    question: 'How often is the AI pricing data updated?',
+    answer: 'Pricing is reviewed and updated every 90 days. The current dataset was last verified on May 18, 2026. AI providers change rates frequently. OpenAI, Anthropic, and DeepSeek have all adjusted pricing within the past six months. Official pricing pages are monitored and the Best Answer Hub AI Cost Calculator is updated within one week of any announced change. Always verify on the provider\'s official site before signing annual contracts.'
+  },
+  {
+    question: 'Can I use multiple AI tools at the same time?',
+    answer: 'Yes, and most teams do. A typical setup stacks ChatGPT or Claude for general research and writing, Cursor or GitHub Copilot for software development, and OpenAI API or DeepSeek for production automations and backend integrations. The Best Answer Hub AI Cost Calculator lets you select any combination of subscriptions, API platforms, and hybrid setups to see your true total stack cost before any free trials expire.'
+  },
+  {
+    question: 'What does "per seat" mean for AI team tools?',
+    answer: 'Per seat means the price is charged for each individual user on your team. GitHub Copilot Business costs $19 per seat per month, so a five-person engineering team pays $95 per month. Some tools like ChatGPT Plus are priced per account, not per seat, which means one person can use it but sharing the login violates most terms of service. Business plans always use per-seat billing to enforce proper user licensing.'
+  },
+  {
+    question: 'Are there free tiers for these AI tools?',
+    answer: 'Most platforms offer limited free tiers. ChatGPT Free has daily message caps. GitHub Copilot Free gives 2,000 code completions per month. Cursor Hobby is free for light individual use. DeepSeek provides starter API credits for new accounts. The calculator focuses on paid plans because free tiers are typically too restrictive for daily professional use, but they are excellent for testing before committing to a subscription.'
+  },
+  {
+    question: 'Which AI setup gives the best value for developers?',
+    answer: 'For solo developers, Cursor Pro at $20 per month plus Claude API via BYOK offers the best balance of IDE integration and raw token pricing. For teams, GitHub Copilot Business at $19 per seat provides the deepest IDE integration across VS Code, JetBrains, and Visual Studio. If you only need occasional code help, ChatGPT Plus at $20 per month is the cheapest entry point. The Best Answer Hub AI Cost Calculator lets you model each scenario side by side.'
+  },
+  {
+    question: 'How do I calculate API tokens for my project?',
+    answer: 'One token equals roughly 0.75 words in English. A 500-word email prompt uses about 667 input tokens. A 300-word response uses about 400 output tokens. The Best Answer Hub AI Cost Calculator includes presets for common workflows: vibe coding, document summarization, customer support automation, and research agents. Select the preset that matches your use case and the calculator auto-fills realistic token counts based on industry averages.'
+  },
+  {
+    question: 'Why is my Cursor or Claude bill so much higher than the subscription price?',
+    answer: 'Subscription sticker prices are just the entry fee. For power users, actual API-equivalent consumption can be 5–20x higher than the base plan. The biggest hidden drivers are context window re-sending (every turn in a conversation resends the full history), cache operations, file reads, and retries on failed outputs. A developer on Claude Code Max calculated their true API-equivalent usage at over $1,400 per month, seven times the $200 sticker price. Cursor Pro users routinely hit daily limits within an hour of agentic coding. The Best Answer Hub AI Cost Calculator factors in a 15% buffer across all API estimates to account for this real-world overage.'
+  }
+];
+
+const seo = {
+  title: 'AI Cost Calculator — Monthly AI Stack Spend (2026)',
+  description: 'Free AI cost calculator. Estimate monthly spend for Claude, ChatGPT, Cursor, Copilot, OpenAI, DeepSeek and Kimi. Subscriptions and API pricing included.',
+  url: '/tools/ai-cost-calculator/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-17T00:00:00+00:00',
+  dateModified: '2026-08-29T00:00:00+00:00',
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'AI Cost Calculator', url: '/tools/ai-cost-calculator/' }
+  ],
+  faq: faqList
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <UpdatedBadge date={seo.dateModified} suffix={`${subscriptionTools.length + apiPlatforms.length} tools, ${apiModelCount} API models`} />
+          <a href="/calculators/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            ← Calculators
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          AI Cost Calculator:<br/>
+          <em class="italic text-bae-primary">Estimate your true monthly spend</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Most teams underestimate their AI stack cost by 40–60%. Add your subscriptions, API usage, and hybrid tooling to see what Claude, ChatGPT, Cursor, Copilot, OpenAI, DeepSeek, Kimi and others will actually cost you.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="AI cost calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <!-- Controls Bar -->
+      <div class="bg-bae-card border border-bae-border rounded-bae p-4 md:p-5 mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-bae-sm">
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-semibold text-bae-ink">Currency</span>
+          <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden" id="currency-toggle">
+            {Object.entries(currencies).map(([code, info]) => (
+              <button type="button" data-currency={code} class={`currency-btn px-3 py-1.5 text-sm font-medium transition-colors ${code === 'USD' ? 'bg-bae-ink text-white' : 'text-bae-muted hover:text-bae-ink'}`}>
+                {code}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-semibold text-bae-ink">Mode</span>
+          <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden" id="mode-toggle">
+            <button type="button" data-mode="personal" class="mode-btn px-4 py-1.5 text-sm font-medium bg-bae-primary text-white transition-colors">Personal</button>
+            <button type="button" data-mode="business" class="mode-btn px-4 py-1.5 text-sm font-medium text-bae-muted hover:text-bae-ink transition-colors">Business</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 items-start">
+        <!-- Left: Tool Stack -->
+        <div class="space-y-4" id="tool-stack">
+          <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-1">Subscriptions</h2>
+          {subscriptionTools.map((tool) => (
+            <div class="tool-card bg-bae-card border border-bae-border rounded-bae shadow-bae-sm overflow-hidden" data-tool-id={tool.id} data-tool-type="subscription">
+              <label class="flex items-center gap-3 p-4 cursor-pointer hover:bg-bae-bg/50 transition-colors">
+                <input type="checkbox" class="tool-check w-[18px] h-[18px] rounded border-bae-border text-bae-primary focus:ring-bae-primary" data-tool={tool.id} />
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="font-semibold text-bae-ink text-sm">{tool.name}</span>
+                    <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-primary-soft text-bae-primary">{tool.category}</span>
+                  </div>
+                  <p class="text-xs text-bae-muted mt-0.5">{tool.description}</p>
+                </div>
+              </label>
+              <div class="tool-config hidden px-4 pb-4 pt-0 border-t border-bae-border-light">
+                <div class="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-bae-muted mb-1.5">Plan</label>
+                    <select class="tool-tier w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" data-tool={tool.id}>
+                      {tool.tiers.map((tier) => (
+                        <option value={tier.id} data-price={tier.monthlyUSD} data-per-seat={tier.perSeat ? 'true' : 'false'}>
+                          {tier.name} — ${tier.monthlyUSD}{tier.perSeat ? '/seat' : '/mo'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div class="tool-seats-wrapper" data-tool={tool.id}>
+                    <label class="block text-xs font-medium text-bae-muted mb-1.5">Seats</label>
+                    <input type="number" min="1" max="1000" value="1" class="tool-seats w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" data-tool={tool.id} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mt-6 mb-1">API Platforms</h2>
+          {apiPlatforms.map((platform) => (
+            <div class="tool-card bg-bae-card border border-bae-border rounded-bae shadow-bae-sm overflow-hidden" data-tool-id={platform.id} data-tool-type="api">
+              <label class="flex items-center gap-3 p-4 cursor-pointer hover:bg-bae-bg/50 transition-colors">
+                <input type="checkbox" class="tool-check w-[18px] h-[18px] rounded border-bae-border text-bae-primary focus:ring-bae-primary" data-tool={platform.id} />
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="font-semibold text-bae-ink text-sm">{platform.name}</span>
+                    <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-primary-soft text-bae-primary">{platform.category}</span>
+                  </div>
+                  <p class="text-xs text-bae-muted mt-0.5">{platform.description}</p>
+                </div>
+              </label>
+              <div class="tool-config hidden px-4 pb-4 pt-0 border-t border-bae-border-light">
+                <div class="pt-3 space-y-3">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs font-medium text-bae-muted mb-1.5">Model</label>
+                      <select class="tool-model w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" data-tool={platform.id}>
+                        {platform.models.map((model) => (
+                          <option value={model.id} data-input={model.inputPer1M} data-output={model.outputPer1M}>
+                            {model.name} ({model.context})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-bae-muted mb-1.5">Usage Preset</label>
+                      <select class="tool-preset w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" data-tool={platform.id}>
+                        <option value="custom">Custom</option>
+                        {usagePresets.map((preset) => (
+                          <option value={preset.id} data-daily={preset.dailyRequests} data-input={preset.avgInputTokens} data-output={preset.avgOutputTokens}>
+                            {preset.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs font-medium text-bae-muted mb-1.5">Monthly Input Tokens</label>
+                      <input type="number" min="0" value="0" class="tool-input-tokens w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" data-tool={platform.id} />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-medium text-bae-muted mb-1.5">Monthly Output Tokens</label>
+                      <input type="number" min="0" value="0" class="tool-output-tokens w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" data-tool={platform.id} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <!-- Cursor Hybrid Special Case -->
+          <div class="tool-card bg-bae-card border border-bae-border rounded-bae shadow-bae-sm overflow-hidden" data-tool-id="cursor-byok" data-tool-type="hybrid">
+            <label class="flex items-center gap-3 p-4 cursor-pointer hover:bg-bae-bg/50 transition-colors">
+              <input type="checkbox" class="tool-check w-[18px] h-[18px] rounded border-bae-border text-bae-primary focus:ring-bae-primary" data-tool="cursor-byok" />
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold text-bae-ink text-sm">Cursor (BYOK)</span>
+                  <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-100">Hybrid</span>
+                </div>
+                <p class="text-xs text-bae-muted mt-0.5">Cursor subscription + your own API key for cheaper raw token rates.</p>
+              </div>
+            </label>
+            <div class="tool-config hidden px-4 pb-4 pt-0 border-t border-bae-border-light">
+              <div class="pt-3 space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-bae-muted mb-1.5">Cursor Plan</label>
+                    <select class="cursor-tier w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                      <option value="cursor-pro" data-price="20">Pro — $20/mo</option>
+                      <option value="cursor-pro-plus" data-price="60">Pro+ — $60/mo</option>
+                      <option value="cursor-ultra" data-price="200">Ultra — $200/mo</option>
+                      <option value="cursor-business" data-price="40">Business — $40/seat</option>
+                    </select>
+                  </div>
+                  <div class="cursor-seats-wrapper">
+                    <label class="block text-xs font-medium text-bae-muted mb-1.5">Seats</label>
+                    <input type="number" min="1" max="1000" value="1" class="cursor-seats w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                  </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-bae-muted mb-1.5">API Provider</label>
+                    <select class="cursor-api-provider w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                      <option value="claude-api">Claude API</option>
+                      <option value="openai-api">OpenAI API</option>
+                      <option value="gemini-api">Gemini API</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-bae-muted mb-1.5">API Model</label>
+                    {/* Every option carries data-provider so the provider switch scales past two
+                        vendors. It replaced a boolean `openai-option` class that could only ever
+                        express "OpenAI or not". Prices are per 1M tokens, verified against each
+                        vendor's own pricing page on 2026-08-29. */}
+                    <select class="cursor-api-model w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                      <option value="opus-5" data-provider="claude" data-input="5.0" data-output="25.0">Claude Opus 5</option>
+                      <option value="sonnet-5" data-provider="claude" data-input="2.0" data-output="10.0">Claude Sonnet 5</option>
+                      <option value="fable-5" data-provider="claude" data-input="10.0" data-output="50.0">Claude Fable 5</option>
+                      <option value="opus-4-8" data-provider="claude" data-input="5.0" data-output="25.0">Claude Opus 4.8</option>
+                      <option value="opus-4-7" data-provider="claude" data-input="5.0" data-output="25.0">Claude Opus 4.7</option>
+                      <option value="sonnet-4-6" data-provider="claude" data-input="3.0" data-output="15.0">Claude Sonnet 4.6</option>
+                      <option value="haiku-4-5" data-provider="claude" data-input="1.0" data-output="5.0">Claude Haiku 4.5</option>
+                      <option value="gpt-5-6-sol" data-provider="openai" data-input="4.0" data-output="20.0" class="hidden">GPT-5.6 Sol</option>
+                      <option value="gpt-5-6-terra" data-provider="openai" data-input="2.0" data-output="12.0" class="hidden">GPT-5.6 Terra</option>
+                      <option value="gpt-5-6-luna" data-provider="openai" data-input="0.2" data-output="1.2" class="hidden">GPT-5.6 Luna</option>
+                      <option value="gpt-5-5" data-provider="openai" data-input="5.0" data-output="30.0" class="hidden">GPT-5.5</option>
+                      <option value="gpt-5-4" data-provider="openai" data-input="2.5" data-output="15.0" class="hidden">GPT-5.4</option>
+                      <option value="gpt-5-4-mini" data-provider="openai" data-input="0.75" data-output="4.5" class="hidden">GPT-5.4 mini</option>
+                      <option value="gpt-5" data-provider="openai" data-input="1.25" data-output="10.0" class="hidden">GPT-5</option>
+                      <option value="gpt-5-mini" data-provider="openai" data-input="0.25" data-output="2.0" class="hidden">GPT-5 mini</option>
+                      <option value="gpt-5-nano" data-provider="openai" data-input="0.05" data-output="0.4" class="hidden">GPT-5 nano</option>
+                      <option value="gpt-4o" data-provider="openai" data-input="2.5" data-output="10.0" class="hidden">GPT-4o</option>
+                      <option value="o3" data-provider="openai" data-input="2.0" data-output="8.0" class="hidden">o3</option>
+                      <option value="o3-mini" data-provider="openai" data-input="1.1" data-output="4.4" class="hidden">o3-mini</option>
+                      <option value="gemini-3-1-pro" data-provider="gemini" data-input="2.0" data-output="12.0" class="hidden">Gemini 3.1 Pro (≤200k)</option>
+                      <option value="gemini-3-7-flash" data-provider="gemini" data-input="0.75" data-output="3.75" class="hidden">Gemini 3.7 Flash</option>
+                      <option value="gemini-3-5-flash" data-provider="gemini" data-input="1.5" data-output="9.0" class="hidden">Gemini 3.5 Flash</option>
+                      <option value="gemini-3-5-flash-lite" data-provider="gemini" data-input="0.3" data-output="2.5" class="hidden">Gemini 3.5 Flash-Lite</option>
+                      <option value="gemini-2-5-pro" data-provider="gemini" data-input="1.25" data-output="10.0" class="hidden">Gemini 2.5 Pro (≤200k)</option>
+                      <option value="gemini-2-5-flash" data-provider="gemini" data-input="0.3" data-output="2.5" class="hidden">Gemini 2.5 Flash</option>
+                      <option value="gemini-2-5-flash-lite" data-provider="gemini" data-input="0.1" data-output="0.4" class="hidden">Gemini 2.5 Flash-Lite</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-bae-muted mb-1.5">Monthly Input Tokens</label>
+                    <input type="number" min="0" value="500000" class="cursor-input-tokens w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-bae-muted mb-1.5">Monthly Output Tokens</label>
+                    <input type="number" min="0" value="250000" class="cursor-output-tokens w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reset -->
+          <div class="flex justify-end -mt-1 mb-1">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset calculator
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Summary Panel -->
+        <div class="lg:sticky lg:top-[84px] space-y-4">
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Cost Summary</h3>
+            <div class="mb-5">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Estimated Monthly</div>
+              <div class="text-3xl md:text-4xl font-bold font-serif" id="summary-monthly">$0</div>
+            </div>
+            <div class="mb-5">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Estimated Annual</div>
+              <div class="text-xl md:text-2xl font-semibold" id="summary-annual">$0</div>
+            </div>
+            <div class="mb-5 hidden" id="per-user-wrapper">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Per User / Month</div>
+              <div class="text-lg font-semibold" id="summary-per-user">$0</div>
+            </div>
+          </div>
+
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Breakdown</h3>
+            <div id="breakdown-list" class="space-y-2">
+              <p class="text-sm text-bae-muted">Select tools and click Calculate to see your breakdown.</p>
+            </div>
+          </div>
+
+          <button type="button" id="pdf-btn" class="w-full hidden bg-white border border-bae-border text-bae-ink hover:border-bae-primary hover:text-bae-primary font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+            Download PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Pick your stack', text: 'Select the AI tools your team actually uses: subscriptions like ChatGPT and Copilot, API platforms like OpenAI and DeepSeek, and hybrid setups like Cursor with BYOK.' },
+    { name: 'Set usage levels', text: 'Use presets for common workflows (vibe coding, automation, research) or enter raw token counts. Business mode adds per-seat pricing for team tools.' },
+    { name: 'Get your estimate', text: 'See monthly and annual totals, per-user costs, and a breakdown by tool. Export a PDF report to share with finance or your team.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How the calculator works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Pick your stack</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Select the AI tools your team actually uses: subscriptions like ChatGPT and Copilot, API platforms like OpenAI and DeepSeek, and hybrid setups like Cursor with BYOK.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Set usage levels</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Use presets for common workflows (vibe coding, automation, research) or enter raw token counts. Business mode adds per-seat pricing for team tools.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Get your estimate</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">See monthly and annual totals, per-user costs, and a breakdown by tool. Export a PDF report to share with finance or your team.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Reference Table -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-2">Pricing reference</h2>
+      {/* Driven by pricingData.lastUpdated so the date cannot drift away from the numbers it
+          describes — it previously read "May 2026" while the table had moved on. */}
+      <p class="text-sm text-bae-muted mb-6">Rates per million tokens, verified {verifiedOn}.</p>
+
+      <div class="overflow-x-auto rounded-bae border border-bae-border">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-bae-bg border-b border-bae-border">
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Provider</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Model</th>
+              <th class="text-right px-4 py-3 font-semibold text-bae-ink">Input / 1M</th>
+              <th class="text-right px-4 py-3 font-semibold text-bae-ink">Output / 1M</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Context</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-bae-border-light">
+            {apiPlatforms.map((platform) => (
+              platform.models.map((model, i) => (
+                <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors">
+                  {i === 0 && (
+                    <td class="px-4 py-3 font-medium text-bae-ink" rowspan={platform.models.length}>{platform.name}</td>
+                  )}
+                  <td class="px-4 py-3 text-bae-fg">{model.name}</td>
+                  <td class="px-4 py-3 text-right font-mono text-bae-muted">${model.inputPer1M.toFixed(3)}</td>
+                  <td class="px-4 py-3 text-right font-mono text-bae-muted">${model.outputPer1M.toFixed(3)}</td>
+                  <td class="px-4 py-3 text-bae-muted">{model.context}</td>
+                </tr>
+              ))
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 text-xs text-bae-muted">
+        * Approximate conversion rates: €1 = $1.09, £1 = $1.27. Rates updated May 2026.
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Subscription vs API vs Hybrid</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="font-semibold text-bae-ink text-sm mb-2 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Subscription
+          </h3>
+          <p class="text-sm text-bae-muted leading-relaxed mb-3">Flat monthly fee per user. Predictable, capped costs. Best for teams that want stable budgets.</p>
+          <p class="text-xs text-bae-muted font-medium">Examples: ChatGPT Plus, Copilot Pro, Claude Pro</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="font-semibold text-bae-ink text-sm mb-2 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-bae-primary"></span>
+            API
+          </h3>
+          <p class="text-sm text-bae-muted leading-relaxed mb-3">Pay per token. Scales with usage. Can be 10x cheaper for automation, or 10x more expensive for heavy agents.</p>
+          <p class="text-xs text-bae-muted font-medium">Examples: OpenAI API, Claude API, DeepSeek</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="font-semibold text-bae-ink text-sm mb-2 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            Hybrid
+          </h3>
+          <p class="text-sm text-bae-muted leading-relaxed mb-3">Base subscription plus API costs. Gives you the IDE features plus control over model choice and raw token pricing.</p>
+          <p class="text-xs text-bae-muted font-medium">Examples: Cursor BYOK, Cline + API</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What Teams Pay -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-2">What teams actually pay</h2>
+      <p class="text-sm text-bae-muted mb-6">Real-world stack estimates based on verified pricing and industry usage patterns.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Solo Developer</div>
+          <div class="text-2xl font-bold text-bae-ink mb-1">$50 – $120</div>
+          <div class="text-sm text-bae-muted mb-3">/ month</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Cursor Pro ($20) or Copilot Pro ($10), ChatGPT Plus ($20), occasional Claude API calls for side projects. Heavy agentic use can push this to $200+ in busy months.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Small Team (5 people)</div>
+          <div class="text-2xl font-bold text-bae-ink mb-1">$300 – $900</div>
+          <div class="text-sm text-bae-muted mb-3">/ month</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Copilot Business ($19 × 5), shared ChatGPT/Claude seats, one or two Cursor Pro accounts, light API automation. Mixed stacks with agentic workflows scale fast.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Growing Team (20 people)</div>
+          <div class="text-2xl font-bold text-bae-ink mb-1">$2,000 – $8,000</div>
+          <div class="text-sm text-bae-muted mb-3">/ month</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Copilot Enterprise + Cursor Business for power users + Claude Code/API for backend agents. A 20-dev team with 10 heavy agentic users can hit $5K–$14K in peak months.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Estimates include a 15% API buffer for real-world overage. Actual costs vary by usage intensity, model choice, and team workflow.</p>
+    </div>
+  </section>
+
+  <!-- What Developers Are Saying -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What developers are saying</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Cursor Pro user, June 2025</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Subscription Sticker Shock</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">~1 hour limit</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"I only managed to get about an hour of coding with it before hitting the new rate limit. The $20 sticker price is not the real cost."</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Engineering lead, 4-person team</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">API Rate Reality</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">$1,428/mo true cost</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"My Claude Code Max usage would cost $1,428 per month at API rates, seven times the $200 sticker price. Context inflation is the silent bill killer."</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">OpenAI Developer Community</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Hidden Token Explosion</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">$8–10 per day</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"Costs exploded to $8–10 per day. It was due to enormous context tokens, around 1 million per session. We had zero transparency about behind-the-scenes usage."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqList.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.question}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Print-only Report -->
+  <div id="print-report" class="hidden">
+    <div class="p-8">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+        <div>
+          <div class="text-2xl font-bold text-bae-ink">Best Answer Hub</div>
+          <p class="text-sm text-bae-muted">AI Stack Cost Report</p>
+        </div>
+      </div>
+      <div class="border-t border-bae-border pt-4 mb-6">
+        <div class="grid grid-cols-3 gap-4 mb-4">
+          <div>
+            <p class="text-xs text-bae-muted uppercase">Monthly Estimate</p>
+            <p class="text-2xl font-bold text-bae-ink" id="print-monthly">$0</p>
+          </div>
+          <div>
+            <p class="text-xs text-bae-muted uppercase">Annual Estimate</p>
+            <p class="text-xl font-bold text-bae-ink" id="print-annual">$0</p>
+          </div>
+          <div>
+            <p class="text-xs text-bae-muted uppercase">Generated</p>
+            <p class="text-sm font-medium text-bae-ink" id="report-gen-date"></p>
+          </div>
+        </div>
+      </div>
+      <h2 class="text-lg font-bold text-bae-ink mb-3">Selected Stack</h2>
+      <div id="print-breakdown" class="space-y-2 text-sm"></div>
+      <div class="mt-8 text-xs text-bae-muted border-t border-bae-border pt-4">
+        <p>This report is an estimate based on publicly available pricing verified {verifiedOn}. Actual costs may vary. Verify current pricing with each provider before purchasing.</p>
+      </div>
+    </div>
+  </div>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+  <script is:inline define:vars={{ pricingData }}>
+    (function() {
+      // Stamp the "Generated" date at runtime (user's date), not at build time —
+      // a build-time date changes the static HTML daily and causes a spurious
+      // IndexNow re-submit for an otherwise-unchanged page.
+      const genDateEl = document.getElementById('report-gen-date');
+      if (genDateEl) genDateEl.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const currencies = pricingData.currencies;
+      const WORK_DAYS_PER_MONTH = 22;
+      let currentCurrency = 'USD';
+      let currentMode = 'personal';
+
+      function formatMoney(amount, currencyCode) {
+        const c = currencies[currencyCode];
+        const converted = amount * c.rate;
+        if (converted >= 100) return c.symbol + Math.round(converted).toLocaleString();
+        if (converted >= 1) return c.symbol + converted.toFixed(2);
+        return c.symbol + converted.toFixed(3);
+      }
+
+      function getMonthlyTokens(dailyReqs, tokensPerReq) {
+        return dailyReqs * tokensPerReq * WORK_DAYS_PER_MONTH;
+      }
+
+      function calculate() {
+        let totalMonthly = 0;
+        let totalSeats = 0;
+        const breakdown = [];
+
+        // Subscription tools
+        document.querySelectorAll('.tool-card[data-tool-type="subscription"]').forEach(card => {
+          const check = card.querySelector('.tool-check');
+          if (!check.checked) return;
+          const toolId = card.dataset.toolId;
+          const tierSelect = card.querySelector('.tool-tier');
+          const tierOption = tierSelect.options[tierSelect.selectedIndex];
+          const price = parseFloat(tierOption.dataset.price);
+          const perSeat = tierOption.dataset.perSeat === 'true';
+          const seatsInput = card.querySelector('.tool-seats');
+          const seats = parseInt(seatsInput?.value || '1', 10);
+          const count = (currentMode === 'business' && perSeat) ? seats : (perSeat ? seats : 1);
+          const monthly = price * count;
+          totalMonthly += monthly;
+          if (perSeat || currentMode === 'business') totalSeats += count;
+          breakdown.push({
+            name: card.querySelector('.font-semibold').textContent.trim(),
+            plan: tierOption.text.split('—')[0].trim(),
+            monthly,
+            detail: perSeat ? `${count} seat${count > 1 ? 's' : ''}` : 'fixed'
+          });
+        });
+
+        // API platforms
+        document.querySelectorAll('.tool-card[data-tool-type="api"]').forEach(card => {
+          const check = card.querySelector('.tool-check');
+          if (!check.checked) return;
+          const platformName = card.querySelector('.font-semibold').textContent.trim();
+          const modelSelect = card.querySelector('.tool-model');
+          const modelOption = modelSelect.options[modelSelect.selectedIndex];
+          const inputRate = parseFloat(modelOption.dataset.input);
+          const outputRate = parseFloat(modelOption.dataset.output);
+          const inputTokens = parseInt(card.querySelector('.tool-input-tokens').value || '0', 10);
+          const outputTokens = parseInt(card.querySelector('.tool-output-tokens').value || '0', 10);
+          const monthly = ((inputTokens / 1e6) * inputRate + (outputTokens / 1e6) * outputRate) * 1.15; // 15% buffer
+          totalMonthly += monthly;
+          breakdown.push({
+            name: platformName,
+            plan: modelOption.text.split('(')[0].trim(),
+            monthly,
+            detail: `${(inputTokens/1e6).toFixed(2)}M in / ${(outputTokens/1e6).toFixed(2)}M out`
+          });
+        });
+
+        // Cursor BYOK
+        const cursorByokCard = document.querySelector('.tool-card[data-tool-id="cursor-byok"]');
+        if (cursorByokCard) {
+          const check = cursorByokCard.querySelector('.tool-check');
+          if (check.checked) {
+            const tierSelect = cursorByokCard.querySelector('.cursor-tier');
+            const tierOption = tierSelect.options[tierSelect.selectedIndex];
+            const subPrice = parseFloat(tierOption.dataset.price);
+            const seats = parseInt(cursorByokCard.querySelector('.cursor-seats')?.value || '1', 10);
+            const isBusiness = tierOption.value === 'cursor-business';
+            const seatCount = (currentMode === 'business' || isBusiness) ? seats : (isBusiness ? seats : 1);
+            const subMonthly = subPrice * seatCount;
+            totalMonthly += subMonthly;
+            if (isBusiness || currentMode === 'business') totalSeats += seatCount;
+
+            const modelSelect = cursorByokCard.querySelector('.cursor-api-model');
+            const modelOption = modelSelect.options[modelSelect.selectedIndex];
+            const inputRate = parseFloat(modelOption.dataset.input);
+            const outputRate = parseFloat(modelOption.dataset.output);
+            const inputTokens = parseInt(cursorByokCard.querySelector('.cursor-input-tokens').value || '0', 10);
+            const outputTokens = parseInt(cursorByokCard.querySelector('.cursor-output-tokens').value || '0', 10);
+            const apiMonthly = ((inputTokens / 1e6) * inputRate + (outputTokens / 1e6) * outputRate) * 1.15;
+            totalMonthly += apiMonthly;
+
+            breakdown.push({
+              name: 'Cursor (BYOK)',
+              plan: tierOption.text.split('—')[0].trim() + ' + ' + modelOption.text.split('(')[0].trim(),
+              monthly: subMonthly + apiMonthly,
+              detail: `Sub ${seatCount} seat${seatCount>1?'s':''} + API ${(inputTokens/1e6).toFixed(2)}M/${(outputTokens/1e6).toFixed(2)}M`
+            });
+          }
+        }
+
+        // Update UI
+        const annual = totalMonthly * 12;
+        document.getElementById('summary-monthly').textContent = formatMoney(totalMonthly, currentCurrency);
+        document.getElementById('summary-annual').textContent = formatMoney(annual, currentCurrency);
+
+        const perUserWrapper = document.getElementById('per-user-wrapper');
+        if (currentMode === 'business' && totalSeats > 0) {
+          perUserWrapper.classList.remove('hidden');
+          document.getElementById('summary-per-user').textContent = formatMoney(totalMonthly / totalSeats, currentCurrency);
+        } else {
+          perUserWrapper.classList.add('hidden');
+        }
+
+        // Breakdown list
+        const list = document.getElementById('breakdown-list');
+        list.textContent = '';
+        if (breakdown.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'text-sm text-bae-muted';
+          p.textContent = 'Select tools above to see your cost breakdown.';
+          list.appendChild(p);
+        } else {
+          breakdown.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between text-sm';
+
+            const left = document.createElement('div');
+            left.className = 'truncate pr-2';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'font-medium text-bae-ink';
+            nameSpan.textContent = item.name;
+
+            const planSpan = document.createElement('span');
+            planSpan.className = 'text-bae-muted';
+            planSpan.textContent = ' — ' + item.plan;
+
+            left.appendChild(nameSpan);
+            left.appendChild(planSpan);
+
+            const costSpan = document.createElement('span');
+            costSpan.className = 'font-semibold text-bae-ink shrink-0';
+            costSpan.textContent = formatMoney(item.monthly, currentCurrency);
+
+            row.appendChild(left);
+            row.appendChild(costSpan);
+            list.appendChild(row);
+
+            const detailDiv = document.createElement('div');
+            detailDiv.className = 'text-[11px] text-bae-muted -mt-1 mb-1';
+            detailDiv.textContent = item.detail;
+            list.appendChild(detailDiv);
+          });
+        }
+
+        const pdfBtn = document.getElementById('pdf-btn');
+        if (breakdown.length > 0) {
+          pdfBtn.classList.remove('hidden');
+        } else {
+          pdfBtn.classList.add('hidden');
+        }
+
+        // Populate print report
+        document.getElementById('print-monthly').textContent = formatMoney(totalMonthly, currentCurrency);
+        document.getElementById('print-annual').textContent = formatMoney(annual, currentCurrency);
+        const printBreakdown = document.getElementById('print-breakdown');
+        printBreakdown.textContent = '';
+        if (breakdown.length > 0) {
+          breakdown.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'flex justify-between border-b border-bae-border py-2';
+
+            const left = document.createElement('div');
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'font-medium';
+            nameSpan.textContent = item.name;
+
+            const planSpan = document.createElement('span');
+            planSpan.className = 'text-bae-muted';
+            planSpan.textContent = ' — ' + item.plan;
+
+            const detailDiv = document.createElement('div');
+            detailDiv.className = 'text-xs text-bae-muted';
+            detailDiv.textContent = item.detail;
+
+            left.appendChild(nameSpan);
+            left.appendChild(planSpan);
+            left.appendChild(detailDiv);
+
+            const costSpan = document.createElement('span');
+            costSpan.className = 'font-semibold';
+            costSpan.textContent = formatMoney(item.monthly, currentCurrency);
+
+            row.appendChild(left);
+            row.appendChild(costSpan);
+            printBreakdown.appendChild(row);
+          });
+        } else {
+          const p = document.createElement('p');
+          p.className = 'text-bae-muted';
+          p.textContent = 'No tools selected.';
+          printBreakdown.appendChild(p);
+        }
+      }
+
+      // Currency toggle
+      document.getElementById('currency-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.currency-btn');
+        if (!btn) return;
+        currentCurrency = btn.dataset.currency;
+        document.querySelectorAll('.currency-btn').forEach(b => {
+          b.classList.toggle('bg-bae-ink', b.dataset.currency === currentCurrency);
+          b.classList.toggle('text-white', b.dataset.currency === currentCurrency);
+          b.classList.toggle('text-bae-muted', b.dataset.currency !== currentCurrency);
+        });
+        calculate();
+      });
+
+      // Mode toggle
+      document.getElementById('mode-toggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.mode-btn');
+        if (!btn) return;
+        currentMode = btn.dataset.mode;
+        document.querySelectorAll('.mode-btn').forEach(b => {
+          b.classList.toggle('bg-bae-primary', b.dataset.mode === currentMode);
+          b.classList.toggle('text-white', b.dataset.mode === currentMode);
+          b.classList.toggle('text-bae-muted', b.dataset.mode !== currentMode);
+        });
+        calculate();
+      });
+
+      // Tool checkbox expand/collapse
+      document.querySelectorAll('.tool-check').forEach(check => {
+        check.addEventListener('change', () => {
+          const card = check.closest('.tool-card');
+          const config = card.querySelector('.tool-config');
+          if (check.checked) {
+            config.classList.remove('hidden');
+            card.classList.add('border-bae-primary', 'ring-1', 'ring-bae-primary/20');
+            // Auto-populate tokens for API tools if preset selected
+            const preset = card.querySelector('.tool-preset');
+            if (preset && preset.value !== 'custom') {
+              preset.dispatchEvent(new Event('change'));
+            }
+          } else {
+            config.classList.add('hidden');
+            card.classList.remove('border-bae-primary', 'ring-1', 'ring-bae-primary/20');
+          }
+          calculate();
+        });
+      });
+
+      // Preset change -> fill tokens
+      document.querySelectorAll('.tool-preset').forEach(select => {
+        select.addEventListener('change', () => {
+          const card = select.closest('.tool-card');
+          const option = select.options[select.selectedIndex];
+          if (select.value === 'custom') return;
+          const daily = parseInt(option.dataset.daily, 10);
+          const input = parseInt(option.dataset.input, 10);
+          const output = parseInt(option.dataset.output, 10);
+          card.querySelector('.tool-input-tokens').value = getMonthlyTokens(daily, input);
+          card.querySelector('.tool-output-tokens').value = getMonthlyTokens(daily, output);
+          calculate();
+        });
+      });
+
+      // API model, token inputs, seats — auto-calculate
+      document.querySelectorAll('.tool-model, .tool-input-tokens, .tool-output-tokens, .tool-seats').forEach(el => {
+        el.addEventListener('input', calculate);
+      });
+
+      // Cursor API provider switch
+      const cursorProvider = document.querySelector('.cursor-api-provider');
+      if (cursorProvider) {
+        cursorProvider.addEventListener('change', () => {
+          const provider = cursorProvider.value;
+          const modelSelect = document.querySelector('.cursor-api-model');
+          // 'claude-api' -> 'claude'. Matching on data-provider means a new vendor is a markup
+          // change only; the old boolean class could only ever express "OpenAI or not".
+          const key = provider.replace(/-api$/, '');
+          Array.from(modelSelect.options).forEach(opt => {
+            opt.classList.toggle('hidden', opt.dataset.provider !== key);
+          });
+          // Select first visible
+          const firstVisible = Array.from(modelSelect.options).find(o => !o.classList.contains('hidden'));
+          if (firstVisible) modelSelect.value = firstVisible.value;
+          calculate();
+        });
+      }
+
+      // Cursor inputs — auto-calculate
+      document.querySelectorAll('.cursor-api-model, .cursor-input-tokens, .cursor-output-tokens, .cursor-seats').forEach(el => {
+        el.addEventListener('input', calculate);
+      });
+
+      // PDF buttons
+      async function downloadPDF() {
+        if (typeof html2pdf === 'undefined') return;
+        const element = document.getElementById('print-report');
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = '100%';
+        clone.style.width = '190mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+        try {
+          await html2pdf().set({
+            margin: [6, 6, 6, 6],
+            filename: 'ai-stack-cost-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+        }
+      }
+      document.getElementById('pdf-btn').addEventListener('click', downloadPDF);
+      // Reset
+      document.getElementById('clear-btn').addEventListener('click', () => {
+        // Uncheck all tools
+        document.querySelectorAll('.tool-check').forEach(check => {
+          check.checked = false;
+          const card = check.closest('.tool-card');
+          const config = card.querySelector('.tool-config');
+          if (config) config.classList.add('hidden');
+          card.classList.remove('border-bae-primary', 'ring-1', 'ring-bae-primary/20');
+        });
+        // Reset subscription tiers to first option
+        document.querySelectorAll('.tool-tier').forEach(select => {
+          select.selectedIndex = 0;
+        });
+        // Reset API models to first option
+        document.querySelectorAll('.tool-model').forEach(select => {
+          select.selectedIndex = 0;
+        });
+        // Reset presets to custom
+        document.querySelectorAll('.tool-preset').forEach(select => {
+          select.value = 'custom';
+        });
+        // Zero token inputs
+        document.querySelectorAll('.tool-input-tokens, .tool-output-tokens').forEach(input => {
+          input.value = 0;
+        });
+        // Reset seats
+        document.querySelectorAll('.tool-seats').forEach(input => {
+          input.value = 1;
+        });
+        // Reset Cursor BYOK
+        const cursorTierEl = document.querySelector('.cursor-tier');
+        if (cursorTierEl) cursorTierEl.selectedIndex = 0;
+        const cursorProviderEl = document.querySelector('.cursor-api-provider');
+        if (cursorProviderEl) cursorProviderEl.selectedIndex = 0;
+        const cursorModelEl = document.querySelector('.cursor-api-model');
+        if (cursorModelEl) {
+          cursorModelEl.selectedIndex = 0;
+          // Reset shows the Claude models, matching the provider select's own reset to index 0.
+          Array.from(cursorModelEl.options).forEach(opt => {
+            opt.classList.toggle('hidden', opt.dataset.provider !== 'claude');
+          });
+        }
+        document.querySelectorAll('.cursor-input-tokens').forEach(input => { input.value = 500000; });
+        document.querySelectorAll('.cursor-output-tokens').forEach(input => { input.value = 250000; });
+        document.querySelectorAll('.cursor-seats').forEach(input => { input.value = 1; });
+        // Reset currency to USD
+        currentCurrency = 'USD';
+        document.querySelectorAll('.currency-btn').forEach(b => {
+          b.classList.toggle('bg-bae-ink', b.dataset.currency === 'USD');
+          b.classList.toggle('text-white', b.dataset.currency === 'USD');
+          b.classList.toggle('text-bae-muted', b.dataset.currency !== 'USD');
+        });
+        // Reset mode to personal
+        currentMode = 'personal';
+        document.querySelectorAll('.mode-btn').forEach(b => {
+          b.classList.toggle('bg-bae-primary', b.dataset.mode === 'personal');
+          b.classList.toggle('text-white', b.dataset.mode === 'personal');
+          b.classList.toggle('text-bae-muted', b.dataset.mode !== 'personal');
+        });
+        updateSeatsVisibility();
+        const cursorWrapper = document.querySelector('.cursor-seats-wrapper');
+        if (cursorWrapper) {
+          cursorWrapper.classList.add('hidden');
+          cursorWrapper.querySelector('input').value = '1';
+        }
+        calculate();
+      });
+
+      // Seats visibility logic for subscription tools
+      function updateSeatsVisibility() {
+        document.querySelectorAll('.tool-card[data-tool-type="subscription"]').forEach(card => {
+          const tierSelect = card.querySelector('.tool-tier');
+          const seatsWrapper = card.querySelector('.tool-seats-wrapper');
+          if (!tierSelect || !seatsWrapper) return;
+          const perSeat = tierSelect.options[tierSelect.selectedIndex].dataset.perSeat === 'true';
+          if (perSeat || currentMode === 'business') {
+            seatsWrapper.classList.remove('hidden');
+          } else {
+            seatsWrapper.classList.add('hidden');
+            seatsWrapper.querySelector('input').value = '1';
+          }
+        });
+      }
+      document.querySelectorAll('.tool-tier').forEach(s => s.addEventListener('change', () => {
+        updateSeatsVisibility();
+        calculate();
+      }));
+
+      // Cursor seats visibility
+      const cursorTier = document.querySelector('.cursor-tier');
+      if (cursorTier) {
+        cursorTier.addEventListener('change', () => {
+          const isBusiness = cursorTier.value === 'cursor-business';
+          const wrapper = document.querySelector('.cursor-seats-wrapper');
+          if (isBusiness || currentMode === 'business') {
+            wrapper.classList.remove('hidden');
+          } else {
+            wrapper.classList.add('hidden');
+            wrapper.querySelector('input').value = '1';
+          }
+          calculate();
+        });
+      }
+
+      // Initial state
+      updateSeatsVisibility();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-report,
+      #print-report * {
+        visibility: visible;
+      }
+      #print-report {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        display: block !important;
+      }
+      nav, footer, section, main > *:not(#print-report) {
+        display: none !important;
+      }
+    }
+    .tool-card {
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .tool-config {
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/mortgage-calculator/" class="text-bae-primary hover:underline">Mortgage Calculator</a>, <a href="/calculators/compound-interest/" class="text-bae-primary hover:underline">Compound Interest Calculator</a>, <a href="/calculators/cloud-cost-calculator/" class="text-bae-primary hover:underline">Cloud Cost Calculator</a>, and <a href="/calculators/" class="text-bae-primary hover:underline">Calculators Hub</a>.</p>
+        </div>
+        <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all calculators →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "AI Cost Calculator",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0" }
+    }
+  </script>
+</BaseLayout>

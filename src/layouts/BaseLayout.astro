@@ -1,0 +1,188 @@
+﻿---
+import type { SEOProps } from '../types';
+import { generateStructuredData, formatDate } from '../lib/seo';
+import SkipLink from '../components/layout/SkipLink.astro';
+
+import Nav from '../components/layout/Nav.astro';
+import Footer from '../components/layout/Footer.astro';
+import CookieConsent from '../components/trust/CookieConsent.astro';
+import HelpChat from '../components/chat/HelpChat.astro';
+import StructuredData from '../components/seo/StructuredData.astro';
+import OpenGraph from '../components/seo/OpenGraph.astro';
+import TwitterCard from '../components/seo/TwitterCard.astro';
+import '../styles/global.css';
+
+interface Props {
+  seo: SEOProps;
+  class?: string;
+  noindex?: boolean;
+}
+
+const { seo, class: className = '', noindex = false } = Astro.props;
+const baseUrl = 'https://www.bestanswerhub.com';
+const fullUrl = `${baseUrl}${seo.url}`;
+const defaultOgImage = `${baseUrl}/og-image.png`;
+const ogImage = seo.ogImage ? `${baseUrl}${seo.ogImage}` : defaultOgImage;
+
+// Analytics & Search Console config from environment variables
+// Set PUBLIC_GA4_ID=G-XXXXXXXXXX and PUBLIC_GSC_VERIFICATION=your_code in .env
+const GA4_ID = import.meta.env.PUBLIC_GA4_ID || '';
+const GSC_VERIFICATION = import.meta.env.PUBLIC_GSC_VERIFICATION || '';
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="color-scheme" content="light">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <link rel="canonical" href={fullUrl}>
+  <link rel="alternate" hreflang="en" href={fullUrl}>
+  
+  <title>{seo.title}</title>
+  <meta name="description" content={seo.description}>
+  <meta name="author" content={seo.article?.author || 'Best Answer Hub Editorial Team'}>
+  {noindex ? (
+    <meta name="robots" content="noindex, nofollow">
+  ) : (
+    <>
+      <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+      <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+      <meta name="bingbot" content="index, follow">
+      <meta name="OAI-SearchBot" content="index, follow">
+    </>
+  )}
+  
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://www.googletagmanager.com https://pagead2.googlesyndication.com https://cdn.paddle.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://pagead2.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.paddle.com; connect-src 'self' https://dns.google https://rdap.org https://data.iana.org https://*.paddle.com wss://*.paddle.com https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  
+  <OpenGraph title={seo.title} description={seo.description} url={fullUrl} image={ogImage} type={seo.type === 'Article' ? 'article' : 'website'} />
+  <TwitterCard title={seo.title} description={seo.description} image={ogImage} />
+  <StructuredData data={seo} />
+  
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9659227310633091" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  {GSC_VERIFICATION && (
+    <meta name="google-site-verification" content={GSC_VERIFICATION} />
+  )}
+  
+  <slot name="head" />
+</head>
+<body class={`bg-bae-bg text-bae-fg font-sans antialiased ${className}`}>
+  <SkipLink />
+  <header role="banner">
+    <Nav />
+  </header>
+  
+  <main id="main-content">
+    <slot />
+    {seo.dateModified && (
+      <div class="max-w-3xl mx-auto px-4 pb-10 pt-2">
+        <p class="text-xs text-bae-muted text-center">
+          {seo.url !== '/about/shahbaz-ali-malik/' && (
+            <Fragment>
+              Built &amp; maintained by <a href="/about/shahbaz-ali-malik/" class="font-medium text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Shahbaz Ali Malik</a>
+              <span class="mx-1.5" aria-hidden="true">·</span>
+            </Fragment>
+          )}
+          Last updated: <time itemprop="dateModified" datetime={seo.dateModified}>{formatDate(seo.dateModified)}</time>
+        </p>
+      </div>
+    )}
+  </main>
+  
+  <Footer />
+  <CookieConsent />
+  
+  {GA4_ID && (
+    <script is:inline define:vars={{ GA4_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+
+      // CONSENT DEFAULTS MUST COME FIRST, before `js` or any `config`. Google's Consent Mode
+      // spec is explicit about the ordering: a config that runs before the defaults are set is
+      // processed without consent state.
+      //
+      // And there is exactly ONE `config` call, made after consent is granted (see
+      // applyGtagConsent). It used to be called twice — once here with send_page_view:false and
+      // again on consent with true — and GA4 treats the second config for an already-configured
+      // measurement id as an update, so it did NOT fire the page_view. Measured over 180 days:
+      // 99 session_start events against only 44 page_view, and landing pages reported as
+      // "(not set)" for most sessions. Do not reintroduce a config call here.
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'analytics_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'functionality_storage': 'denied',
+        'personalization_storage': 'denied',
+        'security_storage': 'granted'
+      });
+      gtag('js', new Date());
+
+      function loadGA4() {
+        const script = document.createElement('script');
+        script.async = true;
+        script.crossOrigin = 'anonymous';
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_ID;
+        document.head.appendChild(script);
+      }
+
+      function applyGtagConsent(consent) {
+        const update = {};
+        if (consent.analytics) {
+          update.analytics_storage = 'granted';
+          update.functionality_storage = 'granted';
+        }
+        if (consent.marketing) {
+          update.ad_storage = 'granted';
+          update.ad_user_data = 'granted';
+          update.ad_personalization = 'granted';
+        }
+        if (Object.keys(update).length > 0) {
+          gtag('consent', 'update', update);
+        }
+        if (consent.analytics && GA4_ID) {
+          // The ONE config call. Default send_page_view is true, so this is what records the
+          // landing page. loadGA4() then replays the queued commands once gtag.js arrives.
+          gtag('config', GA4_ID);
+          loadGA4();
+        }
+      }
+
+      try {
+        const consent = JSON.parse(localStorage.getItem('bae_cookie_consent_v1'));
+        if (consent) {
+          applyGtagConsent(consent);
+        }
+      } catch(e) {
+        // No consent yet — stays blocked
+      }
+
+      window.addEventListener('bae-consent-updated', function(e) {
+        if (e.detail) {
+          applyGtagConsent(e.detail);
+        }
+      });
+    </script>
+  )}
+  
+  <HelpChat />
+  <slot name="scripts" />
+</body>
+</html>

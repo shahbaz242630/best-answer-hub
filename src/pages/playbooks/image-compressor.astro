@@ -1,0 +1,335 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-04T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Image Compressor?', a: 'The Best Answer Hub Image Compressor is a free, browser-based tool that shrinks JPEG, PNG, and WebP image files without uploading anything. You drag in a photo, set the quality, and download a smaller version. It uses your browser to re-encode the image on your own device, needs no account, and has no file-size cap.' },
+  { q: 'Does the Image Compressor upload my photos?', a: 'No. The Best Answer Hub Image Compressor processes every image in your browser using the Canvas API, so the file never leaves your device. Many popular compressors upload your photo to a server instead. You can confirm this tool sends nothing by compressing an image with the internet switched off: it still works.' },
+  { q: 'Is it safe and private to use?', a: 'Yes. Because the Best Answer Hub Image Compressor works entirely on your device, your images are never sent to a server, stored in the cloud, or seen by a third party. Upload-based tools hold your file on their servers, however briefly. Here, there is no upload and nothing to retain.' },
+  { q: 'How much smaller can WebP make an image?', a: 'Google measured WebP files at 25 to 34 percent smaller than JPEG at the same visual quality, and about 26 percent smaller than PNG. The Best Answer Hub Image Compressor can output WebP, so for web use it is usually the smallest option while keeping the picture looking the same.' },
+  { q: 'What is the difference between lossy and lossless compression?', a: 'Lossy compression, used by JPEG and WebP, discards some data to shrink the file, and the change cannot be undone. Lossless compression, used by PNG, keeps every pixel exactly but saves less space. The Best Answer Hub Image Compressor supports both, so you choose based on the image.' },
+  { q: 'Will compressing reduce the quality of my image?', a: 'A little, if you use lossy JPEG or WebP, but at a quality around 75 to 80 percent the difference is usually invisible while the file gets much smaller. PNG stays pixel-perfect because it is lossless. The Best Answer Hub Image Compressor gives you a quality slider so you can judge the trade-off.' },
+  { q: 'Which image format should I use?', a: 'Use JPEG for photographs, PNG for logos, screenshots, and anything with text or transparency, and WebP for almost everything on the web because it is the smallest. The Best Answer Hub Image Compressor outputs all three, so you can match the format to the job in one place.' },
+  { q: 'Does compressing remove GPS location and camera data?', a: 'Yes. The Best Answer Hub Image Compressor redraws your photo onto a canvas and re-encodes only the pixels, so hidden EXIF metadata, including GPS coordinates, camera model, and the date taken, is not carried into the new file. That is a real privacy gain when you share a photo online.' },
+  { q: 'What is EXIF metadata?', a: 'EXIF is data embedded inside an image file that can record the camera model, the settings, the date a photo was taken, and often the GPS location. It travels with the file unless removed. The Best Answer Hub Image Compressor drops it during compression, because re-encoding keeps only the pixels.' },
+  { q: 'Is there a file-size limit?', a: 'No. The Best Answer Hub Image Compressor has no file-size cap and no daily quota, unlike many free compressors that limit you to a few megabytes per image or a set number per day. Because the work happens on your device, the only real limit is your own computer memory.' },
+  { q: 'Why should I compress images for my website?', a: 'Because images are the biggest part of most pages, and large ones slow the page down. Google uses page speed, through Core Web Vitals, as a ranking signal, and slow pages lose visitors. Compressing images with the Best Answer Hub tool cuts the file size so pages load faster.' },
+  { q: 'Can I use the Image Compressor offline?', a: 'Yes. After the page loads once, the Best Answer Hub Image Compressor works with no internet connection, because the compression runs in your browser. There are no server calls, which makes it dependable on a train, a plane, or any connection you would rather not send a private photo across.' },
+  { q: 'What image formats can I upload?', a: 'You can bring in JPEG, PNG, GIF, BMP, and WebP images, and export as JPEG, PNG, or WebP. The Best Answer Hub Image Compressor reads the common formats and lets you convert between the three main web formats while it compresses, all on your own device.' },
+  { q: 'Can I compress several images at once?', a: 'The Best Answer Hub Image Compressor handles one image at a time, and each one takes only a moment. For a batch, compress them one after another before you upload them to your site or send them on. Doing them individually also lets you set the right quality for each picture.' },
+  { q: 'How is it different from tools like TinyPNG or iLoveIMG?', a: 'Tools like TinyPNG and iLoveIMG upload your image to their servers to compress it, and cap the free tier by file size or count. The Best Answer Hub Image Compressor compresses in your browser, so nothing is uploaded, there is no size cap, and no signup, while still producing small JPEG, PNG, and WebP files.' },
+];
+
+const seo = {
+  title: 'How to Compress Images Without Uploading Them',
+  description: 'Compress JPEG, PNG, and WebP images free in your browser, with nothing uploaded. How much smaller WebP is, and why compressing strips hidden GPS data.',
+  url: '/playbooks/image-compressor/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Image Compressor', url: '/playbooks/image-compressor/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · Image Tools</span>
+        <div class="cav">Compressed on your device, not uploaded</div>
+        <h1>Compress Images, <em>Nothing Uploaded</em></h1>
+        <p class="dek">A plain guide to shrinking image files: how much smaller WebP really is, when to keep PNG, why the popular compressors upload your photo to a server, and how compressing quietly strips the hidden GPS location from a picture. The Best Answer Hub Image Compressor does it all in your browser.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Privacy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Compress<small>JPEG, PNG, WebP</small></div>
+          <div class="seg b2">Private<small>never uploaded</small></div>
+          <div class="seg b3">Free<small>no cap, no signup</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">3</div><div class="l">output formats</div><div class="src">JPEG, PNG, WebP</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">images uploaded to a server</div><div class="src">compressed on your device</div></div>
+      <div class="stat"><div class="n">25-34%</div><div class="l">smaller with WebP</div><div class="src">vs JPEG, Google study</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#safe">Does it upload?</a>
+        <a href="#exif">Hidden location data</a>
+        <a href="#formats">Which format, how small</a>
+        <a href="#web">Why compress</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub Image Compressor is a free, browser-based tool that shrinks JPEG, PNG, and WebP images without uploading anything, and it re-encodes every picture on your own device.</strong> This guide explains why so many popular compressors upload your photo to a server, how compressing quietly strips the hidden GPS location from an image, how much smaller WebP really is, and when a plain PNG is still the right choice.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Image Compressor?</h2>
+        <p>The Best Answer Hub <a href="/tools/image-compressor/">Image Compressor</a> is a single-page tool that reduces the file size of an image without sending it anywhere. You drag in a JPEG, PNG, GIF, BMP, or WebP file, set a quality level, and download a smaller version as JPEG, PNG, or WebP. It works by drawing your image onto a canvas in the browser and re-encoding the pixels, using the browser <code>Canvas</code> API, so the file never leaves your device, there is no upload, and there is no file-size cap or daily quota. It needs no account and shows no ads. The tool sits in the Best Answer Hub <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The part that matters</div>
+        <h2 id="safe">Does the Image Compressor upload my photos?</h2>
+        <p>No, and that is the main thing that sets it apart: the Best Answer Hub Image Compressor processes every image in your browser, so the file is never uploaded to a server. Most of the well-known compressors work the other way. TinyPNG and iLoveIMG both send your image to their servers to compress it, and iLoveIMG states on its own security page that uploaded files are stored on cloud infrastructure and deleted within two hours, which means your photo does sit on a third-party server for a window of time. Google's own Squoosh is the honest exception, an in-browser compressor whose project page states plainly that it "does not send your image to a server." The Best Answer Hub Image Compressor takes that same client-side approach, and re-encodes with the browser Canvas API, a standard feature MDN documents through its <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob" target="_blank" rel="noopener noreferrer">toBlob</a> method. You can prove it sends nothing by compressing an image with the internet switched off: it still works, because the whole job happens on your machine.</p>
+        <blockquote>The most private way to compress a photo is to never upload it. <span class="accent">If the work happens in your browser, there is no server copy to trust, retain, or leak.</span></blockquote>
+        <table>
+          <thead><tr><th>What happens</th><th>Best Answer Hub</th><th>Upload-based compressors</th></tr></thead>
+          <tbody>
+            <tr><td>Where compression runs</td><td class="band">In your browser</td><td>On the company's servers</td></tr>
+            <tr><td>Image leaves your device</td><td class="band">No</td><td>Yes, uploaded then returned</td></tr>
+            <tr><td>File-size cap</td><td class="band">None</td><td>Common, such as 5 MB each</td></tr>
+            <tr><td>Account or ads</td><td class="band">None</td><td>Sometimes</td></tr>
+            <tr><td>Works offline</td><td class="band">Yes</td><td>No</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The hidden passenger</div>
+        <h2 id="exif">Does compressing remove hidden location data?</h2>
+        <p>Yes, and it is one of the quiet benefits of the Best Answer Hub Image Compressor. A photo straight from a phone or camera carries EXIF metadata, a block of hidden information that can include the camera model, the settings, the date it was taken, and often the exact GPS coordinates of where you stood (<a href="https://developer.mozilla.org/en-US/docs/Glossary/Exif" target="_blank" rel="noopener noreferrer">MDN</a>). That data travels with the file unless something removes it. Because the Best Answer Hub Image Compressor redraws your image onto a canvas and re-encodes only the pixels, the new file contains the picture and nothing else: the GPS location and camera details are left behind. MDN notes that the canvas step "will ignore all EXIF metadata in images," which is exactly why the output is clean.</p>
+        <p>This is not a theoretical worry. In 2012, a magazine published a photo of the fugitive tech founder John McAfee while he was in hiding, and the GPS coordinates embedded in that single image revealed he was in Guatemala (<a href="https://grahamcluley.com/john-mcafee-location-exif/" target="_blank" rel="noopener noreferrer">Graham Cluley</a>). Social networks usually strip this metadata on upload, but a photo shared by email, a messaging app in file mode, or a cloud link often keeps it. Compressing a picture with the Best Answer Hub tool before you share it removes the location as a side effect, so the file you send says nothing about where you were.</p>
+        <div class="callout sage"><div class="h">Keep the original if you need the data</div><p>Stripping EXIF is usually what you want, but not always: photographers and archivists rely on that metadata. Because compression creates a new file, the sensible habit is to keep your untouched original, then compress a copy for sharing. That way you get a clean, small file to send and still hold the full-detail version.</p></div>
+
+        <div class="cav">Pick the right format</div>
+        <h2 id="formats">JPEG, PNG, or WebP: which, and how much smaller?</h2>
+        <p>The right format depends on the image, and the Best Answer Hub Image Compressor outputs all three so you can match it. JPEG is a lossy format, ideal for photographs, where discarding a little unseen detail shrinks the file a lot. PNG is lossless, meaning it keeps every pixel exactly, which makes it the choice for logos, screenshots, text, and anything needing transparency, at the cost of a larger file. WebP can do both, and it is the smallest option for the web: Google measured lossy WebP at 25 to 34% smaller than JPEG at the same visual quality, so a WebP file is often around 70% the size of the JPEG, and lossless WebP at about 26% smaller than PNG, roughly 74% of the PNG size (<a href="https://developers.google.com/speed/webp" target="_blank" rel="noopener noreferrer">Google</a>). Every current browser, including Chrome, Safari, Firefox, and Edge, supports WebP, so there is little reason not to use it online.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">WebP is smaller at the same quality</figcaption>
+          <svg viewBox="0 0 600 280" role="img" aria-label="Bar chart of relative file size at matched quality: JPEG 100 percent, WebP versus JPEG about 70 percent, PNG 100 percent, WebP lossless versus PNG about 74 percent.">
+            <defs><linearGradient id="bargrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <line x1="52" y1="232" x2="565" y2="232" stroke="#E1D4be" stroke-width="2"/>
+            <rect x="72" y="62" width="82" height="170" rx="7" fill="url(#bargrad)" opacity="0.45"/>
+            <text x="113" y="52" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="18" font-weight="800" fill="#33302A">100%</text>
+            <text x="113" y="250" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#847B6B">JPEG</text>
+            <rect x="202" y="113" width="82" height="119" rx="7" fill="url(#bargrad)"/>
+            <text x="243" y="103" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="18" font-weight="800" fill="#33302A">~70%</text>
+            <text x="243" y="250" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#847B6B">WebP</text>
+            <rect x="332" y="62" width="82" height="170" rx="7" fill="url(#bargrad)" opacity="0.45"/>
+            <text x="373" y="52" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="18" font-weight="800" fill="#33302A">100%</text>
+            <text x="373" y="250" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#847B6B">PNG</text>
+            <rect x="462" y="107" width="82" height="125" rx="7" fill="url(#bargrad)"/>
+            <text x="503" y="97" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="18" font-weight="800" fill="#33302A">~74%</text>
+            <text x="503" y="250" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#847B6B">WebP lossless</text>
+          </svg>
+          <p class="chart-src">Relative file size, lower is better, at matched visual quality. Google measured lossy WebP at 25 to 34% smaller than JPEG and lossless WebP at 26% smaller than PNG. In one matched test a JPEG of 66 KB became a 46 KB WebP. Sources below.</p>
+        </figure>
+        <table>
+          <thead><tr><th>Format</th><th>Type</th><th>Best for</th><th>Trade-off</th></tr></thead>
+          <tbody>
+            <tr><td class="band">JPEG</td><td>Lossy</td><td>Photographs</td><td>Small, universal, some detail lost</td></tr>
+            <tr><td class="band">PNG</td><td>Lossless</td><td>Logos, screenshots, text, transparency</td><td>Perfect quality, larger files</td></tr>
+            <tr><td class="band">WebP</td><td>Lossy or lossless</td><td>Almost everything on the web</td><td>Smallest, needs a modern browser</td></tr>
+          </tbody>
+        </table>
+        <div class="callout peach"><div class="h">The quality slider only bites on lossy files</div><p>When you export JPEG or WebP, the quality setting decides how much detail to trade for size, and around 75 to 80% the loss is usually invisible. For PNG the slider does nothing, because PNG is lossless and keeps every pixel. The Best Answer Hub Image Compressor makes that plain, so you know when the dial matters.</p></div>
+
+        <div class="cav">Why it is worth doing</div>
+        <h2 id="web">Why compress images for your website?</h2>
+        <p>Because images are usually the heaviest thing on a page, and heavy pages are slow, which is a problem the Best Answer Hub Image Compressor is built to fix. The HTTP Archive Web Almanac finds that images are the single biggest contributor to page weight, and Google treats loading speed, through its Core Web Vitals, as a ranking signal in Search (<a href="https://developers.google.com/search/docs/appearance/page-experience" target="_blank" rel="noopener noreferrer">Google Search Central</a>). Speed also holds visitors: Google reports that 40% of people leave a page that takes more than three seconds to load. A large image is often the element that decides a page's Largest Contentful Paint, the moment the main content appears, which Google says should happen within 2.5 seconds (<a href="https://web.dev/articles/lcp" target="_blank" rel="noopener noreferrer">web.dev</a>). Compressing your images, ideally to WebP at a sensible quality, cuts that weight and brings the page in faster, without a visible drop in how it looks.</p>
+
+        <div class="cta">
+          <span class="kicker">Shrink one now</span>
+          <h3>Open the Image Compressor</h3>
+          <p>Free, no signup, no size cap, and compressed entirely in your browser. Drag in a photo, set the quality, and download a smaller file that carries no hidden metadata.</p>
+          <a class="btn" href="/tools/image-compressor/">Compress an image</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about compressing images</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-pdf-tools/">Free PDF Tools, Nothing Uploaded</a></b> The same privacy-first approach applied to PDFs, from compressing to merging, all in your browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/qr-code-generator/">Why Some Free QR Codes Stop Working</a></b> Another browser-based utility that keeps your data local and needs no signup.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to PDFs.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob" target="_blank" rel="noopener noreferrer">HTMLCanvasElement.toBlob()</a> (quality argument 0 to 1 applies only to lossy JPEG and WebP) and <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage" target="_blank" rel="noopener noreferrer">drawImage()</a> (canvas ignores EXIF metadata), 2025 to 2026.</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Glossary/Exif" target="_blank" rel="noopener noreferrer">EXIF</a> (embedded metadata, including capture date and GPS, per the CIPA Exif standard), and <a href="https://developer.mozilla.org/en-US/docs/Glossary/Lossy_compression" target="_blank" rel="noopener noreferrer">Lossy</a> and <a href="https://developer.mozilla.org/en-US/docs/Glossary/Lossless_compression" target="_blank" rel="noopener noreferrer">Lossless compression</a>, 2025.</li>
+          <li>Google for Developers, <a href="https://developers.google.com/speed/webp" target="_blank" rel="noopener noreferrer">WebP</a> and the <a href="https://developers.google.com/speed/webp/docs/webp_study" target="_blank" rel="noopener noreferrer">WebP Compression Study</a> (lossy WebP 25 to 34% smaller than JPEG; lossless 26% smaller than PNG; supported in all major browsers), 2025.</li>
+          <li>Google Search Central, <a href="https://developers.google.com/search/docs/appearance/page-experience" target="_blank" rel="noopener noreferrer">Understanding Google page experience</a> (Core Web Vitals are used by ranking systems), current.</li>
+          <li>web.dev, <a href="https://web.dev/articles/lcp" target="_blank" rel="noopener noreferrer">Largest Contentful Paint</a> (images are often the LCP element; a good LCP is 2.5 seconds or less), Google.</li>
+          <li>Think with Google, <a href="https://business.google.com/uk/think/marketing-strategies/mobile-page-speed-load-time/" target="_blank" rel="noopener noreferrer">Why marketers should care about mobile page speed</a> (40% of consumers leave a page that takes longer than three seconds), 2016.</li>
+          <li>HTTP Archive, <a href="https://almanac.httparchive.org/en/2024/page-weight" target="_blank" rel="noopener noreferrer">Web Almanac 2024, Page Weight</a> (images are the biggest contributor to page weight), 2024.</li>
+          <li>Graham Cluley, <a href="https://grahamcluley.com/john-mcafee-location-exif/" target="_blank" rel="noopener noreferrer">Fugitive John McAfee's location revealed by photo metadata</a> (embedded GPS EXIF exposed his location), 2012.</li>
+          <li>Google Chrome Labs, <a href="https://github.com/GoogleChromeLabs/squoosh" target="_blank" rel="noopener noreferrer">Squoosh</a> ("does not send your image to a server; all image compression processes locally"), observed 2026.</li>
+          <li>TinyPNG, <a href="https://tinypng.com/" target="_blank" rel="noopener noreferrer">tinypng.com</a>, and iLoveIMG, <a href="https://www.iloveimg.com/help/security" target="_blank" rel="noopener noreferrer">Security page</a> (server-side upload; free-tier caps; uploaded files deleted within two hours), observed 2026.</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/image-compressor/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Image Compressor</a>, <a href="/tools/pdf-compressor/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Compressor</a>, <a href="/tools/favicon-generator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Favicon Generator</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

@@ -1,0 +1,1331 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Finals Grade Calculator?',
+    a: 'The Best Answer Hub Finals Grade Calculator is a free browser-based tool that tells you exactly what score you need on your final exam to reach your target grade. It supports weighted categories, custom grading scales, dropped lowest scores, extra credit modeling, pass/fail thresholds, and reverse calculations. All math happens instantly in your browser. No signup, no ads, and your grade data never leaves your device.',
+  },
+  {
+    q: 'What do I need on my final to get an A in the class?',
+    a: 'Use the Best Answer Hub Finals Grade Calculator Classic mode: enter your current grade, your desired grade, and how much the final is worth. The tool instantly shows the exact percentage you need. For example, if you have an 88% and the final is worth 30%, you need a 94.7% to reach an A (90%). The calculator also flags if your goal is mathematically impossible, so you know before you sit for the exam whether your target is realistic.',
+  },
+  {
+    q: 'The calculator says I need 101.67% on my final, does that mean my A is mathematically impossible?',
+    a: 'Yes. If the Best Answer Hub Finals Grade Calculator returns a required score above 100%, your target grade is mathematically out of reach with the grades you have already earned. For example, if you have a 72% and the final is worth 20%, the highest possible grade is 72% × 80% + 100% × 20% = 77.6%, so an A (90%) is impossible. The calculator shows this clearly so you can set a realistic backup goal, like aiming for a B or C instead of studying for an impossible A.',
+  },
+  {
+    q: 'My professor drops the lowest test and the final counts as a test grade. What do I need on the final to get a B+ overall?',
+    a: 'The Best Answer Hub Finals Grade Calculator handles this in Weighted Categories mode. Enter your test scores, enable the "Drop lowest 1" toggle in the Tests category, and enter your other categories (homework, quizzes, etc.). The calculator recalculates your test average after the drop, then computes exactly what you need on the final. Unlike simple calculators that only accept one current grade number, this tool models the actual structure of your syllabus: drops, replacements, and all.',
+  },
+  {
+    q: 'I\'m taking a class pass/fail and the final is worth 40%. What\'s the absolute worst I can do on the final and still pass the class?',
+    a: 'The Best Answer Hub Finals Grade Calculator has a pass/fail toggle that changes the target from a letter grade to a simple passing threshold, usually 60% or 70% depending on your institution. Enter your current grade, set the final weight to 40%, and select Pass/Fail mode. The tool shows the minimum score you can get and still pass. For example, if you have a 68% and need 60% to pass with a 40% final, you can score as low as 48% on the final and still pass, because 68% × 60% + 48% × 40% = 60%.',
+  },
+  {
+    q: 'My syllabus has weighted categories: homework 20%, quizzes 30%, midterm 20%, final 30%. I bombed a quiz. Can I still get an A in the class?',
+    a: 'Yes. Use the Best Answer Hub Finals Grade Calculator Weighted Categories mode. Enter each category with its exact weight and your current average. The calculator computes your overall grade and shows what you need on the final to reach any target. For example, if your quiz average dropped to 72% but homework is 95% and midterm is 88%, the tool might show you need only an 87% on the final to still get an A. This is far more accurate than guessing, because it accounts for the exact weight of each category in your syllabus.',
+  },
+  {
+    q: 'If I bomb the final and get a 50%, but it\'s only worth 15%, how far will my overall grade actually drop?',
+    a: 'The Best Answer Hub Finals Grade Calculator Reverse mode answers this exact fear. Enter your current grade, the final weight (15%), and a hypothetical final score (50%). The tool shows your new overall grade instantly. For example, an 85% current grade with a 50% on a 15% final drops to 79.75%, still a C+ at most schools. Seeing the actual number often reduces anxiety, because a bad final that is only 15% of the grade cannot destroy a strong semester.',
+  },
+  {
+    q: 'My syllabus says 450 points earned out of 500 so far, and the final is worth 100 points. How do I figure out what I need on the final to get a B?',
+    a: 'The Best Answer Hub Finals Grade Calculator handles points-based systems automatically. In Weighted Categories mode, enter your earned points (450) and total possible points so far (500) as one category, then add the Final category with 100 possible points. The calculator converts everything to percentages and shows exactly what you need. For a B (80% overall), you would need 30 points out of 100 on the final, because 450 + 30 = 480 total points out of 600 possible, which is exactly 80%. The tool does the conversion math so you never have to guess.',
+  },
+  {
+    q: 'My grading scale is weird: A is 94-100, not 90, how do I change the calculator to match my syllabus?',
+    a: 'The Best Answer Hub Finals Grade Calculator includes a Custom Grading Scale panel where you can set any boundaries you want. Change A from 90 to 94, add or remove plus/minus grades, and even create a pass/fail scale. The calculator instantly recalculates your letter grade using your custom scale. Most free calculators force a generic A=90 scale that does not match your syllabus. This tool lets you match your professor\'s exact rubric.',
+  },
+  {
+    q: 'I already took the final and got an 88.6. My grade going in was 91% and the final is worth 15%. What\'s my overall course grade?',
+    a: 'Use the Best Answer Hub Finals Grade Calculator Reverse mode. Enter your pre-final grade (91%), your final score (88.6%), and the final weight (15%). The calculator blends them: 91% × 85% + 88.6% × 15% = 90.64% overall. The tool also shows your letter grade using your custom grading scale. This is the #2 most-used calculation after "What do I need?" Students ask it within minutes of walking out of the exam room.',
+  },
+  {
+    q: 'I need a 3.5 cumulative GPA to keep my scholarship. I have a 3.2 with 30 credits done and 30 credits left. What GPA do I need this semester?',
+    a: 'The Best Answer Hub Finals Grade Calculator includes a Semester GPA Planner that works alongside the final grade calculator. Enter your current cumulative GPA (3.2), credits completed (30), and remaining credits (30). The tool shows you need a 3.8 GPA this semester to reach 3.5 overall, because 3.2 × 30 + 3.8 × 30 = 210 quality points across 60 credits, which is a 3.5 cumulative. If the required number comes out above 4.0, the planner flags it as mathematically impossible so you can set a realistic target. This turns a vague scholarship stress into a concrete, achievable goal.',
+  },
+  {
+    q: 'My professor says she curves the final. Can I still trust the calculator, or does the curve make it useless?',
+    a: 'The Best Answer Hub Finals Grade Calculator gives you the raw number before any curve, which is still valuable. A curve is a bonus. It can only help you, never hurt you. The calculator shows what you need on the uncurved exam. If the raw required score is 85% and the professor adds 5 points to everyone, you effectively need an 80% raw score. The tool includes a note explaining this: "Study for the raw number. The curve is insurance, not a target." Unlike vague reassurance, this gives you a concrete study goal.',
+  },
+  {
+    q: 'I have four finals in three days and limited time. How do I figure out which class is worth studying for first?',
+    a: 'The Best Answer Hub Finals Grade Calculator helps you prioritize with its Study Priority view. Enter all four classes with their current grades, final weights, and target grades. The calculator ranks them by effort required: a class where you need a 95% gets red priority, while one where you need a 62% gets green low priority. This prevents the common mistake of over-studying for a class where you are already safe while under-studying for a borderline grade. The tool turns panic into a ranked action plan.',
+  },
+  {
+    q: 'My gradebook says I have a 49% but that\'s because the final category is entered as a zero right now, what\'s my real current grade before the final?',
+    a: 'This is the #1 cause of calculator errors. The Best Answer Hub Finals Grade Calculator warns you about this explicitly: if your LMS (Canvas, Blackboard, Moodle) shows a 49% because the final is entered as 0/100, your REAL current grade is 49% ÷ 75% = 65.3%, because only 75% of the course has been graded so far. The calculator has an LMS Gradebook Mode that asks: "Is your current grade out of 100% possible, or only the completed portion?" Selecting the right option prevents the terrifying but wrong result of "You need 133% on the final" that students see on basic calculators.',
+  },
+  {
+    q: 'If I do all the extra credit, can I get my grade from a 76% to a B before the final?',
+    a: 'The Best Answer Hub Finals Grade Calculator models extra credit in Weighted Categories mode. Add an "Extra Credit" category or toggle the extra credit option within an existing category. Enter the bonus points or percentage, and the calculator shows how much it raises your overall grade. For example, 5 points of extra credit in a homework category worth 20% raises your overall grade by 1 percentage point. The tool shows both "before extra credit" and "after extra credit" required scores, so you can decide if the effort is worth it.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your grades and weights', description: 'Use Classic mode for a quick "what do I need?" answer, or Weighted Categories mode to match your exact syllabus structure with homework, quizzes, midterms, and finals.' },
+  { title: 'Pick your target or see what-if scenarios', description: 'Enter your desired grade and the calculator shows the exact final score required. Toggle pass/fail mode, custom grading scales, or dropped lowest scores to match your professor\'s policies.' },
+  { title: 'Download your plan or share the link', description: 'Save a PDF report for your advisor meeting, or copy a shareable link to send your calculation to your study group. Your data never leaves your browser.' },
+];
+
+const seo = {
+  title: 'Finals Grade Calculator: What You Need on Your Final (2026)',
+  description: 'Free final grade calculator — find exactly what you need on your final exam. Weighted categories, custom scales, and PDF export. No signup.',
+  url: '/calculators/finals-grade-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Finals Grade Calculator', url: '/calculators/finals-grade-calculator/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated June 2026 · No signup, no data stored
+          </div>
+          <a href="/calculators/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Calculators
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Finals Grade Calculator:<br/>
+          <em class="italic text-bae-primary">What you need on your final</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Find the exact score you need on your final exam to reach your target grade. Supports weighted categories, custom grading scales, dropped lowest scores, and pass/fail mode. All calculations happen instantly in your browser. Your grades never leave your device.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Finals grade calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 items-start">
+
+        <!-- Left: Calculator Tabs + Inputs -->
+        <div class="space-y-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <!-- Tabs -->
+            <div class="flex gap-1 mb-6 bg-bae-bg rounded-bae-sm p-1 overflow-x-auto">
+              <button type="button" data-tab="classic" class="tab-btn flex-1 whitespace-nowrap text-xs font-semibold px-2.5 py-2 rounded-bae-sm bg-bae-primary text-white">Classic</button>
+              <button type="button" data-tab="weighted" class="tab-btn flex-1 whitespace-nowrap text-xs font-semibold px-2.5 py-2 rounded-bae-sm text-bae-ink hover:bg-bae-border/50 transition-colors">Weighted</button>
+              <button type="button" data-tab="reverse" class="tab-btn flex-1 whitespace-nowrap text-xs font-semibold px-2.5 py-2 rounded-bae-sm text-bae-ink hover:bg-bae-border/50 transition-colors">Reverse</button>
+              <button type="button" data-tab="gpa" class="tab-btn flex-1 whitespace-nowrap text-xs font-semibold px-2.5 py-2 rounded-bae-sm text-bae-ink hover:bg-bae-border/50 transition-colors">GPA Plan</button>
+              <button type="button" data-tab="priority" class="tab-btn flex-1 whitespace-nowrap text-xs font-semibold px-2.5 py-2 rounded-bae-sm text-bae-ink hover:bg-bae-border/50 transition-colors">Priority</button>
+            </div>
+
+            <!-- Classic Tab -->
+            <div id="tab-classic" class="tab-content">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Current grade (%)</label>
+                  <input type="number" id="c-current" min="0" max="100" step="0.01" value="85" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" placeholder="e.g. 85" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Final exam weight (%)</label>
+                  <input type="number" id="c-weight" min="1" max="100" step="0.01" value="25" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" placeholder="e.g. 25" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Desired grade</label>
+                  <select id="c-desired-type" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary">
+                    <option value="letter">Letter grade</option>
+                    <option value="percent">Percentage</option>
+                    <option value="pass">Pass/Fail</option>
+                  </select>
+                </div>
+                <div id="c-desired-letter-wrap">
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Target letter</label>
+                  <select id="c-desired-letter" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary">
+                    <option value="A">A</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B" selected>B</option>
+                    <option value="B-">B-</option>
+                    <option value="C+">C+</option>
+                    <option value="C">C</option>
+                    <option value="C-">C-</option>
+                    <option value="D+">D+</option>
+                    <option value="D">D</option>
+                  </select>
+                </div>
+                <div id="c-desired-percent-wrap" class="hidden">
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Target %</label>
+                  <input type="number" id="c-desired-percent" min="0" max="100" step="0.01" value="80" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div id="c-desired-pass-wrap" class="hidden">
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Pass threshold (%)</label>
+                  <input type="number" id="c-desired-pass" min="0" max="100" step="0.01" value="60" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+              </div>
+
+              <!-- LMS Gradebook Mode helper -->
+              <div class="border-t border-bae-border pt-4">
+                <button type="button" id="toggle-lms" class="flex items-center gap-1.5 text-xs font-semibold text-bae-muted hover:text-bae-ink transition-colors">
+                  <svg id="lms-chevron" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                  LMS gradebook mode (Canvas / Blackboard shows a low %?)
+                </button>
+                <div id="lms-panel" class="hidden mt-3 bg-bae-bg rounded-bae-sm p-3">
+                  <p class="text-[11px] text-bae-muted mb-3 leading-relaxed">If your LMS counts the ungraded final as a 0, your displayed grade is artificially low. Enter what it shows and how much of the course is graded so far to recover your <em>real</em> current grade.</p>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-[10px] text-bae-muted mb-0.5">Grade your LMS shows (%)</label>
+                      <input type="number" id="lms-displayed" min="0" max="100" step="0.01" value="49" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1.5 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] text-bae-muted mb-0.5">% of course graded so far</label>
+                      <input type="number" id="lms-graded" min="1" max="100" step="0.01" value="75" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1.5 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" />
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between mt-3 gap-2">
+                    <div class="text-xs text-bae-ink">Real current grade: <span id="lms-result" class="font-bold text-bae-primary">—</span></div>
+                    <button type="button" id="lms-apply" class="bg-bae-primary text-white text-[11px] font-semibold px-3 py-1.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Use in Classic</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weighted Tab -->
+            <div id="tab-weighted" class="tab-content hidden">
+              <div id="w-categories" class="space-y-3 mb-4"></div>
+              <button type="button" id="w-add-cat" class="text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors mb-4">+ Add category</button>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Desired overall grade</label>
+                  <select id="w-desired-type" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary">
+                    <option value="letter">Letter grade</option>
+                    <option value="percent">Percentage</option>
+                  </select>
+                </div>
+                <div id="w-desired-letter-wrap">
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Target letter</label>
+                  <select id="w-desired-letter" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary">
+                    <option value="A">A</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B" selected>B</option>
+                    <option value="B-">B-</option>
+                    <option value="C+">C+</option>
+                    <option value="C">C</option>
+                    <option value="C-">C-</option>
+                    <option value="D+">D+</option>
+                    <option value="D">D</option>
+                  </select>
+                </div>
+                <div id="w-desired-percent-wrap" class="hidden">
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Target %</label>
+                  <input type="number" id="w-desired-percent" min="0" max="100" step="0.01" value="80" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+              </div>
+              <div class="flex gap-2 mb-4">
+                <button type="button" id="w-calc-required" class="flex-1 bg-bae-primary text-white text-xs font-semibold px-3 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Calculate required final</button>
+                <button type="button" id="w-calc-overall" class="flex-1 bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Calculate overall grade</button>
+              </div>
+            </div>
+
+            <!-- Reverse Tab -->
+            <div id="tab-reverse" class="tab-content hidden">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Current grade (%)</label>
+                  <input type="number" id="r-current" min="0" max="100" step="0.01" value="85" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Final score (%)</label>
+                  <input type="number" id="r-final" min="0" max="100" step="0.01" value="78" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Final weight (%)</label>
+                  <input type="number" id="r-weight" min="1" max="100" step="0.01" value="25" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+              </div>
+            </div>
+
+            <!-- GPA Plan Tab -->
+            <div id="tab-gpa" class="tab-content hidden">
+              <p class="text-xs text-bae-muted mb-4 leading-relaxed">Plan the GPA you need <em>this semester</em> to hit a target cumulative GPA, for scholarships, honors, or grad-school cutoffs.</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Current cumulative GPA</label>
+                  <input type="number" id="g-cum" min="0" max="4" step="0.01" value="3.2" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Target cumulative GPA</label>
+                  <input type="number" id="g-target" min="0" max="4" step="0.01" value="3.5" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Credits completed</label>
+                  <input type="number" id="g-done" min="0" step="0.5" value="30" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Credits remaining this semester</label>
+                  <input type="number" id="g-remaining" min="0.5" step="0.5" value="30" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+              </div>
+              <p class="text-[10px] text-bae-muted mb-1">GPA is on a 4.0 scale. If the required GPA comes out above 4.0, your target is out of reach this semester.</p>
+            </div>
+
+            <!-- Study Priority Tab -->
+            <div id="tab-priority" class="tab-content hidden">
+              <p class="text-xs text-bae-muted mb-4 leading-relaxed">Juggling several finals? Enter each class to see which needs the most effort. Classes are ranked hardest-first and colour-coded so you study the right ones.</p>
+              <div id="p-classes" class="space-y-3 mb-4"></div>
+              <button type="button" id="p-add" class="text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors mb-2">+ Add class</button>
+            </div>
+
+            <!-- Custom Grading Scale (all tabs) -->
+            <div class="border-t border-bae-border pt-4 mb-4">
+              <button type="button" id="toggle-scale" class="flex items-center gap-1.5 text-xs font-semibold text-bae-muted hover:text-bae-ink transition-colors">
+                <svg id="scale-chevron" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                Custom grading scale
+              </button>
+              <div id="scale-panel" class="hidden mt-3">
+                <label class="flex items-center gap-2 mb-3 cursor-pointer">
+                  <input type="checkbox" id="scale-plusminus" checked class="w-4 h-4 accent-bae-primary rounded" />
+                  <span class="text-xs text-bae-ink">Use plus/minus grades (A-, B+, etc.)</span>
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="scale-inputs">
+                  <div><label class="block text-[10px] text-bae-muted mb-0.5">A</label><input type="number" data-grade="A" value="90" class="scale-bound w-full bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>
+                  <div><label class="block text-[10px] text-bae-muted mb-0.5">B</label><input type="number" data-grade="B" value="80" class="scale-bound w-full bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>
+                  <div><label class="block text-[10px] text-bae-muted mb-0.5">C</label><input type="number" data-grade="C" value="70" class="scale-bound w-full bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>
+                  <div><label class="block text-[10px] text-bae-muted mb-0.5">D</label><input type="number" data-grade="D" value="60" class="scale-bound w-full bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>
+                  <div><label class="block text-[10px] text-bae-muted mb-0.5">F</label><input type="number" data-grade="F" value="0" class="scale-bound w-full bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>
+                </div>
+                <p class="text-[10px] text-bae-muted mt-2">Default: A=90, B=80, C=70, D=60. Plus/minus auto-calculates midpoints.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <button type="button" id="btn-calculate" class="flex-1 bg-bae-primary text-white text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Calculate</button>
+              <button type="button" id="btn-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:border-red-400 hover:text-red-500 transition-colors">Clear All</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="space-y-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm sticky top-6">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Results</h2>
+            <div id="results-empty" class="text-sm text-bae-muted italic">Enter your grades and click Calculate to see results.</div>
+            <div id="results-content" class="hidden space-y-4">
+              <div class="text-center py-3">
+                <div id="res-main-value" class="text-4xl md:text-5xl font-bold text-bae-primary font-serif"></div>
+                <div id="res-main-label" class="text-xs font-semibold uppercase tracking-wider text-bae-muted mt-1"></div>
+              </div>
+              <div id="res-details" class="space-y-2 text-sm"></div>
+              <div id="res-warning" class="hidden bg-amber-50 border border-amber-200 rounded-bae-sm p-3 text-xs text-amber-800"></div>
+              <div id="res-impossible" class="hidden bg-red-50 border border-red-200 rounded-bae-sm p-3 text-xs text-red-800"></div>
+              <div id="res-secured" class="hidden bg-green-50 border border-green-200 rounded-bae-sm p-3 text-xs text-green-800"></div>
+              <div class="flex gap-2 pt-2">
+                <button type="button" id="btn-pdf" class="flex-1 bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Download PDF</button>
+                <button type="button" id="btn-share" class="flex-1 bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy Link</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Study Priority Tip -->
+          <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-4">
+            <h3 class="text-xs font-bold text-bae-ink mb-1">Study Tip</h3>
+            <p class="text-xs text-bae-muted leading-relaxed">A final that is only 15% of your grade cannot drop a strong semester by more than a few points. Focus your energy on high-weight finals where you are borderline.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-8">How It Works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {steps.map((step, i) => (
+          <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+            <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">{i + 1}</div>
+            <h3 class="text-base font-bold text-bae-ink mb-1">{step.title}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-8">Frequently Asked Questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-bae-ink leading-snug">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-8">What people calculate with it</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider">Scholarship Preservation</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1 mb-1">The College Student</h3>
+          <div class="text-xs font-medium text-bae-primary mb-2">Needs a 3.5 GPA to keep financial aid</div>
+          <p class="text-sm text-bae-muted">Uses the Semester GPA Planner to see they need a 3.8 this semester. Then breaks it down per class: an A- in Stats, a B+ in Econ, and an A in English gets them there. No more vague panic, just concrete targets.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider">Midterm Recovery</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1 mb-1">The High School Student</h3>
+          <div class="text-xs font-medium text-bae-primary mb-2">Bombed the midterm but homework is strong</div>
+          <p class="text-sm text-bae-muted">Got a 62 on the midterm worth 25% but has 98% on homework worth 20%. The Weighted Categories mode shows they need an 84 on the final to still get an A. Suddenly the final feels achievable, not hopeless.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider">Grad School Survival</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1 mb-1">The Grad Student</h3>
+          <div class="text-xs font-medium text-bae-primary mb-2">Pass/fail class with a 40% final</div>
+          <p class="text-sm text-bae-muted">Taking a required stats course pass/fail to protect their GPA. With a 68% current grade and pass threshold at 60%, the calculator shows they can score as low as 48% on the final and still pass. Stress level: managed.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider">Gradebook Decoder</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1 mb-1">The Parent</h3>
+          <div class="text-xs font-medium text-bae-primary mb-2">Canvas shows 49% because final is a zero</div>
+          <p class="text-sm text-bae-muted">Their kid is panicking because Canvas shows 49%. The parent uses LMS Gradebook Mode to explain that the real grade before the final is 49 ÷ 75 = 65.3%. They need a 73 on the final to pass, tough but doable.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/calculators/gpa-calculator/" class="text-bae-primary hover:underline">GPA Calculator</a>, <a href="/calculators/compound-interest/" class="text-bae-primary hover:underline">Compound Interest Calculator</a>, <a href="/calculators/mortgage-calculator/" class="text-bae-primary hover:underline">Mortgage Calculator</a>, <a href="/calculators/salary-converter/" class="text-bae-primary hover:underline">Salary Converter</a>, and <a href="/calculators/tax-calculator/" class="text-bae-primary hover:underline">Tax Calculator</a>.</p>
+        </div>
+        <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all calculators →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hidden PDF Report -->
+  <div id="pdf-report" class="hidden">
+    <div id="pdf-report-content" class="bg-white p-8" style="width: 210mm; box-sizing: border-box;">
+      <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 8px; color: #1e1b4b;">Finals Grade Report</h1>
+      <p id="pdf-date" style="font-size: 12px; color: #64748b; margin-bottom: 16px;"></p>
+      <div id="pdf-summary" style="font-size: 12px; margin-bottom: 16px;"></div>
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+        <thead>
+          <tr style="background: #f8fafc;">
+            <th style="border: 1px solid #e2e8f0; padding: 6px; text-align: left;">Item</th>
+            <th style="border: 1px solid #e2e8f0; padding: 6px; text-align: left;">Value</th>
+          </tr>
+        </thead>
+        <tbody id="pdf-table-body"></tbody>
+      </table>
+      <p style="font-size: 10px; color: #94a3b8; margin-top: 16px;">Generated by Best Answer Hub Finals Grade Calculator · bestanswerhub.com/calculators/finals-grade-calculator/</p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="fg-toast" class="fixed bottom-6 right-6 bg-bae-ink text-white text-xs font-semibold px-4 py-2.5 rounded-bae-sm shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none z-50">Copied</div>
+
+  <script is:inline>
+    (function() {
+      'use strict';
+
+      // ─── DOM refs ───
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+      const btnCalculate = document.getElementById('btn-calculate');
+      const btnClear = document.getElementById('btn-clear');
+      const btnPdf = document.getElementById('btn-pdf');
+      const btnShare = document.getElementById('btn-share');
+      const resultsEmpty = document.getElementById('results-empty');
+      const resultsContent = document.getElementById('results-content');
+      const resMainValue = document.getElementById('res-main-value');
+      const resMainLabel = document.getElementById('res-main-label');
+      const resDetails = document.getElementById('res-details');
+      const resWarning = document.getElementById('res-warning');
+      const resImpossible = document.getElementById('res-impossible');
+      const resSecured = document.getElementById('res-secured');
+      const toast = document.getElementById('fg-toast');
+      const toggleScale = document.getElementById('toggle-scale');
+      const scalePanel = document.getElementById('scale-panel');
+      const scaleChevron = document.getElementById('scale-chevron');
+      const scaleInputs = document.querySelectorAll('.scale-bound');
+      const scalePlusMinus = document.getElementById('scale-plusminus');
+
+      // Classic tab refs
+      const cCurrent = document.getElementById('c-current');
+      const cWeight = document.getElementById('c-weight');
+      const cDesiredType = document.getElementById('c-desired-type');
+      const cDesiredLetter = document.getElementById('c-desired-letter');
+      const cDesiredLetterWrap = document.getElementById('c-desired-letter-wrap');
+      const cDesiredPercent = document.getElementById('c-desired-percent');
+      const cDesiredPercentWrap = document.getElementById('c-desired-percent-wrap');
+      const cDesiredPass = document.getElementById('c-desired-pass');
+      const cDesiredPassWrap = document.getElementById('c-desired-pass-wrap');
+
+      // Reverse tab refs
+      const rCurrent = document.getElementById('r-current');
+      const rFinal = document.getElementById('r-final');
+      const rWeight = document.getElementById('r-weight');
+
+      // Weighted tab refs
+      const wCategories = document.getElementById('w-categories');
+      const wAddCat = document.getElementById('w-add-cat');
+      const wDesiredType = document.getElementById('w-desired-type');
+      const wDesiredLetter = document.getElementById('w-desired-letter');
+      const wDesiredLetterWrap = document.getElementById('w-desired-letter-wrap');
+      const wDesiredPercent = document.getElementById('w-desired-percent');
+      const wDesiredPercentWrap = document.getElementById('w-desired-percent-wrap');
+      const wCalcRequired = document.getElementById('w-calc-required');
+      const wCalcOverall = document.getElementById('w-calc-overall');
+
+      // LMS helper refs
+      const toggleLms = document.getElementById('toggle-lms');
+      const lmsPanel = document.getElementById('lms-panel');
+      const lmsChevron = document.getElementById('lms-chevron');
+      const lmsDisplayed = document.getElementById('lms-displayed');
+      const lmsGraded = document.getElementById('lms-graded');
+      const lmsResult = document.getElementById('lms-result');
+      const lmsApply = document.getElementById('lms-apply');
+
+      // GPA Plan refs
+      const gCum = document.getElementById('g-cum');
+      const gTarget = document.getElementById('g-target');
+      const gDone = document.getElementById('g-done');
+      const gRemaining = document.getElementById('g-remaining');
+
+      // Study Priority refs
+      const pClasses = document.getElementById('p-classes');
+      const pAdd = document.getElementById('p-add');
+
+      // ─── State ───
+      let activeTab = 'classic';
+      let scaleBounds = { A: 90, B: 80, C: 70, D: 60, F: 0 };
+      let usePlusMinus = true;
+      let lastResult = null;
+
+      // ─── Helpers ───
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.remove('opacity-0');
+        toast.classList.add('opacity-100');
+        setTimeout(function() {
+          toast.classList.remove('opacity-100');
+          toast.classList.add('opacity-0');
+        }, 2000);
+      }
+
+      function getScale() {
+        const s = {};
+        scaleInputs.forEach(function(inp) {
+          s[inp.dataset.grade] = parseFloat(inp.value) || 0;
+        });
+        // Ensure descending order
+        const keys = ['A','B','C','D','F'];
+        for (let i = 0; i < keys.length - 1; i++) {
+          if (s[keys[i]] <= s[keys[i+1]]) s[keys[i]] = s[keys[i+1]] + 10;
+        }
+        return s;
+      }
+
+      function buildGradeMap(bounds, plusMinus) {
+        const map = [];
+        const letters = ['A','B','C','D'];
+        const tops = [100, bounds.A, bounds.B, bounds.C, bounds.D];
+        for (let i = 0; i < letters.length; i++) {
+          const letter = letters[i];
+          const top = tops[i];
+          const bottom = tops[i+1];
+          if (plusMinus) {
+            const midHigh = bottom + (top - bottom) * 0.67;
+            const midLow = bottom + (top - bottom) * 0.33;
+            map.push({ grade: letter + '+', min: Math.round(midHigh * 100) / 100 });
+            map.push({ grade: letter, min: Math.round(midLow * 100) / 100 });
+            map.push({ grade: letter + '-', min: bottom });
+          } else {
+            map.push({ grade: letter, min: bottom });
+          }
+        }
+        map.push({ grade: 'F', min: 0 });
+        // Sort descending by min
+        map.sort(function(a, b) { return b.min - a.min; });
+        return map;
+      }
+
+      function percentToLetter(pct, gradeMap) {
+        for (let i = 0; i < gradeMap.length; i++) {
+          if (pct >= gradeMap[i].min - 0.001) return gradeMap[i].grade;
+        }
+        return 'F';
+      }
+
+      function letterToPercent(letter, gradeMap) {
+        for (let i = 0; i < gradeMap.length; i++) {
+          if (gradeMap[i].grade === letter) return gradeMap[i].min;
+        }
+        return 0;
+      }
+
+      // Resolve a *target* letter to the % you need to reach it.
+      // Base letters (A/B/C/D) always map to the scale boundary — "target B" = 80,
+      // not the plus/minus mid-band — so results match the FAQ and Percentage mode.
+      // Plus/minus targets (A-, B+, …) use the plus/minus map, with a safe fallback
+      // to the base boundary when plus/minus grading is switched off.
+      function resolveTarget(letter, bounds, gradeMap) {
+        const base = letter.charAt(0);
+        if (base === 'F') return 0;
+        if (letter.length === 1) {
+          return bounds[base] !== undefined ? bounds[base] : letterToPercent(letter, gradeMap);
+        }
+        const fromMap = letterToPercent(letter, gradeMap);
+        if (fromMap > 0) return fromMap;            // plus/minus on: real band bottom
+        return bounds[base] !== undefined ? bounds[base] : 0;  // plus/minus off: base boundary
+      }
+
+      function formatNum(n) {
+        return (Math.round(n * 100) / 100).toFixed(2);
+      }
+
+      // ─── Tabs ───
+      function switchTab(name) {
+        activeTab = name;
+        tabBtns.forEach(function(btn) {
+          const active = btn.dataset.tab === name;
+          btn.classList.toggle('bg-bae-primary', active);
+          btn.classList.toggle('text-white', active);
+          btn.classList.toggle('text-bae-ink', !active);
+        });
+        tabContents.forEach(function(tc) {
+          tc.classList.toggle('hidden', !tc.id.endsWith(name));
+        });
+        resultsEmpty.classList.remove('hidden');
+        resultsContent.classList.add('hidden');
+      }
+
+      tabBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() { switchTab(btn.dataset.tab); });
+      });
+
+      // ─── Custom Scale ───
+      toggleScale.addEventListener('click', function() {
+        scalePanel.classList.toggle('hidden');
+        scaleChevron.style.transform = scalePanel.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+      });
+
+      scalePlusMinus.addEventListener('change', function() {
+        usePlusMinus = scalePlusMinus.checked;
+      });
+
+      // ─── Classic desired type toggle ───
+      cDesiredType.addEventListener('change', function() {
+        cDesiredLetterWrap.classList.toggle('hidden', cDesiredType.value !== 'letter');
+        cDesiredPercentWrap.classList.toggle('hidden', cDesiredType.value !== 'percent');
+        cDesiredPassWrap.classList.toggle('hidden', cDesiredType.value !== 'pass');
+      });
+
+      // ─── Weighted desired type toggle ───
+      wDesiredType.addEventListener('change', function() {
+        wDesiredLetterWrap.classList.toggle('hidden', wDesiredType.value !== 'letter');
+        wDesiredPercentWrap.classList.toggle('hidden', wDesiredType.value !== 'percent');
+      });
+
+      // ─── Wire weighted action buttons (both recalculate; mode is auto-detected) ───
+      wCalcRequired.addEventListener('click', calculate);
+      wCalcOverall.addEventListener('click', calculate);
+
+      // ─── LMS Gradebook Mode helper ───
+      function lmsCompute() {
+        const displayed = parseFloat(lmsDisplayed.value);
+        const graded = parseFloat(lmsGraded.value);
+        if (isNaN(displayed) || isNaN(graded) || graded <= 0) {
+          lmsResult.textContent = '—';
+          return null;
+        }
+        const real = displayed / (graded / 100);
+        lmsResult.textContent = formatNum(real) + '%';
+        return real;
+      }
+      toggleLms.addEventListener('click', function() {
+        lmsPanel.classList.toggle('hidden');
+        lmsChevron.style.transform = lmsPanel.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+        if (!lmsPanel.classList.contains('hidden')) lmsCompute();
+      });
+      lmsDisplayed.addEventListener('input', lmsCompute);
+      lmsGraded.addEventListener('input', lmsCompute);
+      lmsApply.addEventListener('click', function() {
+        const real = lmsCompute();
+        if (real === null) { showToast('Enter LMS values first'); return; }
+        cCurrent.value = formatNum(real);
+        showToast('Applied ' + formatNum(real) + '% to current grade');
+      });
+
+      // ─── Study Priority class builder ───
+      let pCount = 0;
+      function addClass(name, current, weight, target) {
+        pCount++;
+        const div = document.createElement('div');
+        div.className = 'bg-bae-bg rounded-bae-sm p-3';
+        div.dataset.pRow = '1';
+        div.innerHTML =
+          '<div class="grid grid-cols-12 gap-2">' +
+            '<div class="col-span-3"><label class="block text-[10px] text-bae-muted mb-0.5">Class</label><input type="text" data-field="name" value="' + (name || 'Class') + '" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>' +
+            '<div class="col-span-3"><label class="block text-[10px] text-bae-muted mb-0.5">Current (%)</label><input type="number" data-field="current" min="0" max="100" step="0.01" value="' + (current !== undefined ? current : '') + '" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>' +
+            '<div class="col-span-2"><label class="block text-[10px] text-bae-muted mb-0.5">Final wt (%)</label><input type="number" data-field="weight" min="1" max="100" step="0.01" value="' + (weight !== undefined ? weight : '') + '" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>' +
+            '<div class="col-span-2"><label class="block text-[10px] text-bae-muted mb-0.5">Target (%)</label><input type="number" data-field="target" min="0" max="100" step="0.01" value="' + (target !== undefined ? target : '') + '" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>' +
+            '<div class="col-span-2 flex items-end"><button type="button" data-remove class="text-[10px] text-red-500 hover:text-red-700 font-semibold px-1 py-1 rounded-bae-sm">Remove</button></div>' +
+          '</div>';
+        pClasses.appendChild(div);
+        div.querySelector('[data-remove]').addEventListener('click', function() { div.remove(); });
+      }
+      addClass('Stats', 85, 50, 90);       // needs ~95 -> high (red)
+      addClass('Economics', 80, 40, 80);   // needs ~80 -> medium (amber)
+      addClass('English', 88, 25, 80);     // needs ~56 -> low (green, you're safe)
+      pAdd.addEventListener('click', function() { addClass('New Class', '', '', ''); });
+
+      function getPriorityClasses() {
+        const rows = [];
+        pClasses.querySelectorAll('[data-p-row]').forEach(function(div) {
+          const name = div.querySelector('[data-field="name"]').value.trim() || 'Class';
+          const current = parseFloat(div.querySelector('[data-field="current"]').value);
+          const weight = parseFloat(div.querySelector('[data-field="weight"]').value);
+          const target = parseFloat(div.querySelector('[data-field="target"]').value);
+          if (isNaN(current) || isNaN(weight) || isNaN(target) || weight <= 0) return;
+          const required = (target - current * (1 - weight/100)) / (weight/100);
+          let band;
+          if (required < 0) band = 'secured';
+          else if (required > 100) band = 'impossible';
+          else if (required >= 90) band = 'high';
+          else if (required >= 70) band = 'medium';
+          else band = 'low';
+          rows.push({ name: name, current: current, weight: weight, target: target, required: required, band: band });
+        });
+        rows.sort(function(a, b) { return b.required - a.required; });
+        return rows;
+      }
+
+      // ─── Weighted category builder ───
+      let wCatCount = 0;
+      function addCategory(name, weight, score, isFinal) {
+        wCatCount++;
+        const id = 'wcat-' + wCatCount;
+        const div = document.createElement('div');
+        div.className = 'bg-bae-bg rounded-bae-sm p-3';
+        div.dataset.catId = id;
+        div.innerHTML =
+          '<div class="grid grid-cols-12 gap-2">' +
+            '<div class="col-span-4"><label class="block text-[10px] text-bae-muted mb-0.5">Category</label><input type="text" data-field="name" value="' + (name || 'Category') + '" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>' +
+            '<div class="col-span-3"><label class="block text-[10px] text-bae-muted mb-0.5">Weight (%)</label><input type="number" data-field="weight" min="0" max="100" step="0.01" value="' + (weight || 0) + '" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>' +
+            '<div class="col-span-3"><label class="block text-[10px] text-bae-muted mb-0.5">Score (%)</label><input type="number" data-field="score" min="0" max="200" step="0.01" value="' + (score !== undefined ? score : '') + '" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" placeholder="leave blank to calculate" /></div>' +
+            '<div class="col-span-2 flex items-end"><button type="button" data-remove class="text-[10px] text-red-500 hover:text-red-700 font-semibold px-2 py-1 rounded-bae-sm">Remove</button></div>' +
+          '</div>' +
+          '<div class="mt-2 flex items-center gap-2">' +
+            '<label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" data-advanced-toggle class="w-3 h-3 accent-bae-primary rounded" /><span class="text-[10px] text-bae-muted">Advanced</span></label>' +
+          '</div>' +
+          '<div data-advanced class="hidden mt-2 grid grid-cols-12 gap-2">' +
+            '<div class="col-span-6"><label class="block text-[10px] text-bae-muted mb-0.5">Individual scores (comma-separated)</label><input type="text" data-field="scores" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" placeholder="e.g. 85, 92, 78" /></div>' +
+            '<div class="col-span-3"><label class="block text-[10px] text-bae-muted mb-0.5">Drop lowest</label><input type="number" data-field="drop" min="0" max="10" step="1" value="0" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" /></div>' +
+            '<div class="col-span-3"><label class="block text-[10px] text-bae-muted mb-0.5">Extra credit</label><input type="number" data-field="extra" min="0" max="100" step="0.01" value="0" class="w-full bg-white border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" placeholder="pts" /></div>' +
+          '</div>';
+        wCategories.appendChild(div);
+
+        div.querySelector('[data-remove]').addEventListener('click', function() {
+          div.remove();
+        });
+        div.querySelector('[data-advanced-toggle]').addEventListener('change', function(e) {
+          div.querySelector('[data-advanced]').classList.toggle('hidden', !e.target.checked);
+        });
+      }
+
+      // Init default categories
+      addCategory('Homework', 20, 88);
+      addCategory('Quizzes', 20, 82);
+      addCategory('Midterm', 25, 76);
+      addCategory('Final Exam', 35, '', true);
+
+      wAddCat.addEventListener('click', function() {
+        addCategory('New Category', 0, '');
+      });
+
+      function getWeightedCategories() {
+        const cats = [];
+        wCategories.querySelectorAll('[data-cat-id]').forEach(function(div) {
+          const name = div.querySelector('[data-field="name"]').value.trim() || 'Category';
+          const weight = parseFloat(div.querySelector('[data-field="weight"]').value) || 0;
+          const scoreInput = div.querySelector('[data-field="score"]');
+          const score = scoreInput.value === '' ? null : (parseFloat(scoreInput.value) || 0);
+          const scoresStr = div.querySelector('[data-field="scores"]').value;
+          const drop = parseInt(div.querySelector('[data-field="drop"]').value, 10) || 0;
+          const extra = parseFloat(div.querySelector('[data-field="extra"]').value) || 0;
+          let finalScore = score;
+          if (scoresStr && scoresStr.trim()) {
+            const arr = scoresStr.split(',').map(function(s) { return parseFloat(s.trim()); }).filter(function(n) { return !isNaN(n); });
+            if (arr.length > 0) {
+              arr.sort(function(a, b) { return a - b; });
+              const dropCount = Math.min(drop, arr.length - 1);
+              const kept = arr.slice(dropCount);
+              const sum = kept.reduce(function(a, b) { return a + b; }, 0);
+              finalScore = sum / kept.length + extra;
+            }
+          } else if (extra > 0 && score !== null) {
+            finalScore = score + extra;
+          }
+          cats.push({ name: name, weight: weight, score: finalScore, rawScore: score });
+        });
+        return cats;
+      }
+
+      // ─── Calculate ───
+      function calculate() {
+        const scale = getScale();
+        const gradeMap = buildGradeMap(scale, usePlusMinus);
+        let result = {};
+
+        if (activeTab === 'classic') {
+          const current = parseFloat(cCurrent.value) || 0;
+          const weight = parseFloat(cWeight.value) || 0;
+          const type = cDesiredType.value;
+          let desired = 0;
+          let desiredLetter = null;
+          if (type === 'letter') { desired = resolveTarget(cDesiredLetter.value, scale, gradeMap); desiredLetter = cDesiredLetter.value; }
+          else if (type === 'percent') desired = parseFloat(cDesiredPercent.value) || 0;
+          else desired = parseFloat(cDesiredPass.value) || 0;
+
+          const required = (desired - current * (1 - weight/100)) / (weight/100);
+          const maxPossible = current * (1 - weight/100) + 100 * (weight/100);
+          const minPossible = current * (1 - weight/100); // overall if final = 0
+
+          result = {
+            mode: 'classic',
+            current: current,
+            weight: weight,
+            invalid: !(weight > 0),         // weight 0 / blank → division by zero
+            desired: desired,
+            desiredLetter: desiredLetter,
+            required: required,
+            maxPossible: maxPossible,
+            minPossible: minPossible,
+            lockedIn: required < 0,        // target already guaranteed (even a 0 reaches it)
+            impossible: required > 100,    // unreachable even with a perfect final
+            possible: required >= 0 && required <= 100,
+            letter: percentToLetter(required, gradeMap),
+            overallLetter: percentToLetter(maxPossible, gradeMap),
+            minLetter: percentToLetter(minPossible, gradeMap)
+          };
+        } else if (activeTab === 'reverse') {
+          const current = parseFloat(rCurrent.value) || 0;
+          const final = parseFloat(rFinal.value) || 0;
+          const weight = parseFloat(rWeight.value) || 0;
+          const overall = current * (1 - weight/100) + final * (weight/100);
+          result = {
+            mode: 'reverse',
+            current: current,
+            final: final,
+            weight: weight,
+            overall: overall,
+            letter: percentToLetter(overall, gradeMap)
+          };
+        } else if (activeTab === 'weighted') {
+          const cats = getWeightedCategories();
+          const totalWeight = cats.reduce(function(s, c) { return s + c.weight; }, 0);
+          const known = cats.filter(function(c) { return c.score !== null; });
+          const unknown = cats.filter(function(c) { return c.score === null; });
+          const knownWeight = known.reduce(function(s, c) { return s + c.weight; }, 0);
+          const knownScore = known.reduce(function(s, c) { return s + c.weight * c.score; }, 0);
+
+          result = {
+            mode: 'weighted',
+            cats: cats,
+            totalWeight: totalWeight,
+            knownWeight: knownWeight,
+            knownScore: knownScore,
+            unknownCount: unknown.length
+          };
+
+          // If calculating required final
+          if (unknown.length === 1) {
+            const u = unknown[0];
+            const type = wDesiredType.value;
+            let desired = 0;
+            let desiredLetter = null;
+            if (type === 'letter') { desired = resolveTarget(wDesiredLetter.value, scale, gradeMap); desiredLetter = wDesiredLetter.value; }
+            else desired = parseFloat(wDesiredPercent.value) || 0;
+
+            const required = (desired * totalWeight - knownScore) / u.weight;
+            const maxOverall = (knownScore + u.weight * 100) / totalWeight;
+            const minOverall = knownScore / totalWeight; // overall if final = 0
+            result.invalid = !(totalWeight > 0 && u.weight > 0); // zero weight → division by zero
+            result.desired = desired;
+            result.desiredLetter = desiredLetter;
+            result.required = required;
+            result.unknown = u;
+            result.lockedIn = required < 0;     // target already guaranteed
+            result.impossible = required > 100;  // unreachable even with a perfect final
+            result.possible = required >= 0 && required <= 100;
+            result.maxOverall = maxOverall;
+            result.minOverall = minOverall;
+            result.letter = percentToLetter(required, gradeMap);
+            result.minLetter = percentToLetter(minOverall, gradeMap);
+          } else if (unknown.length === 0) {
+            // Calculate overall
+            result.invalid = !(totalWeight > 0); // no weights entered → division by zero
+            const overall = knownScore / totalWeight;
+            result.overall = overall;
+            result.letter = percentToLetter(overall, gradeMap);
+          }
+        } else if (activeTab === 'gpa') {
+          const cum = parseFloat(gCum.value) || 0;
+          const target = parseFloat(gTarget.value) || 0;
+          const done = parseFloat(gDone.value) || 0;
+          const remaining = parseFloat(gRemaining.value) || 0;
+          const currentQP = cum * done;
+          const totalCredits = done + remaining;
+          const targetQP = target * totalCredits;
+          const required = remaining > 0 ? (targetQP - currentQP) / remaining : Infinity;
+          result = {
+            mode: 'gpa',
+            cum: cum, target: target, done: done, remaining: remaining,
+            required: required,
+            lockedIn: required < 0,
+            impossible: required > 4.0 + 1e-9,
+            possible: required >= 0 && required <= 4.0 + 1e-9
+          };
+        } else if (activeTab === 'priority') {
+          const rows = getPriorityClasses();
+          result = { mode: 'priority', rows: rows };
+        }
+
+        lastResult = result;
+        renderResults(result, gradeMap);
+      }
+
+      function renderResults(result, gradeMap) {
+        resultsEmpty.classList.add('hidden');
+        resultsContent.classList.remove('hidden');
+        resWarning.classList.add('hidden');
+        resImpossible.classList.add('hidden');
+        resSecured.classList.add('hidden');
+        resDetails.innerHTML = '';
+
+        // Echo the letter the user actually picked; fall back to deriving it from the % target.
+        const desiredLabel = result.desiredLetter || (result.desired !== undefined ? percentToLetter(result.desired, gradeMap) : '');
+
+        if (result.mode === 'classic') {
+          if (result.invalid) {
+            resMainValue.textContent = '—';
+            resMainLabel.textContent = 'Check final weight';
+            resImpossible.classList.remove('hidden');
+            resImpossible.innerHTML = '<strong>Enter a final exam weight greater than 0%.</strong> The final has to be worth something for us to work out what you need on it.';
+          } else if (result.lockedIn) {
+            resMainValue.textContent = formatNum(result.minPossible) + '%';
+            resMainLabel.textContent = 'Already secured (' + result.minLetter + ')';
+            resSecured.classList.remove('hidden');
+            resSecured.innerHTML = '<strong>Your target is already locked in.</strong> Even a 0% on the final leaves you at ' + formatNum(result.minPossible) + '% (' + result.minLetter + '), at or above your ' + formatNum(result.desired) + '% goal. Relax: your final cannot drop you below this floor.';
+            resDetails.innerHTML =
+              '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Current grade</span><span class="font-semibold text-bae-ink">' + formatNum(result.current) + '%</span></div>' +
+              '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Final weight</span><span class="font-semibold text-bae-ink">' + formatNum(result.weight) + '%</span></div>' +
+              '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Target grade</span><span class="font-semibold text-bae-ink">' + formatNum(result.desired) + '% (' + desiredLabel + ')</span></div>' +
+              '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Worst-case grade (0% final)</span><span class="font-semibold text-bae-ink">' + formatNum(result.minPossible) + '% (' + result.minLetter + ')</span></div>' +
+              '<div class="flex justify-between py-1"><span class="text-bae-muted">Best-case grade (100% final)</span><span class="font-semibold text-bae-ink">' + formatNum(result.maxPossible) + '% (' + result.overallLetter + ')</span></div>';
+          } else if (result.possible) {
+            resMainValue.textContent = formatNum(result.required) + '%';
+            resMainLabel.textContent = 'Needed on final for ' + desiredLabel;
+            resDetails.innerHTML =
+              '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Current grade</span><span class="font-semibold text-bae-ink">' + formatNum(result.current) + '%</span></div>' +
+              '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Final weight</span><span class="font-semibold text-bae-ink">' + formatNum(result.weight) + '%</span></div>' +
+              '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Target grade</span><span class="font-semibold text-bae-ink">' + formatNum(result.desired) + '% (' + desiredLabel + ')</span></div>' +
+              '<div class="flex justify-between py-1"><span class="text-bae-muted">Max possible grade</span><span class="font-semibold text-bae-ink">' + formatNum(result.maxPossible) + '% (' + result.overallLetter + ')</span></div>';
+            if (result.required > 90) {
+              resWarning.classList.remove('hidden');
+              resWarning.textContent = 'You need a very high score. Study hard, but consider a backup target grade.';
+            }
+          } else {
+            resMainValue.textContent = formatNum(result.required) + '%';
+            resMainLabel.textContent = 'Required (impossible)';
+            resImpossible.classList.remove('hidden');
+            resImpossible.innerHTML = '<strong>Target is mathematically impossible.</strong> The highest grade you can achieve is ' + formatNum(result.maxPossible) + '% (' + result.overallLetter + '). Try lowering your target to a ' + result.overallLetter + ' or lower.';
+            resDetails.innerHTML =
+              '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Current grade</span><span class="font-semibold text-bae-ink">' + formatNum(result.current) + '%</span></div>' +
+              '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Final weight</span><span class="font-semibold text-bae-ink">' + formatNum(result.weight) + '%</span></div>' +
+              '<div class="flex justify-between py-1"><span class="text-bae-muted">Max possible grade</span><span class="font-semibold text-bae-ink">' + formatNum(result.maxPossible) + '% (' + result.overallLetter + ')</span></div>';
+          }
+        } else if (result.mode === 'reverse') {
+          resMainValue.textContent = formatNum(result.overall) + '%';
+          resMainLabel.textContent = 'Overall grade (' + result.letter + ')';
+          resDetails.innerHTML =
+            '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Grade before final</span><span class="font-semibold text-bae-ink">' + formatNum(result.current) + '%</span></div>' +
+            '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Final score</span><span class="font-semibold text-bae-ink">' + formatNum(result.final) + '%</span></div>' +
+            '<div class="flex justify-between py-1"><span class="text-bae-muted">Final weight</span><span class="font-semibold text-bae-ink">' + formatNum(result.weight) + '%</span></div>';
+        } else if (result.mode === 'weighted') {
+          if (result.invalid) {
+            resMainValue.textContent = '—';
+            resMainLabel.textContent = 'Check category weights';
+            resImpossible.classList.remove('hidden');
+            resImpossible.innerHTML = '<strong>Category weights must add up to more than 0%.</strong> Give each category (including the blank one you want calculated) a weight greater than 0.';
+          } else if (result.unknownCount === 1 && result.required !== undefined) {
+            if (result.lockedIn) {
+              resMainValue.textContent = formatNum(result.minOverall) + '%';
+              resMainLabel.textContent = 'Already secured (' + result.minLetter + ')';
+              resSecured.classList.remove('hidden');
+              resSecured.innerHTML = '<strong>Your target is already locked in.</strong> Even a 0% on ' + result.unknown.name + ' leaves you at ' + formatNum(result.minOverall) + '% (' + result.minLetter + '), at or above your ' + formatNum(result.desired) + '% goal.';
+              resDetails.innerHTML =
+                '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Target overall</span><span class="font-semibold text-bae-ink">' + formatNum(result.desired) + '% (' + desiredLabel + ')</span></div>' +
+                '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Worst-case (0% on ' + result.unknown.name + ')</span><span class="font-semibold text-bae-ink">' + formatNum(result.minOverall) + '% (' + result.minLetter + ')</span></div>' +
+                '<div class="flex justify-between py-1"><span class="text-bae-muted">Best-case (100%)</span><span class="font-semibold text-bae-ink">' + formatNum(result.maxOverall) + '% (' + percentToLetter(result.maxOverall, gradeMap) + ')</span></div>';
+            } else if (result.possible) {
+              resMainValue.textContent = formatNum(result.required) + '%';
+              resMainLabel.textContent = 'Needed on ' + result.unknown.name;
+              resDetails.innerHTML =
+                '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Target overall</span><span class="font-semibold text-bae-ink">' + formatNum(result.desired) + '% (' + desiredLabel + ')</span></div>' +
+                '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Known categories</span><span class="font-semibold text-bae-ink">' + formatNum(result.knownWeight) + '% weight</span></div>' +
+                '<div class="flex justify-between py-1"><span class="text-bae-muted">Max possible</span><span class="font-semibold text-bae-ink">' + formatNum(result.maxOverall) + '% (' + percentToLetter(result.maxOverall, gradeMap) + ')</span></div>';
+              if (result.required > 90) {
+                resWarning.classList.remove('hidden');
+                resWarning.textContent = 'You need a very high score on ' + result.unknown.name + '. Consider a backup target.';
+              }
+            } else {
+              resMainValue.textContent = formatNum(result.required) + '%';
+              resMainLabel.textContent = 'Required (impossible)';
+              resImpossible.classList.remove('hidden');
+              resImpossible.innerHTML = '<strong>Target is mathematically impossible.</strong> The highest overall grade you can achieve is ' + formatNum(result.maxOverall) + '% (' + percentToLetter(result.maxOverall, gradeMap) + ').';
+            }
+          } else if (result.unknownCount === 0 && result.overall !== undefined) {
+            resMainValue.textContent = formatNum(result.overall) + '%';
+            resMainLabel.textContent = 'Overall grade (' + result.letter + ')';
+            let html = '';
+            result.cats.forEach(function(c) {
+              html += '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">' + c.name + ' (' + c.weight + '%)</span><span class="font-semibold text-bae-ink">' + formatNum(c.score) + '%</span></div>';
+            });
+            html += '<div class="flex justify-between py-1"><span class="text-bae-muted">Total weight</span><span class="font-semibold text-bae-ink">' + formatNum(result.totalWeight) + '%</span></div>';
+            resDetails.innerHTML = html;
+          } else {
+            resMainValue.textContent = '—';
+            resMainLabel.textContent = 'Check inputs';
+            resDetails.innerHTML = '<p class="text-sm text-bae-muted">Leave exactly one category score blank to calculate the required score. Or fill in all categories to see the overall grade.</p>';
+          }
+        } else if (result.mode === 'gpa') {
+          const currentQP = result.cum * result.done;
+          const totalCredits = result.done + result.remaining;
+          const maxCum = totalCredits > 0 ? (currentQP + 4.0 * result.remaining) / totalCredits : 0;
+          const minCum = totalCredits > 0 ? currentQP / totalCredits : 0;
+          const detail =
+            '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Current cumulative GPA</span><span class="font-semibold text-bae-ink">' + formatNum(result.cum) + '</span></div>' +
+            '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Target cumulative GPA</span><span class="font-semibold text-bae-ink">' + formatNum(result.target) + '</span></div>' +
+            '<div class="flex justify-between py-1 border-b border-bae-border"><span class="text-bae-muted">Credits completed</span><span class="font-semibold text-bae-ink">' + formatNum(result.done) + '</span></div>' +
+            '<div class="flex justify-between py-1"><span class="text-bae-muted">Credits remaining</span><span class="font-semibold text-bae-ink">' + formatNum(result.remaining) + '</span></div>';
+          if (result.lockedIn) {
+            resMainValue.textContent = formatNum(minCum);
+            resMainLabel.textContent = 'Target already secured';
+            resSecured.classList.remove('hidden');
+            resSecured.innerHTML = '<strong>Your target is already locked in.</strong> Even a 0.0 this semester leaves your cumulative GPA at ' + formatNum(minCum) + ', at or above your ' + formatNum(result.target) + ' goal.';
+            resDetails.innerHTML = detail;
+          } else if (result.impossible) {
+            resMainValue.textContent = formatNum(result.required);
+            resMainLabel.textContent = 'GPA needed (impossible)';
+            resImpossible.classList.remove('hidden');
+            resImpossible.innerHTML = '<strong>Out of reach this semester.</strong> A ' + formatNum(result.required) + ' GPA is above the 4.0 maximum. Even straight A&rsquo;s (4.0) this semester reach only a ' + formatNum(maxCum) + ' cumulative GPA. Lower your target or spread it across more semesters.';
+            resDetails.innerHTML = detail;
+          } else {
+            resMainValue.textContent = formatNum(result.required);
+            resMainLabel.textContent = 'GPA needed this semester';
+            resDetails.innerHTML = detail;
+            if (result.required >= 3.7) {
+              resWarning.classList.remove('hidden');
+              resWarning.textContent = 'You need a very high GPA this semester (' + formatNum(result.required) + '). Achievable, but it leaves little room for a slip.';
+            }
+          }
+        } else if (result.mode === 'priority') {
+          const rows = result.rows || [];
+          if (rows.length === 0) {
+            resMainValue.textContent = '—';
+            resMainLabel.textContent = 'Add classes';
+            resDetails.innerHTML = '<p class="text-sm text-bae-muted">Add at least one class with a current grade, final weight, and target to see your study ranking.</p>';
+          } else {
+            const colors = { high: 'text-red-600', impossible: 'text-red-600', medium: 'text-amber-600', low: 'text-green-600', secured: 'text-green-600' };
+            const labels = { high: 'Must ace it', impossible: 'Out of reach', medium: 'Study up', low: 'You’re safe', secured: 'Locked in' };
+            resMainValue.textContent = rows.length;
+            resMainLabel.textContent = rows.length === 1 ? 'class ranked' : 'classes ranked, hardest first';
+            let html = '';
+            rows.forEach(function(r, i) {
+              const c = colors[r.band] || 'text-bae-ink';
+              const valTxt = r.band === 'secured' ? 'Secured' : (r.band === 'impossible' ? '>100%' : 'Need ' + formatNum(r.required) + '%');
+              html += '<div class="flex items-center justify-between py-1.5 border-b border-bae-border">' +
+                '<span class="flex items-center gap-2"><span class="inline-flex w-5 h-5 items-center justify-center rounded-full bg-bae-bg text-[10px] font-bold text-bae-muted">' + (i + 1) + '</span><span class="text-bae-ink font-medium">' + r.name + '</span></span>' +
+                '<span class="text-right"><span class="font-bold ' + c + '">' + valTxt + '</span><span class="block text-[10px] ' + c + '">' + (labels[r.band] || '') + '</span></span>' +
+                '</div>';
+            });
+            resDetails.innerHTML = html;
+          }
+        }
+      }
+
+      btnCalculate.addEventListener('click', calculate);
+
+      btnClear.addEventListener('click', function() {
+        // Classic tab
+        cCurrent.value = '';
+        cWeight.value = '25';
+        cDesiredType.value = 'letter';
+        cDesiredLetter.value = 'B';
+        cDesiredPercent.value = '80';
+        cDesiredPass.value = '60';
+        cDesiredLetterWrap.classList.remove('hidden');
+        cDesiredPercentWrap.classList.add('hidden');
+        cDesiredPassWrap.classList.add('hidden');
+
+        // Reverse tab
+        rCurrent.value = '';
+        rFinal.value = '';
+        rWeight.value = '25';
+
+        // Weighted tab — remove all, restore defaults
+        wCategories.innerHTML = '';
+        wCatCount = 0;
+        addCategory('Homework', 20, 88);
+        addCategory('Quizzes', 20, 82);
+        addCategory('Midterm', 25, 76);
+        addCategory('Final Exam', 35, '', true);
+        wDesiredType.value = 'letter';
+        wDesiredLetter.value = 'B';
+        wDesiredPercent.value = '80';
+        wDesiredLetterWrap.classList.remove('hidden');
+        wDesiredPercentWrap.classList.add('hidden');
+
+        // GPA Plan tab
+        gCum.value = '3.2';
+        gTarget.value = '3.5';
+        gDone.value = '30';
+        gRemaining.value = '30';
+
+        // Study Priority tab — remove all, restore defaults
+        pClasses.innerHTML = '';
+        pCount = 0;
+        addClass('Stats', 85, 50, 90);
+        addClass('Economics', 80, 40, 80);
+        addClass('English', 88, 25, 80);
+
+        // LMS helper
+        lmsDisplayed.value = '49';
+        lmsGraded.value = '75';
+        lmsResult.textContent = '—';
+
+        // Reset custom scale
+        scaleBounds = { A: 90, B: 80, C: 70, D: 60, F: 0 };
+        usePlusMinus = true;
+        scalePlusMinus.checked = true;
+        scaleInputs.forEach(function(inp) {
+          const g = inp.dataset.grade;
+          if (g && scaleBounds[g] !== undefined) { inp.value = scaleBounds[g]; }
+        });
+        if (!scalePanel.classList.contains('hidden')) {
+          toggleScale.click();
+        }
+
+        // Reset results
+        resultsContent.classList.add('hidden');
+        resultsEmpty.classList.remove('hidden');
+        lastResult = null;
+
+        // Clear URL params
+        if (window.history.replaceState) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        showToast('All fields cleared');
+      });
+
+      // ─── PDF Export ───
+      btnPdf.addEventListener('click', function() {
+        if (!lastResult) { showToast('Calculate first'); return; }
+        if (typeof html2pdf === 'undefined') { showToast('PDF library loading'); return; }
+
+        const gradeMap = buildGradeMap(getScale(), usePlusMinus);
+        document.getElementById('pdf-date').textContent = 'Generated on ' + new Date().toLocaleDateString();
+
+        let summaryHtml = '';
+        if (lastResult.mode === 'classic') {
+          summaryHtml = '<p><strong>Mode:</strong> Classic (What do I need on my final?)</p>' +
+            '<p><strong>Current grade:</strong> ' + formatNum(lastResult.current) + '%</p>' +
+            '<p><strong>Final weight:</strong> ' + formatNum(lastResult.weight) + '%</p>' +
+            (lastResult.lockedIn
+              ? '<p><strong>Target already secured:</strong> even a 0% final keeps you at ' + formatNum(lastResult.minPossible) + '% (' + lastResult.minLetter + ')</p>'
+              : '<p><strong>Required on final:</strong> ' + formatNum(lastResult.required) + '% (' + lastResult.letter + ')</p>');
+        } else if (lastResult.mode === 'reverse') {
+          summaryHtml = '<p><strong>Mode:</strong> Reverse (What is my overall grade?)</p>' +
+            '<p><strong>Overall grade:</strong> ' + formatNum(lastResult.overall) + '% (' + lastResult.letter + ')</p>';
+        } else if (lastResult.mode === 'weighted') {
+          summaryHtml = '<p><strong>Mode:</strong> Weighted Categories</p>';
+          if (lastResult.overall !== undefined) {
+            summaryHtml += '<p><strong>Overall grade:</strong> ' + formatNum(lastResult.overall) + '% (' + lastResult.letter + ')</p>';
+          } else if (lastResult.required !== undefined) {
+            summaryHtml += lastResult.lockedIn
+              ? '<p><strong>Target already secured on ' + lastResult.unknown.name + ':</strong> even a 0% keeps you at ' + formatNum(lastResult.minOverall) + '% (' + lastResult.minLetter + ')</p>'
+              : '<p><strong>Required on ' + lastResult.unknown.name + ':</strong> ' + formatNum(lastResult.required) + '% (' + lastResult.letter + ')</p>';
+          }
+        } else if (lastResult.mode === 'gpa') {
+          summaryHtml = '<p><strong>Mode:</strong> Semester GPA Planner</p>' +
+            '<p><strong>Current cumulative GPA:</strong> ' + formatNum(lastResult.cum) + ' over ' + formatNum(lastResult.done) + ' credits</p>' +
+            (lastResult.impossible
+              ? '<p><strong>Target ' + formatNum(lastResult.target) + ' is out of reach this semester</strong> (needs ' + formatNum(lastResult.required) + ' GPA, above the 4.0 max)</p>'
+              : lastResult.lockedIn
+                ? '<p><strong>Target ' + formatNum(lastResult.target) + ' already secured</strong>: even a 0.0 this semester keeps you there</p>'
+                : '<p><strong>GPA needed this semester:</strong> ' + formatNum(lastResult.required) + ' (to reach a ' + formatNum(lastResult.target) + ' cumulative)</p>');
+        } else if (lastResult.mode === 'priority') {
+          summaryHtml = '<p><strong>Mode:</strong> Study Priority</p>' +
+            '<p><strong>' + (lastResult.rows ? lastResult.rows.length : 0) + ' classes ranked hardest-first</strong> by the score needed on each final.</p>';
+        }
+        document.getElementById('pdf-summary').innerHTML = summaryHtml;
+
+        const tbody = document.getElementById('pdf-table-body');
+        tbody.innerHTML = '';
+        function addRow(item, val) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = '<td style="border:1px solid #e2e8f0;padding:6px;">' + item + '</td><td style="border:1px solid #e2e8f0;padding:6px;">' + val + '</td>';
+          tbody.appendChild(tr);
+        }
+        if (lastResult.mode === 'classic') {
+          addRow('Current grade', formatNum(lastResult.current) + '%');
+          addRow('Final weight', formatNum(lastResult.weight) + '%');
+          addRow('Target grade', formatNum(lastResult.desired) + '% (' + (lastResult.desiredLetter || percentToLetter(lastResult.desired, gradeMap)) + ')');
+          if (lastResult.lockedIn) {
+            addRow('Status', 'Already secured: even a 0% final passes your target');
+            addRow('Worst-case grade (0% final)', formatNum(lastResult.minPossible) + '% (' + lastResult.minLetter + ')');
+          } else {
+            addRow('Required on final', formatNum(lastResult.required) + '% (' + lastResult.letter + ')');
+          }
+          addRow('Max possible', formatNum(lastResult.maxPossible) + '% (' + lastResult.overallLetter + ')');
+        } else if (lastResult.mode === 'reverse') {
+          addRow('Current grade', formatNum(lastResult.current) + '%');
+          addRow('Final score', formatNum(lastResult.final) + '%');
+          addRow('Final weight', formatNum(lastResult.weight) + '%');
+          addRow('Overall grade', formatNum(lastResult.overall) + '% (' + lastResult.letter + ')');
+        } else if (lastResult.mode === 'weighted' && lastResult.cats) {
+          lastResult.cats.forEach(function(c) {
+            addRow(c.name + ' (' + c.weight + '%)', (c.score !== null ? formatNum(c.score) + '%' : '—'));
+          });
+          if (lastResult.overall !== undefined) addRow('Overall grade', formatNum(lastResult.overall) + '% (' + lastResult.letter + ')');
+          if (lastResult.required !== undefined) {
+            if (lastResult.lockedIn) {
+              addRow('Status on ' + lastResult.unknown.name, 'Already secured: even a 0% passes your target');
+              addRow('Worst-case overall (0%)', formatNum(lastResult.minOverall) + '% (' + lastResult.minLetter + ')');
+            } else {
+              addRow('Required on ' + lastResult.unknown.name, formatNum(lastResult.required) + '% (' + lastResult.letter + ')');
+            }
+          }
+        } else if (lastResult.mode === 'gpa') {
+          addRow('Current cumulative GPA', formatNum(lastResult.cum));
+          addRow('Target cumulative GPA', formatNum(lastResult.target));
+          addRow('Credits completed', formatNum(lastResult.done));
+          addRow('Credits remaining', formatNum(lastResult.remaining));
+          addRow(lastResult.impossible ? 'GPA needed (impossible)' : (lastResult.lockedIn ? 'Status' : 'GPA needed this semester'),
+                 lastResult.lockedIn ? 'Already secured' : formatNum(lastResult.required));
+        } else if (lastResult.mode === 'priority' && lastResult.rows) {
+          lastResult.rows.forEach(function(r, i) {
+            addRow((i + 1) + '. ' + r.name, r.band === 'secured' ? 'Secured' : (r.band === 'impossible' ? 'Out of reach (>100%)' : 'Need ' + formatNum(r.required) + '% on final'));
+          });
+        }
+
+        const report = document.getElementById('pdf-report-content');
+        const clone = report.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        html2pdf().set({
+          margin: 0,
+          filename: 'finals-grade-report.pdf',
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, scrollX: 0, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(clone).save().then(function() {
+          if (clone.parentNode) document.body.removeChild(clone);
+          showToast('PDF downloaded');
+        }).catch(function() {
+          if (clone.parentNode) document.body.removeChild(clone);
+          showToast('PDF generation failed');
+        });
+      });
+
+      // ─── Shareable URL ───
+      btnShare.addEventListener('click', function() {
+        if (!lastResult) { showToast('Calculate first'); return; }
+        const params = new URLSearchParams();
+        params.set('tab', activeTab);
+        if (activeTab === 'classic') {
+          params.set('current', cCurrent.value);
+          params.set('weight', cWeight.value);
+          params.set('dtype', cDesiredType.value);
+          if (cDesiredType.value === 'letter') params.set('desired', cDesiredLetter.value);
+          else if (cDesiredType.value === 'percent') params.set('desired', cDesiredPercent.value);
+          else params.set('desired', cDesiredPass.value);
+        } else if (activeTab === 'reverse') {
+          params.set('current', rCurrent.value);
+          params.set('final', rFinal.value);
+          params.set('weight', rWeight.value);
+        }
+        const url = window.location.origin + window.location.pathname + '?' + params.toString();
+        navigator.clipboard.writeText(url).then(function() { showToast('Link copied'); }).catch(function() { showToast('Copy failed'); });
+      });
+
+      // ─── Read URL on load ───
+      function readURL() {
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get('tab');
+        if (tab && ['classic','weighted','reverse'].indexOf(tab) !== -1) {
+          switchTab(tab);
+        }
+        if (tab === 'classic' || !tab) {
+          if (params.has('current')) cCurrent.value = params.get('current');
+          if (params.has('weight')) cWeight.value = params.get('weight');
+          if (params.has('dtype')) {
+            cDesiredType.value = params.get('dtype');
+            cDesiredType.dispatchEvent(new Event('change'));
+            if (params.get('dtype') === 'letter') cDesiredLetter.value = params.get('desired');
+            else if (params.get('dtype') === 'percent') cDesiredPercent.value = params.get('desired');
+            else cDesiredPass.value = params.get('desired');
+          }
+          calculate();
+        } else if (tab === 'reverse') {
+          if (params.has('current')) rCurrent.value = params.get('current');
+          if (params.has('final')) rFinal.value = params.get('final');
+          if (params.has('weight')) rWeight.value = params.get('weight');
+          calculate();
+        }
+      }
+
+      readURL();
+    })();
+  </script>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+</BaseLayout>

@@ -1,0 +1,51 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { SEOProps } from '../types';
+
+interface Props {
+  seo: SEOProps;
+  frontmatter: {
+    title: string;
+    productA: string;
+    productB: string;
+    category: string;
+    verdict?: string;
+    winner?: string;
+  };
+}
+
+const { seo, frontmatter } = Astro.props;
+---
+
+<BaseLayout seo={seo}>
+  <div class="py-12 md:py-16">
+    <div class="container max-w-content mx-auto px-6">
+      <header class="mb-10">
+        <span class="text-bae-primary text-sm font-semibold mb-2 inline-block">{frontmatter.category}</span>
+        <h1 class="font-serif text-3xl md:text-4xl font-bold text-bae-ink leading-tight mb-4">
+          {frontmatter.title}
+        </h1>
+        
+        {frontmatter.verdict && (
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 mb-6">
+            <p class="text-sm text-bae-muted uppercase font-semibold tracking-wider mb-1">Quick Verdict</p>
+            <p class="text-bae-ink font-medium">{frontmatter.verdict}</p>
+          </div>
+        )}
+      </header>
+      
+      <div class="grid gap-8">
+        <slot />
+      </div>
+      
+      <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <a href={`/go/${frontmatter.productA}/`} class="bg-bae-card border border-bae-border rounded-bae p-4 text-center font-semibold text-bae-ink hover:border-bae-primary transition-colors">
+          Visit {frontmatter.productA} →
+        </a>
+        <a href={`/go/${frontmatter.productB}/`} class="bg-bae-card border border-bae-border rounded-bae p-4 text-center font-semibold text-bae-ink hover:border-bae-primary transition-colors">
+          Visit {frontmatter.productB} →
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

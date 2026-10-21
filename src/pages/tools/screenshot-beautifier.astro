@@ -1,0 +1,504 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Screenshot Beautifier?',
+    a: 'The Best Answer Hub Screenshot Beautifier is a free browser-based tool that turns plain screenshots into professional device mockups. You upload any image (a website screenshot, app interface, or design mockup) and renders it inside a realistic device frame such as a desktop monitor, laptop, tablet, or smartphone. You can choose a background color, adjust padding, and download a high-resolution PNG. Everything runs locally in your browser. Your images are never uploaded to a server.',
+  },
+  {
+    q: 'Is the Screenshot Beautifier free to use?',
+    a: 'Yes, the Screenshot Beautifier is completely free with no usage limits, no signup, and no watermarked output. You can create as many device mockups as you want. Unlike paid design tools like Canva Pro, Figma, or Placeit, there are no subscription fees or credit limits. Every mockup is generated instantly in your browser using the HTML5 Canvas API.',
+  },
+  {
+    q: 'How do I use the Screenshot Beautifier?',
+    a: 'Upload your screenshot or image using the file picker or drag-and-drop area. Select a device frame: Desktop Monitor, Laptop, Tablet, or Smartphone. Choose a background color and adjust the padding if needed. The Best Answer Hub Screenshot Beautifier instantly renders a live preview of your image inside the device frame. Once you are happy with the result, click "Download Mockup" to save a high-resolution PNG file to your computer.',
+  },
+  {
+    q: 'What device frames are available?',
+    a: 'The Best Answer Hub Screenshot Beautifier offers four device frames. Desktop Monitor is ideal for landing pages, dashboards, and web apps. Laptop works great for SaaS products, portfolios, and presentations. Tablet is perfect for iPad apps, e-books, and digital magazines. Smartphone is designed for mobile app screenshots, social media stories, and mobile web designs. Each frame is drawn with clean, modern styling that looks professional on presentations, pitch decks, and marketing materials.',
+  },
+  {
+    q: 'What image formats are supported?',
+    a: 'You can upload PNG, JPEG, WebP, and GIF images of any size. The recommended minimum resolution is 800 pixels wide for the best mockup quality. The Best Answer Hub Screenshot Beautifier places no artificial limits on input size. Upload a small icon or a massive 4K screenshot and it will frame it the same way. For the sharpest results, use a source image that is at least 1200 pixels wide.',
+  },
+  {
+    q: 'Is my image sent to a server?',
+    a: 'No. Your image never leaves your browser. The Screenshot Beautifier uses the HTML5 Canvas API to draw the device frame and your image locally on your device. There are no network requests, no cloud storage, and no server-side rendering. You can verify this by opening your browser\'s Network tab in Developer Tools. You will see zero outgoing requests when you upload, preview, or download a mockup.',
+  },
+  {
+    q: 'Can I use these mockups for commercial projects?',
+    a: 'Yes. The device frames are generic geometric illustrations created with the Canvas API. They are not copyrighted product designs or trademarked device replicas. The mockups you generate are yours to use for personal, commercial, client, or marketing purposes without attribution. You own the rights to your output.',
+  },
+  {
+    q: 'What is the best device frame for app store screenshots?',
+    a: 'For Apple App Store screenshots, the Smartphone frame is the standard choice. Apple requires screenshots in specific dimensions: 6.7-inch (1290 x 2796 pixels), 6.5-inch (1284 x 2778 pixels), and 5.5-inch (1242 x 2208 pixels). While the Best Answer Hub Screenshot Beautifier does not enforce those exact dimensions, the Smartphone frame gives you a polished presentation mockup you can use in pitch decks, landing pages, and social media. For the actual App Store, export your raw screenshots at the required sizes and use Apple\'s official templates.',
+  },
+  {
+    q: 'Can I change the background color?',
+    a: 'Yes. The Best Answer Hub Screenshot Beautifier includes a set of curated background colors optimized for screenshot presentations. Options include clean white, soft gray, subtle indigo, warm sand, and dark charcoal. You can also choose a transparent background if you need to place the mockup on a custom background in Photoshop, Figma, or Canva later.',
+  },
+  {
+    q: 'Why do device mockups improve conversion rates?',
+    a: 'Device mockups add context and professionalism to plain screenshots. A raw screenshot floating on a page looks unfinished, but the same screenshot inside a laptop frame instantly signals "this is a real product." Studies from Unbounce and ConversionXL show that product visuals with context frames can increase landing page conversion by 15 to 35 percent. Mockups also make screenshots more shareable on Twitter, LinkedIn, and Product Hunt because they stand out in feeds.',
+  },
+  {
+    q: 'Can I use this tool on my phone?',
+    a: 'Yes. The Screenshot Beautifier works on any modern browser including Safari on iOS and Chrome on Android. However, because the Best Answer Hub Screenshot Beautifier uses the HTML5 Canvas API for high-resolution rendering, performance is best on desktop or tablet devices. The download will still be a full-resolution PNG regardless of which device you use to create it.',
+  },
+  {
+    q: 'How does this compare to Canva, Figma, or Placeit?',
+    a: 'Canva, Figma, and Placeit offer powerful design ecosystems with thousands of templates, but they require accounts, have learning curves, and often charge subscriptions. Best Answer Hub\'s Screenshot Beautifier is built for speed: upload, pick a frame, download. There is no login, no canvas setup, no font selection, and no monthly fee. It is the fastest way to turn a screenshot into a presentation-ready mockup when you do not need advanced editing.',
+  },
+  {
+    q: 'What padding setting should I use?',
+    a: 'Padding controls how much space appears between your device frame and the edge of the canvas. For social media posts and Twitter cards, use medium or large padding so the device does not get cropped by platform previews. For embedded website images and documentation, small or medium padding keeps the mockup compact. For print materials like pitch decks, large padding creates a clean, breathable layout.',
+  },
+  {
+    q: 'Can I create mockups with multiple devices?',
+    a: 'Not currently. The Best Answer Hub Screenshot Beautifier creates one device mockup at a time. For multi-device compositions (such as a laptop, tablet, and phone arranged together) generate three separate mockups and combine them in Canva, Figma, or Google Slides. Alternatively, use the <a href="/tools/images-to-pdf/">Images to PDF</a> tool to bundle multiple mockups into a single document.',
+  },
+  {
+    q: 'What size should I export my mockup for Twitter/X, LinkedIn, and Product Hunt?',
+    a: 'Each platform has an optimal image size for mockups to render without cropping or compression artifacts. For Twitter/X, use 1200 x 675 pixels (16:9 ratio). This is the standard link card and in-feed image size. For LinkedIn, 1200 x 627 pixels works best for both posts and article headers. For Product Hunt, the gallery thumbnail is 1270 x 760 pixels and the maker gallery accepts images up to 2560 x 1440. For landing pages and blog embeds, 1600 x 900 or higher gives crisp Retina-quality results. The Best Answer Hub Screenshot Beautifier downloads a full-resolution PNG. Set your input screenshot to at least the target width before uploading so the output is sharp at any of these sizes.',
+  },
+];
+
+const steps = [
+  { title: 'Upload your screenshot', description: 'Drag and drop or click to upload any PNG, JPEG, or WebP image. There is no file size limit.' },
+  { title: 'Pick a device & style', description: 'Choose from Desktop, Laptop, Tablet, or Phone. Select a background color and padding amount.' },
+  { title: 'Download your mockup', description: 'Preview updates instantly. Click download to save a high-resolution PNG ready for presentations or social media.' },
+];
+
+const seo = {
+  title: 'Free Screenshot Beautifier & Device Mockup Generator (2026)',
+  description: 'Turn screenshots into professional device mockups instantly. Desktop, laptop, tablet, and phone frames. 100% client-side. No signup, no watermarks.',
+  url: '/tools/screenshot-beautifier/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Screenshot Beautifier', url: '/tools/screenshot-beautifier/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Uploads to Servers"
+    title="Screenshot Beautifier:"
+    accentText="Device mockups in one click"
+    description="Turn plain screenshots into professional desktop, laptop, tablet, and phone mockups. Choose a background, adjust padding, and download a high-resolution PNG."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <!-- Screenshot Beautifier Interface -->
+  <section class="py-6 md:py-8" aria-label="Screenshot beautifier">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-4xl mx-auto space-y-6">
+
+        <!-- Upload -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <h2 class="text-sm font-bold text-bae-ink mb-4">Upload Screenshot</h2>
+          <div id="sb-dropzone" class="border-2 border-dashed border-bae-border rounded-bae p-8 text-center cursor-pointer hover:border-bae-primary hover:bg-bae-primary-soft transition-colors">
+            <svg class="w-10 h-10 text-bae-muted mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <p class="text-sm text-bae-ink font-medium mb-1">Click or drag &amp; drop to upload</p>
+            <p class="text-xs text-bae-muted">PNG, JPEG, WebP · Max 20 GB</p>
+            <input type="file" id="sb-file" accept="image/png,image/jpeg,image/webp" class="hidden" />
+          </div>
+          <p id="sb-file-name" class="text-xs text-bae-muted mt-2 hidden"></p>
+        </div>
+
+        <!-- Controls -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <h2 class="text-sm font-bold text-bae-ink mb-4">Mockup Settings</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Device -->
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-2">Device Frame</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" data-device="desktop" class="sb-device-btn bg-bae-primary text-white text-xs font-semibold px-3 py-2 rounded-bae-sm border border-bae-primary transition-colors">Desktop</button>
+                <button type="button" data-device="laptop" class="sb-device-btn bg-bae-bg text-bae-ink text-xs font-semibold px-3 py-2 rounded-bae-sm border border-bae-border hover:border-bae-primary transition-colors">Laptop</button>
+                <button type="button" data-device="tablet" class="sb-device-btn bg-bae-bg text-bae-ink text-xs font-semibold px-3 py-2 rounded-bae-sm border border-bae-border hover:border-bae-primary transition-colors">Tablet</button>
+                <button type="button" data-device="phone" class="sb-device-btn bg-bae-bg text-bae-ink text-xs font-semibold px-3 py-2 rounded-bae-sm border border-bae-border hover:border-bae-primary transition-colors">Phone</button>
+              </div>
+            </div>
+            <!-- Background -->
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-2">Background</label>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" data-bg="#ffffff" class="sb-bg-btn w-7 h-7 rounded-full border-2 border-bae-primary bg-white" aria-label="White background"></button>
+                <button type="button" data-bg="#f3f4f6" class="sb-bg-btn w-7 h-7 rounded-full border border-bae-border bg-gray-100" aria-label="Light gray background"></button>
+                <button type="button" data-bg="#e0e7ff" class="sb-bg-btn w-7 h-7 rounded-full border border-bae-border bg-indigo-100" aria-label="Indigo background"></button>
+                <button type="button" data-bg="#fafaf8" class="sb-bg-btn w-7 h-7 rounded-full border border-bae-border bg-[#fafaf8]" aria-label="Warm background"></button>
+                <button type="button" data-bg="#1a1a2e" class="sb-bg-btn w-7 h-7 rounded-full border border-bae-border bg-[#1a1a2e]" aria-label="Dark background"></button>
+                <button type="button" data-bg="transparent" class="sb-bg-btn w-7 h-7 rounded-full border border-bae-border bg-transparent" style="background-image: repeating-conic-gradient(#e5e5e5 0% 25%, transparent 0% 50%) ; background-size: 10px 10px;" aria-label="Transparent background"></button>
+              </div>
+            </div>
+            <!-- Padding -->
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-2">Padding</label>
+              <input type="range" id="sb-padding" min="0" max="120" value="60" class="w-full accent-bae-primary" />
+              <div class="flex justify-between text-[11px] text-bae-muted mt-1">
+                <span>None</span>
+                <span id="sb-padding-val">60px</span>
+                <span>Large</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-2 mt-5">
+            <button type="button" id="sb-download" class="bg-bae-primary text-white text-xs font-semibold px-4 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors" disabled>Download Mockup</button>
+            <button type="button" id="sb-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-4 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-ink transition-colors">Clear</button>
+          </div>
+        </div>
+
+        <!-- Canvas Preview -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <h2 class="text-sm font-bold text-bae-ink mb-4">Preview</h2>
+          <div class="flex items-center justify-center min-h-[300px] bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden" id="sb-preview-wrap">
+            <p class="text-sm text-bae-muted" id="sb-preview-placeholder">Upload an image to see your mockup</p>
+            <canvas id="sb-canvas" class="hidden max-w-full h-auto"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Who uses this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Product Launch</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The Indie Maker</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">1270 x 760 Gallery Ready</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Launching on Product Hunt tomorrow, they need a hero image that looks polished without paying for Placeit. They drop their dashboard screenshot into the Laptop frame, pick a soft indigo background, and have a 1270 x 760 gallery image ready in under two minutes.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Investor Pitch</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The SaaS Founder</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Slide-Ready PNGs in Seconds</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Building a pitch deck for investors, they frame every product screenshot inside a Desktop Monitor mockup so slides look consistent and professional. No Figma required. They generate each slide-ready PNG in seconds and drop it straight into Google Slides.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">App Store Prep</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The Mobile App Developer</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Apple-Style Marketing Visuals</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Adding screenshots to a landing page before the App Store submission, they wrap app screenshots in the Smartphone frame to create marketing visuals that look identical to Apple&apos;s own promotional imagery, without needing a designer or a subscription to a mockup service.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Social Content</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The Content Creator</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">1200 x 675 Twitter Optimized</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Writing a tutorial thread on Twitter/X, they frame every step screenshot inside a browser Laptop mockup so the thread looks editorial rather than raw. Each image exports at 1200 x 675 (the exact size Twitter renders without cropping) and the thread gets shared significantly more than plain screenshots.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more design &amp; media tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/image-compressor/" class="text-bae-primary hover:underline">Image Compressor</a>, <a href="/tools/color-palette-generator/" class="text-bae-primary hover:underline">Color Palette</a>, <a href="/tools/images-to-pdf/" class="text-bae-primary hover:underline">Images to PDF</a>, <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code</a>, and <a href="/tools/pdf-to-images/" class="text-bae-primary hover:underline">PDF to Images</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const fileInput = document.getElementById('sb-file');
+      const dropzone = document.getElementById('sb-dropzone');
+      const fileName = document.getElementById('sb-file-name');
+      const canvas = document.getElementById('sb-canvas');
+      const previewWrap = document.getElementById('sb-preview-wrap');
+      const placeholder = document.getElementById('sb-preview-placeholder');
+      const downloadBtn = document.getElementById('sb-download');
+      const clearBtn = document.getElementById('sb-clear');
+      const paddingInput = document.getElementById('sb-padding');
+      const paddingVal = document.getElementById('sb-padding-val');
+      const deviceBtns = document.querySelectorAll('.sb-device-btn');
+      const bgBtns = document.querySelectorAll('.sb-bg-btn');
+
+      const ctx = canvas.getContext('2d');
+      let currentImage = null;
+      let currentDevice = 'desktop';
+      let currentBg = '#ffffff';
+      let currentPadding = 60;
+      const MAX_CANVAS_DIM = 8192;
+      const MAX_FILE_SIZE = 20 * 1024 * 1024 * 1024;
+
+      function setActiveDevice(btn) {
+        deviceBtns.forEach(b => {
+          b.classList.remove('bg-bae-primary', 'text-white', 'border-bae-primary');
+          b.classList.add('bg-bae-bg', 'text-bae-ink', 'border-bae-border');
+        });
+        btn.classList.remove('bg-bae-bg', 'text-bae-ink', 'border-bae-border');
+        btn.classList.add('bg-bae-primary', 'text-white', 'border-bae-primary');
+        currentDevice = btn.getAttribute('data-device');
+        render();
+      }
+
+      function setActiveBg(btn) {
+        bgBtns.forEach(b => { b.classList.remove('border-2', 'border-bae-primary'); b.classList.add('border'); });
+        btn.classList.remove('border');
+        btn.classList.add('border-2', 'border-bae-primary');
+        currentBg = btn.getAttribute('data-bg');
+        render();
+      }
+
+      deviceBtns.forEach(btn => btn.addEventListener('click', () => setActiveDevice(btn)));
+      bgBtns.forEach(btn => btn.addEventListener('click', () => setActiveBg(btn)));
+
+      paddingInput.addEventListener('input', function() {
+        currentPadding = parseInt(this.value, 10);
+        paddingVal.textContent = currentPadding + 'px';
+        render();
+      });
+
+      function handleFile(file) {
+        if (!file) return;
+        if (!file.type.startsWith('image/')) { alert('Please upload an image file (PNG, JPEG, WebP)'); return; }
+        if (file.size > MAX_FILE_SIZE) { alert('Image must be under 20 GB'); return; }
+        fileName.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+        fileName.classList.remove('hidden');
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            currentImage = img;
+            placeholder.classList.add('hidden');
+            canvas.classList.remove('hidden');
+            downloadBtn.disabled = false;
+            render();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      fileInput.addEventListener('change', function(e) { handleFile(e.target.files[0]); });
+
+      dropzone.addEventListener('click', function() { fileInput.click(); });
+      dropzone.addEventListener('dragover', function(e) { e.preventDefault(); dropzone.classList.add('border-bae-primary', 'bg-bae-primary-soft'); });
+      dropzone.addEventListener('dragleave', function() { dropzone.classList.remove('border-bae-primary', 'bg-bae-primary-soft'); });
+      dropzone.addEventListener('drop', function(e) { e.preventDefault(); dropzone.classList.remove('border-bae-primary', 'bg-bae-primary-soft'); handleFile(e.dataTransfer.files[0]); });
+
+      function drawImageCover(ctx, img, x, y, w, h) {
+        const imgRatio = img.width / img.height;
+        const targetRatio = w / h;
+        let sx, sy, sw, sh;
+        if (imgRatio > targetRatio) {
+          sh = img.height; sw = img.height * targetRatio; sx = (img.width - sw) / 2; sy = 0;
+        } else {
+          sw = img.width; sh = img.width / targetRatio; sx = 0; sy = (img.height - sh) / 2;
+        }
+        ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+      }
+
+      function drawDesktop(cw, ch, pad, screenW, screenH) {
+        const bezel = 24;
+        const bottomBar = 40;
+        const standW = 140;
+        const standH = 60;
+        const baseW = 200;
+        const baseH = 16;
+        const corner = 12;
+        const totalH = screenH + bezel * 2 + bottomBar + standH + baseH + 20;
+        const scale = Math.min((cw - pad * 2) / (screenW + bezel * 2), (ch - pad * 2) / totalH);
+        const w = (screenW + bezel * 2) * scale;
+        const h = (screenH + bezel * 2 + bottomBar) * scale;
+        const x = (cw - w) / 2;
+        const y = pad + (ch - pad * 2 - totalH * scale) / 2;
+
+        // Stand
+        ctx.fillStyle = '#d1d5db';
+        ctx.fillRect(x + w / 2 - standW * scale / 2, y + h, standW * scale, standH * scale);
+        // Base
+        ctx.fillStyle = '#9ca3af';
+        roundRect(ctx, x + w / 2 - baseW * scale / 2, y + h + standH * scale, baseW * scale, baseH * scale, corner * scale);
+        ctx.fill();
+        // Monitor bezel
+        ctx.fillStyle = '#1f2937';
+        roundRect(ctx, x, y, w, h, corner * scale);
+        ctx.fill();
+        // Screen
+        return { x: x + bezel * scale, y: y + bezel * scale, w: screenW * scale, h: screenH * scale };
+      }
+
+      function drawLaptop(cw, ch, pad, screenW, screenH) {
+        const bezel = 18;
+        const baseH = 28;
+        const corner = 10;
+        const totalW = screenW + bezel * 2;
+        const totalH = screenH + bezel * 2 + baseH + 10;
+        const scale = Math.min((cw - pad * 2) / totalW, (ch - pad * 2) / totalH);
+        const w = totalW * scale;
+        const h = (screenH + bezel * 2) * scale;
+        const x = (cw - w) / 2;
+        const y = pad + (ch - pad * 2 - totalH * scale) / 2;
+
+        // Base
+        ctx.fillStyle = '#d1d5db';
+        roundRect(ctx, x - 20 * scale, y + h, w + 40 * scale, baseH * scale, corner * scale);
+        ctx.fill();
+        // Trackpad
+        ctx.fillStyle = '#b0b5bd';
+        roundRect(ctx, x + w / 2 - 60 * scale, y + h + 4 * scale, 120 * scale, baseH * scale - 8 * scale, 4 * scale);
+        ctx.fill();
+        // Screen bezel
+        ctx.fillStyle = '#1f2937';
+        roundRect(ctx, x, y, w, h, corner * scale);
+        ctx.fill();
+        // Camera
+        ctx.fillStyle = '#374151';
+        ctx.beginPath(); ctx.arc(x + w / 2, y + 10 * scale, 3 * scale, 0, Math.PI * 2); ctx.fill();
+        return { x: x + bezel * scale, y: y + bezel * scale, w: screenW * scale, h: screenH * scale };
+      }
+
+      function drawTablet(cw, ch, pad, screenW, screenH) {
+        const bezel = 28;
+        const corner = 20;
+        const totalW = screenW + bezel * 2;
+        const totalH = screenH + bezel * 2;
+        const scale = Math.min((cw - pad * 2) / totalW, (ch - pad * 2) / totalH);
+        const w = totalW * scale;
+        const h = totalH * scale;
+        const x = (cw - w) / 2;
+        const y = pad + (ch - pad * 2 - h) / 2;
+
+        // Body
+        ctx.fillStyle = '#e5e7eb';
+        roundRect(ctx, x, y, w, h, corner * scale);
+        ctx.fill();
+        // Screen
+        ctx.fillStyle = '#000000';
+        roundRect(ctx, x + bezel * scale, y + bezel * scale, screenW * scale, screenH * scale, 8 * scale);
+        ctx.fill();
+        // Camera
+        ctx.fillStyle = '#9ca3af';
+        ctx.beginPath(); ctx.arc(x + w / 2, y + 14 * scale, 3 * scale, 0, Math.PI * 2); ctx.fill();
+        return { x: x + bezel * scale, y: y + bezel * scale, w: screenW * scale, h: screenH * scale };
+      }
+
+      function drawPhone(cw, ch, pad, screenW, screenH) {
+        const bezel = 22;
+        const corner = 32;
+        const totalW = screenW + bezel * 2;
+        const totalH = screenH + bezel * 2;
+        const scale = Math.min((cw - pad * 2) / totalW, (ch - pad * 2) / totalH);
+        const w = totalW * scale;
+        const h = totalH * scale;
+        const x = (cw - w) / 2;
+        const y = pad + (ch - pad * 2 - h) / 2;
+
+        // Body
+        ctx.fillStyle = '#1f2937';
+        roundRect(ctx, x, y, w, h, corner * scale);
+        ctx.fill();
+        // Screen
+        ctx.fillStyle = '#000000';
+        roundRect(ctx, x + bezel * scale, y + bezel * scale, screenW * scale, screenH * scale, 20 * scale);
+        ctx.fill();
+        // Notch
+        ctx.fillStyle = '#1f2937';
+        roundRect(ctx, x + w / 2 - 40 * scale, y + 10 * scale, 80 * scale, 20 * scale, 10 * scale);
+        ctx.fill();
+        return { x: x + bezel * scale, y: y + bezel * scale, w: screenW * scale, h: screenH * scale };
+      }
+
+      function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+
+      function render() {
+        if (!currentImage) return;
+        let cw, ch;
+        switch (currentDevice) {
+          case 'desktop': cw = 1400; ch = 1100; break;
+          case 'laptop': cw = 1400; ch = 1000; break;
+          case 'tablet': cw = 1000; ch = 1300; break;
+          case 'phone': cw = 700; ch = 1400; break;
+          default: cw = 1400; ch = 1100;
+        }
+        canvas.width = cw;
+        canvas.height = ch;
+
+        // Background
+        if (currentBg === 'transparent') {
+          ctx.clearRect(0, 0, cw, ch);
+        } else {
+          ctx.fillStyle = currentBg;
+          ctx.fillRect(0, 0, cw, ch);
+        }
+
+        const pad = currentPadding;
+        let screen;
+        switch (currentDevice) {
+          case 'desktop': screen = drawDesktop(cw, ch, pad, 1100, 700); break;
+          case 'laptop': screen = drawLaptop(cw, ch, pad, 1000, 640); break;
+          case 'tablet': screen = drawTablet(cw, ch, pad, 780, 1020); break;
+          case 'phone': screen = drawPhone(cw, ch, pad, 520, 1040); break;
+        }
+
+        // Clip and draw screenshot
+        if (screen) {
+          ctx.save();
+          roundRect(ctx, screen.x, screen.y, screen.w, screen.h, currentDevice === 'phone' ? 20 : currentDevice === 'tablet' ? 8 : 4);
+          ctx.clip();
+          drawImageCover(ctx, currentImage, screen.x, screen.y, screen.w, screen.h);
+          ctx.restore();
+        }
+      }
+
+      downloadBtn.addEventListener('click', function() {
+        if (!currentImage) return;
+        const link = document.createElement('a');
+        link.download = 'mockup-' + currentDevice + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+
+      clearBtn.addEventListener('click', function() {
+        currentImage = null;
+        fileInput.value = '';
+        fileName.classList.add('hidden');
+        canvas.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+        downloadBtn.disabled = true;
+      });
+    })();
+  </script>
+</BaseLayout>

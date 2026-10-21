@@ -1,0 +1,68 @@
+# gitleaks config. This repo is PUBLIC: CI blocks any commit gitleaks flags.
+# Default rules plus narrowly scoped allowlists for values that are public by design.
+# Each allowlist is as tight as possible (exact value, or path AND shape), so a real
+# secret added later to the same file is still caught.
+
+[extend]
+useDefault = true
+
+# The default ruleset has NO Paddle patterns (verified 2026-10-21: a planted
+# webhook secret went undetected). Our payment stack runs on Paddle.
+[[rules]]
+id = "paddle-api-key"
+description = "Paddle API key (live or sandbox)"
+regex = '''pdl_(?:live|sdbx)_apikey_[A-Za-z0-9_]{20,}'''
+keywords = ["pdl_live_apikey", "pdl_sdbx_apikey"]
+
+[[rules]]
+id = "paddle-webhook-secret"
+description = "Paddle notification-setting (webhook) signing secret"
+regex = '''pdl_ntfset_[A-Za-z0-9_]{20,}'''
+keywords = ["pdl_ntfset_"]
+
+# Hostinger FTP credentials are full write access to the live site.
+[[rules]]
+id = "ftp-password-assignment"
+description = "FTP password assigned a literal value"
+regex = '''(?i)FTP_PASS(?:WORD)?\s*[=:]\s*['"]?([^\s'"$]{8,})'''
+secretGroup = 1
+keywords = ["ftp_pass"]
+
+# IndexNow key. Not a secret: it is served at the site root
+# (public/<key>.txt) so search engines can verify domain ownership.
+[[allowlists]]
+description = "IndexNow ownership key (public by design)"
+regexTarget = "match"
+regexes = ['''d9073cc1091bf80f36af829019760dc0''']
+
+# Deploy cache = {"dist path": "md5 of file"}. Image names containing "facebook"
+# make the md5 look like a Facebook secret. Only exact path:md5 pairs are allowed.
+[[allowlists]]
+description = "deploy-cache md5 hashes"
+condition = "AND"
+paths = ['''^\.deploy-cache\.json$''']
+regexTarget = "match"
+regexes = [''':"[0-9a-f]{32}"$''']
+
+# Vendored, minified Kokoro TTS library: tokenizer code, not credentials.
+# The whole file is one line, so match on the finding itself, never the line.
+[[allowlists]]
+description = "kokoro-js minified tokenizer code"
+condition = "AND"
+paths = ['''^public/kokoro-js\.js$''']
+regexTarget = "match"
+regexes = ['''unk_token,''']
+
+# localStorage key names (e.g. 'bah-semester-schedule-v1'): app storage labels, not secrets.
+[[allowlists]]
+description = "localStorage key names"
+regexTarget = "line"
+regexes = ['''STORAGE_KEY\s*=\s*['"]bah-[a-z0-9-]+-v\d+['"]''']
+
+# .env.example documents the variable names with obvious placeholders.
+[[allowlists]]
+description = ".env.example placeholders"
+condition = "AND"
+paths = ['''^\.env\.example$''']
+regexTarget = "match"
+regexes = ['''=your-ftp-password$''']

@@ -1,0 +1,370 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RelatedPlaybooks from '../../components/playbooks/RelatedPlaybooks.astro';
+
+const today = '2026-07-04T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub AI Knowledge Test?', a: 'The Best Answer Hub AI Knowledge Test is a free, browser-based assessment that scores how well you understand AI across five domains, including how it actually works, then places you at Beginner, Intermediate, or Advanced. It serves 50 questions, takes about 20 minutes, and needs no signup or email. The level reflects what you answer, not how you feel.' },
+  { q: 'Is ChatGPT a search engine or a database?', a: 'Neither. A large language model does not search an index or look up stored records. As OpenAI explains, its models do not keep copies of their training data; they predict the most likely next word, one at a time, from patterns. A search engine retrieves real pages; a model generates plausible text.' },
+  { q: 'How does a large language model actually work?', a: 'It predicts text. The model breaks your prompt into tokens, then repeatedly predicts the next most likely token from patterns stored as billions of numbers, adding one at a time until it stops. It is not retrieving an answer from a database. That single fact explains most of its useful and its strange behavior.' },
+  { q: 'What is a token?', a: 'A token is the small unit of text a model reads and writes, roughly a word-piece. IBM puts it at about 1.5 tokens per word. The model does not see whole sentences as meaning; it processes tokens and predicts the next one. Tokens also determine how much text a model can handle at once.' },
+  { q: 'What is a context window?', a: 'The context window is how much text, measured in tokens, a model can hold in mind at once, its working memory, as IBM describes it. Everything in your conversation competes for that space. Once a chat or document exceeds the window, the model starts forgetting the earliest details, which is why long threads drift.' },
+  { q: 'What is a training cutoff?', a: 'A training cutoff is the date a model’s knowledge effectively stops. Its information comes from a fixed body of training text, not a live feed, so it does not inherently know events after that date unless it is given a tool such as web browsing. A confident answer about recent news is a classic place to check.' },
+  { q: 'Why does AI make up facts, or hallucinate?', a: 'Because it predicts plausible text rather than looking facts up. OpenAI calls hallucinations plausible but false statements, and explains that training rewards confident guessing over admitting uncertainty. Obscure, specific facts are exactly what a pattern-predictor invents, which is why even a fluent, confident answer can be completely made up.' },
+  { q: 'Why does AI sound so confident when it is wrong?', a: 'Confidence is a writing style the model learned, not a sign it checked anything. It generates the most likely next words, and hedging is less common in its training text than assertion. OpenAI notes that admitting uncertainty scores worse on typical tests than guessing, so models are nudged toward sounding sure.' },
+  { q: 'Can AI give fake sources or citations?', a: 'Yes, and this is the most damaging version of the myth. In 2023, lawyers were fined $5,000 after ChatGPT invented fake case citations they filed in court. In 2025 a California court fined an attorney $10,000 for 21 fabricated quotes, and trackers now log new cases daily. Always open the original source.' },
+  { q: 'Does AI know about recent events?', a: 'Not reliably. A model’s built-in knowledge is frozen at its training cutoff, so it does not truly know what happened afterward unless it is given live tools. If a chatbot answers a current-events question with confidence and no source, treat that as a prompt to verify rather than proof it knows.' },
+  { q: 'Is my data private when I use a chatbot?', a: 'Treat a public chatbot as not private. In 2023, Samsung engineers leaked source code and internal notes into ChatGPT within weeks, prompting a company-wide ban, because data sent to external servers is hard to retrieve and delete. Never paste confidential, client, or personal information into a public AI tool.' },
+  { q: 'How do I check whether an AI answer is true?', a: 'Check it like a claim from a stranger, not a database record. Open the original source for any citation, date, name, or statistic before you rely on it. Stanford found even purpose-built legal AI tools gave wrong information up to 34% of the time, so verification is a core skill, not an optional extra.' },
+  { q: 'Are some AI tools immune to hallucination?', a: 'No. Even tools that retrieve documents still fabricate. Stanford researchers found leading legal AI products hallucinated between 17% and 34% of the time despite being built for accuracy. Retrieval lowers the risk but does not remove it. Any tool that generates text can produce a confident, plausible, wrong answer.' },
+  { q: 'If AI is not a database, what is it good for?', a: 'A great deal, once you use it for what it is. It is excellent at drafting, summarizing, rephrasing, brainstorming, and explaining, where plausible, fluent text is the goal. It is risky as a sole source of facts. The skill is using it to think and produce, then verifying anything factual against a real source.' },
+  { q: 'How is this different from a vendor’s AI quiz?', a: 'Most free AI quizzes exist to recommend the maker’s own product, and many gate the result behind your email. The Best Answer Hub AI Knowledge Test sells nothing, carries no affiliate links, captures no email, and runs in your browser. The honest result is the deliverable, not a sales lead.' },
+];
+
+const seo = {
+  title: 'The Biggest Myth About AI: It Is Not a Fact Database',
+  description: 'Most people think ChatGPT looks up facts. It predicts text, which is why it is confidently wrong. How AI really works, and how to use it without getting burned.',
+  url: '/playbooks/the-biggest-myth-about-ai/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'The Biggest Myth About AI', url: '/playbooks/the-biggest-myth-about-ai/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · AI Skills</span>
+        <div class="cav">Let's clear this up</div>
+        <h1>The Biggest Myth About AI: <em>It Is Not a Fact Database</em></h1>
+        <p class="dek">Most people use ChatGPT as if it looks things up. It does not. It predicts the next word, over and over, and that one fact explains why it can be brilliant and confidently wrong in the same breath. Here is how it really works, and how to use it without getting burned.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~10 min read</span><span>Evidence-based</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Beginner<small>0–49</small></div>
+          <div class="seg b2">Intermediate<small>50–79</small></div>
+          <div class="seg b3">Advanced<small>80–100</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">49%</div><div class="l">of ChatGPT messages are people asking for information or advice</div><div class="src">OpenAI / NBER, 2025</div></div>
+      <div class="stat"><div class="n">600+</div><div class="l">court cases caught citing AI-fabricated sources</div><div class="src">Associated Press, 2025</div></div>
+      <div class="stat"><div class="n">34%</div><div class="l">hallucination rate even for some purpose-built legal AI</div><div class="src">Stanford, 2024</div></div>
+      <div class="stat"><div class="n">$10k</div><div class="l">fine for a court brief with 21 AI-invented quotes</div><div class="src">California, 2025</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#myth">The wrong picture</a>
+        <a href="#how">How it really works</a>
+        <a href="#vs">Search engine vs model</a>
+        <a href="#wrong">Why it’s confidently wrong</a>
+        <a href="#cost">When it bites</a>
+        <a href="#fix">How to use it safely</a>
+        <a href="#find">Find your level</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead">Here is the single most useful thing to understand about AI: ChatGPT is not a fact database, and it is not a search engine. <strong>It does not look anything up. It predicts the next word, over and over, from patterns it learned in training.</strong> Almost every surprising thing AI does, the brilliance and the confident nonsense, follows from that one fact.</p>
+
+        <p>Yet most people use it like a search box. OpenAI's own research found that about half of ChatGPT messages are people "asking" for information or advice, and roughly three-quarters are practical guidance, information, or writing (<a href="https://openai.com/index/how-people-are-using-chatgpt/" target="_blank" rel="noopener noreferrer">OpenAI, 2025</a>). Treating a text-predictor as a fact-retriever is exactly where things go wrong. It is also, as the companion guide on <a href="/playbooks/how-good-is-your-ai-knowledge/">how good your AI knowledge really is</a> explains, the idea that separates a beginner from an advanced user.</p>
+
+        <div class="cav">The wrong picture</div>
+        <h2 id="myth">What most people get wrong about AI</h2>
+        <p>When researchers studied how everyday people think chatbots work, one of the most common mental models was the "super searcher": users imagined the tool running a live keyword search of the internet or a database, then tidying up the results (<a href="https://arxiv.org/abs/2510.25662" target="_blank" rel="noopener noreferrer">a 2025 study of user misconceptions</a>). It is an understandable picture, and it is wrong. The reality changes how you should read every answer.</p>
+        <table>
+          <thead><tr><th>The myth</th><th>What is actually true</th></tr></thead>
+          <tbody>
+            <tr><td class="band">AI looks up facts in a database</td><td>It predicts the next likely word; OpenAI calls its errors "plausible but false statements"</td></tr>
+            <tr><td class="band">If it sounds confident, it is right</td><td>Confidence is a writing style, not a check; training rewards guessing over saying "I don't know"</td></tr>
+            <tr><td class="band">It knows current events</td><td>Its knowledge is frozen at a training cutoff unless it is given live tools</td></tr>
+            <tr><td class="band">A citation it gives must be real</td><td>Lawyers have been fined for AI-invented citations, $5,000 in 2023 and $10,000 in 2025</td></tr>
+            <tr><td class="band">Whatever I type stays private</td><td>Samsung engineers leaked source code into ChatGPT in 2023; assume it is not private</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">What's really happening</div>
+        <h2 id="how">So how does it actually work?</h2>
+        <p>A large language model generates text one token at a time. A token is a word-piece, roughly 1.5 tokens per word, and the model holds your conversation in a context window, its working memory measured in tokens (<a href="https://www.ibm.com/think/topics/context-window" target="_blank" rel="noopener noreferrer">IBM, 2024</a>). From there it simply predicts what comes next, again and again. OpenAI puts it plainly: its models "do not store or retain copies of the data they are trained on," and instead "predict the next most likely word when generating a response, one word at a time" (<a href="https://help.openai.com/en/articles/7842364-how-chatgpt-and-our-foundation-models-are-developed" target="_blank" rel="noopener noreferrer">OpenAI</a>).</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">How a model actually produces an answer</figcaption>
+          <div class="flow">
+            <div class="step"><span class="num">1</span><div class="stxt"><b>Your prompt goes in.</b> It enters the model's context window, its short-term working memory, measured in tokens.</div></div>
+            <div class="step"><span class="num">2</span><div class="stxt"><b>The text is split into tokens.</b> Word-pieces, about 1.5 tokens per word, each turned into a number.</div></div>
+            <div class="step"><span class="num">3</span><div class="stxt"><b>It predicts the next token.</b> From patterns stored as billions of weights, not by looking anything up, it ranks the most likely next token.</div></div>
+            <div class="step"><span class="num">4</span><div class="stxt"><b>It picks one and adds it.</b> With a little randomness, which is why the same question can get different answers. <span class="loop">&#8635; then it repeats step 3 for the next token</span></div></div>
+            <div class="step"><span class="num">5</span><div class="stxt"><b>It stops.</b> At a natural ending, or when the context window is full.</div></div>
+          </div>
+          <p class="chart-src">It never retrieves an answer; it predicts one word at a time, which is why it can be fluent and wrong at once. Sources: OpenAI; IBM; Stephen Wolfram.</p>
+        </figure>
+
+        <div class="callout"><div class="h">Three words worth knowing</div><p><b>Token:</b> a word-piece the model reads and writes. <b>Context window:</b> how much text it can hold in mind at once, its working memory. <b>Training cutoff:</b> the date its knowledge stops, after which it does not truly know what happened unless given a live tool. These three explain most of AI's quirks.</p></div>
+
+        <div class="cav">Side by side</div>
+        <h2 id="vs">Search engine versus language model</h2>
+        <p>The cleanest way to hold the idea is to compare the two things people confuse. A search engine retrieves; a language model predicts. Almost every practical difference flows from that.</p>
+        <table>
+          <thead><tr><th>When you ask it something</th><th>Search engine or database</th><th>Language model</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Core action</td><td>Looks up and returns stored pages or records</td><td>Predicts the next likely word, one at a time</td></tr>
+            <tr><td class="band">What it holds</td><td>Copies of indexed pages</td><td>Numerical patterns, no copies of training data</td></tr>
+            <tr><td class="band">Freshness</td><td>Live, continually updated index</td><td>Frozen at a training cutoff unless given live tools</td></tr>
+            <tr><td class="band">Same question twice</td><td>Same result, it is deterministic</td><td>Can differ, there is built-in randomness</td></tr>
+            <tr><td class="band">Sources</td><td>Points to a real, findable page</td><td>Can fabricate a plausible but fake source</td></tr>
+            <tr><td class="band">When it has nothing</td><td>Returns "no results"</td><td>Tends to guess fluently rather than say "I don't know"</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The catch</div>
+        <h2 id="wrong">Why it is so often confidently wrong</h2>
+        <p>Once you see AI as a text-predictor, hallucinations stop being mysterious. OpenAI defines them as "plausible but false statements" and explains they happen because "standard training and evaluation procedures reward guessing over acknowledging uncertainty" (<a href="https://openai.com/index/why-language-models-hallucinate/" target="_blank" rel="noopener noreferrer">OpenAI, 2025</a>). Saying "I don't know" scores zero on a test, while a guess might land, so models learn to sound sure. On OpenAI's own SimpleQA factual benchmark, an older model (o4-mini) answered almost every question and was wrong about three times out of four, a 75% error rate, while a newer model that more often admitted uncertainty cut its error rate to 26%.</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">Guessing looks confident, and gets it wrong</figcaption>
+          <svg viewBox="0 0 600 280" role="img" aria-label="Bar chart: on the SimpleQA factual test, the older o4-mini model had a 75% error rate, while a newer model that more often abstained had a 26% error rate">
+            <defs><linearGradient id="errgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <line x1="70" y1="232" x2="560" y2="232" stroke="#E1D4be" stroke-width="2"/>
+            <rect x="150" y="78" width="120" height="154" rx="8" fill="url(#errgrad)"/>
+            <text x="210" y="68" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="27" font-weight="800" fill="#33302A">75%</text>
+            <text x="210" y="250" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" fill="#847B6B">Older model (almost always guesses)</text>
+            <text x="210" y="268" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" fill="#847B6B">wrong answers</text>
+            <rect x="350" y="179" width="120" height="53" rx="8" fill="url(#errgrad)" opacity="0.72"/>
+            <text x="410" y="169" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="27" font-weight="800" fill="#33302A">26%</text>
+            <text x="410" y="250" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" fill="#847B6B">Newer model (often says</text>
+            <text x="410" y="268" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" fill="#847B6B">"not sure") wrong answers</text>
+          </svg>
+          <p class="chart-src">Source: OpenAI SimpleQA benchmark, 2025. A model- and test-specific result, not a general accuracy rate, but a vivid demonstration that fluent does not mean correct.</p>
+        </figure>
+
+        <blockquote>It is not lying and it is not broken. <span class="accent">It is doing exactly what it was built to do: produce text that sounds right.</span></blockquote>
+
+        <div class="cav">When it bites</div>
+        <h2 id="cost">What happens when you trust it like a database</h2>
+        <p>The clearest warnings come from courtrooms. In 2023, two lawyers were fined $5,000 after filing a brief full of case citations ChatGPT had invented; when challenged, the tool insisted the fake cases were real (<a href="https://en.wikipedia.org/wiki/Mata_v._Avianca,_Inc." target="_blank" rel="noopener noreferrer">Mata v. Avianca, 2023</a>). The pattern has only accelerated. In 2025 a California appeals court fined an attorney $10,000 after finding 21 of 23 quotations in his brief were fabricated, and a federal judge ordered two firms to pay $31,100 for bogus AI research. One legal tracker logged more than 600 such cases nationwide, with new ones now appearing daily (<a href="https://thedailyrecord.com/2025/10/13/california-lawyer-ai-fake-citations-fine/" target="_blank" rel="noopener noreferrer">Associated Press, 2025</a>).</p>
+        <p>And do not assume a "research" tool is safe. Stanford researchers tested purpose-built legal AI products and found they still gave wrong information between 17% and 34% of the time, despite being designed for accuracy (<a href="https://hai.stanford.edu/news/ai-trial-legal-models-hallucinate-1-out-6-or-more-benchmarking-queries" target="_blank" rel="noopener noreferrer">Stanford HAI, 2024</a>). Retrieval lowers the risk; it does not remove it.</p>
+        <div class="callout peach"><div class="h">It is not a private database either</div><p>Anything you paste into a public chatbot can leave your control. In 2023, Samsung engineers fed source code and internal meeting notes into ChatGPT within weeks, and the company banned the tools, noting that data sent to external servers is hard to retrieve and delete (<a href="https://techcrunch.com/2023/05/02/samsung-bans-use-of-generative-ai-tools-like-chatgpt-after-april-internal-data-leak/" target="_blank" rel="noopener noreferrer">TechCrunch, 2023</a>). Keep confidential, client, and personal details out.</p></div>
+
+        <div class="cav">The fix is simple</div>
+        <h2 id="fix">How to use AI without getting burned</h2>
+        <p>The fix is not avoidance, it is verification. In a 2026 Workday study of 3,200 employees, the people who got real value reviewed AI output as carefully as a human colleague's; 77% of daily users did, and those who skipped it lost nearly 40% of their saved time to rework (<a href="https://newsroom.workday.com/2026-01-14-New-Workday-Research-Companies-Are-Leaving-AI-Gains-on-the-Table" target="_blank" rel="noopener noreferrer">Workday, 2026</a>). Treat AI as a fast, fluent draft, then check anything that has to be true.</p>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">1</span><div>You used a citation, quote, statistic, name, or date without opening the original source.</div></li>
+            <li><span class="dot">2</span><div>You asked about something after the model's training cutoff and assumed it knew.</div></li>
+            <li><span class="dot">3</span><div>The answer was confident with no hedging; confident and wrong is normal, not a contradiction.</div></li>
+            <li><span class="dot">4</span><div>The question was obscure or very specific, which is exactly what models tend to invent.</div></li>
+            <li><span class="dot">5</span><div>The AI agreed with a shaky premise in your question instead of correcting it.</div></li>
+            <li><span class="dot">6</span><div>You assumed a "research" or "retrieval" tool could not be wrong.</div></li>
+            <li><span class="dot">7</span><div>You pasted confidential, client, or personal data into a public tool.</div></li>
+          </ul>
+        </div>
+        <div class="callout sage"><div class="h">The one habit that fixes most of this</div><p>Before you rely on anything an AI tells you, open the real source for any fact, figure, name, or citation. If there is no source to open, treat the claim as unverified. That single habit is what separates people who get burned from people who get value.</p></div>
+
+        <div class="cav">Your turn</div>
+        <h2 id="find">How well do you actually understand AI?</h2>
+        <p>Understanding that AI predicts text rather than retrieving facts is one of the five areas the free AI Knowledge Test measures. It serves 50 questions, scores each objectively, and shows your level plus a radar of your strongest and weakest domains, so you know exactly where your mental model is solid and where it needs work.</p>
+        <div class="cta">
+          <span class="kicker">See where you really stand</span>
+          <h3>Take the free AI Knowledge Test</h3>
+          <p>50 questions, about 20 minutes, no signup and no email. Your level and domain radar are computed in your browser and never uploaded.</p>
+          <a class="btn" href="/knowledge-center/ai-knowledge-test/">Start the free test</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about how AI works</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>OpenAI, <a href="https://help.openai.com/en/articles/7842364-how-chatgpt-and-our-foundation-models-are-developed" target="_blank" rel="noopener noreferrer">How ChatGPT and our foundation models are developed</a>, 2026.</li>
+          <li>OpenAI, <a href="https://openai.com/index/why-language-models-hallucinate/" target="_blank" rel="noopener noreferrer">Why language models hallucinate</a>, 2025.</li>
+          <li>OpenAI, <a href="https://openai.com/index/how-people-are-using-chatgpt/" target="_blank" rel="noopener noreferrer">How people are using ChatGPT</a> (with NBER), 2025.</li>
+          <li>IBM Think, <a href="https://www.ibm.com/think/topics/context-window" target="_blank" rel="noopener noreferrer">What is a context window?</a>, 2024.</li>
+          <li>Stephen Wolfram, <a href="https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/" target="_blank" rel="noopener noreferrer">What Is ChatGPT Doing, and Why Does It Work?</a>, 2023.</li>
+          <li>Mata v. Avianca, Inc., <a href="https://en.wikipedia.org/wiki/Mata_v._Avianca,_Inc." target="_blank" rel="noopener noreferrer">678 F. Supp. 3d 443</a>, 2023 (fabricated citations; $5,000 sanction).</li>
+          <li>Associated Press via The Daily Record, <a href="https://thedailyrecord.com/2025/10/13/california-lawyer-ai-fake-citations-fine/" target="_blank" rel="noopener noreferrer">California attorney fined $10,000 for AI fake citations</a>, 2025.</li>
+          <li>Stanford HAI, <a href="https://hai.stanford.edu/news/ai-trial-legal-models-hallucinate-1-out-6-or-more-benchmarking-queries" target="_blank" rel="noopener noreferrer">AI on Trial: Legal Models Hallucinate</a>, 2024.</li>
+          <li>Workday, <a href="https://newsroom.workday.com/2026-01-14-New-Workday-Research-Companies-Are-Leaving-AI-Gains-on-the-Table" target="_blank" rel="noopener noreferrer">Beyond Productivity</a>, 2026.</li>
+          <li>TechCrunch, <a href="https://techcrunch.com/2023/05/02/samsung-bans-use-of-generative-ai-tools-like-chatgpt-after-april-internal-data-leak/" target="_blank" rel="noopener noreferrer">Samsung bans generative AI tools after data leak</a>, 2023.</li>
+        </ul>
+              <RelatedPlaybooks track="aikt" currentHref={seo.url} />
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Try our free tools: <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">All Tools</a>, <a href="/calculators/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Calculators</a>, <a href="/career-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Career Toolkit</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, and the <a href="/pdf-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Toolkit</a>.</p>
+</article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.2rem,5vw,3.4rem);line-height:1.03;margin:2px 0 18px;letter-spacing:-.02em;max-width:17em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:42em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.76rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb .flow{margin:6px 0 2px}
+  .pb .flow .step{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--border)}
+  .pb .flow .step:last-child{border-bottom:0}
+  .pb .flow .num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .flow .stxt{font-size:.96rem;color:var(--body)}
+  .pb .flow .stxt b{color:var(--ink)}
+  .pb .flow .loop{display:inline-block;margin-top:7px;font-size:.76rem;font-weight:700;color:var(--clay-dark);background:var(--peach);border:1px solid #ecd6c5;border-radius:999px;padding:3px 12px}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.88rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 13px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+  .pb td{padding:12px 13px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb .callout b{color:var(--ink)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

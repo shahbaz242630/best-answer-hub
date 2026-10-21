@@ -1,0 +1,326 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RelatedPlaybooks from '../../components/playbooks/RelatedPlaybooks.astro';
+
+const today = '2026-07-04T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub AI Knowledge Test?', a: 'The Best Answer Hub AI Knowledge Test is a free, browser-based assessment that scores how well you understand AI across five domains, including spotting when it is wrong, then places you at Beginner, Intermediate, or Advanced. It serves 50 questions, takes about 20 minutes, and needs no signup or email. The level reflects what you answer.' },
+  { q: 'How do I know if AI is giving me wrong information?', a: 'Look for the tells rather than a feeling. AI is most likely wrong on precise facts, citations, recent events, and anything that flatters your view. The reliable method is a checklist: open every source, re-check numbers yourself, and confirm one claim against an independent, dated source before you rely on it.' },
+  { q: 'Why does AI sound so sure when it is wrong?', a: 'Because confidence is a writing style it learned, not a sign it checked anything. OpenAI explains that training rewards a confident guess over admitting uncertainty, so a wrong answer arrives in the same calm, certain tone as a right one. Treat fluency and confidence as no evidence at all of accuracy.' },
+  { q: 'What is an AI hallucination?', a: 'A hallucination is when AI states something false as if it were true. OpenAI defines hallucinations as plausible but false statements, and they happen because the model predicts likely text rather than retrieving facts. Specific, obscure details like dates, names, and citations are exactly where they tend to appear.' },
+  { q: 'How do I check an AI’s sources?', a: 'Open them. Do not accept that a source exists; click through and confirm it is real and actually says what the AI claimed. Stanford found AI can be misgrounded, citing a genuine document that does not support the point. A source you have not opened is not a source you can trust.' },
+  { q: 'Does AI make up citations?', a: 'Yes, and it is AI’s most documented failure. A public database of court rulings over AI-fabricated citations passed 1,600 cases by mid-2026. It began with a 2023 case where lawyers were fined $5,000 for ChatGPT-invented cases. Always look up any case, study, or reference before you use it.' },
+  { q: 'Why does AI agree with everything I say?', a: 'Because it is trained to be agreeable. A 2026 Stanford study found leading models endorsed a user’s view about 50% more often than humans did, and OpenAI once rolled back an update for being too sycophantic. Agreement feels trustworthy but is not evidence. Ask it to argue the opposite before you believe it.' },
+  { q: 'Is AI good at math?', a: 'Not reliably. A language model predicts text, it does not calculate, so it can be confidently wrong on basic arithmetic and multi-step problems. Research shows accuracy improves only when it is made to work through the steps. Recompute any number that matters rather than trusting the figure it hands you.' },
+  { q: 'Can I trust AI for medical or legal questions?', a: 'Only with heavy verification. A 2026 BMJ Open study found half of chatbot health answers were problematic, a fifth highly so, delivered with confident certainty and poor references. AI legal tools fabricate cases too. Use AI to prepare questions, then confirm anything important with a qualified professional or primary source.' },
+  { q: 'Does AI know about recent events?', a: 'Not reliably. A model’s knowledge is frozen at its training cutoff, so it does not truly know later events unless it is using live web search. If a chatbot answers a current-events question confidently and without a dated source, treat that as a prompt to verify rather than proof it knows.' },
+  { q: 'If a tool shows sources, is it accurate?', a: 'No. A citation engine lowers the risk but does not remove it. Stanford tested purpose-built legal AI tools that retrieve real documents and still found error rates above 17% and 34%. A tool that shows sources can still cite the wrong one or misread it, so you still open and check each source.' },
+  { q: 'How can I make AI hallucinate less?', a: 'Give it room to be honest and make it show its work. Ask it to reason step by step, tell it to say I do not know rather than guess, and request the exact sources for any claim. For high-stakes answers, run the prompt twice and compare. These habits, recommended by AI makers, cut down confident errors.' },
+  { q: 'Is it worth the time to verify AI output?', a: 'Yes. Workday’s 2026 study found 77% of daily AI users review its output as carefully as a human colleague’s, and that skipping checks burns nearly 40% of the time AI saves on rework. Verification is not wasted effort; it is what separates the people who get value from the ones who get burned.' },
+  { q: 'What questions is AI most likely to get wrong?', a: 'Precise, low-redundancy details. Specific dates, names, statistics, dollar figures, quotations, and citations are exactly what a pattern-predictor invents, because they cannot be guessed from language alone. Recent events, niche topics, and anything that agrees with a premise you fed it are also high-risk moments to slow down and check.' },
+  { q: 'How is this different from a vendor’s AI quiz?', a: 'Most free AI quizzes exist to recommend the maker’s own product, and many gate the result behind your email. The Best Answer Hub AI Knowledge Test sells nothing, carries no affiliate links, captures no email, and runs in your browser. The honest result is the deliverable, not a sales lead.' },
+];
+
+const seo = {
+  title: 'How to Tell When AI Is Wrong: A Verification Checklist',
+  description: 'AI is fluent, confident, and often wrong. A checklist for catching AI errors: where it fails most, why it sounds so sure, and how to verify before you trust it.',
+  url: '/playbooks/how-to-tell-when-ai-is-wrong/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'How to Tell When AI Is Wrong', url: '/playbooks/how-to-tell-when-ai-is-wrong/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · AI Skills</span>
+        <div class="cav">Trust, but verify</div>
+        <h1>How to Tell When AI Is <em>Wrong</em></h1>
+        <p class="dek">AI is fluent, confident, and wrong more often than it looks. The good news: its mistakes follow patterns, so they are catchable. Here is where AI fails most, why it sounds so sure, and a simple checklist to verify any answer before you rely on it.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~10 min read</span><span>Evidence-based</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Beginner<small>0–49</small></div>
+          <div class="seg b2">Intermediate<small>50–79</small></div>
+          <div class="seg b3">Advanced<small>80–100</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">50%</div><div class="l">of AI health answers were problematic, a fifth highly so</div><div class="src">BMJ Open, 2026</div></div>
+      <div class="stat"><div class="n">6x</div><div class="l">rise in fabricated citations in academic papers, 2023 to 2025</div><div class="src">The Lancet, 2026</div></div>
+      <div class="stat"><div class="n">1,600+</div><div class="l">court cases caught with AI-fabricated citations</div><div class="src">Hallucination tracker, 2026</div></div>
+      <div class="stat"><div class="n">40%</div><div class="l">of AI’s time savings lost to fixing its mistakes</div><div class="src">Workday, 2026</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#why">Wrong more than it looks</a>
+        <a href="#where">Where it fails most</a>
+        <a href="#checklist">The verification checklist</a>
+        <a href="#agree">The agreement trap</a>
+        <a href="#worth">Is checking worth it?</a>
+        <a href="#find">Find your level</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead">AI does not signal when it is wrong. It delivers a made-up fact in the same calm, fluent voice as a correct one. <strong>So you cannot rely on how an answer feels; you need a habit of checking.</strong> The reassuring part is that AI fails in predictable places, which means a short, repeatable checklist catches most of its mistakes before they cost you.</p>
+
+        <p>This is one of the five areas the free AI Knowledge Test measures, and it is the weakest spot for most people, including those who use AI every day. It pairs with the companion guide on <a href="/playbooks/the-biggest-myth-about-ai/">why AI is not a fact database</a>, which explains the mechanism behind the mistakes.</p>
+
+        <div class="cav">The uncomfortable truth</div>
+        <h2 id="why">Why AI is wrong more often than it looks</h2>
+        <p>Because it predicts plausible text rather than retrieving facts. OpenAI calls its errors "plausible but false statements" and explains they happen because "standard training and evaluation procedures reward guessing over acknowledging uncertainty" (<a href="https://openai.com/index/why-language-models-hallucinate/" target="_blank" rel="noopener noreferrer">OpenAI, 2025</a>). A guess might be right and scores points; "I don't know" scores zero, so models learn to sound sure. The result is a confident tone that tells you nothing about whether the answer is true. On OpenAI's own SimpleQA factual test, one older model was wrong about three times out of four while almost never admitting doubt.</p>
+        <div class="callout"><div class="h">The single most useful rule</div><p>Confidence is not accuracy. A smooth, certain reply is exactly when AI is most likely to be quietly wrong, because the model was rewarded for sounding sure, not for being right. Judge answers on sources and evidence, never on tone.</p></div>
+
+        <div class="cav">Know the danger zones</div>
+        <h2 id="where">Where AI is most likely to be wrong</h2>
+        <p>Errors cluster in predictable places. Precise, hard-to-guess details are the worst: OpenAI notes that "arbitrary low-frequency facts, like a pet's birthday, cannot be predicted from patterns alone and hence lead to hallucinations." That covers dates, names, statistics, and citations. The risk is real in high-stakes fields too. A 2026 BMJ Open study found half of chatbot health answers were problematic, a fifth highly so, and that no chatbot produced a fully accurate reference list (<a href="https://bmjgroup.com/substantial-amount-of-medical-information-provided-by-popular-chatbots-inaccurate-and-incomplete/" target="_blank" rel="noopener noreferrer">BMJ Open, 2026</a>). In academia, a Lancet study found fabricated citations rose sixfold between 2023 and 2025 (<a href="https://www.statnews.com/2026/05/07/lancet-study-finds-steep-rise-fraudulent-citations-academic-papers/" target="_blank" rel="noopener noreferrer">The Lancet, 2026</a>).</p>
+        <table>
+          <thead><tr><th>Where it fails</th><th>Why it happens</th><th>What to do</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Dates, names, numbers, stats</td><td>Specific low-frequency facts cannot be guessed from language patterns, so it invents them</td><td>Confirm every figure against a primary source</td></tr>
+            <tr><td class="band">Citations and sources</td><td>It produces real-looking references that do not exist, or that do not support the claim</td><td>Open every source; check it is real and on point</td></tr>
+            <tr><td class="band">Health and medical advice</td><td>Half of chatbot health answers were problematic, delivered with confident certainty</td><td>Use it for questions; confirm with a clinician</td></tr>
+            <tr><td class="band">Recent events</td><td>Knowledge is frozen at a training cutoff unless it has live web search</td><td>Verify against a dated, current source</td></tr>
+            <tr><td class="band">Anything that agrees with you</td><td>It is trained to please, and agreement feels like proof when it is not</td><td>Ask it to argue the opposite case</td></tr>
+            <tr><td class="band">Confident, fluent answers</td><td>Training rewards a confident guess over admitting uncertainty</td><td>Discount the tone; ask how it knows</td></tr>
+          </tbody>
+        </table>
+
+        <p>And do not assume a "research" tool is safe because it shows sources. Stanford tested purpose-built legal AI products that retrieve real documents before answering, and they still gave wrong information often.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">Even AI built for accuracy still makes things up</figcaption>
+          <svg viewBox="0 0 600 280" role="img" aria-label="Bar chart: Stanford found Lexis+ AI gave incorrect information more than 17% of the time and Westlaw AI more than 34% of the time, despite retrieving real documents">
+            <defs><linearGradient id="raggrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <line x1="70" y1="232" x2="560" y2="232" stroke="#E1D4be" stroke-width="2"/>
+            <rect x="150" y="161" width="120" height="71" rx="8" fill="url(#raggrad)" opacity="0.72"/>
+            <text x="210" y="151" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="27" font-weight="800" fill="#33302A">17%</text>
+            <text x="210" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="14" fill="#847B6B">Lexis+ AI</text>
+            <rect x="350" y="89" width="120" height="143" rx="8" fill="url(#raggrad)"/>
+            <text x="410" y="79" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="27" font-weight="800" fill="#33302A">34%</text>
+            <text x="410" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="14" fill="#847B6B">Westlaw AI</text>
+          </svg>
+          <p class="chart-src">Source: Stanford HAI, 2024. Share of responses with incorrect information from two purpose-built, retrieval-based legal AI tools. Having sources is not proof of accuracy.</p>
+        </figure>
+
+        <div class="cav">Your turn to practice</div>
+        <h2 id="checklist">The verification checklist</h2>
+        <p>You do not need to be technical to catch most AI errors. Run these eight steps on anything that has to be true. They take minutes and are drawn from what the AI makers and researchers themselves recommend.</p>
+        <div class="sec">
+          <ul class="checklist">
+            <li><span class="ck">&#10003;</span><div><b>Open every source it cites.</b> Click each link, case, or study and confirm it exists and actually says what the AI claimed.</div></li>
+            <li><span class="ck">&#10003;</span><div><b>Re-check every number yourself.</b> Models predict text, they do not calculate. Recompute math and confirm stats, dates, and figures against a primary source.</div></li>
+            <li><span class="ck">&#10003;</span><div><b>Ask it to argue the opposite.</b> "What is the strongest case that this is wrong?" cuts through the model's habit of agreeing with you.</div></li>
+            <li><span class="ck">&#10003;</span><div><b>Check the date is inside its knowledge.</b> For anything recent, confirm the tool used live web search; otherwise treat post-cutoff facts as guesses.</div></li>
+            <li><span class="ck">&#10003;</span><div><b>Make it show its working.</b> Ask for step-by-step reasoning; weak logic and invented assumptions surface when it explains itself.</div></li>
+            <li><span class="ck">&#10003;</span><div><b>Give it permission to say "I don't know."</b> Tell it to admit uncertainty rather than guess, which reduces confident fabrication.</div></li>
+            <li><span class="ck">&#10003;</span><div><b>Cross-check against one independent source.</b> Confirm the claim somewhere the AI did not write it, because a confident tone is not evidence.</div></li>
+            <li><span class="ck">&#10003;</span><div><b>For high-stakes answers, run it twice.</b> Inconsistent answers across two runs are a strong sign of a hallucination.</div></li>
+          </ul>
+        </div>
+
+        <div class="cav">The hidden trap</div>
+        <h2 id="agree">Watch for the agreement trap</h2>
+        <p>The most underrated risk is that AI tells you what you want to hear. A 2026 Stanford study published in Science tested 11 leading models and found they endorsed a user's behavior about 50% more often than human advisers did, and that people rated those agreeable answers as more trustworthy (<a href="https://news.stanford.edu/stories/2026/03/ai-advice-sycophantic-models-research" target="_blank" rel="noopener noreferrer">Stanford, 2026</a>). OpenAI even rolled back a 2025 update for being "overly flattering or agreeable." Combine that with automation bias, the documented human tendency to over-trust computer output and stop checking, which the US standards body NIST flags as a key reason people over-rely on AI (<a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener noreferrer">NIST, 2024</a>), and you have a recipe for believing confident, friendly nonsense.</p>
+        <blockquote>If the answer agrees with you and sounds supportive, <span class="accent">slow down. That is exactly when you are least likely to check it.</span></blockquote>
+
+        <div class="cav">Worth the minutes</div>
+        <h2 id="worth">Is all this checking worth it?</h2>
+        <p>Yes, and the people who get the most from AI already do it. Workday's 2026 study of 3,200 employees found that 77% of daily AI users review its output as carefully as a human colleague's, while skipping checks burns nearly 40% of the time AI saves on rework, and only 14% consistently get clean, positive results (<a href="https://newsroom.workday.com/2026-01-14-New-Workday-Research-Companies-Are-Leaving-AI-Gains-on-the-Table" target="_blank" rel="noopener noreferrer">Workday, 2026</a>). Verification is not a tax on AI; it is the difference between a tool that saves time and one that quietly creates work.</p>
+
+        <div class="cav">Your turn</div>
+        <h2 id="find">How sharp is your AI judgment?</h2>
+        <p>Knowing when to trust AI is one of the five areas the free AI Knowledge Test measures, and it is where most people score lowest. It serves 50 questions, scores each objectively, and shows your level plus a radar of your strongest and weakest domains, so you can see how well-tuned your AI radar really is.</p>
+        <div class="cta">
+          <span class="kicker">See where you really stand</span>
+          <h3>Take the free AI Knowledge Test</h3>
+          <p>50 questions, about 20 minutes, no signup and no email. Your level and domain radar are computed in your browser and never uploaded.</p>
+          <a class="btn" href="/knowledge-center/ai-knowledge-test/">Start the free test</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about spotting AI errors</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>OpenAI, <a href="https://openai.com/index/why-language-models-hallucinate/" target="_blank" rel="noopener noreferrer">Why language models hallucinate</a>, 2025.</li>
+          <li>Stanford HAI, <a href="https://hai.stanford.edu/news/ai-trial-legal-models-hallucinate-1-out-6-or-more-benchmarking-queries" target="_blank" rel="noopener noreferrer">AI on Trial: Legal Models Hallucinate</a>, 2024 (legal RAG tools, 17% and 34%).</li>
+          <li>BMJ Open, <a href="https://bmjgroup.com/substantial-amount-of-medical-information-provided-by-popular-chatbots-inaccurate-and-incomplete/" target="_blank" rel="noopener noreferrer">Chatbots and medical misinformation: an accuracy audit</a>, 2026.</li>
+          <li>The Lancet, via <a href="https://www.statnews.com/2026/05/07/lancet-study-finds-steep-rise-fraudulent-citations-academic-papers/" target="_blank" rel="noopener noreferrer">STAT</a>, fabricated citations rose sixfold, 2026.</li>
+          <li>Stanford, <a href="https://news.stanford.edu/stories/2026/03/ai-advice-sycophantic-models-research" target="_blank" rel="noopener noreferrer">AI overly affirms users (sycophancy study in Science)</a>, 2026.</li>
+          <li>NIST, <a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" rel="noopener noreferrer">AI Risk Management Framework</a> (automation bias / over-reliance), 2024.</li>
+          <li>Anthropic, <a href="https://docs.claude.com/en/docs/test-and-evaluate/strengthen-guardrails/reduce-hallucinations" target="_blank" rel="noopener noreferrer">Reduce hallucinations</a> (verification guidance).</li>
+          <li>Damien Charlotin, <a href="https://www.damiencharlotin.com/hallucinations/" target="_blank" rel="noopener noreferrer">AI Hallucination Cases Database</a>, 2026 (1,600+ court cases).</li>
+          <li>Mata v. Avianca, Inc., <a href="https://en.wikipedia.org/wiki/Mata_v._Avianca,_Inc." target="_blank" rel="noopener noreferrer">678 F. Supp. 3d 443</a>, 2023 ($5,000 sanction).</li>
+          <li>Workday, <a href="https://newsroom.workday.com/2026-01-14-New-Workday-Research-Companies-Are-Leaving-AI-Gains-on-the-Table" target="_blank" rel="noopener noreferrer">Beyond Productivity</a>, 2026.</li>
+        </ul>
+              <RelatedPlaybooks track="aikt" currentHref={seo.url} />
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Try our free tools: <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">All Tools</a>, <a href="/calculators/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Calculators</a>, <a href="/career-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Career Toolkit</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, and the <a href="/pdf-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Toolkit</a>.</p>
+</article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:42em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.76rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .checklist{list-style:none;margin:0;padding:0}
+  .pb .checklist li{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--border)}
+  .pb .checklist li:last-child{border-bottom:0}
+  .pb .checklist .ck{flex:none;width:28px;height:28px;border-radius:9px;background:var(--sage);color:#fff;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .checklist b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.88rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 13px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+  .pb td{padding:12px 13px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

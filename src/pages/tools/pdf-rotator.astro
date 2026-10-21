@@ -1,0 +1,493 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub PDF Rotator?',
+    a: 'The Best Answer Hub PDF Rotator is a free browser-based tool that permanently rotates PDF pages 90° clockwise, 90° counter-clockwise, or 180°. You can rotate every page at once or select specific pages while leaving the rest unchanged. The tool uses pdf-lib to update the native rotation flag inside the PDF, with no re-encoding or rasterization. Changes survive reopening in any viewer. Everything runs locally in your browser. No files are uploaded to any server.',
+  },
+  {
+    q: 'Why does my PDF rotation not save when I close the file?',
+    a: 'Most PDF viewers have two different rotation operations that users frequently confuse. <strong>Rotate View</strong> (found in Adobe Reader, Chrome\'s PDF viewer, and macOS Preview) changes only how the document looks on your screen during that session. It does not edit the file, so the rotation disappears when you reopen it. <strong>Rotate Pages</strong> permanently changes the rotation metadata stored in the PDF itself. The Best Answer Hub PDF Rotator always performs a permanent page rotation: download the result and it will display correctly in every viewer.',
+  },
+  {
+    q: 'How do I permanently rotate and save a PDF?',
+    a: 'Upload your PDF to the Best Answer Hub PDF Rotator, choose your angle (90° CW, 90° CCW, or 180°), select all pages or specific ones, and click Rotate PDF. The tool writes the new rotation angle directly into the PDF\'s page metadata using pdf-lib, then generates a modified file for download. The rotation is permanent: it displays correctly in Adobe Reader, Chrome, Safari, Edge, and any other viewer, and survives being emailed, uploaded, or printed.',
+  },
+  {
+    q: 'Can I rotate only specific pages without affecting the rest?',
+    a: 'Yes. After uploading your PDF to the Best Answer Hub PDF Rotator, select the <strong>Specific Pages</strong> option and enter page numbers using commas and dashes, for example, <code>2, 4-6, 9</code> rotates pages 2, 4 through 6, and page 9, while all other pages stay at their original orientation. This is ideal for multi-page scanned documents where a few pages were fed through the scanner sideways, without having to re-scan the entire document.',
+  },
+  {
+    q: 'Does rotating a PDF reduce quality or make text unsearchable?',
+    a: 'No on both counts. The Best Answer Hub PDF Rotator uses pdf-lib to update the native rotation metadata flag: the actual page content (text, images, vector graphics) is never touched, re-encoded, or rasterized. Text remains fully selectable, searchable, and copy-pasteable. Image resolution stays exactly the same. This is fundamentally different from tools that rasterize pages during rotation, which do degrade quality and break text selection.',
+  },
+  {
+    q: 'How do I fix a sideways or upside-down scanned PDF?',
+    a: 'If pages are sideways, use the 90° CW or 90° CCW button in the Best Answer Hub PDF Rotator: try CW first; if the result is still wrong, apply CCW on the output. If pages are upside down, select 180°. If only some pages are affected (a common sheet-fed scanner issue where pages were fed in the wrong direction), use the Specific Pages option to target only those pages. The fix takes seconds and preserves the original scan quality completely.',
+  },
+  {
+    q: 'I rotated my PDF in Adobe Reader but it won\'t save. Why?',
+    a: 'Adobe Reader\'s "Rotate View" option only changes how the document looks on your screen during that session. It does not edit the file. When you close Reader or share the file, the rotation is gone. Permanently saving a rotation in Adobe software requires Adobe Acrobat Pro or Standard (from $23/month). The Best Answer Hub PDF Rotator performs a permanent rotation at no cost: the downloaded file opens correctly in every viewer, with no subscription required.',
+  },
+  {
+    q: 'Does rotating a PDF invalidate a digital signature?',
+    a: 'In most cases, yes. Digitally signed PDFs are cryptographically locked: any modification to the file, including changing page rotation metadata, breaks the signature hash and the signature shows as "invalid" or "modified" in validation tools like Adobe Acrobat. If you need to rotate a digitally signed PDF, contact the signer to re-sign after rotation. For unsigned PDFs, rotation via the Best Answer Hub PDF Rotator causes no issues.',
+  },
+  {
+    q: 'How do I rotate a PDF on Mac without Adobe Acrobat?',
+    a: 'Apple Preview (built into macOS) supports permanent rotation: open the PDF, go to View → Thumbnails, select the pages you want to rotate, and use Tools → Rotate Left or Rotate Right, then save with ⌘S. For more control (rotating specific pages, selecting exact angles, or processing without opening Preview), the Best Answer Hub PDF Rotator works in Safari or Chrome on Mac with no software install: drag in your PDF, choose your settings, and download.',
+  },
+  {
+    q: 'How do I rotate a PDF on iPhone without downloading an app?',
+    a: 'Open the Best Answer Hub PDF Rotator in Safari on your iPhone. No app install required. Tap the upload area to select your PDF from Files, choose your rotation angle and page scope, and tap Rotate PDF. The processing runs entirely in Safari using client-side JavaScript; nothing is uploaded to any server. Download the permanently rotated PDF directly to your Files app with one tap.',
+  },
+  {
+    q: 'How do I rotate a PDF on Windows for free?',
+    a: 'The Best Answer Hub PDF Rotator works in any Windows browser (Chrome, Firefox, or Edge) with no software to install. Open the page, drop in your PDF, select the rotation angle and pages, and download the permanently rotated file. Windows 11 has no built-in PDF editor that saves rotation. Microsoft Edge shows a temporary rotate option in its PDF viewer, but this does not write to the file. The Best Answer Hub PDF Rotator is the fastest permanent option on Windows without installing Adobe Acrobat.',
+  },
+  {
+    q: 'What is the difference between rotating a PDF and flipping it?',
+    a: 'Rotation turns a page by a set angle (90°, 180°, or 270°). Flipping creates a mirror image: horizontally (left-right reversed) or vertically (top-bottom reversed). The Best Answer Hub PDF Rotator supports 90° CW, 90° CCW, and 180° rotation. It does not support horizontal or vertical mirroring. The 180° option is equivalent in appearance to an upside-down fix for most documents. For true mirroring, a desktop tool like Adobe Acrobat Pro or PDF Studio is required.',
+  },
+  {
+    q: 'Does rotating a PDF increase the file size?',
+    a: 'No. Rotating via metadata flag update adds virtually nothing to file size. The Best Answer Hub PDF Rotator uses pdf-lib to update the rotation value in each page\'s internal dictionary, changing a single numeric value in the PDF structure. Page content, images, and fonts are completely untouched. The output file is effectively the same size as the original. Tools that rasterize during rotation produce significantly larger files. The Best Answer Hub PDF Rotator does not rasterize.',
+  },
+  {
+    q: 'Does the Best Answer Hub PDF Rotator preserve bookmarks, forms, and annotations?',
+    a: 'Yes. Because the Best Answer Hub PDF Rotator only updates the rotation metadata flag without rebuilding or restructuring the PDF, bookmarks, form fields, annotations, and hyperlinks are preserved intact. This is a meaningful advantage over tools that rasterize or fully rebuild PDFs during rotation, which typically strip all interactive elements in the process.',
+  },
+  {
+    q: 'How does the Best Answer Hub PDF Rotator compare to Smallpdf and iLovePDF?',
+    a: 'Smallpdf limits free users to two rotation tasks per day and uploads files to its servers. iLovePDF allows one task per hour for free users and also processes files server-side. Both require an internet connection and create privacy exposure for any document you rotate. The Best Answer Hub PDF Rotator is completely free with no daily caps, no watermarks, no signup, and full local processing. Nothing leaves your browser. The main practical difference: the Best Answer Hub PDF Rotator does not auto-detect page orientation, so the rotation angle must be chosen manually.',
+  },
+];
+
+const steps = [
+  { title: 'Upload your PDF', description: 'Drag and drop or click to select a PDF file. The document stays on your device. Nothing is uploaded to any server. The tool shows the total page count after loading.' },
+  { title: 'Choose rotation and scope', description: 'Select 90° clockwise, 90° counter-clockwise, or 180°. Choose All Pages or enter specific page numbers. Click Rotate PDF.' },
+  { title: 'Download the result', description: 'The rotated PDF downloads instantly. Because only metadata is changed, even large files process in under a second.' },
+];
+
+const seo = {
+  title: 'Free PDF Rotator — Rotate Pages Online, No Upload (2026)',
+  description: 'Rotate PDF pages for free in your browser. Turn pages 90° or 180°. Rotate all pages or specific ones. No uploads or signup.',
+  url: '/tools/pdf-rotator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'PDF Rotator', url: '/tools/pdf-rotator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Upload to Servers"
+    title="PDF Rotator:"
+    accentText="Fix orientation instantly"
+    description="Rotate PDF pages for free in your browser. Turn pages 90° clockwise, 90° counter-clockwise, or 180°. Apply to all pages or only specific ones. No signup, no watermarks, no daily limits."
+    backLink="/pdf-toolkit/"
+    backLabel="← PDF Toolkit"
+  />
+
+  <!-- Rotator Interface -->
+  <section class="py-6 md:py-8" aria-label="PDF rotator">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-4">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1">Drop your PDF here</p>
+          <p class="text-xs text-bae-muted">or click to browse (.pdf files only)</p>
+          <input type="file" id="file-input" class="hidden" accept=".pdf,application/pdf" />
+        </div>
+
+        <!-- Size Warning -->
+        <div id="size-warning" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-3 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <p class="text-xs text-amber-700">This file is very large (<strong id="warn-size"></strong>). Processing may take longer on mobile devices.</p>
+        </div>
+
+        <!-- PDF Info -->
+        <div id="pdf-info" class="hidden mb-4 text-center">
+          <p class="text-sm text-bae-ink font-medium"><span id="info-name" class="truncate"></span></p>
+          <p class="text-xs text-bae-muted"><span id="info-pages"></span> pages · <span id="info-size"></span></p>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-area" class="hidden mb-4 bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="text-sm font-bold text-bae-ink mb-4">Rotation Settings</h3>
+
+          <!-- Angle -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Rotation Angle</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" data-angle="-90" class="angle-btn bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center hover:border-bae-primary transition-colors">
+                <svg class="w-5 h-5 text-bae-ink mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                <span class="text-xs font-medium text-bae-ink">90° CCW</span>
+              </button>
+              <button type="button" data-angle="180" class="angle-btn bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center hover:border-bae-primary transition-colors">
+                <svg class="w-5 h-5 text-bae-ink mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span class="text-xs font-medium text-bae-ink">180°</span>
+              </button>
+              <button type="button" data-angle="90" class="angle-btn bg-bae-primary border border-bae-primary rounded-bae-sm p-3 text-center">
+                <svg class="w-5 h-5 text-white mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/></svg>
+                <span class="text-xs font-medium text-white">90° CW</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Scope -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Apply To</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto">
+              <button type="button" id="scope-all" class="scope-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">All Pages</button>
+              <button type="button" id="scope-specific" class="scope-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Specific Pages</button>
+            </div>
+          </div>
+
+          <!-- Specific Pages Input -->
+          <div class="mb-4 hidden" id="pages-control">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Page Numbers (1-based)</label>
+            <input type="text" id="pages-input" placeholder="e.g. 1-3, 5, 8-10" class="w-full px-3 py-2 bg-bae-bg border border-bae-border rounded-bae-sm text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            <p class="text-xs text-bae-muted mt-1.5">Use commas and dashes. Example: <code>2, 4-6, 9</code> rotates only pages 2, 4 through 6, and page 9.</p>
+          </div>
+
+          <button type="button" id="rotate-btn" class="w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+            Rotate PDF
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Rotating...</p>
+            <p class="text-xs text-bae-muted mt-1">Processing locally in your browser</p>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-bae-ink">Rotation Complete</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Ready</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                <p class="text-[10px] text-bae-muted uppercase tracking-wider mb-1">Total Pages</p>
+                <p id="result-pages" class="text-sm font-medium text-bae-ink">—</p>
+              </div>
+              <div class="bg-emerald-50 rounded-bae-sm p-3 text-center border border-emerald-100">
+                <p class="text-[10px] text-emerald-600 uppercase tracking-wider mb-1">Pages Rotated</p>
+                <p id="rotated-count" class="text-sm font-medium text-emerald-700">—</p>
+              </div>
+            </div>
+            <a id="download-btn" href="#" download class="block w-full text-center bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm hover:bg-bae-accent transition-colors no-underline">
+              Download Rotated PDF
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What this tool cannot do</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>Password-protected files:</strong> Encrypted or DRM-protected PDFs cannot be opened or rotated.</li>
+              <li><strong>Crop or resize:</strong> This tool only changes orientation. It does not crop margins or change page dimensions.</li>
+              <li><strong>Auto-detect orientation:</strong> The tool does not automatically detect which pages need rotation. You must choose the angle and pages manually.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people rotate with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people rotate with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from home users, office workers, and professionals.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Scanned Documents</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Fix sideways scanner output</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Most common rotation use case</p>
+          <p class="text-sm text-bae-muted">Sheet-fed scanners frequently output pages sideways when documents are fed in the wrong direction. Select the affected pages, choose 90° CW or CCW, and fix the whole batch without re-scanning a single page.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Phone Scans</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Correct phone camera orientation</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Instant fix, full quality preserved</p>
+          <p class="text-sm text-bae-muted">PDFs created from phone photos often arrive rotated depending on how the phone was held during capture. The Best Answer Hub PDF Rotator fixes orientation by updating metadata, not re-encoding the images, so quality is identical to the original.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Mixed Orientations</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Rotate only the wrong pages</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Specific pages only, rest unchanged</p>
+          <p class="text-sm text-bae-muted">Reports and multi-page scans often contain a mix of portrait and landscape pages. Specific Pages mode rotates only the incorrectly oriented ones, leaving diagrams, wide tables, and charts in their intended landscape orientation.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Print Preparation</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Match orientation before printing</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Permanent, prints correctly every time</p>
+          <p class="text-sm text-bae-muted">PDFs that look correct on screen but print sideways have a rotation metadata mismatch. The Best Answer Hub PDF Rotator writes the correct orientation permanently into the file. It prints correctly from any device, every time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more PDF tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/pdf-compressor/" class="text-bae-primary hover:underline">PDF Compressor</a>, <a href="/tools/pdf-merger/" class="text-bae-primary hover:underline">PDF Merger</a>, <a href="/tools/pdf-splitter/" class="text-bae-primary hover:underline">PDF Splitter</a>, <a href="/tools/images-to-pdf/" class="text-bae-primary hover:underline">Images to PDF</a>, <a href="/tools/pdf-to-images/" class="text-bae-primary hover:underline">PDF to Images</a>, and <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>. All free, no signup.</p>
+        </div>
+        <a href="/pdf-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse PDF Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const settingsArea = document.getElementById('settings-area');
+      const progressArea = document.getElementById('progress-area');
+      const resultArea = document.getElementById('result-area');
+      const progressText = document.getElementById('progress-text');
+      const sizeWarning = document.getElementById('size-warning');
+      const warnSize = document.getElementById('warn-size');
+      const pdfInfo = document.getElementById('pdf-info');
+      const infoName = document.getElementById('info-name');
+      const infoPages = document.getElementById('info-pages');
+      const infoSize = document.getElementById('info-size');
+      const rotateBtn = document.getElementById('rotate-btn');
+      const downloadBtn = document.getElementById('download-btn');
+      const resultPagesEl = document.getElementById('result-pages');
+      const rotatedCountEl = document.getElementById('rotated-count');
+      const pagesInput = document.getElementById('pages-input');
+      const pagesControl = document.getElementById('pages-control');
+      const scopeAll = document.getElementById('scope-all');
+      const scopeSpecific = document.getElementById('scope-specific');
+
+      let currentFile = null;
+      let totalPages = 0;
+      let currentAngle = 90;
+      let currentScope = 'all';
+      let PDFLib = null;
+
+      function formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      function validatePdf(file) {
+        return file.name.toLowerCase().endsWith('.pdf') && file.type === 'application/pdf';
+      }
+
+      async function loadPdfLib() {
+        if (PDFLib) return;
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = '/pdf-lib.min.js';
+          s.onload = () => { PDFLib = window.PDFLib; resolve(); };
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+
+      // Angle buttons
+      document.querySelectorAll('.angle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentAngle = parseInt(btn.dataset.angle, 10);
+          document.querySelectorAll('.angle-btn').forEach(b => {
+            b.classList.remove('bg-bae-primary', 'border-bae-primary');
+            b.classList.add('bg-bae-bg', 'border-bae-border');
+            b.querySelector('svg').classList.remove('text-white');
+            b.querySelector('svg').classList.add('text-bae-ink');
+            b.querySelector('span').classList.remove('text-white');
+            b.querySelector('span').classList.add('text-bae-ink');
+          });
+          btn.classList.remove('bg-bae-bg', 'border-bae-border');
+          btn.classList.add('bg-bae-primary', 'border-bae-primary');
+          btn.querySelector('svg').classList.remove('text-bae-ink');
+          btn.querySelector('svg').classList.add('text-white');
+          btn.querySelector('span').classList.remove('text-bae-ink');
+          btn.querySelector('span').classList.add('text-white');
+        });
+      });
+
+      function setScope(scope) {
+        currentScope = scope;
+        if (scope === 'all') {
+          scopeAll.classList.add('bg-bae-primary', 'text-white');
+          scopeAll.classList.remove('text-bae-muted');
+          scopeSpecific.classList.remove('bg-bae-primary', 'text-white');
+          scopeSpecific.classList.add('text-bae-muted');
+          pagesControl.classList.add('hidden');
+        } else {
+          scopeSpecific.classList.add('bg-bae-primary', 'text-white');
+          scopeSpecific.classList.remove('text-bae-muted');
+          scopeAll.classList.remove('bg-bae-primary', 'text-white');
+          scopeAll.classList.add('text-bae-muted');
+          pagesControl.classList.remove('hidden');
+        }
+      }
+
+      scopeAll.addEventListener('click', () => setScope('all'));
+      scopeSpecific.addEventListener('click', () => setScope('specific'));
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+      const MAX_FILE_SIZE = 20 * 1024 * 1024 * 1024;
+      async function handleFile(file) {
+        if (!file) return;
+        if (!validatePdf(file)) {
+          alert('Please upload a PDF file.');
+          return;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+          alert('File too large. Maximum size is 20 GB.');
+          return;
+        }
+        if (downloadBtn._objUrl) URL.revokeObjectURL(downloadBtn._objUrl);
+        currentFile = file;
+        if (file.size > 500 * 1024 * 1024) {
+          warnSize.textContent = formatBytes(file.size);
+          sizeWarning.classList.remove('hidden');
+        } else {
+          sizeWarning.classList.add('hidden');
+        }
+
+        await loadPdfLib();
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+          totalPages = pdf.getPageCount();
+
+          infoName.textContent = file.name;
+          infoPages.textContent = totalPages;
+          infoSize.textContent = formatBytes(file.size);
+          pdfInfo.classList.remove('hidden');
+          settingsArea.classList.remove('hidden');
+          resultArea.classList.add('hidden');
+          settingsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+          alert('Could not read this PDF. It may be password-protected or corrupted.');
+        }
+      }
+
+      rotateBtn.addEventListener('click', async () => {
+        if (!currentFile || totalPages === 0) return;
+        resultArea.classList.add('hidden');
+        progressArea.classList.remove('hidden');
+        progressText.textContent = 'Rotating PDF...';
+
+        try {
+          await loadPdfLib();
+          const arrayBuffer = await currentFile.arrayBuffer();
+          const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+
+          let targetIndices = [];
+          if (currentScope === 'all') {
+            targetIndices = pdf.getPageIndices();
+          } else {
+            targetIndices = parsePages(pagesInput.value.trim(), totalPages);
+            if (targetIndices.length === 0) {
+              progressText.textContent = 'Please enter valid page numbers.';
+              return;
+            }
+          }
+
+          for (const idx of targetIndices) {
+            const page = pdf.getPage(idx);
+            const currentRotation = page.getRotation().angle;
+            page.setRotation(PDFLib.degrees(currentRotation + currentAngle));
+          }
+
+          const bytes = await pdf.save();
+          const blob = new Blob([bytes], { type: 'application/pdf' });
+          if (downloadBtn._objUrl) URL.revokeObjectURL(downloadBtn._objUrl);
+          const url = URL.createObjectURL(blob);
+
+          resultPagesEl.textContent = totalPages + ' page' + (totalPages !== 1 ? 's' : '');
+          rotatedCountEl.textContent = targetIndices.length + ' page' + (targetIndices.length !== 1 ? 's' : '');
+          downloadBtn.href = url;
+          downloadBtn.download = currentFile.name.replace(/\.pdf$/i, '') + '-rotated.pdf';
+          downloadBtn._objUrl = url;
+
+          progressArea.classList.add('hidden');
+          resultArea.classList.remove('hidden');
+          resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+          console.error(err);
+          progressText.textContent = 'Rotation failed: ' + (err.message || 'Unknown error. Try a different file.');
+        }
+      });
+
+      function parsePages(input, maxPage) {
+        if (!input) return [];
+        const indices = new Set();
+        const parts = input.split(',');
+        for (const part of parts) {
+          const trimmed = part.trim();
+          if (!trimmed) continue;
+          if (trimmed.includes('-')) {
+            const [start, end] = trimmed.split('-').map(s => parseInt(s.trim(), 10));
+            if (isNaN(start) || isNaN(end)) continue;
+            for (let i = start; i <= end; i++) {
+              if (i >= 1 && i <= maxPage) indices.add(i - 1);
+            }
+          } else {
+            const num = parseInt(trimmed, 10);
+            if (!isNaN(num) && num >= 1 && num <= maxPage) indices.add(num - 1);
+          }
+        }
+        return Array.from(indices).sort((a, b) => a - b);
+      }
+    })();
+  </script>
+</BaseLayout>

@@ -1,0 +1,543 @@
+---
+import { allTools } from '../../data/tools';
+
+interface ChatTool {
+  href: string;
+  title: string;
+  description: string;
+  badge: string;
+  keywords: string;
+}
+
+const chatTools: ChatTool[] = allTools.map(t => ({
+  href: t.href,
+  title: t.title,
+  description: t.description,
+  badge: t.badge,
+  keywords: t.keywords,
+}));
+
+const isHomepage = Astro.url.pathname === '/';
+---
+
+<div id="bae-chat-root" data-homepage={isHomepage ? 'true' : 'false'}>
+  {/* Toggle Button */}
+  <button
+    id="bae-chat-toggle"
+    type="button"
+    class="fixed bottom-5 right-5 z-[100] flex items-center gap-2 bg-bae-primary hover:bg-bae-accent text-white font-medium px-5 py-3 rounded-full shadow-bae-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-bae-primary focus:ring-offset-2"
+    aria-label="Open help chat"
+    aria-expanded="false"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    <span>Help</span>
+  </button>
+
+  {/* Chat Panel */}
+  <div
+    id="bae-chat-panel"
+    role="dialog"
+    aria-label="Best Answer Hub Help Chat"
+    class="fixed z-[100] hidden flex-col bg-bae-card border border-bae-border shadow-bae-lg overflow-hidden
+      bottom-0 left-0 right-0 h-[75vh] rounded-t-bae
+      sm:bottom-5 sm:left-auto sm:right-5 sm:w-[400px] sm:h-[520px] sm:rounded-bae"
+  >
+    {/* Header */}
+    <div class="flex items-center justify-between bg-bae-ink text-white px-5 py-4 shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-bae-primary flex items-center justify-center text-white font-bold text-sm shrink-0">?</div>
+        <div>
+          <h3 class="font-semibold text-sm leading-tight">Best Answer Hub</h3>
+          <p class="text-xs text-white/70">We typically reply instantly</p>
+        </div>
+      </div>
+      <button
+        id="bae-chat-close"
+        type="button"
+        class="text-white/70 hover:text-white transition-colors p-1 rounded-sm focus:outline-none focus:ring-2 focus:ring-white/50"
+        aria-label="Close chat"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    {/* Messages */}
+    <div id="bae-chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"></div>
+
+    {/* Input */}
+    <div class="shrink-0 border-t border-bae-border p-3 bg-bae-card">
+      <form id="bae-chat-form" class="flex items-center gap-2">
+        <input
+          id="bae-chat-input"
+          type="text"
+          class="flex-1 bg-bae-bg border border-bae-border rounded-bae-sm px-4 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary"
+          placeholder="Ask me anything..."
+          autocomplete="off"
+          aria-label="Type your message"
+        />
+        <button
+          id="bae-chat-send"
+          type="submit"
+          class="bg-bae-primary hover:bg-bae-accent text-white p-2.5 rounded-bae-sm transition-colors focus:outline-none focus:ring-2 focus:ring-bae-primary focus:ring-offset-2 shrink-0"
+          aria-label="Send message"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  #bae-chat-messages::-webkit-scrollbar {
+    width: 6px;
+  }
+  #bae-chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  #bae-chat-messages::-webkit-scrollbar-thumb {
+    background-color: #e8e8f0;
+    border-radius: 20px;
+  }
+  .bae-typing-dot {
+    animation: bae-typing-pulse 1.4s infinite ease-in-out both;
+  }
+  .bae-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+  .bae-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+  @keyframes bae-typing-pulse {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+</style>
+
+<script is:inline define:vars={{ chatTools, isHomepage }}>
+(function() {
+  'use strict';
+
+  const STORAGE_KEY = 'bae_chat_state_v1';
+  const WELCOMED_KEY = 'bae_chat_welcomed_v1';
+  const SESSION_KEY = 'bae_chat_session_v1';
+
+  const root = document.getElementById('bae-chat-root');
+  const toggleBtn = document.getElementById('bae-chat-toggle');
+  const panel = document.getElementById('bae-chat-panel');
+  const closeBtn = document.getElementById('bae-chat-close');
+  const messagesEl = document.getElementById('bae-chat-messages');
+  const form = document.getElementById('bae-chat-form');
+  const input = document.getElementById('bae-chat-input');
+
+  if (!root || !toggleBtn || !panel || !closeBtn || !messagesEl || !form || !input) return;
+
+  let isOpen = false;
+  let typingTimer = null;
+
+  /* --- Persistence --- */
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) { return null; }
+  }
+
+  function saveState() {
+    try {
+      const els = messagesEl.querySelectorAll('[data-msg]');
+      const msgs = [];
+      els.forEach(el => {
+        // Save the bubble's innerHTML, not the wrapper's — prevents nested bubbles on restore
+        var bubble = el.firstElementChild;
+        msgs.push({ role: el.dataset.role, html: bubble ? bubble.innerHTML : el.innerHTML });
+      });
+      if (msgs.length > 30) msgs.splice(0, msgs.length - 30);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages: msgs, open: isOpen }));
+    } catch (e) {}
+  }
+
+  /* --- UI Helpers --- */
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }
+
+  function scrollToBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function setOpen(open) {
+    isOpen = open;
+    if (open) {
+      panel.classList.remove('hidden');
+      panel.classList.add('flex');
+      toggleBtn.classList.add('hidden');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+    } else {
+      panel.classList.remove('flex');
+      panel.classList.add('hidden');
+      toggleBtn.classList.remove('hidden');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+    saveState();
+  }
+
+  /* --- Message Rendering --- */
+  function createWrapper(role) {
+    const wrapper = document.createElement('div');
+    wrapper.dataset.msg = 'true';
+    wrapper.dataset.role = role;
+    wrapper.className = role === 'user' ? 'flex justify-end' : 'flex justify-start';
+    return wrapper;
+  }
+
+  function createBubble(role) {
+    const bubble = document.createElement('div');
+    bubble.className = role === 'user'
+      ? 'bg-bae-primary-soft text-bae-ink rounded-bae rounded-tr-sm px-4 py-2.5 max-w-[85%] text-sm'
+      : 'bg-bae-card border border-bae-border text-bae-ink rounded-bae rounded-tl-sm px-4 py-2.5 max-w-[90%] text-sm';
+    return bubble;
+  }
+
+  function addUserMessage(text) {
+    const wrapper = createWrapper('user');
+    const bubble = createBubble('user');
+    bubble.textContent = text;
+    wrapper.appendChild(bubble);
+    messagesEl.appendChild(wrapper);
+    scrollToBottom();
+    saveState();
+  }
+
+  function showTyping() {
+    hideTyping();
+    const wrapper = createWrapper('bot');
+    wrapper.id = 'bae-chat-typing';
+    const bubble = createBubble('bot');
+    bubble.innerHTML = '<div class="flex items-center gap-1 h-5 px-1"><span class="bae-typing-dot w-1.5 h-1.5 bg-bae-muted rounded-full inline-block"></span><span class="bae-typing-dot w-1.5 h-1.5 bg-bae-muted rounded-full inline-block"></span><span class="bae-typing-dot w-1.5 h-1.5 bg-bae-muted rounded-full inline-block"></span></div>';
+    wrapper.appendChild(bubble);
+    messagesEl.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  function hideTyping() {
+    const el = document.getElementById('bae-chat-typing');
+    if (el) el.remove();
+  }
+
+  function addBotMessage(content) {
+    hideTyping();
+    const wrapper = createWrapper('bot');
+    const bubble = createBubble('bot');
+
+    if (typeof content === 'string') {
+      bubble.textContent = content;
+    } else if (content.type === 'text') {
+      bubble.textContent = content.text;
+    } else if (content.type === 'tool') {
+      bubble.innerHTML = renderToolCard(content.tool);
+    } else if (content.type === 'multi-tool') {
+      bubble.innerHTML = '<p class="mb-2">' + escapeHtml(content.text) + '</p>' + content.tools.map(renderToolCard).join('');
+    } else if (content.type === 'category') {
+      bubble.innerHTML = renderCategoryResponse(content);
+    } else if (content.type === 'quick-replies') {
+      bubble.innerHTML = '<p class="mb-3">' + escapeHtml(content.text) + '</p>' + renderQuickReplies(content.replies);
+    }
+
+    wrapper.appendChild(bubble);
+    messagesEl.appendChild(wrapper);
+    scrollToBottom();
+    saveState();
+  }
+
+  function renderToolCard(tool) {
+    return '<div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 mb-2 last:mb-0">' +
+      '<div class="flex items-center justify-between mb-1 gap-2">' +
+        '<span class="font-semibold text-sm text-bae-ink">' + escapeHtml(tool.title) + '</span>' +
+        '<span class="text-[10px] uppercase tracking-wide text-bae-muted bg-bae-border-light px-2 py-0.5 rounded-full shrink-0">' + escapeHtml(tool.badge) + '</span>' +
+      '</div>' +
+      '<p class="text-xs text-bae-muted mb-2 line-clamp-2">' + escapeHtml(tool.description) + '</p>' +
+      '<a href="' + tool.href + '" class="inline-flex items-center text-xs font-medium text-bae-primary hover:text-bae-accent transition-colors">Open tool →</a>' +
+    '</div>';
+  }
+
+  function renderCategoryResponse(content) {
+    const hubMap = {
+      'PDF Tool': '/pdf-toolkit/',
+      'Career': '/career-toolkit/',
+      'Developer': '/developer-toolbox/',
+      'Calculator': '/calculators/',
+      'Finance': '/calculators/',
+      'DevOps': '/calculators/',
+      'Utility': '/calculators/',
+      'Kitchen': '/calculators/',
+      'Tech': '/calculators/',
+      'Social': '/calculators/',
+    };
+    const hub = hubMap[content.badge] || '/tools/';
+    let html = '<p class="mb-2">' + escapeHtml(content.text) + '</p>';
+    html += '<a href="' + hub + '" class="inline-block mb-3 text-xs font-medium text-bae-primary hover:text-bae-accent underline underline-offset-2">Browse all ' + escapeHtml(content.badge) + ' tools →</a>';
+    html += content.tools.map(renderToolCard).join('');
+    return html;
+  }
+
+  function renderQuickReplies(replies) {
+    return '<div class="flex flex-wrap gap-2 mt-1">' + replies.map(function(r) {
+      return '<button type="button" class="bae-quick-reply px-3 py-1.5 bg-bae-primary/10 hover:bg-bae-primary text-bae-primary hover:text-white text-xs font-medium rounded-full transition-colors border border-bae-primary/20" data-text="' + r.replace(/"/g, '&quot;') + '">' + escapeHtml(r) + '</button>';
+    }).join('') + '</div>';
+  }
+
+  /* --- Response Logic --- */
+  var GENERAL_RESPONSES = {
+    greeting: {
+      type: 'text',
+      text: 'Hi there! Welcome to Best Answer Hub. I can help you find the right tool. What are you looking for today?'
+    },
+    greeting_homepage: {
+      type: 'quick-replies',
+      text: 'Hi there! Welcome to Best Answer Hub. What would you like to do today?',
+      replies: ['Find a PDF tool', 'Explore calculators', 'Build my resume', 'Developer tools']
+    },
+    help: {
+      type: 'quick-replies',
+      text: 'Best Answer Hub has 50+ free browser-based tools. Here are the main categories:',
+      replies: ['PDF Tools', 'Calculators', 'Career Tools', 'Developer Tools', 'Generators', 'Checkers']
+    },
+    privacy: {
+      type: 'text',
+      text: 'Privacy is our priority. All tools run 100% in your browser. Your data never leaves your device, no uploads to servers, and no signup required.'
+    },
+    contact: {
+      type: 'text',
+      text: 'You can reach us through the Contact page at /contact/. For quick answers, try asking me about any of our tools!'
+    },
+    free: {
+      type: 'text',
+      text: 'All tools on Best Answer Hub are 100% free. No signup, no credit card, no watermarks, and no usage limits. Your data stays in your browser.'
+    },
+    how_it_works: {
+      type: 'text',
+      text: 'Every tool on Best Answer Hub runs directly in your browser. Just open the tool page, enter your data, and get instant results. No downloads or installations needed. Pick a tool and I can send you the link!'
+    },
+    fallback: {
+      type: 'quick-replies',
+      text: 'I\'m not sure I understood. I can help you find tools like PDF converters, calculators, resume builders, and more. What would you like to do?',
+      replies: ['PDF Tools', 'Calculators', 'Career Tools', 'Developer Tools']
+    }
+  };
+
+  var ALIAS_PATTERNS = [
+    { patterns: ['word to pdf', 'docx to pdf', 'convert word to pdf'], href: '/tools/pdf-to-word-converter/' },
+    { patterns: ['pdf to word', 'convert pdf to word', 'pdf to docx'], href: '/tools/pdf-to-word-converter/' },
+    { patterns: ['jpg to pdf', 'jpeg to pdf', 'png to pdf', 'image to pdf', 'photo to pdf', 'webp to pdf'], href: '/tools/images-to-pdf/' },
+    { patterns: ['pdf to jpg', 'pdf to png', 'pdf to image', 'pdf to photo'], href: '/tools/pdf-to-images/' },
+    { patterns: ['extract pages from pdf', 'split pdf pages', 'separate pdf'], href: '/tools/pdf-splitter/' },
+    { patterns: ['combine pdf', 'join pdf', 'merge pdf files'], href: '/tools/pdf-merger/' },
+    { patterns: ['shrink pdf', 'reduce pdf size', 'make pdf smaller'], href: '/tools/pdf-compressor/' },
+    { patterns: ['rotate pdf pages', 'turn pdf', 'flip pdf'], href: '/tools/pdf-rotator/' },
+    { patterns: ['resume maker', 'cv builder', 'create resume'], href: '/tools/resume-builder/' },
+    { patterns: ['cover letter maker', 'write cover letter'], href: '/tools/cover-letter-builder/' },
+    { patterns: ['word count', 'count words', 'character count'], href: '/tools/word-counter/' },
+    { patterns: ['reading time', 'how long to read', 'speech time'], href: '/tools/reading-time/' },
+    { patterns: ['change case', 'uppercase', 'lowercase', 'camelcase', 'snake case'], href: '/tools/case-converter/' },
+    { patterns: ['job keywords', 'ats keywords', 'resume keywords'], href: '/tools/job-keyword-matcher/' },
+    { patterns: ['mortgage payment', 'home loan', 'house payment'], href: '/calculators/mortgage-calculator/' },
+    { patterns: ['tax estimate', 'income tax', 'federal tax', 'self employment tax'], href: '/calculators/tax-calculator/' },
+    { patterns: ['hourly to salary', 'salary to hourly', 'wage calculator', 'paycheck'], href: '/calculators/salary-converter/' },
+    { patterns: ['compound interest', 'savings calculator', 'investment growth'], href: '/calculators/compound-interest/' },
+    { patterns: ['roi', 'return on investment', 'break even'], href: '/calculators/roi-calculator/' },
+    { patterns: ['cloud hosting cost', 'hosting comparison', 'vercel vs netlify', 'server cost'], href: '/calculators/cloud-cost-calculator/' },
+    { patterns: ['unit conversion', 'convert units', 'currency convert', 'metric to imperial'], href: '/calculators/unit-currency-converter/' },
+    { patterns: ['recipe scale', 'cooking measurement', 'cup to gram', 'kitchen convert'], href: '/calculators/cooking-converter/' },
+    { patterns: ['bytes to gb', 'tb to gb', 'data size', 'storage convert'], href: '/calculators/data-storage-converter/' },
+    { patterns: ['engagement rate', 'instagram engagement', 'tiktok engagement', 'social media metrics'], href: '/calculators/social-media-engagement/' },
+    { patterns: ['ai cost', 'chatgpt cost', 'claude pricing', 'api cost estimate'], href: '/tools/ai-cost-calculator/' },
+    { patterns: ['json format', 'json beautify', 'json validate'], href: '/tools/json-formatter/' },
+    { patterns: ['decode jwt', 'inspect token', 'json web token'], href: '/tools/jwt-decoder/' },
+    { patterns: ['test regex', 'regular expression', 'regex match'], href: '/tools/regex-tester/' },
+    { patterns: ['base64 encode', 'base64 decode'], href: '/tools/base64-encoder/' },
+    { patterns: ['url encode', 'url decode', 'percent encoding'], href: '/tools/url-encoder/' },
+    { patterns: ['unix timestamp', 'epoch converter', 'date to timestamp'], href: '/tools/timestamp-converter/' },
+    { patterns: ['generate password', 'strong password', 'passphrase'], href: '/tools/password-generator/' },
+    { patterns: ['qr code', 'barcode', 'create qr'], href: '/tools/qr-code-generator/' },
+    { patterns: ['hash text', 'sha256', 'sha1', 'checksum'], href: '/tools/hash-generator/' },
+    { patterns: ['color palette', 'color scheme', 'accessible colors'], href: '/tools/color-palette-generator/' },
+    { patterns: ['invoice maker', 'create invoice', 'pdf invoice'], href: '/tools/invoice-generator/' },
+    { patterns: ['favicon maker', 'create favicon', 'ico file'], href: '/tools/favicon-generator/' },
+    { patterns: ['screenshot mockup', 'device frame', 'phone mockup'], href: '/tools/screenshot-beautifier/' },
+    { patterns: ['meta tags', 'open graph', 'twitter card', 'seo meta'], href: '/tools/meta-tag-generator/' },
+    { patterns: ['website speed', 'page speed', 'load time test'], href: '/tools/website-speed-test/' },
+    { patterns: ['seo audit', 'seo check', 'seo score'], href: '/tools/seo-score-checker/' },
+    { patterns: ['broken links', '404 check', 'dead links'], href: '/tools/broken-link-checker/' },
+    { patterns: ['my ip', 'public ip', 'ip address', 'what is my ip'], href: '/tools/ip-address-checker/' },
+    { patterns: ['diff compare', 'text compare', 'code diff'], href: '/developer-toolbox/diff-checker/' },
+    { patterns: ['cron schedule', 'crontab', 'cron job'], href: '/developer-toolbox/cron-expression-generator/' },
+    { patterns: ['css shadow', 'css gradient', 'flexbox generator', 'grid generator'], href: '/developer-toolbox/css-generators/' },
+    { patterns: ['csv to json', 'json to csv', 'xml to json', 'yaml convert'], href: '/developer-toolbox/data-converter/' },
+    { patterns: ['sql format', 'beautify sql', 'sql validate'], href: '/developer-toolbox/sql-formatter/' },
+    { patterns: ['dns lookup', 'whois', 'site check', 'domain lookup'], href: '/developer-toolbox/network-tools/' },
+    { patterns: ['markdown editor', 'md preview', 'markdown to html'], href: '/developer-toolbox/markdown-editor/' },
+  ];
+
+  function getResponse(input) {
+    var normalized = input.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+
+    // 1. Alias patterns (specific tool matches)
+    for (var i = 0; i < ALIAS_PATTERNS.length; i++) {
+      var alias = ALIAS_PATTERNS[i];
+      for (var j = 0; j < alias.patterns.length; j++) {
+        if (normalized.indexOf(alias.patterns[j]) !== -1) {
+          var tool = null;
+          for (var k = 0; k < chatTools.length; k++) {
+            if (chatTools[k].href === alias.href) { tool = chatTools[k]; break; }
+          }
+          if (tool) return { type: 'tool', tool: tool };
+        }
+      }
+    }
+
+    // 2. General intents
+    if (/\b(hi|hello|hey|howdy|hola)\b/.test(normalized)) return GENERAL_RESPONSES.greeting;
+    if (/\b(help|what can you do|what do you have|show me tools|list tools)\b/.test(normalized)) return GENERAL_RESPONSES.help;
+    if (/\b(privacy|is it safe|is my data secure|secure|private)\b/.test(normalized)) return GENERAL_RESPONSES.privacy;
+    if (/\b(contact|email|support|reach you)\b/.test(normalized)) return GENERAL_RESPONSES.contact;
+    if (/\b(free|cost|price|pay|subscription|charge)\b/.test(normalized)) return GENERAL_RESPONSES.free;
+    if (/\b(how does.*work|how to use|how do i use)\b/.test(normalized)) return GENERAL_RESPONSES.how_it_works;
+
+    // 3. Tool scoring
+    var words = normalized.split(' ').filter(function(w) { return w.length > 1; });
+    var scored = chatTools.map(function(tool) {
+      var kw = tool.keywords.toLowerCase();
+      var title = tool.title.toLowerCase();
+      var desc = tool.description.toLowerCase();
+      var score = 0;
+
+      if (kw.indexOf(normalized) !== -1) score += 10;
+      for (var wi = 0; wi < words.length; wi++) {
+        var word = words[wi];
+        if (kw.indexOf(word) !== -1) score += 2;
+        if (title.indexOf(word) !== -1) score += 3;
+        if (desc.indexOf(word) !== -1) score += 1;
+      }
+      return {
+        href: tool.href,
+        title: tool.title,
+        description: tool.description,
+        badge: tool.badge,
+        score: score
+      };
+    }).filter(function(t) { return t.score > 0; }).sort(function(a, b) { return b.score - a.score; });
+
+    if (scored.length === 0) return GENERAL_RESPONSES.fallback;
+
+    if (scored.length === 1) {
+      return { type: 'tool', tool: scored[0] };
+    }
+
+    var topBadge = scored[0].badge;
+    var sameCategory = scored.filter(function(t) { return t.badge === topBadge; });
+    if (sameCategory.length >= 2 && sameCategory.length <= 4) {
+      return {
+        type: 'category',
+        text: 'Here are the ' + topBadge + ' tools I found:',
+        badge: topBadge,
+        tools: sameCategory.slice(0, 4)
+      };
+    }
+
+    return {
+      type: 'multi-tool',
+      text: 'I found a few tools that might help:',
+      tools: scored.slice(0, 3)
+    };
+  }
+
+  /* --- Event Handlers --- */
+  function handleSend(text) {
+    if (!text.trim()) return;
+    addUserMessage(text);
+    input.value = '';
+
+    showTyping();
+
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(function() {
+      var response = getResponse(text);
+      addBotMessage(response);
+    }, 600 + Math.random() * 400);
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    handleSend(input.value);
+  });
+
+  toggleBtn.addEventListener('click', function() {
+    setOpen(true);
+    input.focus();
+  });
+
+  closeBtn.addEventListener('click', function() {
+    setOpen(false);
+  });
+
+  messagesEl.addEventListener('click', function(e) {
+    var btn = e.target.closest('.bae-quick-reply');
+    if (!btn) return;
+    var text = btn.dataset.text;
+    if (text) handleSend(text);
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && isOpen) setOpen(false);
+  });
+
+  /* --- Init --- */
+  function init() {
+    // Clear chat history on every new browser session
+    var isNewSession = false;
+    try {
+      if (!sessionStorage.getItem(SESSION_KEY)) {
+        sessionStorage.setItem(SESSION_KEY, '1');
+        isNewSession = true;
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    } catch (e) {}
+
+    var state = isNewSession ? null : loadState();
+    var hasHistory = false;
+
+    if (state && state.messages && state.messages.length > 0) {
+      hasHistory = true;
+      for (var i = 0; i < state.messages.length; i++) {
+        var m = state.messages[i];
+        var wrapper = createWrapper(m.role);
+        var bubble = createBubble(m.role);
+        bubble.innerHTML = m.html;
+        wrapper.appendChild(bubble);
+        messagesEl.appendChild(wrapper);
+      }
+      if (state.open) {
+        panel.classList.remove('hidden');
+        panel.classList.add('flex');
+        toggleBtn.classList.add('hidden');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        isOpen = true;
+      }
+    }
+
+    if (isHomepage && !hasHistory) {
+      var welcomed = false;
+      try { welcomed = localStorage.getItem(WELCOMED_KEY) === 'true'; } catch (e) {}
+      if (!welcomed) {
+        setTimeout(function() {
+          setOpen(true);
+          addBotMessage(GENERAL_RESPONSES.greeting_homepage);
+          try { localStorage.setItem(WELCOMED_KEY, 'true'); } catch (e) {}
+        }, 4000);
+      }
+    }
+  }
+
+  init();
+})();
+</script>

@@ -1,0 +1,684 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub HTML Cleaner & Text Stripper?',
+    a: 'The Best Answer Hub HTML Cleaner & Text Stripper is a free, browser-based tool with two modes. The HTML Cleaner turns messy pasted HTML (especially from Microsoft Word, Google Docs, and CMS exports) into clean, semantic markup while preserving the structure you want. The Text Stripper removes invisible Unicode characters, zero-width spaces, non-breaking spaces, smart quotes, byte-order marks, and extra whitespace from any plain text. Everything runs 100% in your browser, so no files are uploaded to a server.',
+  },
+  {
+    q: 'How do I remove all the weird formatting when I paste from Microsoft Word into WordPress without losing my headings and links?',
+    a: 'Paste your Word content into the Best Answer Hub HTML Cleaner, enable the "Preserve links" and "Preserve headings" options, then click Clean. The tool strips proprietary MSO namespace tags, inline styles, font tags, and conditional comments while keeping your semantic structure intact. Copy the clean HTML and paste it directly into the WordPress block editor. Your headings stay as h1–h6 tags, lists stay as ul/ol, and links keep their href attributes, without the bloat that breaks mobile layouts and triggers spam filters.',
+  },
+  {
+    q: 'Why does pasting from Google Docs into my CMS always add weird span tags and make everything bold?',
+    a: 'Google Docs wraps copied content in a `<b>` tag with an inline `style="font-weight:400"` reset, then adds extra `<span>` elements with `docs-internal-guid` attributes and font-family declarations. The Best Answer Hub HTML Cleaner detects and strips these Google Docs artifacts automatically. It removes the bogus bold wrapper, deletes docs-internal-guid attributes, and strips inline font styles while preserving your actual bold, italic, and link formatting as clean semantic HTML.',
+  },
+  {
+    q: 'How do I remove invisible zero-width spaces and hidden Unicode characters from text copied from ChatGPT or Claude?',
+    a: 'Paste the AI-generated text into the Best Answer Hub Text Stripper and check the "Remove zero-width characters" option, then click Strip. The tool removes zero-width spaces (U+200B), zero-width non-joiners (U+200C), zero-width joiners (U+200D), and byte-order marks (U+FEFF) that LLMs often inject between words. These invisible characters break code parsers, corrupt CSV imports, and cause search-and-replace to fail silently. The character detector panel shows exactly which invisible characters were found and how many.',
+  },
+  {
+    q: 'Is there a free HTML cleaner that does not upload my files to a server? I need to clean confidential documents.',
+    a: 'Yes. The Best Answer Hub HTML Cleaner & Text Stripper is completely free and runs entirely inside your browser using vanilla JavaScript. There are no server uploads, no cloud processing, and no database storage. Your proprietary code, legal documents, medical records, and client-confidential content never leave your device. You can verify this by disconnecting from the internet after loading the page. Both the HTML Cleaner and Text Stripper continue to work perfectly offline.',
+  },
+  {
+    q: 'How do I strip all inline styles from HTML but keep the basic structure like tables, lists, and bold text?',
+    a: 'In the Best Answer Hub HTML Cleaner, enable "Remove inline styles" and "Convert styles to semantic tags," then click Clean. The tool strips every `style=""` attribute, `class=""` attribute, and font tag, while converting `font-weight:bold` spans into `<strong>` tags and `font-style:italic` spans into `<em>` tags. Tables keep their `<table>`, `<tr>`, and `<td>` structure but lose inline width, border, and align attributes. Lists stay as `<ul>` or `<ol>`, and headings remain `<h1>` through `<h6>`.',
+  },
+  {
+    q: 'What is the difference between stripping HTML tags and cleaning HTML?',
+    a: 'Stripping HTML tags removes all markup and returns plain text, which destroys links, headings, lists, and tables. Cleaning HTML removes only the junk (inline styles, proprietary classes, empty spans, and Microsoft Office namespace tags) while preserving the semantic structure that gives your content meaning. The Best Answer Hub HTML Cleaner offers both approaches: use Clean mode to keep semantic HTML, or switch to the Text Stripper mode to extract plain text with proper paragraph breaks when you truly need unformatted copy.',
+  },
+  {
+    q: 'How do I paste content into my email marketing tool without triggering spam filters from Word formatting?',
+    a: 'Microsoft Word HTML contains hundreds of lines of proprietary code, inline styles, and XML declarations that email clients like Gmail and Outlook cannot render correctly. This broken markup inflates file size and triggers spam filters. Paste your Word content into the Best Answer Hub HTML Cleaner, enable "Remove classes" and "Remove inline styles," then copy the clean HTML. The output is lightweight, standards-compliant markup that renders consistently across Mailchimp, Constant Contact, Klaviyo, and direct email campaigns.',
+  },
+  {
+    q: 'How do I fix copy-paste from PDFs that introduces zero-width characters and broken line breaks?',
+    a: 'PDF text extraction often inserts zero-width spaces, soft hyphens, and non-breaking spaces that break word counts, database imports, and code compilation. Paste the copied PDF text into the Best Answer Hub Text Stripper, enable "Remove zero-width characters," "Remove soft hyphens," and "Collapse extra whitespace," then click Strip. The tool normalizes line endings, removes hidden Unicode garbage, and gives you clean plain text suitable for Excel, SQL databases, Python scripts, and CMS editors.',
+  },
+  {
+    q: 'Why does my CSV import into Excel break whenever the source text has smart quotes and non-breaking spaces?',
+    a: 'Microsoft Word, Google Docs, and macOS TextEdit use curly smart quotes (U+201C, U+201D, U+2018, U+2019) and non-breaking spaces (U+00A0) that CSV parsers treat as malformed field delimiters or multi-byte encoding errors. Paste your text into the Best Answer Hub Text Stripper, enable "Normalize smart quotes to straight quotes" and "Replace non-breaking spaces," then click Strip. The output uses standard ASCII quotes and regular spaces, so Excel, Google Sheets, MySQL, and PostgreSQL imports process correctly every time.',
+  },
+  {
+    q: 'How do I clean up messy HTML from an old CMS migration that has hundreds of unused CSS classes and empty div tags?',
+    a: 'Legacy CMS migrations often leave behind nested `<div>` containers, empty `<span>` elements, and inline styles from old themes. Paste the migration HTML into the Best Answer Hub HTML Cleaner, enable "Remove classes," "Remove inline styles," and "Remove empty tags," then click Clean. The tool flattens unnecessary nesting, deletes empty elements, and leaves you with lightweight semantic HTML that works with modern frameworks like Tailwind CSS, Bootstrap, and static site generators.',
+  },
+  {
+    q: 'Why does Ctrl+Shift+V paste plain text but still leave weird spacing and line break issues?',
+    a: 'Ctrl+Shift+V (or Cmd+Shift+V on Mac) strips rich formatting like bold and colors, but it does NOT remove invisible Unicode characters. Zero-width spaces, non-breaking spaces, byte-order marks, and soft hyphens are valid plain-text characters, so they survive the paste. The Best Answer Hub Text Stripper is designed to catch exactly what Ctrl+Shift+V misses. Paste your text, enable all strip options, and click Strip to remove the hidden characters that cause double spacing, broken line breaks, and failed search-and-replace operations.',
+  },
+  {
+    q: 'How do I clean up Excel table HTML so it does not have inline styles and weird MSO tags?',
+    a: 'When you copy a table from Excel or Google Sheets, the clipboard contains Microsoft Office namespace attributes, inline width and border styles, and conditional comments that break responsive design. Paste the table HTML into the Best Answer Hub HTML Cleaner, enable "Preserve tables" and "Remove inline styles," then click Clean. The output keeps the `<table>`, `<tr>`, `<th>`, and `<td>` structure but strips all style bloat, giving you clean markup that responds to your CSS framework.',
+  },
+  {
+    q: 'How do I detect and remove byte order marks (BOM) from the beginning of a text file so my database import does not fail?',
+    a: 'A UTF-8 byte-order mark (U+FEFF) at the start of a file causes MySQL, PostgreSQL, and Python CSV readers to treat the first column header as malformed. Paste your file content into the Best Answer Hub Text Stripper, enable "Remove byte-order marks," and click Strip. The tool scans for U+FEFF at the beginning and anywhere in the text, removes it, and shows a count in the character detector panel. Save the output back to your file and your database import will process normally.',
+  },
+  {
+    q: 'What is the fastest way to convert curly smart quotes to straight ASCII quotes when preparing text for code or JSON?',
+    a: 'Paste your text into the Best Answer Hub Text Stripper, enable "Normalize smart quotes to straight quotes," and click Strip. The tool converts left and right double curly quotes (U+201C and U+201D) to standard straight double quotes ("), and left and right single curly quotes (U+2018 and U+2019) to straight apostrophes (\'). It also handles low-double and high-double quote variants. The result is ASCII-safe text that validates in JSON parsers, compiles in code editors, and imports cleanly into databases without encoding errors.',
+  },
+];
+
+const steps = [
+  { title: 'Paste your messy content', description: 'Copy HTML from Word, Google Docs, a CMS, or any web page and paste it into the HTML Cleaner. Or paste plain text with hidden characters into the Text Stripper.' },
+  { title: 'Choose your cleaning options', description: 'Toggle checkboxes to preserve links, headings, and lists while removing inline styles, classes, and proprietary tags. For text, select which invisible characters to remove.' },
+  { title: 'Copy clean output instantly', description: 'Click Clean or Strip to see the result in real time. Copy the output to your clipboard or download it as a file. Nothing ever leaves your browser.' },
+];
+
+const seo = {
+  title: 'HTML Cleaner & Text Stripper — Remove Word Formatting (2026)',
+  description: 'Clean messy HTML from Word, Google Docs, and CMS exports. Strip invisible characters, smart quotes, and zero-width spaces. 100% client-side — no upload.',
+  url: '/developer-toolbox/html-cleaner/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Developer Toolbox', url: '/developer-toolbox/' },
+    { name: 'HTML Cleaner & Text Stripper', url: '/developer-toolbox/html-cleaner/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="HTML Cleaner & Text Stripper:"
+    accentText="Clean Word, Docs, and AI text instantly"
+    description="Remove Microsoft Office garbage, inline styles, and invisible Unicode characters in one click. Two modes: clean messy HTML into semantic markup, or strip hidden characters from plain text. All processing runs in your browser, and nothing is uploaded."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- Tool Interface -->
+  <section class="py-6 md:py-8" aria-label="HTML Cleaner and Text Stripper">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+
+        <!-- Tabs -->
+        <div class="flex items-center gap-2 mb-5 border-b border-bae-border pb-3">
+          <button type="button" id="tab-html" class="tab-btn active text-xs font-semibold px-3.5 py-2 rounded-bae-sm transition-colors bg-bae-primary text-white">Clean HTML</button>
+          <button type="button" id="tab-text" class="tab-btn text-xs font-semibold px-3.5 py-2 rounded-bae-sm transition-colors bg-bae-bg text-bae-ink border border-bae-border hover:border-bae-primary">Strip Text</button>
+          <span id="source-badge" class="ml-auto text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-bae-sm bg-amber-100 text-amber-800 hidden"></span>
+        </div>
+
+        <!-- HTML Cleaner Panel -->
+        <div id="panel-html">
+          <!-- Options -->
+          <div class="flex flex-wrap gap-x-4 gap-y-2 mb-4">
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-preserve-links" checked class="accent-bae-primary"> Preserve links
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-preserve-headings" checked class="accent-bae-primary"> Preserve headings
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-preserve-lists" checked class="accent-bae-primary"> Preserve lists
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-preserve-bold" checked class="accent-bae-primary"> Preserve bold/italic
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-preserve-tables" checked class="accent-bae-primary"> Preserve tables
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-remove-styles" checked class="accent-bae-primary"> Remove inline styles
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-remove-classes" checked class="accent-bae-primary"> Remove classes
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-remove-empty" checked class="accent-bae-primary"> Remove empty tags
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-semantic" checked class="accent-bae-primary"> Convert styles to semantic tags
+            </label>
+          </div>
+
+          <!-- Inputs -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">Messy HTML Input</label>
+              <textarea id="html-input" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Paste messy HTML from Word, Google Docs, or a CMS..." spellcheck="false"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">Clean HTML Output</label>
+              <textarea id="html-output" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Clean HTML will appear here..." spellcheck="false" readonly></textarea>
+            </div>
+          </div>
+
+          <!-- Stats & Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="btn-clean" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Clean HTML</button>
+            <button type="button" id="btn-html-sample" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Sample Data</button>
+            <button type="button" id="btn-html-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+            <button type="button" id="btn-html-copy" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy Result</button>
+            <button type="button" id="btn-html-download" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Download .html</button>
+            <p id="html-stats" class="text-xs text-bae-muted hidden ml-auto"></p>
+          </div>
+        </div>
+
+        <!-- Text Stripper Panel -->
+        <div id="panel-text" class="hidden">
+          <!-- Options -->
+          <div class="flex flex-wrap gap-x-4 gap-y-2 mb-4">
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-zw" checked class="accent-bae-primary"> Remove zero-width chars
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-nbsp" checked class="accent-bae-primary"> Replace non-breaking spaces
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-quotes" checked class="accent-bae-primary"> Normalize smart quotes
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-dashes" class="accent-bae-primary"> Normalize dashes
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-ellipsis" class="accent-bae-primary"> Normalize ellipsis
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-bom" checked class="accent-bae-primary"> Remove byte-order marks
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-shy" checked class="accent-bae-primary"> Remove soft hyphens
+            </label>
+            <label class="flex items-center gap-1.5 text-xs text-bae-ink cursor-pointer">
+              <input type="checkbox" id="opt-collapse" checked class="accent-bae-primary"> Collapse extra whitespace
+            </label>
+          </div>
+
+          <!-- Inputs -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">Dirty Text Input</label>
+              <textarea id="text-input" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Paste text with hidden characters, smart quotes, or extra spaces..." spellcheck="false"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">Clean Text Output</label>
+              <textarea id="text-output" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Clean text will appear here..." spellcheck="false" readonly></textarea>
+            </div>
+          </div>
+
+          <!-- Character Detector -->
+          <div id="char-detector" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae-sm p-3">
+            <p class="text-xs font-semibold text-amber-800 mb-1.5">Invisible characters detected:</p>
+            <div id="char-detector-list" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- Stats & Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="btn-strip" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Strip Text</button>
+            <button type="button" id="btn-text-sample" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Sample Data</button>
+            <button type="button" id="btn-text-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+            <button type="button" id="btn-text-copy" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy Result</button>
+            <button type="button" id="btn-text-download" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Download .txt</button>
+            <p id="text-stats" class="text-xs text-bae-muted hidden ml-auto"></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people clean with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people clean with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common workflows from content marketers, developers, data analysts, and AI power users.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Content Marketing</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Paste from Word into WordPress without breaking the layout</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Removes 200+ lines of MSO garbage per paste</p>
+          <p class="text-sm text-bae-muted">A marketing manager copies a 1,500-word press release from Microsoft Word and pastes it into the Best Answer Hub HTML Cleaner. The tool strips 247 lines of proprietary MSO namespace tags, inline font styles, and XML declarations while preserving headings, bullet lists, and hyperlinks. The clean HTML pastes perfectly into the WordPress block editor without breaking the mobile theme.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Email Campaigns</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Clean newsletter HTML so it renders consistently in Gmail and Outlook</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Cuts HTML file size by 60–80%</p>
+          <p class="text-sm text-bae-muted">An email marketer imports a designed newsletter from Google Docs into the Best Answer Hub HTML Cleaner. The tool removes docs-internal-guid attributes, font-family spans, and inline width styles that cause Gmail to clip messages and Outlook to ignore padding. The output is standards-compliant HTML that renders consistently across Mailchimp, Klaviyo, and Apple Mail.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Data Processing</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Fix CSV imports that fail because of smart quotes and hidden spaces</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Prevents 100% of encoding-related import errors</p>
+          <p class="text-sm text-bae-muted">A data analyst copies 5,000 rows of product descriptions from a PDF into the Best Answer Hub Text Stripper. The tool finds and removes 1,247 non-breaking spaces, 89 zero-width spaces, and 342 smart quotes that were causing the MySQL import to throw encoding errors. After stripping, the CSV loads into PostgreSQL on the first attempt.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">AI Content Publishing</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Remove invisible watermark characters from ChatGPT output before publishing</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Strips LLM artifacts that break CMS editors</p>
+          <p class="text-sm text-bae-muted">A blogger copies a 2,000-word article from ChatGPT and pastes it into the Best Answer Hub Text Stripper. The character detector reveals 73 zero-width spaces and 12 soft hyphens embedded between paragraphs. After one click, the text pastes cleanly into the CMS without weird line spacing, and the word count matches what the author actually wrote.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/developer-toolbox/diff-checker/" class="text-bae-primary hover:underline">Diff Checker</a>, <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, and <a href="/tools/timestamp-converter/" class="text-bae-primary hover:underline">Timestamp</a>, all free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      // --- Utilities ---
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+
+      function downloadText(text, filename) {
+        if (!text) return;
+        const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // --- Tab Switching ---
+      const tabHtml = document.getElementById('tab-html');
+      const tabText = document.getElementById('tab-text');
+      const panelHtml = document.getElementById('panel-html');
+      const panelText = document.getElementById('panel-text');
+
+      function setTab(mode) {
+        if (mode === 'html') {
+          tabHtml.classList.add('bg-bae-primary', 'text-white');
+          tabHtml.classList.remove('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+          tabText.classList.remove('bg-bae-primary', 'text-white');
+          tabText.classList.add('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+          panelHtml.classList.remove('hidden');
+          panelText.classList.add('hidden');
+        } else {
+          tabText.classList.add('bg-bae-primary', 'text-white');
+          tabText.classList.remove('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+          tabHtml.classList.remove('bg-bae-primary', 'text-white');
+          tabHtml.classList.add('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+          panelText.classList.remove('hidden');
+          panelHtml.classList.add('hidden');
+        }
+      }
+
+      tabHtml.addEventListener('click', function() { setTab('html'); });
+      tabText.addEventListener('click', function() { setTab('text'); });
+
+      // --- Source Detection ---
+      const sourceBadge = document.getElementById('source-badge');
+      function detectSource(text) {
+        if (!text) { sourceBadge.classList.add('hidden'); return; }
+        const t = text.slice(0, 5000).toLowerCase();
+        if (t.includes('mso-') || t.includes('msonormal') || t.includes('xmlns:o=') || t.includes('microsoft')) {
+          sourceBadge.textContent = 'Word document detected';
+          sourceBadge.className = 'ml-auto text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-bae-sm bg-blue-100 text-blue-800';
+          sourceBadge.classList.remove('hidden');
+        } else if (t.includes('docs-internal-guid')) {
+          sourceBadge.textContent = 'Google Docs detected';
+          sourceBadge.className = 'ml-auto text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-bae-sm bg-green-100 text-green-800';
+          sourceBadge.classList.remove('hidden');
+        } else {
+          sourceBadge.classList.add('hidden');
+        }
+      }
+
+      // --- HTML Cleaner ---
+      const htmlInput = document.getElementById('html-input');
+      const htmlOutput = document.getElementById('html-output');
+      const htmlStats = document.getElementById('html-stats');
+
+      htmlInput.addEventListener('input', function() { detectSource(htmlInput.value); });
+
+      function getHtmlOptions() {
+        return {
+          preserveLinks: document.getElementById('opt-preserve-links').checked,
+          preserveHeadings: document.getElementById('opt-preserve-headings').checked,
+          preserveLists: document.getElementById('opt-preserve-lists').checked,
+          preserveBold: document.getElementById('opt-preserve-bold').checked,
+          preserveTables: document.getElementById('opt-preserve-tables').checked,
+          removeStyles: document.getElementById('opt-remove-styles').checked,
+          removeClasses: document.getElementById('opt-remove-classes').checked,
+          removeEmpty: document.getElementById('opt-remove-empty').checked,
+          semantic: document.getElementById('opt-semantic').checked,
+        };
+      }
+
+      function cleanHTML(html, opts) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const body = doc.body;
+
+        // Remove script and style tags
+        body.querySelectorAll('script, style').forEach(function(el) { el.remove(); });
+
+        // Unwrap unwanted tags (keep content)
+        ['font', 'center', 'dir'].forEach(function(tagName) {
+          body.querySelectorAll(tagName).forEach(function(el) {
+            const parent = el.parentNode;
+            if (parent) {
+              while (el.firstChild) parent.insertBefore(el.firstChild, el);
+              parent.removeChild(el);
+            }
+          });
+        });
+
+        // Unwrap bogus bold/italic reset wrappers (e.g. Google Docs <b style="font-weight:normal">
+        // wraps all pasted content, which would otherwise render everything bold).
+        body.querySelectorAll('b[style], strong[style], i[style], em[style]').forEach(function(el) {
+          const style = (el.getAttribute('style') || '').toLowerCase();
+          const tag = el.tagName.toLowerCase();
+          const isBoldTag = tag === 'b' || tag === 'strong';
+          const isItalicTag = tag === 'i' || tag === 'em';
+          if ((isBoldTag && /font-weight:\s*(normal|400)/.test(style)) ||
+              (isItalicTag && /font-style:\s*normal/.test(style))) {
+            const parent = el.parentNode;
+            if (parent) {
+              while (el.firstChild) parent.insertBefore(el.firstChild, el);
+              parent.removeChild(el);
+            }
+          }
+        });
+
+        // Semantic conversion pass (before removing styles)
+        if (opts.semantic) {
+          body.querySelectorAll('span[style], b[style], i[style], p[style], div[style]').forEach(function(el) {
+            const style = (el.getAttribute('style') || '').toLowerCase();
+            const isBold = /font-weight:\s*(bold|700|800|900)/.test(style);
+            const isItalic = /font-style:\s*italic/.test(style);
+            if (!isBold && !isItalic) return;
+
+            const parent = el.parentNode;
+            if (!parent) return;
+
+            // Build wrapper chain
+            let wrapper = null;
+            let inner = null;
+            if (isBold) {
+              wrapper = doc.createElement('strong');
+              inner = wrapper;
+            }
+            if (isItalic) {
+              const em = doc.createElement('em');
+              if (wrapper) { inner.appendChild(em); inner = em; }
+              else { wrapper = em; inner = em; }
+            }
+
+            // Move children into innermost wrapper
+            while (el.firstChild) inner.appendChild(el.firstChild);
+            parent.replaceChild(wrapper, el);
+          });
+        }
+
+        // Determine which tags to remove entirely vs keep
+        const tagsToRemove = [];
+        if (!opts.preserveLinks) tagsToRemove.push('a');
+        if (!opts.preserveHeadings) tagsToRemove.push('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
+        if (!opts.preserveLists) tagsToRemove.push('ul', 'ol', 'li');
+        if (!opts.preserveBold) tagsToRemove.push('strong', 'b', 'em', 'i');
+        if (!opts.preserveTables) tagsToRemove.push('table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot');
+
+        // Unwrap or remove tags
+        tagsToRemove.forEach(function(tagName) {
+          body.querySelectorAll(tagName).forEach(function(el) {
+            const parent = el.parentNode;
+            if (parent) {
+              while (el.firstChild) parent.insertBefore(el.firstChild, el);
+              parent.removeChild(el);
+            }
+          });
+        });
+
+        // Clean attributes on remaining elements
+        body.querySelectorAll('*').forEach(function(el) {
+          if (opts.removeStyles) el.removeAttribute('style');
+          if (opts.removeClasses) el.removeAttribute('class');
+
+          const allowed = ['href', 'src', 'alt', 'title', 'target', 'colspan', 'rowspan', 'scope'];
+          Array.from(el.attributes).forEach(function(attr) {
+            if (!allowed.includes(attr.name)) el.removeAttribute(attr.name);
+          });
+        });
+
+        // Remove empty tags (iterative)
+        if (opts.removeEmpty) {
+          let changed = true;
+          const voidTags = { br:1, img:1, input:1, hr:1, iframe:1 };
+          while (changed) {
+            changed = false;
+            body.querySelectorAll('*').forEach(function(el) {
+              const tag = el.tagName.toLowerCase();
+              if (voidTags[tag]) return;
+              if (el.querySelector('img')) return;
+              const text = (el.textContent || '').trim();
+              if (text === '' && !el.querySelector('br')) {
+                el.remove();
+                changed = true;
+              }
+            });
+          }
+        }
+
+        // Pretty print
+        let result = body.innerHTML.trim();
+        result = result.replace(/></g, '>\n<');
+        result = result.replace(/\n\s*\n/g, '\n');
+        return result;
+      }
+
+      function runClean() {
+        const raw = htmlInput.value;
+        if (!raw.trim()) {
+          htmlOutput.value = '';
+          htmlStats.classList.add('hidden');
+          return;
+        }
+        const opts = getHtmlOptions();
+        const cleaned = cleanHTML(raw, opts);
+        htmlOutput.value = cleaned;
+        const saved = raw.length - cleaned.length;
+        htmlStats.textContent = 'Original: ' + raw.length.toLocaleString() + ' chars → Clean: ' + cleaned.length.toLocaleString() + ' chars (' + (saved > 0 ? '−' + saved.toLocaleString() : '+' + Math.abs(saved).toLocaleString()) + ')';
+        htmlStats.classList.remove('hidden');
+      }
+
+      document.getElementById('btn-clean').addEventListener('click', runClean);
+
+      document.getElementById('btn-html-clear').addEventListener('click', function() {
+        htmlInput.value = '';
+        htmlOutput.value = '';
+        htmlStats.classList.add('hidden');
+        sourceBadge.classList.add('hidden');
+      });
+
+      document.getElementById('btn-html-copy').addEventListener('click', function() {
+        copyText(htmlOutput.value);
+      });
+
+      document.getElementById('btn-html-download').addEventListener('click', function() {
+        downloadText(htmlOutput.value, 'clean.html');
+      });
+
+      document.getElementById('btn-html-sample').addEventListener('click', function() {
+        htmlInput.value = '<p class="MsoNormal" style="margin: 0in; font-size: 11pt; font-family: Calibri, sans-serif;"><span style="font-size: 14pt; color: #1f4e79;"><strong>Project Update</strong></span></p>\n<p class="MsoNormal" style="margin: 0in; font-size: 11pt; font-family: Calibri, sans-serif;">The <span style="background: yellow;">Q3 roadmap</span> is on track.</p>\n<ul type="disc">\n<li class="MsoNormal" style="margin: 0in; font-size: 11pt; font-family: Calibri, sans-serif;">Design system updated</li>\n<li class="MsoNormal" style="margin: 0in; font-size: 11pt; font-family: Calibri, sans-serif;"><a href="/dashboard">Dashboard live</a></li>\n</ul>\n<p class="MsoNormal" style="margin: 0in; font-size: 11pt; font-family: Calibri, sans-serif;"><span style="font-style: italic;">Contact us for details.</span></p>';
+        detectSource(htmlInput.value);
+        runClean();
+      });
+
+      // --- Text Stripper ---
+      const textInput = document.getElementById('text-input');
+      const textOutput = document.getElementById('text-output');
+      const textStats = document.getElementById('text-stats');
+      const charDetector = document.getElementById('char-detector');
+      const charDetectorList = document.getElementById('char-detector-list');
+
+      const invisiblePatterns = [
+        { name: 'Zero-width space', char: '\u200B', hex: 'U+200B' },
+        { name: 'Zero-width non-joiner', char: '\u200C', hex: 'U+200C' },
+        { name: 'Zero-width joiner', char: '\u200D', hex: 'U+200D' },
+        { name: 'Byte-order mark', char: '\uFEFF', hex: 'U+FEFF' },
+        { name: 'Non-breaking space', char: '\u00A0', hex: 'U+00A0' },
+        { name: 'Soft hyphen', char: '\u00AD', hex: 'U+00AD' },
+        { name: 'Left-to-right mark', char: '\u200E', hex: 'U+200E' },
+        { name: 'Right-to-left mark', char: '\u200F', hex: 'U+200F' },
+      ];
+
+      function detectInvisibleChars(text) {
+        const found = [];
+        invisiblePatterns.forEach(function(p) {
+          let count = 0;
+          for (let i = 0; i < text.length; i++) {
+            if (text.charCodeAt(i) === p.char.charCodeAt(0)) count++;
+          }
+          if (count > 0) found.push({ name: p.name, hex: p.hex, count: count });
+        });
+        return found;
+      }
+
+      function updateCharDetector(text) {
+        const found = detectInvisibleChars(text);
+        if (found.length === 0) {
+          charDetector.classList.add('hidden');
+          return;
+        }
+        charDetector.classList.remove('hidden');
+        charDetectorList.innerHTML = '';
+        found.forEach(function(item) {
+          const span = document.createElement('span');
+          span.className = 'text-[10px] font-mono px-2 py-1 rounded bg-amber-100 text-amber-900';
+          span.textContent = item.name + ' ' + item.hex + ' ×' + item.count;
+          charDetectorList.appendChild(span);
+        });
+      }
+
+      textInput.addEventListener('input', function() {
+        updateCharDetector(textInput.value);
+      });
+
+      function getTextOptions() {
+        return {
+          removeZW: document.getElementById('opt-zw').checked,
+          removeNBSP: document.getElementById('opt-nbsp').checked,
+          normalizeQuotes: document.getElementById('opt-quotes').checked,
+          normalizeDashes: document.getElementById('opt-dashes').checked,
+          normalizeEllipsis: document.getElementById('opt-ellipsis').checked,
+          removeBOM: document.getElementById('opt-bom').checked,
+          removeShy: document.getElementById('opt-shy').checked,
+          collapseWhitespace: document.getElementById('opt-collapse').checked,
+        };
+      }
+
+      function stripText(text, opts) {
+        let result = text;
+        if (opts.removeZW) {
+          result = result.replace(/[\u200B\u200C\u200D\u200E\u200F]/g, '');
+        }
+        if (opts.removeNBSP) {
+          result = result.replace(/\u00A0/g, ' ');
+        }
+        if (opts.normalizeQuotes) {
+          result = result
+            .replace(/[\u2018\u2019\u201A]/g, "'")
+            .replace(/[\u201C\u201D\u201E]/g, '"');
+        }
+        if (opts.normalizeDashes) {
+          result = result
+            .replace(/\u2013/g, '-')
+            .replace(/\u2014/g, '--');
+        }
+        if (opts.normalizeEllipsis) {
+          result = result.replace(/\u2026/g, '...');
+        }
+        if (opts.removeBOM) {
+          result = result.replace(/\uFEFF/g, '');
+        }
+        if (opts.removeShy) {
+          result = result.replace(/\u00AD/g, '');
+        }
+        if (opts.collapseWhitespace) {
+          result = result
+            .replace(/[ \t]+/g, ' ')
+            .replace(/^[ \t]+|[ \t]+$/gm, '')
+            .replace(/\n{3,}/g, '\n\n');
+        }
+        return result;
+      }
+
+      function runStrip() {
+        const raw = textInput.value;
+        if (!raw.trim()) {
+          textOutput.value = '';
+          textStats.classList.add('hidden');
+          return;
+        }
+        const opts = getTextOptions();
+        const cleaned = stripText(raw, opts);
+        textOutput.value = cleaned;
+        const removed = raw.length - cleaned.length;
+        textStats.textContent = 'Original: ' + raw.length.toLocaleString() + ' chars → Clean: ' + cleaned.length.toLocaleString() + ' chars (' + (removed > 0 ? '−' + removed.toLocaleString() : removed < 0 ? '+' + Math.abs(removed).toLocaleString() : 'no change') + ')';
+        textStats.classList.remove('hidden');
+        updateCharDetector(raw);
+      }
+
+      document.getElementById('btn-strip').addEventListener('click', runStrip);
+
+      document.getElementById('btn-text-clear').addEventListener('click', function() {
+        textInput.value = '';
+        textOutput.value = '';
+        textStats.classList.add('hidden');
+        charDetector.classList.add('hidden');
+      });
+
+      document.getElementById('btn-text-copy').addEventListener('click', function() {
+        copyText(textOutput.value);
+      });
+
+      document.getElementById('btn-text-download').addEventListener('click', function() {
+        downloadText(textOutput.value, 'clean.txt');
+      });
+
+      document.getElementById('btn-text-sample').addEventListener('click', function() {
+        textInput.value = "Project Update\n\nThe Q3\u00A0roadmap is on track.\n\n\u2022 Design system updated\n\u2022 Dashboard\u200B live\n\nContact us for details \u2014 we\u2019re here to help!\n\n\u201CInnovation distinguishes between a leader and a follower.\u201D\n\nNote:\u200E check the\u00AD re\u00ADport for more info.";
+        updateCharDetector(textInput.value);
+        runStrip();
+      });
+    })();
+  </script>
+</BaseLayout>

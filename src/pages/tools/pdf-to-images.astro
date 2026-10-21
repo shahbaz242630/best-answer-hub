@@ -1,0 +1,617 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub PDF to Images converter?',
+    a: 'The Best Answer Hub PDF to Images converter is a free browser-based tool that renders every page of a PDF document as a high-resolution image. You can export pages as <strong>PNG</strong> or <strong>JPEG</strong> files, choose the output DPI (scale), and download either individual image files or a ZIP archive containing all pages. Everything runs locally in your browser using Mozilla PDF.js. No files are uploaded to any server. Updated May 2026.',
+  },
+  {
+    q: 'Is the converter free and safe for sensitive documents?',
+    a: 'Yes. The Best Answer Hub PDF to Images converter is completely free with no signup required and no watermarks on output. The privacy model is central to the design: all rendering runs locally inside your browser: the PDF is never uploaded to any server, stored in a database, or seen by anyone else. Disconnect from the internet after loading the page and the converter still works. This makes it safe for confidential contracts, financial statements, medical records, certificates, and legal documents. There are no paywalls, daily usage limits, or premium tiers.',
+  },
+  {
+    q: 'How do I convert a PDF to images?',
+    a: 'First, drag and drop a PDF file into the upload area or click to browse. The Best Answer Hub PDF to Images converter shows the filename, page count, and file size. Choose your preferred <strong>Output Format</strong> (PNG or JPEG), <strong>Scale / DPI</strong> (1x to 4x), and <strong>Export Mode</strong> (individual images or ZIP archive). If JPEG is selected, you can also adjust the quality slider from 50% to 100%. Click "Convert to Images" and wait for the progress indicator to finish. Then download your images.',
+  },
+  {
+    q: 'When should I export as PNG versus JPEG?',
+    a: 'Choose <strong>PNG</strong> when quality and sharpness are the priority: it is lossless, preserves crisp text, sharp edges, and diagrams exactly, and supports transparent backgrounds. PNG files are larger but are the right choice for presentations, web publishing, and any document where pixel-perfect fidelity matters. Choose <strong>JPEG</strong> when file size matters more than absolute sharpness: it produces 50–80% smaller files, making it ideal for social media posts, email attachments, and photo-heavy PDFs where minor compression artefacts are acceptable. If in doubt, use PNG. The extra file size is usually worth it for document pages.',
+  },
+  {
+    q: 'What is DPI / scale and which should I choose?',
+    a: 'DPI (dots per inch) controls the resolution of the output images. The tool offers four scale options: <strong>1x (72 DPI)</strong> for quick previews and small file sizes; <strong>2x (144 DPI)</strong> for balanced quality and size, the best default for most uses; <strong>3x (216 DPI)</strong> for high-quality prints and presentations; and <strong>4x (288 DPI)</strong> for maximum fidelity where file size is not a concern. For specific use cases: social media (Instagram, LinkedIn): 2x is sufficient; PowerPoint slides for projected screens: 3x; print at A4 or Letter size: 3x–4x; web thumbnails or quick previews: 1x–2x. Higher scales produce sharper images but take longer to render and create larger files.',
+  },
+  {
+    q: 'Can I convert all pages at once?',
+    a: 'Yes. By default, the Best Answer Hub PDF to Images converter renders every page in your PDF. You do not need to process pages one by one. After conversion, you can download all pages simultaneously either as a ZIP archive or as individual image files with a "Download All as ZIP" button. There is no artificial page limit, though very large documents may take longer depending on your device.',
+  },
+  {
+    q: 'What is the difference between Individual images and ZIP archive?',
+    a: '<strong>Individual images</strong> mode renders each page and displays a thumbnail grid where you can preview and download any single page. A "Download All as ZIP" button is also available to bundle every image on demand. <strong>ZIP archive</strong> mode skips the preview grid and immediately packages all images into a single ZIP file for one-click downloading. Choose ZIP if you know exactly what you want and prefer a faster, cleaner workflow.',
+  },
+  {
+    q: 'Can I convert only specific pages instead of the whole PDF?',
+    a: 'The Best Answer Hub PDF to Images converter currently renders all pages in the uploaded file. To convert only specific pages, use the <a href="/tools/pdf-splitter/">Best Answer Hub PDF Splitter</a> first: extract just the pages you need (for example, pages 3–7 of a 50-page document), download the trimmed PDF, then upload that smaller file to the converter. This two-step workflow gives you full control over which pages become images and also speeds up rendering significantly on large documents.',
+  },
+  {
+    q: 'Will the text in my PDF still be selectable after converting to images?',
+    a: 'No. Once a PDF page is rendered to an image, the text becomes part of the image and is no longer selectable, searchable, or copyable. If you need to preserve selectable text, keep the original PDF or run the exported images through an OCR tool after conversion to make the text detectable again. The Best Answer Hub PDF to Images converter is designed for situations where you need images: embedding pages in presentations, sharing on social media, importing into design software, or posting a certificate online.',
+  },
+  {
+    q: 'How do I convert a PDF to images on iPhone without installing an app?',
+    a: 'The Best Answer Hub PDF to Images converter works in mobile Safari and Chrome on iPhone and iPad. No app download required. Open the page in your browser, tap the upload area to select a PDF from the Files app or Mail, choose PNG or JPEG, set the scale to 2x for a good quality-to-size balance, and download the resulting images. At 3x or 4x scale, rendering may be slow on older devices. 2x is the recommended setting for most mobile use.',
+  },
+  {
+    q: 'The converted images are very large, so how do I reduce the output file size?',
+    a: 'Large output files are usually caused by a high scale setting or PNG format on photo-heavy pages. To reduce file size: lower the scale to 2x (144 DPI), since most screens and presentations need no more; switch to JPEG and lower the quality slider to 75–85%. A 4x PNG export of a single A4 page can exceed 5 MB, while the same page at 2x JPEG at 80% quality is typically under 300 KB. If the output PDF needs further reduction after conversion back to PDF, run it through the <a href="/tools/pdf-compressor/">Best Answer Hub PDF Compressor</a>.',
+  },
+  {
+    q: 'Is there a file size or page count limit?',
+    a: 'No hard file size limit is enforced. The tool currently caps rendering at 200 pages per session for browser performance. For PDFs longer than 200 pages, use the <a href="/tools/pdf-splitter/">Best Answer Hub PDF Splitter</a> to divide the document into smaller batches first, then convert each batch. At 3x–4x scale, very large documents may slow down or exhaust browser memory. 2x is the recommended setting for long documents.',
+  },
+  {
+    q: 'How does this compare to Smallpdf and iLovePDF?',
+    a: 'Smallpdf limits free users to two tasks per day and uploads your file to their servers. iLovePDF caps free web uploads and also processes files server-side. Both require an internet connection and create privacy exposure for sensitive documents. The Best Answer Hub PDF to Images converter is unlimited, requires no signup, processes everything locally in your browser, and offers granular control over DPI, format, and quality that most free competitors lack. The trade-off is that built-in OCR (making converted text selectable again) is not currently available.',
+  },
+  {
+    q: 'Can I use the converter offline without uploading my file?',
+    a: 'Yes. After loading the page once, the converter works without an internet connection. It uses only client-side JavaScript libraries (PDF.js for rendering and JSZip for archive creation), which are loaded when the page first opens. There are no external API calls, no cloud processing, and no server dependencies. This makes it suitable for converting confidential documents on restricted corporate networks, air-gapped environments, or while traveling without reliable internet.',
+  },
+  {
+    q: 'Which browsers are supported?',
+    a: 'All modern browsers are supported: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, and Opera 76+. The tool uses standard Web APIs: File API, Canvas API, TypedArrays, and Blob. Internet Explorer is not supported. For the best performance when converting large PDFs or exporting at 3x–4x scale, Chrome or Edge on desktop offer the fastest rendering speeds and highest memory limits.',
+  },
+];
+
+const steps = [
+  { title: 'Upload your PDF', description: 'Drag and drop or click to select a PDF file. The document stays on your device. Nothing is uploaded to any server. The tool shows the filename, page count, and file size after loading.' },
+  { title: 'Choose format & DPI', description: 'Select PNG or JPEG output, pick a scale from 1x to 4x, and choose whether to export individual images or a ZIP archive. If JPEG is selected, adjust the quality slider to balance size and fidelity.' },
+  { title: 'Download images', description: 'Click "Convert to Images" and wait for the rendering to finish. Download individual pages from the thumbnail grid, or grab the entire set as a ZIP archive with one click.' },
+];
+
+const seo = {
+  title: 'Free PDF to Images — PNG & JPEG Export (2026)',
+  description: 'Convert PDF pages to high-resolution PNG or JPEG images for free. Choose DPI, quality, and export as individual files or ZIP. No uploads, no signup.',
+  url: '/tools/pdf-to-images/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'PDF to Images', url: '/tools/pdf-to-images/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Upload to Servers"
+    title="PDF to Images:"
+    accentText="Convert pages to high-resolution images"
+    description="Convert PDF pages to high-resolution PNG or JPEG images for free in your browser. Choose DPI, quality, and export as individual files or ZIP. No signup, no watermarks, no daily limits."
+    backLink="/pdf-toolkit/"
+    backLabel="← PDF Toolkit"
+  />
+
+  <!-- Converter Interface -->
+  <section class="py-6 md:py-8" aria-label="PDF to images converter">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-4">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1" id="drop-title">Drop your PDF here</p>
+          <p class="text-xs text-bae-muted" id="drop-subtitle">or click to browse (.pdf files only)</p>
+          <input type="file" id="file-input" class="hidden" accept=".pdf,application/pdf" />
+        </div>
+
+        <!-- Size Warning -->
+        <div id="size-warning" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-3 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <p class="text-xs text-amber-700">This file is very large (<strong id="warn-size"></strong>). Rendering may take longer and your browser may become temporarily unresponsive.</p>
+        </div>
+
+        <!-- PDF Info -->
+        <div id="pdf-info" class="hidden mb-4 text-center">
+          <p class="text-sm text-bae-ink font-medium"><span id="info-name" class="truncate"></span></p>
+          <p class="text-xs text-bae-muted"><span id="info-pages"></span> pages · <span id="info-size"></span></p>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-area" class="hidden mb-4 bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="text-sm font-bold text-bae-ink mb-4">Export Settings</h3>
+
+          <!-- Output Format -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Output Format</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto">
+              <button type="button" id="format-png" class="format-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">PNG</button>
+              <button type="button" id="format-jpeg" class="format-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">JPEG</button>
+            </div>
+          </div>
+
+          <!-- Quality Slider -->
+          <div class="mb-4 hidden" id="quality-control">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-medium text-bae-muted">JPEG Quality</label>
+              <span class="text-xs font-semibold text-bae-primary" id="quality-value">90%</span>
+            </div>
+            <input type="range" id="quality-slider" min="50" max="100" value="90" class="w-full h-2 bg-bae-bg rounded-lg appearance-none cursor-pointer accent-bae-primary" />
+            <div class="flex justify-between text-[10px] text-bae-muted mt-1">
+              <span>Smaller file</span>
+              <span>Better quality</span>
+            </div>
+          </div>
+
+          <!-- Scale / DPI -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Scale / DPI</label>
+            <select id="scale-select" class="w-full sm:w-auto px-3 py-2 bg-bae-bg border border-bae-border rounded-bae-sm text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary">
+              <option value="1">1x (72 DPI)</option>
+              <option value="2" selected>2x (144 DPI)</option>
+              <option value="3">3x (216 DPI)</option>
+              <option value="4">4x (288 DPI)</option>
+            </select>
+            <p class="text-xs text-bae-muted mt-1.5">Higher scale produces sharper images but larger files and longer rendering times.</p>
+          </div>
+
+          <!-- Export Mode -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Export Mode</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto">
+              <button type="button" id="mode-individual" class="mode-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">Individual images</button>
+              <button type="button" id="mode-zip" class="mode-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">ZIP archive</button>
+            </div>
+          </div>
+
+          <button type="button" id="convert-btn" class="w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+            Convert to Images
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Rendering...</p>
+            <div class="w-full max-w-xs mx-auto mt-3 h-2 bg-bae-bg rounded-full overflow-hidden">
+              <div id="progress-bar" class="h-full bg-bae-primary transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <p class="text-xs text-bae-muted mt-2">Processing locally in your browser</p>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-bae-ink">Conversion Complete</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Ready</span>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-3 mb-4">
+              <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                <p class="text-[10px] text-bae-muted uppercase tracking-wider mb-1">Pages</p>
+                <p id="result-pages" class="text-sm font-medium text-bae-ink">—</p>
+              </div>
+              <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                <p class="text-[10px] text-bae-muted uppercase tracking-wider mb-1">Format</p>
+                <p id="result-format" class="text-sm font-medium text-bae-ink">—</p>
+              </div>
+              <div class="bg-emerald-50 rounded-bae-sm p-3 text-center border border-emerald-100">
+                <p class="text-[10px] text-emerald-600 uppercase tracking-wider mb-1">Total Size</p>
+                <p id="result-size" class="text-sm font-medium text-emerald-700">—</p>
+              </div>
+            </div>
+
+            <!-- ZIP Download -->
+            <div id="zip-download" class="hidden">
+              <a id="zip-download-btn" href="#" download class="block w-full text-center bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm hover:bg-bae-accent transition-colors no-underline">
+                Download ZIP Archive
+              </a>
+            </div>
+
+            <!-- Individual Grid + Download All -->
+            <div id="individual-download">
+              <div id="thumbnail-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4 max-h-96 overflow-y-auto pr-1"></div>
+              <button type="button" id="download-all-zip-btn" class="w-full bg-bae-ink text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-primary transition-colors">
+                Download All as ZIP
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What this tool cannot do</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>Selectable text:</strong> Output images contain rasterized pages. Text is no longer selectable, searchable, or copyable.</li>
+              <li><strong>Vector fidelity:</strong> Complex vector graphics and fonts are rendered as pixels. Fine details may soften at lower scales.</li>
+              <li><strong>Password-protected files:</strong> Encrypted or DRM-protected PDFs cannot be opened or rendered.</li>
+              <li><strong>Exact color matching:</strong> JPEG compression may introduce subtle color shifts compared to the original PDF.</li>
+              <li><strong>Unlimited page counts:</strong> Very large documents at 3x–4x scale may take longer to process.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people extract with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people extract with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from marketers, designers, and everyday users.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Social Media & Portfolios</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">PDF slides and certificates as shareable images</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">2x PNG, no watermark, no signup</p>
+          <p class="text-sm text-bae-muted">Convert a presentation deck, diploma, or award certificate to PNG images for posting on LinkedIn, Instagram, or personal portfolio sites, with no branding from the converter tool.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">PowerPoint & Presentations</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">PDF pages embedded as crisp slide images</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">3x scale for projector-quality sharpness</p>
+          <p class="text-sm text-bae-muted">Extract PDF report pages or proposal layouts as 3x PNG images to embed directly into PowerPoint or Google Slides, sharp enough to look perfect on large projected screens.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Confidential Documents</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Contracts, statements, and medical records</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">100% private, nothing leaves your device</p>
+          <p class="text-sm text-bae-muted">Convert sensitive legal and financial PDFs to images locally in your browser. Disconnect from the internet after loading the page. The tool still works with no server ever seeing your file.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Web & App Design</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">PDF mockups and design assets for the web</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">PNG export at original resolution</p>
+          <p class="text-sm text-bae-muted">Pull design frames, UI mockups, or product sheets out of a PDF into PNG images ready for Figma, HTML, or a website, preserving every pixel of the original layout without re-encoding.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more PDF tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/pdf-compressor/" class="text-bae-primary hover:underline">PDF Compressor</a>, <a href="/tools/pdf-merger/" class="text-bae-primary hover:underline">PDF Merger</a>, <a href="/tools/pdf-splitter/" class="text-bae-primary hover:underline">PDF Splitter</a>, <a href="/tools/pdf-rotator/" class="text-bae-primary hover:underline">PDF Rotator</a>, <a href="/tools/images-to-pdf/" class="text-bae-primary hover:underline">Images to PDF</a>, and <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>. All free, no signup.</p>
+        </div>
+        <a href="/pdf-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse PDF Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const settingsArea = document.getElementById('settings-area');
+      const progressArea = document.getElementById('progress-area');
+      const resultArea = document.getElementById('result-area');
+      const progressText = document.getElementById('progress-text');
+      const progressBar = document.getElementById('progress-bar');
+      const sizeWarning = document.getElementById('size-warning');
+      const warnSize = document.getElementById('warn-size');
+      const pdfInfo = document.getElementById('pdf-info');
+      const infoName = document.getElementById('info-name');
+      const infoPages = document.getElementById('info-pages');
+      const infoSize = document.getElementById('info-size');
+      const convertBtn = document.getElementById('convert-btn');
+      const qualitySlider = document.getElementById('quality-slider');
+      const qualityValue = document.getElementById('quality-value');
+      const qualityControl = document.getElementById('quality-control');
+      const scaleSelect = document.getElementById('scale-select');
+      const formatPng = document.getElementById('format-png');
+      const formatJpeg = document.getElementById('format-jpeg');
+      const modeIndividual = document.getElementById('mode-individual');
+      const modeZip = document.getElementById('mode-zip');
+      const zipDownload = document.getElementById('zip-download');
+      const zipDownloadBtn = document.getElementById('zip-download-btn');
+      const individualDownload = document.getElementById('individual-download');
+      const thumbnailGrid = document.getElementById('thumbnail-grid');
+      const downloadAllZipBtn = document.getElementById('download-all-zip-btn');
+      const resultPages = document.getElementById('result-pages');
+      const resultFormat = document.getElementById('result-format');
+      const resultSize = document.getElementById('result-size');
+
+      let currentFile = null;
+      let currentFormat = 'png';
+      let currentExportMode = 'individual';
+      let pageImages = [];
+      let zipUrl = null;
+      let pdfjsLib = null;
+      let JSZip = null;
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      async function loadLibraries() {
+        if (!pdfjsLib) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = '/pdf.min.js';
+            s.integrity = 'sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e';
+            s.crossOrigin = 'anonymous';
+            s.onload = () => {
+              pdfjsLib = window.pdfjsLib;
+              pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+              resolve();
+            };
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+        if (!JSZip) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = '/jszip.min.js';
+            s.onload = () => { JSZip = window.JSZip; resolve(); };
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+      }
+
+      function setFormat(fmt) {
+        currentFormat = fmt;
+        if (fmt === 'png') {
+          formatPng.classList.add('bg-bae-primary', 'text-white');
+          formatPng.classList.remove('text-bae-muted');
+          formatJpeg.classList.remove('bg-bae-primary', 'text-white');
+          formatJpeg.classList.add('text-bae-muted');
+          qualityControl.classList.add('hidden');
+        } else {
+          formatJpeg.classList.add('bg-bae-primary', 'text-white');
+          formatJpeg.classList.remove('text-bae-muted');
+          formatPng.classList.remove('bg-bae-primary', 'text-white');
+          formatPng.classList.add('text-bae-muted');
+          qualityControl.classList.remove('hidden');
+        }
+      }
+
+      function setExportMode(mode) {
+        currentExportMode = mode;
+        if (mode === 'individual') {
+          modeIndividual.classList.add('bg-bae-primary', 'text-white');
+          modeIndividual.classList.remove('text-bae-muted');
+          modeZip.classList.remove('bg-bae-primary', 'text-white');
+          modeZip.classList.add('text-bae-muted');
+        } else {
+          modeZip.classList.add('bg-bae-primary', 'text-white');
+          modeZip.classList.remove('text-bae-muted');
+          modeIndividual.classList.remove('bg-bae-primary', 'text-white');
+          modeIndividual.classList.add('text-bae-muted');
+        }
+      }
+
+      formatPng.addEventListener('click', () => setFormat('png'));
+      formatJpeg.addEventListener('click', () => setFormat('jpeg'));
+      modeIndividual.addEventListener('click', () => setExportMode('individual'));
+      modeZip.addEventListener('click', () => setExportMode('zip'));
+
+      qualitySlider.addEventListener('input', (e) => {
+        qualityValue.textContent = e.target.value + '%';
+      });
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+      async function handleFile(file) {
+        if (!file) return;
+        if (!file.name.toLowerCase().endsWith('.pdf') || file.type !== 'application/pdf') {
+          alert('Please upload a valid PDF file.');
+          return;
+        }
+        const MAX_FILE_SIZE = 20 * 1024 * 1024 * 1024;
+        if (file.size > MAX_FILE_SIZE) {
+          alert('File too large. Maximum size is 20 GB.');
+          return;
+        }
+        currentFile = file;
+        if (file.size > 500 * 1024 * 1024) {
+          warnSize.textContent = formatBytes(file.size);
+          sizeWarning.classList.remove('hidden');
+        } else {
+          sizeWarning.classList.add('hidden');
+        }
+
+        await loadLibraries();
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const numPages = pdf.numPages;
+
+          infoName.textContent = file.name;
+          infoPages.textContent = numPages;
+          infoSize.textContent = formatBytes(file.size);
+          pdfInfo.classList.remove('hidden');
+          settingsArea.classList.remove('hidden');
+          resultArea.classList.add('hidden');
+          settingsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+          alert('Could not read this PDF. It may be password-protected or corrupted.');
+        }
+      }
+
+      convertBtn.addEventListener('click', async () => {
+        if (!currentFile) return;
+        resultArea.classList.add('hidden');
+        progressArea.classList.remove('hidden');
+        progressText.textContent = 'Loading libraries...';
+        progressBar.style.width = '0%';
+
+        // Cleanup previous results
+        pageImages.forEach(p => { if (p.url) URL.revokeObjectURL(p.url); });
+        pageImages = [];
+        if (zipUrl) { URL.revokeObjectURL(zipUrl); zipUrl = null; }
+
+        try {
+          await loadLibraries();
+          const arrayBuffer = await currentFile.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          const numPages = pdf.numPages;
+          if (numPages > 200) {
+            alert('This PDF has too many pages. Maximum supported is 200 pages.');
+            return;
+          }
+          const scale = parseFloat(scaleSelect.value);
+          const quality = parseInt(qualitySlider.value, 10) / 100;
+          const mimeType = currentFormat === 'png' ? 'image/png' : 'image/jpeg';
+          const ext = currentFormat === 'png' ? 'png' : 'jpg';
+
+          let totalBytes = 0;
+
+          for (let i = 1; i <= numPages; i++) {
+            progressText.textContent = 'Rendering page ' + i + ' of ' + numPages + '...';
+            progressBar.style.width = Math.round(((i - 1) / numPages) * 100) + '%';
+
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: scale });
+
+            const MAX_CANVAS_DIM = 8192;
+            let renderScale = scale;
+            if (viewport.width > MAX_CANVAS_DIM || viewport.height > MAX_CANVAS_DIM) {
+              renderScale = Math.min(MAX_CANVAS_DIM / viewport.width, MAX_CANVAS_DIM / viewport.height) * scale;
+            }
+            const finalViewport = page.getViewport({ scale: renderScale });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.floor(finalViewport.width);
+            canvas.height = Math.floor(finalViewport.height);
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error('Could not get canvas context');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            await page.render({ canvasContext: ctx, viewport: finalViewport }).promise;
+
+            const blob = await new Promise((resolve) => {
+              canvas.toBlob((b) => resolve(b), mimeType, currentFormat === 'jpeg' ? quality : undefined);
+            });
+
+            if (!blob) throw new Error('Failed to create image blob for page ' + i);
+
+            totalBytes += blob.size;
+            const url = currentExportMode === 'individual' ? URL.createObjectURL(blob) : null;
+            pageImages.push({ blob, url, pageNum: i, ext: ext });
+          }
+
+          progressBar.style.width = '100%';
+          progressText.textContent = 'Finalizing...';
+
+          if (currentExportMode === 'zip') {
+            const zip = new JSZip();
+            pageImages.forEach((p, idx) => {
+              const fileName = 'page-' + String(idx + 1).padStart(3, '0') + '.' + p.ext;
+              zip.file(fileName, p.blob);
+            });
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            zipUrl = URL.createObjectURL(zipBlob);
+            zipDownloadBtn.href = zipUrl;
+            zipDownloadBtn.download = currentFile.name.replace(/\.pdf$/i, '') + '-images.zip';
+            zipDownload.classList.remove('hidden');
+            individualDownload.classList.add('hidden');
+          } else {
+            zipDownload.classList.add('hidden');
+            individualDownload.classList.remove('hidden');
+            thumbnailGrid.innerHTML = '';
+            pageImages.forEach((p) => {
+              const card = document.createElement('div');
+              card.className = 'bg-bae-bg border border-bae-border rounded-bae-sm p-2 text-center';
+              const fileName = 'page-' + String(p.pageNum).padStart(3, '0') + '.' + p.ext;
+              card.innerHTML =
+                '<img src="' + escapeHtml(p.url) + '" alt="' + escapeHtml(fileName) + '" class="w-full h-24 object-contain bg-white rounded mb-2" loading="lazy" />' +
+                '<a href="' + escapeHtml(p.url) + '" download="' + escapeHtml(fileName) + '" class="text-xs font-semibold text-bae-primary hover:underline no-underline">Download</a>';
+              thumbnailGrid.appendChild(card);
+            });
+          }
+
+          resultPages.textContent = numPages + ' page' + (numPages !== 1 ? 's' : '');
+          resultFormat.textContent = currentFormat.toUpperCase();
+          resultSize.textContent = formatBytes(totalBytes);
+
+          progressArea.classList.add('hidden');
+          resultArea.classList.remove('hidden');
+          resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+          console.error(err);
+          progressText.textContent = 'Conversion failed: ' + (err.message || 'Unknown error. Try a different file.');
+        }
+      });
+
+      downloadAllZipBtn.addEventListener('click', async () => {
+        if (!pageImages.length || !JSZip) return;
+        downloadAllZipBtn.textContent = 'Building ZIP...';
+        downloadAllZipBtn.disabled = true;
+        try {
+          const zip = new JSZip();
+          pageImages.forEach((p, idx) => {
+            const fileName = 'page-' + String(idx + 1).padStart(3, '0') + '.' + p.ext;
+            zip.file(fileName, p.blob);
+          });
+          const zipBlob = await zip.generateAsync({ type: 'blob' });
+          const url = URL.createObjectURL(zipBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = currentFile.name.replace(/\.pdf$/i, '') + '-images.zip';
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 10000);
+        } catch (err) {
+          console.error(err);
+          alert('Failed to create ZIP: ' + (err.message || 'Unknown error'));
+        } finally {
+          downloadAllZipBtn.textContent = 'Download All as ZIP';
+          downloadAllZipBtn.disabled = false;
+        }
+      });
+    })();
+  </script>
+</BaseLayout>

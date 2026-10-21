@@ -1,0 +1,673 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Broken Link Checker?',
+    a: 'The Best Answer Hub Broken Link Checker is a free browser-based tool that scans any webpage and tests every link to see if it still works. It checks internal links (pointing to pages on the same site) and external links (pointing to other websites). For each link, it reports whether the destination loads correctly, returns a 404 error, redirects to another URL, or fails entirely. The tool runs directly in your browser. No account, no subscription, and no data is stored on any server.',
+  },
+  {
+    q: 'Is the Broken Link Checker free to use?',
+    a: 'Yes, the Best Answer Hub Broken Link Checker is completely free with no usage limits and no signup required. You can scan as many pages as you want, as often as you want. Unlike paid tools like Ahrefs, Semrush, or Screaming Frog, there are no monthly fees, no crawl credit limits, and no forced account creation. Every scan runs directly between your browser and the target website.',
+  },
+  {
+    q: 'How does the Broken Link Checker work?',
+    a: 'Enter a webpage URL and the Best Answer Hub Broken Link Checker fetches that page\'s HTML directly from the target server. It extracts every link found in the HTML, including navigation links, footer links, content links, and image source URLs if you enable that option. It then tests each link by sending a request to the destination server. For links on the same website, the tool reads the exact HTTP status code. For links on other websites, it uses a compatibility mode that detects whether the server responds without reading the specific status code, due to browser security restrictions. Results appear in a sortable table with color-coded status indicators.',
+  },
+  {
+    q: 'What are broken links and why do they matter?',
+    a: 'A broken link is a hyperlink that points to a page or resource that no longer exists or is unreachable. When a user clicks a broken link, they see a 404 error page instead of the expected content. Broken links matter for three reasons. First, they create a poor user experience and reduce trust in your website. Second, they waste the crawl budget that search engines allocate to your site, meaning Google may not discover your good content because it spent time following dead links. Third, broken internal links interrupt the flow of link equity (ranking power) through your site, potentially lowering the rankings of important pages.',
+  },
+  {
+    q: 'What causes broken links?',
+    a: 'Broken links are caused by several common scenarios. The destination page was deleted or moved without setting up a redirect. The URL was typed incorrectly when the link was created. The destination website changed its domain name or URL structure. The destination server is temporarily down or permanently offline. The link points to a resource that was hosted on a third-party service that shut down or changed its API. Seasonal content like event pages or promotional landing pages are often deleted after their campaign ends, leaving links that pointed to them broken.',
+  },
+  {
+    q: 'How do broken links affect SEO?',
+    a: 'Broken links hurt SEO in multiple ways. They waste crawl budget. Search engine bots have a limited amount of time to crawl your site, and every broken link they follow is time they could have spent indexing your valuable content. They interrupt internal link equity flow. When a page that receives backlinks links to a broken page, that ranking power is lost. They signal poor site maintenance to search engines, since Google\'s quality raters guidelines explicitly mention broken links as a sign of a low-quality website. They increase bounce rate, because users who click broken links leave immediately, sending negative engagement signals. Industry research consistently shows that well-maintained link structures correlate with better search performance and user trust.',
+  },
+  {
+    q: 'What is the difference between internal and external broken links?',
+    a: 'Internal broken links point to pages within your own website, such as a link from your homepage to a blog post that was deleted. These are the most important to fix because you have full control over them, and they directly affect how link equity flows through your site. External broken links point to pages on other websites, such as a link from your blog post to a research paper whose URL changed. While you cannot fix the destination itself, you should replace the link with an alternative source or remove it entirely. External broken links still hurt user experience and credibility, even though they do not directly waste your crawl budget.',
+  },
+  {
+    q: 'How often should I check for broken links?',
+    a: 'For small websites under 50 pages, check once per month. For medium websites between 50 and 500 pages, check once every two weeks. For large websites over 500 pages or e-commerce sites with frequent product changes, check weekly. You should also run a broken link check immediately after any major site restructuring, content migration, or platform change. Many SEO professionals schedule automated scans using tools like Screaming Frog, Sitebulb, or Ahrefs Site Audit, but the Best Answer Hub Broken Link Checker is perfect for quick ad-hoc checks without setup.',
+  },
+  {
+    q: 'Can the tool check links on any website?',
+    a: 'The Best Answer Hub Broken Link Checker can check links on most public websites. However, some websites block external requests using CORS policies or bot protection services like Cloudflare. When this happens, the tool cannot fetch the page HTML to extract links, or it cannot verify the status of external links. For those sites, the Best Answer Hub Broken Link Checker provides as much information as possible and marks unverifiable links clearly. For a complete audit of a heavily protected site, use a desktop crawler like Screaming Frog that does not operate within browser security restrictions.',
+  },
+  {
+    q: 'What does "CORS blocked" or "Unable to verify" mean?',
+    a: 'CORS stands for Cross-Origin Resource Sharing. It is a browser security feature that prevents websites from reading data from other domains without permission. When the Best Answer Hub Broken Link Checker tests a link to another website, the destination server may refuse to share its status code. In these cases, the tool attempts a compatibility check using a no-cors request. If the server responds at all, the link is marked as "Likely OK." If the server does not respond, it is marked as "Likely Broken." These are best-effort results. For critical links, manually verify by clicking them.',
+  },
+  {
+    q: 'What is a 404 error?',
+    a: 'A 404 error means the server could not find the page or resource you requested. It is the most common type of broken link. When a user or search engine bot visits a URL that returns 404, the destination does not exist. This could be because the page was deleted, the URL was mistyped, or the page was moved without a redirect. From an SEO perspective, 404 errors on internal links are the highest priority to fix. You should either restore the missing page, redirect the URL to a relevant replacement, or remove the broken link entirely.',
+  },
+  {
+    q: 'What is a 301 redirect and should I fix it?',
+    a: 'A 301 redirect is a permanent redirect that tells browsers and search engines that a page has moved to a new URL. Redirects are not broken links (they still work), but they create inefficiency. Every redirect adds a small delay for users and wastes a small amount of crawl budget. If your site has many internal links that go through redirects, you should update those links to point directly to the final destination URL. This is especially important for redirect chains, where one redirect leads to another redirect. Google recommends keeping redirect chains under 5 hops, but ideally you should have zero internal redirect chains.',
+  },
+  {
+    q: 'How do I fix broken links?',
+    a: 'For internal broken links, you have three options. First, restore the missing page if it contained valuable content. Second, set up a 301 redirect from the broken URL to the most relevant existing page on your site. Third, remove or replace the broken link in your content. For external broken links, find an alternative source and replace the link, or remove it if no replacement exists. After fixing links, run the Best Answer Hub Broken Link Checker again to confirm all issues are resolved. If you use WordPress, plugins like Broken Link Checker or Redirection can automate this process.',
+  },
+  {
+    q: 'What are the best tools for finding broken links?',
+    a: 'The best tool depends on your site size and budget. For quick, no-setup checks on any device, the Best Answer Hub Broken Link Checker is the ideal starting point: free, instant, and requiring no account. For comprehensive automated monitoring, Ahrefs Site Audit, Semrush Site Audit, and Screaming Frog are the industry leaders. For WordPress sites, the Broken Link Checker plugin scans continuously in the background. For small static sites, W3C Link Checker is a free online option. For command-line users, wget and curl can spider a site and report broken links. The Best Answer Hub Broken Link Checker fills the gap between manual checking and expensive automated suites.',
+  },
+  {
+    q: 'What is a soft 404 error and how does it differ from a regular 404?',
+    a: 'A soft 404 is a page that returns an HTTP 200 status code but displays error content or near-empty text instead of a real page. This happens when a CMS shows a "Page not found" message while still responding with a success code. A regular 404 tells Google definitively that the page does not exist, letting Googlebot remove it from the index quickly. A soft 404 sends mixed signals (the server reports success but the content is an error), causing Google to waste crawl budget re-checking pages that will never have real content. Google Search Console reports soft 404s separately under its Coverage report. The Best Answer Hub Broken Link Checker displays the HTTP status code for each link, helping you identify links that return 200 but may be pointing to soft-404 pages.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your page URL', description: 'Type a page address from your own website. Choose whether to check external links and image sources too.' },
+  { title: 'Run the scan', description: 'The tool extracts all links from the page and tests each one. Internal links get exact status codes. External links are checked in compatibility mode.' },
+  { title: 'Fix broken links', description: 'Review the results table, filter by status, and fix or remove broken links. Re-scan to confirm everything is clean.' },
+];
+
+const seo = {
+  title: 'Free Broken Link Checker — Find Dead Links (2026)',
+  description: 'Scan any website for broken links. Check internal and external URLs with exact HTTP status codes, 404s, and redirects. Client-side, no signup.',
+  url: '/tools/broken-link-checker/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Broken Link Checker', url: '/tools/broken-link-checker/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · Scans Run from Your Browser"
+    title="Broken Link Checker:"
+    accentText="Find dead links on your website"
+    description="Scan pages on your own website for broken internal and external links. See exact HTTP status codes, 404 errors, redirects, and server failures. Due to browser security (CORS), most external sites cannot be scanned."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <!-- Checker Interface -->
+  <section class="py-6 md:py-8" aria-label="Broken link checker">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-3xl mx-auto">
+        <!-- Input -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <label class="block text-sm font-medium text-bae-ink mb-2">Enter a webpage URL to scan <span class="text-bae-muted font-normal">(your own site works best)</span></label>
+          <div class="flex gap-2 mb-3">
+            <input type="url" id="scan-url" placeholder="example.com or https://example.com/page" class="flex-1 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            <button type="button" id="scan-btn" class="shrink-0 bg-bae-primary text-white font-semibold text-sm px-5 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">
+              Scan Links
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-x-5 gap-y-2">
+            <label class="flex items-center gap-2 text-xs text-bae-muted cursor-pointer">
+              <input type="checkbox" id="check-external" checked class="accent-bae-primary w-4 h-4" /> Check external links
+            </label>
+            <label class="flex items-center gap-2 text-xs text-bae-muted cursor-pointer">
+              <input type="checkbox" id="check-images" class="accent-bae-primary w-4 h-4" /> Also check images & resources
+            </label>
+          </div>
+          <div class="mt-2 p-2.5 bg-amber-50 border border-amber-200 rounded-bae-sm">
+            <p class="text-[11px] text-amber-700 leading-relaxed"><strong class="text-amber-800">Browser security limitation:</strong> This tool runs 100% in your browser with no server. Most websites block cross-origin requests (CORS), so scanning external sites like Google, GitHub, or Cloudflare-protected pages will fail. <strong class="text-amber-800">Scanning your own website works perfectly</strong>. Same-origin requests are not restricted.</p>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="scan-loading" class="hidden mt-6">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-6 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="scan-status">Scanning links...</p>
+            <p class="text-xs text-bae-muted mt-1" id="scan-progress">0 of 0 checked</p>
+            <div class="w-full bg-bae-border h-2 rounded-full mt-3 overflow-hidden max-w-xs mx-auto">
+              <div id="scan-bar" class="h-full bg-bae-primary rounded-full transition-all" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="scan-results" class="hidden mt-6 space-y-5">
+          <!-- Summary Cards -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p class="text-xl font-bold text-bae-ink" id="sum-total">0</p>
+              <p class="text-[11px] text-bae-muted">Total Links</p>
+            </div>
+            <div class="bg-emerald-50 border border-emerald-100 rounded-bae-sm p-3 text-center">
+              <p class="text-xl font-bold text-emerald-600" id="sum-ok">0</p>
+              <p class="text-[11px] text-emerald-600">OK</p>
+            </div>
+            <div class="bg-red-50 border border-red-100 rounded-bae-sm p-3 text-center">
+              <p class="text-xl font-bold text-red-500" id="sum-broken">0</p>
+              <p class="text-[11px] text-red-500">Broken</p>
+            </div>
+            <div class="bg-amber-50 border border-amber-100 rounded-bae-sm p-3 text-center">
+              <p class="text-xl font-bold text-amber-600" id="sum-redirect">0</p>
+              <p class="text-[11px] text-amber-600">Redirects</p>
+            </div>
+            <div class="bg-orange-50 border border-orange-100 rounded-bae-sm p-3 text-center">
+              <p class="text-xl font-bold text-orange-500" id="sum-error">0</p>
+              <p class="text-[11px] text-orange-500">Errors</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p class="text-xl font-bold text-bae-muted" id="sum-blocked">0</p>
+              <p class="text-[11px] text-bae-muted">Blocked</p>
+            </div>
+          </div>
+
+          <!-- Filter Tabs -->
+          <div class="flex gap-1 overflow-x-auto pb-1">
+            <button type="button" data-filter="all" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-bae-sm bg-bae-primary text-white transition-colors">All</button>
+            <button type="button" data-filter="broken" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-bae-sm bg-bae-bg text-bae-muted border border-bae-border hover:text-bae-ink transition-colors">Broken</button>
+            <button type="button" data-filter="redirect" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-bae-sm bg-bae-bg text-bae-muted border border-bae-border hover:text-bae-ink transition-colors">Redirects</button>
+            <button type="button" data-filter="error" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-bae-sm bg-bae-bg text-bae-muted border border-bae-border hover:text-bae-ink transition-colors">Errors</button>
+            <button type="button" data-filter="blocked" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-bae-sm bg-bae-bg text-bae-muted border border-bae-border hover:text-bae-ink transition-colors">Blocked</button>
+            <button type="button" data-filter="ok" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-bae-sm bg-bae-bg text-bae-muted border border-bae-border hover:text-bae-ink transition-colors">OK</button>
+          </div>
+
+          <!-- Results Table -->
+          <div class="bg-bae-card border border-bae-border rounded-bae overflow-hidden">
+            <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
+              <table class="w-full text-sm">
+                <thead class="sticky top-0 bg-bae-bg z-10">
+                  <tr class="border-b border-bae-border">
+                    <th class="text-left px-4 py-3 font-semibold text-bae-ink text-xs uppercase tracking-wider">Status</th>
+                    <th class="text-left px-4 py-3 font-semibold text-bae-ink text-xs uppercase tracking-wider">URL</th>
+                    <th class="text-left px-4 py-3 font-semibold text-bae-ink text-xs uppercase tracking-wider">Anchor / Type</th>
+                  </tr>
+                </thead>
+                <tbody id="results-body" class="divide-y divide-bae-border-light"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recommendations -->
+          <div id="link-recommendations" class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-5">
+            <h3 class="text-sm font-bold text-bae-ink mb-3">Recommendations</h3>
+            <div id="rec-list" class="space-y-2"></div>
+          </div>
+
+          <!-- CORS Notice -->
+          <div id="link-cors-notice" class="hidden bg-amber-50 border border-amber-200 rounded-bae p-4 flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            <div>
+              <p class="text-sm font-semibold text-amber-800 mb-1">Some links could not be fully verified</p>
+              <p class="text-xs text-amber-700">Cross-origin restrictions prevent reading exact status codes for external links. Results marked "Likely OK" or "Likely Broken" are best-effort estimates. For critical links, manually verify by clicking them.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- When people use this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">When people run a broken link check</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">BLOGGER / CONTENT CREATOR</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Pre-publish link audit</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ 2 MINUTES PER POST</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Before hitting Publish, paste the draft URL and scan. Catches broken outbound links, dead image sources, and redirect chains that would embarrass you the moment a reader clicks through.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">WEBSITE OWNER</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Post-migration broken link sweep</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">AFTER EVERY REDESIGN OR PLATFORM MOVE</div>
+          <p class="text-sm text-bae-muted leading-relaxed">A CMS migration or URL restructure silently breaks hundreds of internal links. Scan each key page (homepage, top landing pages, nav items) to confirm nothing is returning 404 before Google re-crawls the site.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">SEO PROFESSIONAL</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Quick spot check before a client call</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">NO SCREAMING FROG SETUP NEEDED</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Scan the client homepage and two or three key landing pages in under five minutes. No desktop tool to configure, no crawl to schedule. Good enough to walk into a meeting with a real data point on link health.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">DEVELOPER / FREELANCER</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Pre-launch checklist, final pass</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">LAST CHECK BEFORE GOING LIVE</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Scan the homepage, navigation, and footer before pushing to production. Catches broken CTA links, dead footer links, and misconfigured canonical URLs that testing environments often hide.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/ai-cost-calculator/" class="text-bae-primary hover:underline">AI Cost Calculator</a>, <a href="/tools/image-compressor/" class="text-bae-primary hover:underline">Image Compressor</a>, <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>, <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code</a>, <a href="/tools/password-generator/" class="text-bae-primary hover:underline">Password Generator</a>, <a href="/tools/website-speed-test/" class="text-bae-primary hover:underline">Speed Test</a>, <a href="/tools/seo-score-checker/" class="text-bae-primary hover:underline">SEO Checker</a>, <a href="/tools/invoice-generator/" class="text-bae-primary hover:underline">Invoice Generator</a>, and <a href="/developer-toolbox/" class="text-bae-primary hover:underline">Developer Toolbox</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const scanUrl = document.getElementById('scan-url');
+      const scanBtn = document.getElementById('scan-btn');
+      const scanLoading = document.getElementById('scan-loading');
+      const scanStatus = document.getElementById('scan-status');
+      const scanProgress = document.getElementById('scan-progress');
+      const scanBar = document.getElementById('scan-bar');
+      const scanResults = document.getElementById('scan-results');
+      const resultsBody = document.getElementById('results-body');
+      const recList = document.getElementById('rec-list');
+      const corsNotice = document.getElementById('link-cors-notice');
+      const checkExternal = document.getElementById('check-external');
+      const checkImages = document.getElementById('check-images');
+
+      let allResults = [];
+      let currentFilter = 'all';
+
+      function normalizeUrl(input) {
+        let url = input.trim();
+        if (!url) return null;
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        try { return new URL(url).toString(); } catch (e) { return null; }
+      }
+
+      function isInternalUrl(urlStr) {
+        try {
+          const u = new URL(urlStr);
+          // URL.hostname returns IPv6 addresses wrapped in brackets (e.g. "[::1]");
+          // strip them so the IPv6 range checks below actually match.
+          const host = u.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+          if (host === 'localhost' || host === '0.0.0.0' || host === '::1') return true;
+          // IPv4 private ranges
+          if (/^127\./.test(host)) return true;
+          if (/^192\.168\./.test(host)) return true;
+          if (/^10\./.test(host)) return true;
+          if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) return true;
+          if (/^169\.254\./.test(host)) return true;
+          // IPv6 unique local / link-local / loopback mapped
+          if (/^(fc00|fd00|fe80):/i.test(host)) return true;
+          if (/^::ffff:127\./i.test(host)) return true;
+          if (/^::ffff:192\.168\./i.test(host)) return true;
+          if (/^::ffff:10\./i.test(host)) return true;
+          if (/^::ffff:172\.(1[6-9]|2[0-9]|3[0-1])\./i.test(host)) return true;
+          if (/^::1$/i.test(host)) return true;
+          return false;
+        } catch (e) { return false; }
+      }
+
+      function getHostname(url) {
+        try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; }
+      }
+
+      async function runScan() {
+        const url = normalizeUrl(scanUrl.value);
+        if (!url) { alert('Please enter a valid URL'); return; }
+        if (isInternalUrl(url)) { alert('Internal and local addresses cannot be scanned for security reasons.'); return; }
+
+        const baseHost = getHostname(url);
+        const testExternal = checkExternal.checked;
+        const testImages = checkImages.checked;
+
+        scanResults.classList.add('hidden');
+        scanLoading.classList.remove('hidden');
+        corsNotice.classList.add('hidden');
+        allResults = [];
+
+        // Fetch page
+        scanStatus.textContent = 'Fetching page...';
+        let html = '';
+        let doc = null;
+        let hasCorsIssues = false;
+
+        try {
+          const response = await fetch(url, { cache: 'no-store' });
+          if (isInternalUrl(response.url)) {
+            scanLoading.classList.add('hidden');
+            alert('Redirect blocked for security reasons.');
+            return;
+          }
+          html = await response.text();
+          doc = new DOMParser().parseFromString(html, 'text/html');
+        } catch (e) {
+          scanLoading.classList.add('hidden');
+          alert('Could not fetch the page. This usually happens because the target site blocks cross-origin requests (CORS).\n\nThis tool works best for scanning your own website. For external sites, try a server-side crawler like Screaming Frog.');
+          return;
+        }
+
+        // Extract links
+        const links = [];
+        const seen = new Set();
+
+        doc.querySelectorAll('a[href]').forEach(a => {
+          const href = a.getAttribute('href');
+          if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+          try {
+            const absUrl = new URL(href, url).toString();
+            if (!seen.has(absUrl)) {
+              seen.add(absUrl);
+              links.push({ url: absUrl, text: a.textContent.trim().substring(0, 60) || 'Link', type: 'link', internal: getHostname(absUrl) === baseHost });
+            }
+          } catch (e) {}
+        });
+
+        if (testImages) {
+          doc.querySelectorAll('img[src]').forEach(img => {
+            const src = img.getAttribute('src');
+            if (!src) return;
+            try {
+              const absUrl = new URL(src, url).toString();
+              if (!seen.has(absUrl)) {
+                seen.add(absUrl);
+                links.push({ url: absUrl, text: 'Image', type: 'image', internal: getHostname(absUrl) === baseHost });
+              }
+            } catch (e) {}
+          });
+          doc.querySelectorAll('link[rel="stylesheet"][href]').forEach(link => {
+            const href = link.getAttribute('href');
+            if (!href) return;
+            try {
+              const absUrl = new URL(href, url).toString();
+              if (!seen.has(absUrl)) {
+                seen.add(absUrl);
+                links.push({ url: absUrl, text: 'CSS', type: 'css', internal: getHostname(absUrl) === baseHost });
+              }
+            } catch (e) {}
+          });
+          doc.querySelectorAll('script[src]').forEach(script => {
+            const src = script.getAttribute('src');
+            if (!src) return;
+            try {
+              const absUrl = new URL(src, url).toString();
+              if (!seen.has(absUrl)) {
+                seen.add(absUrl);
+                links.push({ url: absUrl, text: 'Script', type: 'script', internal: getHostname(absUrl) === baseHost });
+              }
+            } catch (e) {}
+          });
+        }
+
+        // Filter external if unchecked, and block internal / non-HTTP(S) links
+        let linksToTest = testExternal ? links : links.filter(l => l.internal);
+        linksToTest = linksToTest.filter(l => !isInternalUrl(l.url) && /^https?:\/\//i.test(l.url));
+
+        scanStatus.textContent = 'Testing ' + linksToTest.length + ' links...';
+        scanBar.style.width = '0%';
+
+        // Test links sequentially with delay
+        for (let i = 0; i < linksToTest.length; i++) {
+          const link = linksToTest[i];
+          scanProgress.textContent = (i + 1) + ' of ' + linksToTest.length + ' checked';
+          scanBar.style.width = Math.round(((i + 1) / linksToTest.length) * 100) + '%';
+
+          const result = await testLink(link);
+          allResults.push(result);
+          if (result.blocked) hasCorsIssues = true;
+
+          // Small delay to avoid rate limiting
+          if (i < linksToTest.length - 1) await new Promise(r => setTimeout(r, 150));
+        }
+
+        scanLoading.classList.add('hidden');
+        showResults(hasCorsIssues);
+      }
+
+      async function testLink(link) {
+        const result = { ...link, status: 'unknown', statusCode: null, blocked: false, ok: false };
+
+        if (link.internal) {
+          // Same origin — try regular fetch for exact status
+          try {
+            const response = await fetch(link.url, { method: 'HEAD', cache: 'no-store', mode: 'cors' });
+            if (isInternalUrl(response.url)) { result.status = 'blocked'; result.statusCode = 'Blocked'; return result; }
+            result.statusCode = response.status;
+            result.ok = response.ok;
+            if (response.status >= 500) result.status = 'error';
+            else if (response.status >= 400) result.status = 'broken';
+            else if (response.status >= 300) result.status = 'redirect';
+            else result.status = 'ok';
+          } catch (e) {
+            // Fallback to GET
+            try {
+              const response = await fetch(link.url, { method: 'GET', cache: 'no-store', mode: 'cors' });
+              if (isInternalUrl(response.url)) { result.status = 'blocked'; result.statusCode = 'Blocked'; return result; }
+              result.statusCode = response.status;
+              result.ok = response.ok;
+              if (response.status >= 500) result.status = 'error';
+              else if (response.status >= 400) result.status = 'broken';
+              else if (response.status >= 300) result.status = 'redirect';
+              else result.status = 'ok';
+            } catch (e2) {
+              result.status = 'broken';
+              result.statusCode = 'Failed';
+            }
+          }
+        } else {
+          // External — try no-cors
+          try {
+            await fetch(link.url, { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
+            result.status = 'ok';
+            result.statusCode = 'Likely OK';
+            result.blocked = true;
+            result.ok = true;
+          } catch (e) {
+            // Try GET no-cors
+            try {
+              await fetch(link.url, { method: 'GET', mode: 'no-cors', cache: 'no-store' });
+              result.status = 'ok';
+              result.statusCode = 'Likely OK';
+              result.blocked = true;
+              result.ok = true;
+            } catch (e2) {
+              result.status = 'broken';
+              result.statusCode = 'Likely Broken';
+              result.blocked = true;
+              result.ok = false;
+            }
+          }
+        }
+
+        return result;
+      }
+
+      function showResults(hasCorsIssues) {
+        scanResults.classList.remove('hidden');
+        scanResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        const counts = { total: allResults.length, ok: 0, broken: 0, redirect: 0, error: 0, blocked: 0 };
+        allResults.forEach(r => {
+          if (r.status === 'ok') counts.ok++;
+          else if (r.status === 'broken') counts.broken++;
+          else if (r.status === 'redirect') counts.redirect++;
+          else if (r.status === 'error') counts.error++;
+          else counts.blocked++;
+        });
+
+        document.getElementById('sum-total').textContent = counts.total;
+        document.getElementById('sum-ok').textContent = counts.ok;
+        document.getElementById('sum-broken').textContent = counts.broken;
+        document.getElementById('sum-redirect').textContent = counts.redirect;
+        document.getElementById('sum-error').textContent = counts.error;
+        document.getElementById('sum-blocked').textContent = counts.blocked;
+
+        if (hasCorsIssues) corsNotice.classList.remove('hidden');
+
+        renderTable();
+        generateRecommendations(counts);
+      }
+
+      function renderTable() {
+        const filtered = currentFilter === 'all' ? allResults : allResults.filter(r => r.status === currentFilter);
+        resultsBody.textContent = '';
+
+        if (filtered.length === 0) {
+          const tr = document.createElement('tr');
+          const td = document.createElement('td');
+          td.colSpan = 3;
+          td.className = 'px-4 py-6 text-center text-sm text-bae-muted';
+          td.textContent = 'No links match this filter.';
+          tr.appendChild(td);
+          resultsBody.appendChild(tr);
+          return;
+        }
+
+        filtered.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.className = 'bg-bae-card hover:bg-bae-bg/50 transition-colors';
+
+          // Status cell
+          const tdStatus = document.createElement('td');
+          tdStatus.className = 'px-4 py-3 whitespace-nowrap';
+
+          const statusSpan = document.createElement('span');
+          let statusText, dotColor, textColor;
+
+          if (r.status === 'ok') {
+            textColor = 'text-emerald-600';
+            dotColor = 'bg-emerald-500';
+            statusText = r.blocked ? 'Likely OK' : r.statusCode || 'OK';
+          } else if (r.status === 'broken') {
+            textColor = 'text-red-500';
+            dotColor = 'bg-red-500';
+            statusText = r.blocked ? 'Likely Broken' : r.statusCode || '404';
+          } else if (r.status === 'redirect') {
+            textColor = 'text-amber-600';
+            dotColor = 'bg-amber-500';
+            statusText = r.statusCode || '301/302';
+          } else if (r.status === 'error') {
+            textColor = 'text-orange-500';
+            dotColor = 'bg-orange-500';
+            statusText = r.statusCode || '500+';
+          } else {
+            textColor = 'text-bae-muted';
+            dotColor = 'bg-bae-muted';
+            statusText = 'Unknown';
+          }
+
+          statusSpan.className = 'inline-flex items-center gap-1 ' + textColor + ' font-medium text-xs';
+
+          const dot = document.createElement('span');
+          dot.className = 'w-2 h-2 rounded-full ' + dotColor;
+
+          statusSpan.appendChild(dot);
+          statusSpan.appendChild(document.createTextNode(statusText));
+          tdStatus.appendChild(statusSpan);
+          tr.appendChild(tdStatus);
+
+          // URL cell
+          const tdUrl = document.createElement('td');
+          tdUrl.className = 'px-4 py-3';
+
+          const a = document.createElement('a');
+          a.href = r.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'text-xs text-bae-primary hover:underline break-all';
+          a.textContent = truncate(r.url, 60);
+
+          tdUrl.appendChild(a);
+          tr.appendChild(tdUrl);
+
+          // Text cell
+          const tdText = document.createElement('td');
+          tdText.className = 'px-4 py-3 text-xs text-bae-muted';
+          tdText.textContent = r.text + ' ';
+
+          const typeLabel = r.type === 'link' ? (r.internal ? 'Internal' : 'External') : r.type.charAt(0).toUpperCase() + r.type.slice(1);
+          const typeSpan = document.createElement('span');
+          typeSpan.className = 'text-[10px] text-bae-muted opacity-60';
+          typeSpan.textContent = '(' + typeLabel + ')';
+
+          tdText.appendChild(typeSpan);
+          tr.appendChild(tdText);
+
+          resultsBody.appendChild(tr);
+        });
+      }
+
+      function generateRecommendations(counts) {
+        const recs = [];
+        if (counts.broken > 0) {
+          recs.push('Found ' + counts.broken + ' broken link(s). Fix these first. They waste crawl budget and hurt user experience. Remove the link, replace it with a working alternative, or restore the missing page.');
+        }
+        if (counts.redirect > 0) {
+          recs.push('Found ' + counts.redirect + ' redirect(s). Update internal links to point directly to the final destination URL to avoid redirect chains and reduce load time.');
+        }
+        if (counts.error > 0) {
+          recs.push('Found ' + counts.error + ' server error(s). These indicate the destination server is malfunctioning. If they are internal links, check your server logs. If external, replace or remove them.');
+        }
+        if (counts.total > 0 && counts.broken === 0 && counts.error === 0) {
+          recs.push('All tested links are working. Re-scan after any site changes to catch new broken links early.');
+        }
+        if (counts.blocked > 0) {
+          recs.push(counts.blocked + ' external link(s) could not be fully verified due to CORS restrictions. Manually verify critical external links by clicking them.');
+        }
+        recList.textContent = '';
+        recs.forEach(r => {
+          const div = document.createElement('div');
+          div.className = 'flex items-start gap-2 text-sm text-bae-ink';
+
+          const arrow = document.createElement('span');
+          arrow.className = 'text-bae-primary font-bold shrink-0 mt-0.5';
+          arrow.textContent = '→';
+
+          const text = document.createElement('span');
+          text.textContent = r;
+
+          div.appendChild(arrow);
+          div.appendChild(text);
+          recList.appendChild(div);
+        });
+      }
+
+      function truncate(str, len) {
+        return str.length > len ? str.substring(0, len) + '...' : str;
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // Filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentFilter = btn.dataset.filter;
+          document.querySelectorAll('.filter-btn').forEach(b => {
+            const active = b === btn;
+            b.classList.toggle('bg-bae-primary', active);
+            b.classList.toggle('text-white', active);
+            b.classList.toggle('bg-bae-bg', !active);
+            b.classList.toggle('text-bae-muted', !active);
+          });
+          renderTable();
+        });
+      });
+
+      scanBtn.addEventListener('click', runScan);
+      scanUrl.addEventListener('keydown', (e) => { if (e.key === 'Enter') runScan(); });
+    })();
+  </script>
+</BaseLayout>

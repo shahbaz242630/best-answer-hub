@@ -1,0 +1,337 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-14T00:00:00+00:00';
+
+const faqs = [
+    { q: 'What is the Best Answer Hub Statistics Suite?', a: 'The Best Answer Hub Statistics Suite is a set of four free, browser-based calculators: a z-score, confidence interval, p-value, and t-test tool. Each computes the result on your device with nothing uploaded, and each is paired with a plain-English explanation of what the number means and the classic misreading to avoid. No account is needed, there are no ads, and no watermark is added.' },
+    { q: 'Does a p-value tell me the probability my hypothesis is true?', a: 'No, and this is the most common misreading, which is why the Best Answer Hub P-Value Calculator explains it next to every result. The American Statistical Association states that p-values do not measure the probability that the studied hypothesis is true, nor the probability the data arose by chance alone. A p-value measures how compatible your data are with a specific model. It also says nothing about the size or importance of an effect.' },
+    { q: 'What does a 95% confidence interval actually mean?', a: 'It means the method that built the interval captures the true value about 95 percent of the time across many repeated samples, not that there is a 95 percent chance the true value is inside your one interval. The Best Answer Hub Confidence Interval Calculator spells out this distinction: your single interval either contains the true value or it does not. The 95 percent describes the long-run reliability of the procedure, not a probability about this specific result.' },
+    { q: 'What is a z-score and when is it valid?', a: 'A z-score is how many standard deviations a value sits from the mean, which lets you compare values across different scales and map to a percentile on the normal curve, which is exactly what the Best Answer Hub Z-Score Calculator computes. It is valid as a percentile only when the data are roughly normal. Standardizing does not make skewed data normal, so a z-score on a non-normal distribution gives a percentile that does not reflect reality.' },
+    { q: 'When should I use a z-test versus a t-test?', a: 'Use a z-score or z-test when the population standard deviation is known or the sample is large enough for the normal model to hold. Use a t-test, such as the Best Answer Hub T-Test Calculator, when you estimate the spread from the sample itself, which is the usual real-world situation. The t-test accounts for the extra uncertainty of estimating the standard deviation, which is why it is the everyday default for small samples.' },
+    { q: 'Which t-test should I choose?', a: 'Match the test to the design, the first choice the Best Answer Hub T-Test Calculator asks you to make: one-sample compares a mean to a fixed value, paired compares two measurements on the same subjects, and independent-samples compares two separate groups. Using the wrong design invalidates the result. For two independent groups, Welch\'s t-test is the safer default because it does not assume the groups have equal variances, and it loses little when they do.' },
+    { q: 'What is Cohen\'s d and why does it matter?', a: 'Cohen\'s d is an effect size, the standardized difference between two means, and it answers a question the p-value from the Best Answer Hub T-Test Calculator cannot: how big is the difference. A significant t-test tells you a difference is detectable, not that it is large. By convention roughly 0.2, 0.5, and 0.8 are small, medium, and large, though these are a rule of thumb rather than a fixed standard.' },
+    { q: 'What is alpha, and is 0.05 a rule?', a: 'Alpha is the significance threshold you set before testing, the accepted risk of a false positive. The 0.05 value is a common convention, not a law, a point the Best Answer Hub Statistics Suite repeats beside its results. The ASA specifically warns against treating that 0.05 line as a bright divide between a real result and no result, since a p-value just above or below it is not meaningfully different. Set alpha deliberately for your context.' },
+    { q: 'When should a test be one-tailed versus two-tailed?', a: 'Use a two-tailed test when you care about a difference in either direction, which is the safe default the Best Answer Hub T-Test Calculator suggests for most questions. Use a one-tailed test only when your hypothesis specified a direction before you looked at the data. Switching to one-tailed after seeing the results is a way to manufacture significance and should be avoided, because it doubles the effective false-positive risk.' },
+    { q: 'Is my data uploaded when I use these calculators?', a: 'No. Every calculation in the Best Answer Hub Statistics Suite runs locally in your browser, so the numbers you enter are never transmitted, logged, or stored on a server. That makes the suite safe to use for sensitive or unpublished data, and it means the tools keep working even with no internet connection after the page has loaded. Closing the tab clears everything you entered.' },
+    { q: 'Do I need an account or subscription?', a: 'No. The Statistics Suite is completely free with no signup, no usage limits, and no paywall on the explanation. Some well-known math tools compute an answer for free but charge to show the working; here the calculation and the plain-English meaning are both free, because Best Answer Hub is funded by optional paid assessments rather than advertising.' },
+    { q: 'Are these calculators accurate enough for coursework?', a: 'Yes. The Best Answer Hub calculators use the standard formulas and distributions for each calculation, and each page explains the assumptions so you can confirm the method fits your data. For coursework, the value is not only the number but the reasoning next to it, which helps you show your understanding and catch the interpretation errors that lose marks even when the arithmetic is right.' },
+    { q: 'Which tool do I use for a hypothesis test?', a: 'It depends on what you are comparing. To compare a sample mean to a value or two group means, use the Best Answer Hub T-Test Calculator. To get the probability behind a test statistic you already have, use the p-value calculator. To express the uncertainty around an estimate, use the confidence interval calculator. The z-score calculator is for standardizing a single value and reading its percentile.' },
+    { q: 'Can these tools replace understanding the statistics?', a: 'No, and the Best Answer Hub tools are built to prevent that. A calculator makes the arithmetic instant, but the ASA\'s central point is that statistical results require reasoning, not a threshold check. That is why each tool explains what its number means and the misreading to avoid. The goal is to compute quickly and interpret correctly, not to outsource the judgment the numbers still require.' },
+    { q: 'Is the Statistics Suite free?', a: 'Yes. It is completely free with no usage limits, no watermarks, and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so the tools carry no ads and never ask you to upgrade to finish a calculation or to unlock the explanation of what your result means.' },
+  ];
+
+const seo = {
+  title: 'Free Statistics Calculators, Explained',
+  description: 'Free z-score, confidence interval, p-value, and t-test calculators that run in your browser, each with the classic misreading to avoid. Nothing uploaded.',
+  url: '/playbooks/free-statistics-calculators/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Free Statistics Calculators', url: '/playbooks/free-statistics-calculators/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Calculators</span>
+        <div class="cav">The number, and what it actually means</div>
+        <h1>Free Statistics Calculators, <em>Explained</em></h1>
+        <p class="dek">A plain guide to the Best Answer Hub Statistics Suite: a z-score, confidence interval, p-value, and t-test calculator, each free and run entirely in your browser, and each paired with the one thing people most often get wrong about it. The math is easy to compute; the meaning is where results go sideways, so this guide covers both.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>No signup</span><span>Nothing uploaded</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Compute<small>four tools</small></div>
+          <div class="seg b2">In-browser<small>nothing uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">4</div><div class="l">free statistics tools in the suite</div><div class="src">z-score, CI, p-value, t-test</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">principles in the ASA p-value statement</div><div class="src">American Statistical Association</div></div>
+      <div class="stat"><div class="n">2016</div><div class="l">the year the ASA warned p-values are misused</div><div class="src">Wasserstein &amp; Lazar</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">data uploaded to a server</div><div class="src">computed on your device</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#pvalue">The p-value trap</a>
+        <a href="#ci">Confidence intervals</a>
+        <a href="#zscore">Z-scores</a>
+        <a href="#ttest">The t-test</a>
+        <a href="#choose">Which test, and alpha</a>
+        <a href="#private">Free and private</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub Statistics Suite gives you a z-score, confidence interval, p-value, and t-test calculator that run entirely in your browser, and each one is paired with a plain-English explanation of what the result does and does not mean.</strong> Computing these numbers is the easy part. The hard part, the part that trips up students and professionals alike, is interpreting them, because the most common readings of a p-value and a confidence interval are simply wrong. This guide walks the four tools and the honest meaning behind each.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Statistics Suite?</h2>
+        <p>The Best Answer Hub <a href="/calculators/statistics-suite/">Statistics Suite</a> is a set of four free calculators for the everyday building blocks of statistical inference: a <a href="/calculators/statistics-suite/z-score-calculator/">Z-Score Calculator</a>, a <a href="/calculators/statistics-suite/confidence-interval-calculator/">Confidence Interval Calculator</a>, a <a href="/calculators/statistics-suite/p-value-calculator/">P-Value Calculator</a>, and a <a href="/calculators/statistics-suite/t-test-calculator/">T-Test Calculator</a>. Each runs on your device with no account and nothing uploaded, adds no watermark, and shows no ads, and each is written to explain the result rather than just print it. The suite sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The famous mistake</div>
+        <h2 id="pvalue">What does a p-value actually tell you, and what does it not?</h2>
+        <p>A p-value tells you how compatible your data are with a specific model, and it does not tell you the probability that your hypothesis is true. This distinction is important enough that the American Statistical Association issued a formal statement about it in 2016, listing six principles for using p-values. Two of them matter most here. The ASA states plainly that p-values "do not measure the probability that the studied hypothesis is true," and that "a p-value, or statistical significance, does not measure the size of an effect or the importance of a result" (<a href="https://www.amstat.org/asa/files/pdfs/p-valuestatement.pdf" target="_blank" rel="noopener noreferrer">Wasserstein &amp; Lazar, 2016</a>). So a small p-value is not proof your hypothesis is right, and a large one is not proof there is no effect. As the ASA's executive director put it, "the p-value was never intended to be a substitute for scientific reasoning."</p>
+        <blockquote>A p-value measures compatibility between data and a model. <span class="accent">It is not the chance the null is true, and it says nothing about how big the effect is.</span></blockquote>
+        <p>The precise definition is worth keeping in view: a p-value is the probability of getting a test statistic at least as extreme as the one observed, if every assumption of the model, including the null hypothesis, were correct (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4877414/" target="_blank" rel="noopener noreferrer">Greenland et al., 2016</a>). The Best Answer Hub P-Value Calculator computes exactly that, and the page explains the reading so the number does not get overstated.</p>
+
+        <div class="cav">The other famous mistake</div>
+        <h2 id="ci">What does a 95% confidence interval really mean?</h2>
+        <p>It means the method that produced the interval captures the true value 95 percent of the time in the long run, not that there is a 95 percent chance the true value sits inside your one interval. The difference sounds subtle and is not. Greenland and colleagues put the wrong reading bluntly and then correct it: the idea that "the specific 95% confidence interval presented by a study has a 95% chance of containing the true effect size" gets a one-word answer, "No!" The 95 percent is a property of the procedure across many hypothetical studies, and your single computed interval either contains the true value or it does not (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4877414/" target="_blank" rel="noopener noreferrer">Greenland et al., 2016</a>). The usual teaching phrasing, that "we are 95% confident the value is between these bounds," is acceptable shorthand as long as you remember it describes the method's track record (<a href="https://online.stat.psu.edu/stat200/lesson/4/4.2/4.2.1" target="_blank" rel="noopener noreferrer">Penn State</a>).</p>
+        <figure class="chart">
+          <figcaption class="chart-title">Why the 95% is about the method, not your one interval</figcaption>
+          <svg viewBox="0 0 620 250" role="img" aria-label="Diagram: a vertical line marks the true value; twenty horizontal confidence intervals from repeated samples are drawn, and about one in twenty misses the true value, illustrating that 95% is the long-run coverage of the method.">
+            <line x1="310" y1="20" x2="310" y2="212" stroke="#6F8A6A" stroke-width="2" stroke-dasharray="4 4"/>
+            <text x="310" y="234" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#5a7355">true value</text>
+            <g font-family="Karla, sans-serif" font-size="0">
+              <line x1="250" y1="30" x2="360" y2="30" stroke="#C6603F" stroke-width="6" stroke-linecap="round"/>
+              <line x1="270" y1="48" x2="380" y2="48" stroke="#C6603F" stroke-width="6" stroke-linecap="round"/>
+              <line x1="230" y1="66" x2="330" y2="66" stroke="#C6603F" stroke-width="6" stroke-linecap="round"/>
+              <line x1="285" y1="84" x2="395" y2="84" stroke="#C6603F" stroke-width="6" stroke-linecap="round"/>
+              <line x1="255" y1="102" x2="355" y2="102" stroke="#C6603F" stroke-width="6" stroke-linecap="round"/>
+              <line x1="330" y1="120" x2="440" y2="120" stroke="#B0512F" stroke-width="6" stroke-linecap="round"/>
+              <line x1="240" y1="138" x2="345" y2="138" stroke="#C6603F" stroke-width="6" stroke-linecap="round"/>
+              <line x1="275" y1="156" x2="380" y2="156" stroke="#C6603F" stroke-width="6" stroke-linecap="round"/>
+              <line x1="260" y1="174" x2="365" y2="174" stroke="#C6603F" stroke-width="6" stroke-linecap="round"/>
+              <line x1="290" y1="192" x2="400" y2="192" stroke="#C6603F" stroke-width="6" stroke-linecap="round"/>
+            </g>
+            <text x="450" y="124" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#B0512F">misses</text>
+          </svg>
+          <p class="chart-src">Illustrative. Each bar is a confidence interval from a fresh sample. Across many samples, about 95 percent capture the true value and about 5 percent miss it. Any single interval simply does or does not contain it.</p>
+        </figure>
+
+        <div class="cav">Reading position</div>
+        <h2 id="zscore">What is a z-score, and where does it mislead?</h2>
+        <p>A z-score tells you how many standard deviations a value sits from the mean, which turns a raw number into a position you can compare across different scales. The formula is simply the value minus the mean, divided by the standard deviation, and the Best Answer Hub Z-Score Calculator maps that position to a percentile on the standard normal curve. The caveat is where people slip: standardizing does not make skewed data normal. If the underlying distribution is not roughly normal, the neat percentile that comes out of a z-score no longer reflects reality, because the percentile lookup assumes the bell curve in the first place. A z-score is a relative position, useful and clean, but it is only as trustworthy as the assumption that the data are approximately normal.</p>
+        <div class="callout peach"><div class="h">A score is not a probability</div><p>A z-score of 2 does not mean a 2 percent anything. It means the value is two standard deviations above the mean, which corresponds to a percentile only when the distribution is normal. The calculator shows the percentile; you supply the judgment about whether the normal assumption holds.</p></div>
+
+        <div class="cav">The workhorse</div>
+        <h2 id="ttest">How do you run a t-test without getting it wrong?</h2>
+        <p>You start by matching the test to the design, because using the wrong design invalidates the result before any number appears. A one-sample t-test compares a mean to a fixed value, a paired t-test compares two measurements on the same subjects, and an independent-samples t-test compares two separate groups; picking the wrong one is the most common and most damaging error. For two independent groups, the safer default is Welch's t-test, which does not assume the two groups have equal variances. The research is clear that Welch "provides a better control of Type 1 error rates when the assumption of homogeneity of variance is not met" and "loses little robustness" when variances are in fact equal, so it is a sound default either way (<a href="https://rips-irsp.com/articles/10.5334/irsp.82" target="_blank" rel="noopener noreferrer">Delacre, Lakens &amp; Leys, 2017</a>). Finally, a significant t-test tells you an effect is detectable, not that it is large, so pair it with an effect size such as Cohen's d, where roughly 0.2, 0.5, and 0.8 are treated as small, medium, and large by convention.</p>
+        <table>
+          <thead><tr><th>You are comparing</th><th>Use this t-test</th></tr></thead>
+          <tbody>
+            <tr><td class="band">A mean against a fixed target</td><td>One-sample</td></tr>
+            <tr><td class="band">Before and after on the same people</td><td>Paired</td></tr>
+            <tr><td class="band">Two separate groups</td><td>Independent samples, Welch by default</td></tr>
+            <tr><td class="band">How big the difference is</td><td>An effect size such as Cohen's d, alongside the test</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The setup choices</div>
+        <h2 id="choose">Z or t, one tail or two, and what is alpha?</h2>
+        <p>Reach for a z-score when the population standard deviation is known or the sample is large enough for the normal model to hold, and for a t-test when you are estimating the spread from the sample itself, which is the usual real-world case. Choose a two-tailed test when you care about a difference in either direction, and a one-tailed test only when your hypothesis specified a direction in advance; picking one-tailed after seeing the data is a way to manufacture significance. Alpha is the significance threshold you set before testing, the accepted risk of a false positive, and while 0.05 is the common convention it is only that, a convention. The ASA's third principle warns specifically against treating that 0.05 line as a bright divide between real and not real (<a href="https://www.amstat.org/asa/files/pdfs/p-valuestatement.pdf" target="_blank" rel="noopener noreferrer">ASA, 2016</a>). NIST frames the pairing cleanly: the confidence level is "the inverse of a significance level," so a 95 percent interval and an alpha of 0.05 are two sides of the same choice (<a href="https://www.itl.nist.gov/div898/handbook/prc/section1/prc14.htm" target="_blank" rel="noopener noreferrer">NIST</a>).</p>
+
+        <div class="cav">The honest edge</div>
+        <h2 id="private">Why use these instead of another online calculator?</h2>
+        <p>Because they are free, they run entirely in your browser, and they explain the result rather than gate the explanation. Plenty of statistics calculators exist, so this is not the only option, and the honest pitch is the combination rather than any single feature: the calculation and the plain-English meaning are both free, nothing you type is uploaded to a server, no account is required, and each tool names the classic misreading to avoid. Some well-known math tools compute an answer for free but charge a subscription to show the working; the Best Answer Hub suite puts the reasoning next to the number at no cost. For anyone learning statistics or sanity-checking a result, understanding what the number means is the point, and that is exactly what these pages are built to deliver.</p>
+        <div class="callout"><div class="h">Pair it with the rest of the toolkit</div><p>The Best Answer Hub <a href="/calculators/">Calculators hub</a> has the neighbors you reach for next, including the <a href="/calculators/stem-suite/">STEM Suite</a> for matrices, distributions, and more, all in the browser. Each runs on your device and uploads nothing.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Run the numbers</span>
+          <h3>Open the Statistics Suite</h3>
+          <p>Free, no signup, and computed entirely in your browser. Get the z-score, confidence interval, p-value, or t-test you need, with a plain-English explanation of what it means, and nothing uploaded.</p>
+          <a class="btn" href="/calculators/statistics-suite/">Open the Statistics Suite</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about the statistics calculators</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-stem-calculators/">Free STEM Calculators, Anchored to the Standards</a></b> Matrices, distributions, resistor codes, and more, all in the browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, No Email Gate</a></b> The Calculators hub guide, from finance to statistics.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>Wasserstein, R. &amp; Lazar, N. (2016), <a href="https://www.amstat.org/asa/files/pdfs/p-valuestatement.pdf" target="_blank" rel="noopener noreferrer">The ASA Statement on p-Values</a>, <em>The American Statistician</em> (six principles; a p-value is not the probability the hypothesis is true and does not measure effect size; 0.05 is not a bright line).</li>
+          <li>Greenland, S. et al. (2016), <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4877414/" target="_blank" rel="noopener noreferrer">Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations</a>, <em>European Journal of Epidemiology</em> (the confidence-interval misreading corrected).</li>
+          <li>Penn State, <a href="https://online.stat.psu.edu/stat200/lesson/4/4.2/4.2.1" target="_blank" rel="noopener noreferrer">STAT 200, 4.2.1</a> (acceptable "95% confident" phrasing).</li>
+          <li>Delacre, M., Lakens, D. &amp; Leys, C. (2017), <a href="https://rips-irsp.com/articles/10.5334/irsp.82" target="_blank" rel="noopener noreferrer">Why Psychologists Should by Default Use Welch's t-test</a> (Welch as a safe default).</li>
+          <li>NIST/SEMATECH, <a href="https://www.itl.nist.gov/div898/handbook/prc/section1/prc14.htm" target="_blank" rel="noopener noreferrer">e-Handbook of Statistical Methods</a> (confidence level as the inverse of the significance level; one- vs two-sided tests).</li>
+          <li>Cohen's d thresholds (0.2 / 0.5 / 0.8) are a widely used rule of thumb, not a fixed standard (<a href="https://statisticsbyjim.com/basics/cohens-d/" target="_blank" rel="noopener noreferrer">background</a>).</li>
+        </ul>
+        <p style="margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:.85rem;color:var(--muted)">Jump into the tools: <a href="/calculators/statistics-suite/">Statistics Suite</a>, <a href="/calculators/stem-suite/">STEM Suite</a>, <a href="/calculators/">Calculators</a>, and <a href="/tools/">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .notaffil{margin-top:14px;font-size:.76rem;color:var(--muted);max-width:44em;font-weight:600}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:24px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+
+</script>

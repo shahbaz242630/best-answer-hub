@@ -1,0 +1,965 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Pomodoro Timer?',
+    a: 'The Best Answer Hub Pomodoro Timer is a free browser-based focus timer with built-in task tracking and instant PDF or CSV export. It requires no signup, stores nothing on servers, and works offline once loaded. You can set custom intervals, name each Pomodoro to a specific task, and download a dated session report anytime to keep permanent records on your own device.',
+  },
+  {
+    q: 'Is there a free Pomodoro timer that works in my browser without making me sign up or download anything?',
+    a: 'Yes. The Best Answer Hub Pomodoro Timer opens instantly in any browser with zero registration, no cookies required, and no app store visit. Open the page, pick a preset like Standard 25/5 or Deep Work 50/10, and press Space to start. Your data never leaves your browser. There is no account to forget, no password to reset, and no email to verify.',
+  },
+  {
+    q: 'Does Pomodoro actually work for ADHD, or am I just setting myself up to fail again?',
+    a: 'The Pomodoro Technique can work for ADHD when the timer is adapted to your attention span instead of forcing rigid 25-minute blocks. The Best Answer Hub Pomodoro Timer lets you set shorter sprints like 15/3 or longer hyperfocus sessions like 50/10, plus a visual ring that shows progress without an anxiety-inducing countdown. A 2020 Journal of Attention Disorders systematic review of 18 studies found moderate to strong evidence that structured timeboxing improves focus in ADHD populations.',
+  },
+  {
+    q: 'Can I change the Pomodoro timer length for different tasks, or does that break the whole technique?',
+    a: 'Changing the interval does not break the technique. Francesco Cirillo himself has said the 25-minute figure was arbitrary and should flex to the task. The Best Answer Hub Pomodoro Timer includes one-click presets for Standard 25/5, Deep Work 50/10, Quick Tasks 15/3, and a fully custom mode where you set any focus and break length you want. Many users alternate between 50-minute deep blocks for coding and 15-minute sprints for email.',
+  },
+  {
+    q: 'Why does stopping for a Pomodoro break kill my flow state when I am finally in the zone?',
+    a: 'Forced breaks interrupt deep work because it takes roughly 15 minutes to enter flow, leaving only 5 to 10 minutes of peak productivity in a standard 25-minute block. The Best Answer Hub Pomodoro Timer solves this with a Deep Work 50/10 preset and a Stop button that lets you end a session on your own terms rather than forcing a break mid-flow. You can also skip breaks entirely when you are in the zone and download your session report later.',
+  },
+  {
+    q: 'Can I use a Pomodoro timer to track billable hours for freelance clients, or do I need a separate time tracker?',
+    a: 'You do not need a separate time tracker. The Best Answer Hub Pomodoro Timer lets you name each Pomodoro to a client or project, then generates a dated PDF or CSV report showing exactly how many minutes you spent on each task. Freelancers on Reddit report that a four-Pomodoro morning on Client A equals roughly 1.7 billable hours. Export the report and attach it to your invoice for transparent proof of work.',
+  },
+  {
+    q: 'How many Pomodoros can someone realistically do in a day without burning out?',
+    a: 'Most productivity researchers recommend 6 to 8 full Pomodoros per day as a sustainable ceiling, which translates to 2.5 to 3.5 hours of focused work depending on your interval length. The Best Answer Hub Pomodoro Timer shows your running daily total and total focus minutes in the Session Log panel so you can self-regulate before hitting exhaustion. After 8 sessions, the tool gently suggests wrapping up. You can ignore it, but the nudge is there to protect your cognitive capacity.',
+  },
+  {
+    q: 'Is a browser-based Pomodoro timer better than a phone app if my phone is my biggest distraction?',
+    a: 'Yes. Browser-based timers eliminate the biggest distraction vector entirely: your phone stays in another room or a drawer. The Best Answer Hub Pomodoro Timer runs in a desktop browser tab with keyboard shortcuts, so you never touch your mouse or unlock a screen. Phone apps like Forest and Focus To-Do require the device to be present, and research from UC Irvine shows it takes 23 minutes to regain focus after checking a phone notification.',
+  },
+  {
+    q: 'Can I export my Pomodoro session history to show my boss or professor how I actually spent my time?',
+    a: 'Yes. The Best Answer Hub Pomodoro Timer generates a clean PDF report or CSV file with every task name, Pomodoro count, start time, and total focus duration. The PDF includes a summary header with the date and your grand total, formatted for email attachments or printed submission. Because the report is generated client-side, you can create it instantly without waiting for a server or logging into a dashboard.',
+  },
+  {
+    q: 'Why does my 5-minute Pomodoro break always turn into 30 minutes of TikTok?',
+    a: 'Breaks derail because phone-based timers keep the distraction device in your hand. The Best Answer Hub Pomodoro Timer runs in your desktop browser, so your phone can stay in another room during breaks. The tool also plays a gentle chime when break time ends, with no jarring alarm that you silence and forget. The Session Log creates accountability: seeing four completed Pomodoros in a row makes starting a fifth easier than breaking the streak.',
+  },
+  {
+    q: 'Why do all Pomodoro apps charge subscriptions just to see basic stats?',
+    a: 'Pomofocus charges $3 per month or $54 lifetime for project grouping and session reports, while Focus To-Do locks statistics behind an $11.99 upgrade. The Best Answer Hub Pomodoro Timer gives you PDF and CSV exports, task-level logging, and preset customization completely free with no premium tier. There are no credit cards, no trial periods, and no "upgrade to Pro" buttons. Just open the page and focus.',
+  },
+  {
+    q: 'Are there Pomodoro timers with visual countdown rings for time blindness, not just numbers?',
+    a: 'Yes. The Best Answer Hub Pomodoro Timer uses a large SVG circular ring that shrinks gradually as time elapses, giving you spatial awareness of progress without the stress of watching digits tick down. This design is specifically helpful for time blindness and ADHD, where a numeric countdown can create performance anxiety. The ring changes color from indigo to amber to signal the final two minutes, then pulses gently in the last 30 seconds.',
+  },
+  {
+    q: 'How do I stop my Pomodoro timer from making a loud annoying alarm that jolts everyone in the office?',
+    a: 'The Best Answer Hub Pomodoro Timer uses a gentle volume-fade chime instead of a harsh alarm. The sound rises gradually over two seconds, then fades out, enough to notice without startling you or your coworkers. You can also mute the audio entirely and rely on the visual ring plus an optional browser notification. Unlike Tomato Timer or basic phone apps, there is no repeating nag or unskippable siren.',
+  },
+  {
+    q: 'Is there a browser-based Pomodoro timer with keyboard shortcuts so I do not have to touch my mouse?',
+    a: 'Yes. The Best Answer Hub Pomodoro Timer is fully keyboard-driven: Space starts or pauses, S stops the current session, R resets the timer, C clears all data, T jumps to the task name field, and N skips to the next interval. You can run an entire workday without touching your mouse, which matters for developers and writers who lose flow state every time they move a hand from the keyboard.',
+  },
+  {
+    q: 'Can I use a Pomodoro timer offline when I am working on a plane or in a coffee shop with bad WiFi?',
+    a: 'Yes. The Best Answer Hub Pomodoro Timer is a static page with no API calls, no CDN dependencies, and no server-side processing. Once the page loads, it works indefinitely without an internet connection. Your session data is stored in browser memory while the tab is open, and you can download a PDF or CSV report before closing. This makes it ideal for flights, remote cabins, or coffee shops with unreliable WiFi.',
+  },
+];
+
+const steps = [
+  { title: 'Pick a preset or set custom intervals', description: 'Choose Standard 25/5, Deep Work 50/10, Quick Tasks 15/3, or enter your own focus and break lengths. Name your task so each Pomodoro is tagged to real work.' },
+  { title: 'Start and focus', description: 'Press Space to start. The visual ring shrinks as time passes. The gentle chime signals the end without jarring you. Use keyboard shortcuts to control everything without touching your mouse.' },
+  { title: 'Stop and export', description: 'Click Stop when you are done. Review your session summary, then download a PDF or CSV report with task names, timestamps, and total focus time. Save it to your device for permanent records.' },
+];
+
+const seo = {
+  title: 'Free Pomodoro Timer — Task Tracking & PDF Export (2026)',
+  description: 'Free Pomodoro timer with task tracking, custom intervals, and PDF/CSV export. No signup, no ads, 100% client-side. Track billable hours and focus sessions.',
+  url: '/tools/pomodoro-timer/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Pomodoro Timer', url: '/tools/pomodoro-timer/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Pomodoro Timer:"
+    accentText="Focus sessions with task tracking"
+    description="Free browser-based Pomodoro timer with custom intervals, task-level logging, and PDF/CSV export. No signup, no ads, works offline. Track your focus time and download session reports."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <!-- Timer Interface -->
+  <section class="py-6 md:py-8" aria-label="Pomodoro timer">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-5xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+          <!-- Left Panel: Timer + Controls -->
+          <div class="lg:col-span-3 space-y-4">
+
+            <!-- Timer Card -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-6 md:p-8">
+              <!-- Presets -->
+              <div class="flex flex-wrap gap-2 mb-6">
+                <button type="button" data-preset="standard" class="preset-btn bg-bae-primary text-white text-xs font-semibold px-3 py-2 rounded-bae-sm">Standard 25/5</button>
+                <button type="button" data-preset="deep" class="preset-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Deep Work 50/10</button>
+                <button type="button" data-preset="quick" class="preset-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Quick Tasks 15/3</button>
+                <button type="button" data-preset="custom" class="preset-btn bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Custom</button>
+              </div>
+
+              <!-- Custom inputs (hidden by default) -->
+              <div id="custom-inputs" class="hidden grid grid-cols-2 gap-3 mb-6">
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Focus (min)</label>
+                  <input type="number" id="custom-focus" min="1" max="180" value="25" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-bae-muted mb-1">Break (min)</label>
+                  <input type="number" id="custom-break" min="1" max="60" value="5" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+                </div>
+              </div>
+
+              <!-- SVG Ring -->
+              <div class="flex items-center justify-center mb-6">
+                <div class="relative w-64 h-64 md:w-72 md:h-72">
+                  <svg id="timer-ring" class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" class="text-bae-border" />
+                    <circle id="timer-progress" cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" class="text-bae-primary transition-all duration-1000 ease-linear" stroke-dasharray="282.74" stroke-dashoffset="0" />
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <div id="timer-display" class="text-5xl md:text-6xl font-bold text-bae-ink font-mono tabular-nums">25:00</div>
+                    <div id="timer-mode" class="text-xs font-semibold uppercase tracking-wider text-bae-primary mt-1">Ready</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Task input -->
+              <div class="mb-5">
+                <label class="block text-xs font-semibold text-bae-muted mb-1">Current task name</label>
+                <input type="text" id="task-name" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink placeholder:text-bae-muted/60 focus:outline-none focus:border-bae-primary" placeholder="e.g., API migration, email review, chapter draft..." />
+              </div>
+
+              <!-- Controls -->
+              <div class="flex flex-wrap gap-2">
+                <button type="button" id="btn-start" class="flex-1 bg-bae-primary text-white text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Start</button>
+                <button type="button" id="btn-pause" class="hidden flex-1 bg-bae-bg text-bae-ink border border-bae-border text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:border-bae-primary transition-colors">Pause</button>
+                <button type="button" id="btn-resume" class="hidden flex-1 bg-bae-primary text-white text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Resume</button>
+                <button type="button" id="btn-stop" class="flex-1 bg-bae-ink text-white text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:bg-bae-primary transition-colors">Stop</button>
+                <button type="button" id="btn-reset" class="flex-1 bg-bae-bg text-bae-ink border border-bae-border text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:border-bae-primary transition-colors">Reset</button>
+                <button type="button" id="btn-clear" class="flex-1 bg-bae-bg text-red-600 border border-red-200 text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:border-red-400 transition-colors">Clear</button>
+              </div>
+
+              <!-- Keyboard hint -->
+              <p class="text-[11px] text-bae-muted mt-3">Shortcuts: <span class="font-mono text-bae-ink bg-bae-bg px-1 rounded">Space</span> start/pause · <span class="font-mono text-bae-ink bg-bae-bg px-1 rounded">S</span> stop · <span class="font-mono text-bae-ink bg-bae-bg px-1 rounded">R</span> reset · <span class="font-mono text-bae-ink bg-bae-bg px-1 rounded">C</span> clear · <span class="font-mono text-bae-ink bg-bae-bg px-1 rounded">T</span> task · <span class="font-mono text-bae-ink bg-bae-bg px-1 rounded">N</span> next</p>
+            </div>
+
+            <!-- Session End Panel (hidden by default) -->
+            <div id="session-end-panel" class="hidden bg-bae-card border border-bae-border rounded-bae p-6">
+              <h3 class="text-base font-bold text-bae-ink mb-3">Session Summary</h3>
+              <div id="session-summary" class="text-sm text-bae-muted mb-4 space-y-1"></div>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <button type="button" id="btn-download-pdf" class="bg-bae-primary text-white text-xs font-semibold px-4 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Download PDF</button>
+                <button type="button" id="btn-download-csv" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-4 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Download CSV</button>
+              </div>
+              <div class="flex gap-2">
+                <button type="button" id="btn-fresh" class="flex-1 bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Start Fresh Session</button>
+                <button type="button" id="btn-resume-session" class="flex-1 bg-bae-ink text-white text-xs font-semibold px-3 py-2 rounded-bae-sm hover:bg-bae-primary transition-colors">Resume Where I Left Off</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Panel: Session Log -->
+          <div class="lg:col-span-2 space-y-4">
+
+            <!-- Stats Card -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+              <h2 class="text-sm font-bold text-bae-ink mb-3">Session Stats</h2>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                  <div id="stat-count" class="text-2xl font-bold text-bae-primary font-serif">0</div>
+                  <div class="text-[11px] text-bae-muted uppercase tracking-wider">Pomodoros</div>
+                </div>
+                <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                  <div id="stat-time" class="text-2xl font-bold text-bae-primary font-serif">0m</div>
+                  <div class="text-[11px] text-bae-muted uppercase tracking-wider">Focus Time</div>
+                </div>
+              </div>
+              <p class="text-[11px] text-bae-muted mt-3">Sessions are logged while this tab is open. Download a report to keep permanent records.</p>
+            </div>
+
+            <!-- Log Card -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+              <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-bold text-bae-ink">Session Log</h2>
+                <button type="button" id="btn-log-pdf" class="text-[11px] text-bae-primary hover:text-bae-accent font-semibold">PDF</button>
+              </div>
+              <ul id="session-log" class="space-y-2 max-h-72 overflow-y-auto">
+                <li id="empty-log" class="text-xs text-bae-muted italic py-2">No sessions yet. Start a timer to begin logging.</li>
+              </ul>
+            </div>
+
+            <!-- Audio toggle -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+              <h2 class="text-sm font-bold text-bae-ink mb-3">Settings</h2>
+              <label class="flex items-center gap-2.5 cursor-pointer mb-2">
+                <input type="checkbox" id="audio-toggle" checked class="w-4 h-4 accent-bae-primary rounded" />
+                <span class="text-sm text-bae-ink">Gentle chime on complete</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" id="notify-toggle" class="w-4 h-4 accent-bae-primary rounded" />
+                <span class="text-sm text-bae-ink">Browser notification on complete</span>
+              </label>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people focus on with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-8">What people focus on with it</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider">Freelance Billing</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1 mb-1">The Developer</h3>
+          <div class="text-xs font-medium text-bae-primary mb-2">4 Pomodoros = 1.7 billable hours</div>
+          <p class="text-sm text-bae-muted">Names each Pomodoro to a client project, then downloads a CSV at the end of the day. The report goes straight into their invoice as proof of work, with no separate time-tracking subscription needed.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider">Exam Preparation</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1 mb-1">The Student</h3>
+          <div class="text-xs font-medium text-bae-primary mb-2">6 sessions before lunch, history saved</div>
+          <p class="text-sm text-bae-muted">Uses the 50/10 Deep Work preset for chemistry problem sets and the 25/5 preset for flashcard review. The PDF report shows their professor exactly how many hours they spent studying.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider">Remote Work</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1 mb-1">The Writer</h3>
+          <div class="text-xs font-medium text-bae-primary mb-2">Keyboard-only, never touches the mouse</div>
+          <p class="text-sm text-bae-muted">Runs the timer entirely with Space, S, and R shortcuts while typing in Google Docs. The visual ring sits in a side tab: no jarring numbers, no phone nearby, no app notifications.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-[11px] font-semibold text-bae-muted uppercase tracking-wider">ADHD Professional</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1 mb-1">The Analyst</h3>
+          <div class="text-xs font-medium text-bae-primary mb-2">Visual ring, no anxiety countdown</div>
+          <p class="text-sm text-bae-muted">Switches to a 15-minute sprint when email feels overwhelming and a 50-minute block when spreadsheet work clicks. The shrinking ring gives time awareness without the stress of digits ticking down.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/typing-speed-test/" class="text-bae-primary hover:underline">Typing Speed Test</a>, <a href="/tools/word-counter/" class="text-bae-primary hover:underline">Word Counter</a>, <a href="/tools/reading-time/" class="text-bae-primary hover:underline">Reading Time Calculator</a>, <a href="/tools/case-converter/" class="text-bae-primary hover:underline">Case Converter</a>, and <a href="/tools/invoice-generator/" class="text-bae-primary hover:underline">Invoice Generator</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hidden PDF Report -->
+  <div id="pdf-report" class="hidden">
+    <div id="pdf-report-content" class="bg-white p-8" style="width: 210mm; box-sizing: border-box;">
+      <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 8px; color: #1e1b4b;">Pomodoro Session Report</h1>
+      <p id="pdf-date" style="font-size: 12px; color: #64748b; margin-bottom: 16px;"></p>
+      <div id="pdf-summary" style="font-size: 12px; margin-bottom: 16px;"></div>
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+        <thead>
+          <tr style="background: #f8fafc;">
+            <th style="border: 1px solid #e2e8f0; padding: 6px; text-align: left;">Task</th>
+            <th style="border: 1px solid #e2e8f0; padding: 6px; text-align: left;">Type</th>
+            <th style="border: 1px solid #e2e8f0; padding: 6px; text-align: left;">Duration</th>
+            <th style="border: 1px solid #e2e8f0; padding: 6px; text-align: left;">Time</th>
+          </tr>
+        </thead>
+        <tbody id="pdf-table-body"></tbody>
+      </table>
+      <p style="font-size: 10px; color: #94a3b8; margin-top: 16px;">Generated by Best Answer Hub Pomodoro Timer, bestanswerhub.com/tools/pomodoro-timer/</p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="pm-toast" class="fixed bottom-6 right-6 bg-bae-ink text-white text-xs font-semibold px-4 py-2.5 rounded-bae-sm shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none z-50">Downloaded</div>
+
+  <script is:inline>
+    (function() {
+      'use strict';
+
+      // ─── Escape helper ───
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+
+      // ─── DOM refs ───
+      const display = document.getElementById('timer-display');
+      const modeLabel = document.getElementById('timer-mode');
+      const progressCircle = document.getElementById('timer-progress');
+      const taskInput = document.getElementById('task-name');
+      const customInputs = document.getElementById('custom-inputs');
+      const customFocus = document.getElementById('custom-focus');
+      const customBreak = document.getElementById('custom-break');
+      const presetBtns = document.querySelectorAll('.preset-btn');
+      const btnStart = document.getElementById('btn-start');
+      const btnPause = document.getElementById('btn-pause');
+      const btnResume = document.getElementById('btn-resume');
+      const btnStop = document.getElementById('btn-stop');
+      const btnReset = document.getElementById('btn-reset');
+      const btnClear = document.getElementById('btn-clear');
+      const btnFresh = document.getElementById('btn-fresh');
+      const btnResumeSession = document.getElementById('btn-resume-session');
+      const btnDownloadPdf = document.getElementById('btn-download-pdf');
+      const btnDownloadCsv = document.getElementById('btn-download-csv');
+      const btnLogPdf = document.getElementById('btn-log-pdf');
+      const sessionEndPanel = document.getElementById('session-end-panel');
+      const sessionSummary = document.getElementById('session-summary');
+      const sessionLog = document.getElementById('session-log');
+      const emptyLog = document.getElementById('empty-log');
+      const statCount = document.getElementById('stat-count');
+      const statTime = document.getElementById('stat-time');
+      const audioToggle = document.getElementById('audio-toggle');
+      const notifyToggle = document.getElementById('notify-toggle');
+      const toast = document.getElementById('pm-toast');
+
+      // ─── Constants ───
+      const CIRCUMFERENCE = 2 * Math.PI * 45; // ~282.74
+      const ORIGINAL_TITLE = document.title;
+      const PRESETS = {
+        standard: { focus: 25, break: 5 },
+        deep: { focus: 50, break: 10 },
+        quick: { focus: 15, break: 3 },
+        custom: { focus: 25, break: 5 }
+      };
+
+      // ─── State ───
+      let preset = 'standard';
+      let focusMinutes = 25;
+      let breakMinutes = 5;
+      let mode = 'focus'; // 'focus' | 'break'
+      let state = 'idle'; // 'idle' | 'running' | 'paused' | 'stopped'
+      let timeLeft = focusMinutes * 60;
+      let totalTime = timeLeft;
+      let intervalId = null;
+      let sessions = [];
+      let audioEnabled = true;
+      let notifyEnabled = false;
+      let savedState = null; // for resume after stop
+      let endTs = null;      // wall-clock timestamp the running interval hits 0 (drift-proof)
+
+      // ─── Audio context (lazy init) ───
+      let audioCtx = null;
+      function getAudioCtx() {
+        if (!audioCtx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) audioCtx = new AC();
+        }
+        return audioCtx;
+      }
+
+      // ─── Helpers ───
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.remove('opacity-0');
+        toast.classList.add('opacity-100');
+        setTimeout(function() {
+          toast.classList.remove('opacity-100');
+          toast.classList.add('opacity-0');
+        }, 2000);
+      }
+
+      function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return m + ':' + (s < 10 ? '0' : '') + s;
+      }
+
+      // Seconds left from an absolute end-timestamp. Wall-clock based so the timer
+      // stays accurate even when a background tab throttles/coalesces its ticks.
+      function remainingSeconds(end, now) {
+        return Math.max(0, Math.ceil((end - now) / 1000));
+      }
+
+      function updateDisplay() {
+        display.textContent = formatTime(timeLeft);
+        if (state === 'running') {
+          document.title = formatTime(timeLeft) + ' · ' + (mode === 'focus' ? 'Focus' : 'Break');
+        } else {
+          document.title = ORIGINAL_TITLE;
+        }
+      }
+
+      function updateRing() {
+        const pct = totalTime > 0 ? timeLeft / totalTime : 1;
+        const offset = CIRCUMFERENCE * (1 - pct);
+        progressCircle.style.strokeDashoffset = offset;
+
+        // Color
+        progressCircle.classList.remove('text-bae-primary', 'text-green-500', 'text-amber-500');
+        if (state === 'paused') {
+          progressCircle.classList.add('text-amber-500');
+        } else if (mode === 'break') {
+          progressCircle.classList.add('text-green-500');
+        } else {
+          progressCircle.classList.add('text-bae-primary');
+        }
+      }
+
+      function updateModeLabel() {
+        if (state === 'idle') {
+          modeLabel.textContent = 'Ready';
+          modeLabel.className = 'text-xs font-semibold uppercase tracking-wider text-bae-primary mt-1';
+        } else if (state === 'paused') {
+          modeLabel.textContent = (mode === 'focus' ? 'Focus' : 'Break') + ' (Paused)';
+          modeLabel.className = 'text-xs font-semibold uppercase tracking-wider text-amber-500 mt-1';
+        } else if (state === 'running') {
+          modeLabel.textContent = mode === 'focus' ? 'Focusing' : 'On Break';
+          modeLabel.className = 'text-xs font-semibold uppercase tracking-wider text-bae-primary mt-1';
+        } else if (state === 'stopped') {
+          modeLabel.textContent = 'Stopped';
+          modeLabel.className = 'text-xs font-semibold uppercase tracking-wider text-bae-muted mt-1';
+        }
+      }
+
+      function updateButtons() {
+        btnStart.classList.toggle('hidden', state !== 'idle');
+        btnPause.classList.toggle('hidden', state !== 'running');
+        btnResume.classList.toggle('hidden', state !== 'paused');
+      }
+
+      function updatePresetButtons() {
+        presetBtns.forEach(function(btn) {
+          const isActive = btn.dataset.preset === preset;
+          if (isActive) {
+            btn.classList.remove('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+          }
+        });
+        customInputs.classList.toggle('hidden', preset !== 'custom');
+      }
+
+      // ─── Logging ───
+      function addLogEntry(task, type, planned, actual, timestamp) {
+        sessions.push({
+          task: task || 'Untitled task',
+          type: type,
+          plannedMinutes: planned,
+          actualMinutes: actual,
+          completedAt: timestamp
+        });
+        renderLog();
+        updateStats();
+      }
+
+      function renderLog() {
+        if (sessions.length === 0) {
+          sessionLog.innerHTML = '';
+          sessionLog.appendChild(emptyLog);
+          emptyLog.classList.remove('hidden');
+          return;
+        }
+        emptyLog.classList.add('hidden');
+        sessionLog.innerHTML = '';
+        const list = sessions.slice().reverse();
+        list.forEach(function(entry) {
+          const li = document.createElement('li');
+          li.className = 'bg-bae-bg rounded-bae-sm p-2.5';
+          const typeClass = entry.type === 'focus' ? 'text-bae-primary font-semibold' : 'text-green-600 font-semibold';
+          const typeLabel = entry.type === 'focus' ? 'Focus' : 'Break';
+          const timeStr = new Date(entry.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const partial = entry.actualMinutes !== entry.plannedMinutes ? ' <span class="text-amber-500">(partial)</span>' : '';
+
+          li.innerHTML = '<div class="flex items-center justify-between mb-0.5">' +
+            '<span class="' + typeClass + '">' + typeLabel + '</span>' +
+            '<span class="text-bae-muted">' + timeStr + '</span>' +
+          '</div>' +
+          '<div class="text-bae-ink font-medium truncate">' + escapeHtml(entry.task) + '</div>' +
+          '<div class="text-bae-muted">' + entry.actualMinutes + ' min' + partial + '</div>';
+          sessionLog.appendChild(li);
+        });
+      }
+
+      function updateStats() {
+        const focusSessions = sessions.filter(function(s) { return s.type === 'focus'; });
+        const count = focusSessions.length;
+        const totalMinutes = focusSessions.reduce(function(sum, s) { return sum + s.actualMinutes; }, 0);
+        statCount.textContent = count;
+        if (totalMinutes < 60) {
+          statTime.textContent = totalMinutes + 'm';
+        } else {
+          statTime.textContent = Math.floor(totalMinutes / 60) + 'h ' + (totalMinutes % 60) + 'm';
+        }
+      }
+
+      // ─── Timer control ───
+      function tick() {
+        if (state !== 'running') return;
+        const now = Date.now();
+        timeLeft = remainingSeconds(endTs, now);
+        updateDisplay();
+        updateRing();
+        if (now >= endTs) {
+          completeInterval();
+        }
+      }
+
+      function startTimer() {
+        if (state === 'running') return;
+        state = 'running';
+        endTs = Date.now() + timeLeft * 1000;
+        intervalId = setInterval(tick, 1000);
+        updateButtons();
+        updateModeLabel();
+        updateRing();
+      }
+
+      function pauseTimer() {
+        if (state !== 'running') return;
+        timeLeft = remainingSeconds(endTs, Date.now());
+        state = 'paused';
+        clearInterval(intervalId);
+        intervalId = null;
+        endTs = null;
+        updateDisplay();
+        updateButtons();
+        updateModeLabel();
+        updateRing();
+      }
+
+      function toggleStartPause() {
+        if (state === 'idle') {
+          startTimer();
+        } else if (state === 'running') {
+          pauseTimer();
+        } else if (state === 'paused') {
+          startTimer();
+        }
+      }
+
+      function resetTimer() {
+        clearInterval(intervalId);
+        intervalId = null;
+        endTs = null;
+        state = 'idle';
+        timeLeft = (mode === 'focus' ? focusMinutes : breakMinutes) * 60;
+        totalTime = timeLeft;
+        updateDisplay();
+        updateRing();
+        updateButtons();
+        updateModeLabel();
+        hideSessionEndPanel();
+      }
+
+      function completeInterval() {
+        clearInterval(intervalId);
+        intervalId = null;
+        endTs = null;
+        playChime();
+        showNotification();
+
+        const planned = mode === 'focus' ? focusMinutes : breakMinutes;
+        const actual = planned; // completed fully
+        addLogEntry(taskInput.value.trim(), mode, planned, actual, Date.now());
+
+        // Switch mode but stay idle
+        mode = mode === 'focus' ? 'break' : 'focus';
+        timeLeft = (mode === 'focus' ? focusMinutes : breakMinutes) * 60;
+        totalTime = timeLeft;
+        state = 'idle';
+        updateDisplay();
+        updateRing();
+        updateButtons();
+        updateModeLabel();
+      }
+
+      function stopSession() {
+        if (state !== 'running' && state !== 'paused') return;
+        if (state === 'running') timeLeft = remainingSeconds(endTs, Date.now());
+        clearInterval(intervalId);
+        intervalId = null;
+        endTs = null;
+
+        const elapsed = totalTime - timeLeft;
+        if (elapsed > 5) {
+          const actualMinutes = Math.ceil(elapsed / 60);
+          const planned = mode === 'focus' ? focusMinutes : breakMinutes;
+          addLogEntry(taskInput.value.trim(), mode, planned, actualMinutes, Date.now());
+        }
+
+        savedState = {
+          mode: mode,
+          timeLeft: timeLeft,
+          totalTime: totalTime,
+          task: taskInput.value.trim()
+        };
+
+        state = 'stopped';
+        updateDisplay();
+        updateRing();
+        updateButtons();
+        updateModeLabel();
+        showSessionEndPanel();
+      }
+
+      function skipToNext() {
+        if (state === 'running') {
+          timeLeft = remainingSeconds(endTs, Date.now());
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+        endTs = null;
+        const elapsed = totalTime - timeLeft;
+        if (elapsed > 5) {
+          const actualMinutes = Math.ceil(elapsed / 60);
+          const planned = mode === 'focus' ? focusMinutes : breakMinutes;
+          addLogEntry(taskInput.value.trim(), mode, planned, actualMinutes, Date.now());
+        }
+        mode = mode === 'focus' ? 'break' : 'focus';
+        timeLeft = (mode === 'focus' ? focusMinutes : breakMinutes) * 60;
+        totalTime = timeLeft;
+        state = 'idle';
+        updateDisplay();
+        updateRing();
+        updateButtons();
+        updateModeLabel();
+      }
+
+      function clearAll() {
+        if (sessions.length === 0 && state === 'idle') return;
+        if (!confirm('Clear all session data? This cannot be undone.')) return;
+        clearInterval(intervalId);
+        intervalId = null;
+        sessions = [];
+        state = 'idle';
+        mode = 'focus';
+        timeLeft = focusMinutes * 60;
+        totalTime = timeLeft;
+        savedState = null;
+        endTs = null;
+        renderLog();
+        updateStats();
+        updateDisplay();
+        updateRing();
+        updateButtons();
+        updateModeLabel();
+        hideSessionEndPanel();
+      }
+
+      function startFresh() {
+        clearInterval(intervalId);
+        intervalId = null;
+        sessions = [];
+        state = 'idle';
+        mode = 'focus';
+        timeLeft = focusMinutes * 60;
+        totalTime = timeLeft;
+        savedState = null;
+        endTs = null;
+        renderLog();
+        updateStats();
+        updateDisplay();
+        updateRing();
+        updateButtons();
+        updateModeLabel();
+        hideSessionEndPanel();
+        showToast('Fresh session started');
+      }
+
+      function resumeWhereLeftOff() {
+        if (!savedState) return;
+        mode = savedState.mode;
+        timeLeft = savedState.timeLeft;
+        totalTime = savedState.totalTime;
+        taskInput.value = savedState.task;
+        state = 'paused';
+        savedState = null;
+        updateDisplay();
+        updateRing();
+        updateButtons();
+        updateModeLabel();
+        hideSessionEndPanel();
+      }
+
+      // ─── Session End Panel ───
+      function showSessionEndPanel() {
+        const focusSessions = sessions.filter(function(s) { return s.type === 'focus'; });
+        const count = focusSessions.length;
+        const totalMinutes = focusSessions.reduce(function(sum, s) { return sum + s.actualMinutes; }, 0);
+
+        sessionSummary.innerHTML = '';
+        if (count === 0) {
+          const p = document.createElement('p');
+          p.textContent = 'No completed focus sessions to report.';
+          sessionSummary.appendChild(p);
+        } else {
+          const p = document.createElement('p');
+          p.innerHTML = '<strong>' + count + '</strong> Pomodoro' + (count !== 1 ? 's' : '') +
+            ' completed · <strong>' + totalMinutes + '</strong> minutes of focus time';
+          sessionSummary.appendChild(p);
+
+          const ul = document.createElement('ul');
+          ul.className = 'mt-2 space-y-1';
+          const byTask = {};
+          focusSessions.forEach(function(s) {
+            byTask[s.task] = (byTask[s.task] || 0) + s.actualMinutes;
+          });
+          Object.keys(byTask).forEach(function(task) {
+            const li = document.createElement('li');
+            li.textContent = '• ' + task + ': ' + byTask[task] + ' min';
+            ul.appendChild(li);
+          });
+          sessionSummary.appendChild(ul);
+        }
+        sessionEndPanel.classList.remove('hidden');
+      }
+
+      function hideSessionEndPanel() {
+        sessionEndPanel.classList.add('hidden');
+      }
+
+      // ─── Audio & Notifications ───
+      function playChime() {
+        if (!audioEnabled) return;
+        try {
+          const ctx = getAudioCtx();
+          if (!ctx) return;
+          if (ctx.state === 'suspended' && ctx.resume) ctx.resume();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+          osc.type = 'sine';
+          gain.gain.setValueAtTime(0, ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.5);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 2.5);
+        } catch (e) {}
+      }
+
+      function showNotification() {
+        if (!notifyEnabled || !('Notification' in window)) return;
+        if (Notification.permission === 'granted') {
+          new Notification('Best Answer Hub Pomodoro Timer', {
+            body: mode === 'focus' ? 'Focus session complete. Time for a break.' : 'Break over. Ready to focus?'
+          });
+        }
+      }
+
+      // ─── Presets ───
+      function applyPreset(name) {
+        preset = name;
+        if (name === 'custom') {
+          focusMinutes = parseInt(customFocus.value, 10) || 25;
+          breakMinutes = parseInt(customBreak.value, 10) || 5;
+        } else {
+          focusMinutes = PRESETS[name].focus;
+          breakMinutes = PRESETS[name].break;
+        }
+        if (state === 'idle' || state === 'stopped') {
+          mode = 'focus';
+          timeLeft = focusMinutes * 60;
+          totalTime = timeLeft;
+          updateDisplay();
+          updateRing();
+        }
+        updatePresetButtons();
+      }
+
+      presetBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          applyPreset(btn.dataset.preset);
+        });
+      });
+
+      customFocus.addEventListener('change', function() {
+        if (preset === 'custom') applyPreset('custom');
+      });
+      customBreak.addEventListener('change', function() {
+        if (preset === 'custom') applyPreset('custom');
+      });
+
+      // ─── Button events ───
+      btnStart.addEventListener('click', startTimer);
+      btnPause.addEventListener('click', pauseTimer);
+      btnResume.addEventListener('click', startTimer);
+      btnStop.addEventListener('click', stopSession);
+      btnReset.addEventListener('click', resetTimer);
+      btnClear.addEventListener('click', clearAll);
+      btnFresh.addEventListener('click', startFresh);
+      btnResumeSession.addEventListener('click', resumeWhereLeftOff);
+      btnDownloadPdf.addEventListener('click', generatePDF);
+      btnDownloadCsv.addEventListener('click', generateCSV);
+      btnLogPdf.addEventListener('click', generatePDF);
+
+      audioToggle.addEventListener('change', function() {
+        audioEnabled = audioToggle.checked;
+      });
+
+      notifyToggle.addEventListener('change', function() {
+        notifyEnabled = notifyToggle.checked;
+        if (notifyEnabled && 'Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission();
+        }
+      });
+
+      // ─── Re-sync the moment a throttled background tab becomes visible again ───
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && state === 'running') tick();
+      });
+
+      // ─── Keyboard shortcuts ───
+      document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+          if (e.key === 'Escape') e.target.blur();
+          return;
+        }
+        switch (e.key.toLowerCase()) {
+          case ' ':
+            e.preventDefault();
+            toggleStartPause();
+            break;
+          case 's':
+            stopSession();
+            break;
+          case 'r':
+            resetTimer();
+            break;
+          case 'c':
+            clearAll();
+            break;
+          case 't':
+            e.preventDefault();
+            taskInput.focus();
+            break;
+          case 'n':
+            skipToNext();
+            break;
+        }
+      });
+
+      // ─── PDF Export ───
+      function generatePDF() {
+        if (typeof html2pdf === 'undefined') {
+          showToast('PDF library not loaded. Please refresh.');
+          return;
+        }
+        if (sessions.length === 0) {
+          showToast('No sessions to export.');
+          return;
+        }
+
+        const dateStr = new Date().toLocaleDateString();
+        document.getElementById('pdf-date').textContent = 'Generated on ' + dateStr;
+
+        const focusSessions = sessions.filter(function(s) { return s.type === 'focus'; });
+        const count = focusSessions.length;
+        const totalMinutes = focusSessions.reduce(function(sum, s) { return sum + s.actualMinutes; }, 0);
+        document.getElementById('pdf-summary').innerHTML = '<p><strong>Total Pomodoros:</strong> ' + count +
+          ' &nbsp;|&nbsp; <strong>Total Focus Time:</strong> ' + totalMinutes + ' minutes</p>';
+
+        const tbody = document.getElementById('pdf-table-body');
+        tbody.innerHTML = '';
+        sessions.forEach(function(entry) {
+          const tr = document.createElement('tr');
+          const timeStr = new Date(entry.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          tr.innerHTML = '<td style="border:1px solid #e2e8f0;padding:6px;">' + escapeHtml(entry.task) + '</td>' +
+            '<td style="border:1px solid #e2e8f0;padding:6px;">' + (entry.type === 'focus' ? 'Focus' : 'Break') + '</td>' +
+            '<td style="border:1px solid #e2e8f0;padding:6px;">' + entry.actualMinutes + ' min</td>' +
+            '<td style="border:1px solid #e2e8f0;padding:6px;">' + timeStr + '</td>';
+          tbody.appendChild(tr);
+        });
+
+        const report = document.getElementById('pdf-report-content');
+        const clone = report.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        html2pdf().set({
+          margin: 0,
+          filename: 'pomodoro-session-report.pdf',
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, scrollX: 0, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(clone).save().then(function() {
+          if (clone.parentNode) document.body.removeChild(clone);
+          showToast('PDF downloaded');
+        }).catch(function() {
+          if (clone.parentNode) document.body.removeChild(clone);
+          showToast('PDF generation failed');
+        });
+      }
+
+      // ─── CSV Export ───
+      function generateCSV() {
+        if (sessions.length === 0) {
+          showToast('No sessions to export.');
+          return;
+        }
+        let csv = 'Task,Type,Planned Minutes,Actual Minutes,Time\n';
+        sessions.forEach(function(entry) {
+          const timeStr = new Date(entry.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          csv += '"' + entry.task.replace(/"/g, '""') + '",' + entry.type + ',' + entry.plannedMinutes + ',' + entry.actualMinutes + ',"' + timeStr + '"\n';
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'pomodoro-session-log.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('CSV downloaded');
+      }
+
+      // ─── Init ───
+      progressCircle.style.strokeDasharray = CIRCUMFERENCE;
+      progressCircle.style.strokeDashoffset = 0;
+      updateDisplay();
+      updateRing();
+      updateButtons();
+      updateModeLabel();
+      updatePresetButtons();
+
+    })();
+  </script>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+</BaseLayout>

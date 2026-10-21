@@ -1,0 +1,17 @@
+---
+// Data-driven freshness badge. Renders "Updated <Month Year>" from the page's
+// real dateModified (ISO string) so it is always truthful and never goes stale.
+// Optional `suffix` appends context, e.g. "11 tools, 20+ models".
+interface Props {
+  date: string;
+  suffix?: string;
+}
+
+const { date, suffix } = Astro.props;
+const label = new Date(date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+---
+
+<div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+  <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+  Updated {label}{suffix ? ` · ${suffix}` : ''}
+</div>

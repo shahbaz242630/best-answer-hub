@@ -1,0 +1,1342 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ToolHero from '../../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub P-Value Calculator?',
+    a: 'The Best Answer Hub P-Value Calculator is a free browser-based tool that converts test statistics into p-values for z-scores, t-scores, chi-square values, and F-ratios. It displays one-tailed and two-tailed probabilities, compares results against custom alpha levels, and generates step-by-step work with plain-English interpretations. All calculations run locally, with no data sent to any server.',
+  },
+  {
+    q: 'How do I calculate a p-value from a z-score?',
+    a: 'Enter the z-score into the Best Answer Hub P-Value Calculator and select the tail type. The calculator uses the standard normal cumulative distribution function to find the tail probability. For example, a z-score of 1.96 produces a two-tailed p-value of approximately 0.0500 and a one-tailed p-value of approximately 0.0250. Step-by-step work shows the exact formula and substitution.',
+  },
+  {
+    q: 'How do I calculate a p-value from a t-statistic?',
+    a: 'Enter the t-statistic and degrees of freedom into the Best Answer Hub P-Value Calculator. The tool evaluates the t-distribution cumulative density function at your value. For instance, a t-score of 2.030 with 35 degrees of freedom yields a two-tailed p-value of approximately 0.0500. The calculator highlights whether the result is significant at your chosen alpha level.',
+  },
+  {
+    q: 'What is the difference between a one-tailed and a two-tailed p-value?',
+    a: 'A one-tailed p-value tests for an effect in a single direction, for example whether a treatment increases a value. A two-tailed p-value tests for an effect in either direction, whether a treatment increases or decreases a value. The Best Answer Hub P-Value Calculator reports both and includes a visual diagram showing the shaded tail area for each.',
+  },
+  {
+    q: 'What does p < 0.05 mean in simple terms?',
+    a: 'A p-value less than 0.05 means that if the null hypothesis were true, the probability of observing a test statistic at least as extreme as yours would be less than 5%. This is typically considered statistically significant. The Best Answer Hub P-Value Calculator includes a plain-English conclusion with every result to avoid common misconceptions.',
+  },
+  {
+    q: 'Is a p-value of 0.043 statistically significant at alpha 0.05?',
+    a: 'Yes. Because 0.043 is less than 0.05, the result is statistically significant at the 5% level. The Best Answer Hub P-Value Calculator automatically compares the computed p-value to your chosen alpha and displays a clear verdict: significant or not significant. It also shows the exact percentage: 4.3% chance of observing this result if the null hypothesis were true.',
+  },
+  {
+    q: 'Can a p-value be negative?',
+    a: 'No. A p-value is a probability, so it always falls between 0 and 1 inclusive. If a calculator returns a negative number, there is an input error or a software bug. The Best Answer Hub P-Value Calculator validates all inputs and warns about impossible values, ensuring every result is a valid probability between 0 and 1.',
+  },
+  {
+    q: 'How do I find the p-value for a chi-square test?',
+    a: 'Enter the chi-square test statistic and degrees of freedom into the Best Answer Hub P-Value Calculator. For a chi-square test, degrees of freedom equal (rows − 1) × (columns − 1) for contingency tables, or k − 1 for goodness-of-fit tests with k categories. The calculator evaluates the chi-square cumulative distribution and returns the upper-tail p-value with step-by-step work.',
+  },
+  {
+    q: 'How do I calculate a p-value from an F-ratio in ANOVA?',
+    a: 'Enter the F-ratio, numerator degrees of freedom (df1), and denominator degrees of freedom (df2) into the Best Answer Hub P-Value Calculator. For a one-way ANOVA, df1 = k − 1 where k is the number of groups, and df2 = N − k where N is the total sample size. The calculator evaluates the F-distribution and returns the upper-tail p-value with interpretation.',
+  },
+  {
+    q: 'What are degrees of freedom and why do they matter for p-values?',
+    a: 'Degrees of freedom represent the number of independent values in a calculation that are free to vary. For a one-sample t-test, df = n − 1. For chi-square, df = (r − 1)(c − 1). They determine the shape of the sampling distribution and therefore the critical value. The Best Answer Hub P-Value Calculator includes inline helpers showing the correct df formula for each test type.',
+  },
+  {
+    q: 'If my p-value is exactly 0.05, do I reject or fail to reject the null hypothesis?',
+    a: 'At the conventional 0.05 significance level, a p-value of exactly 0.05 is considered borderline. Most statisticians and style guides, including APA 7th edition, recommend rejecting the null hypothesis when p ≤ α. The Best Answer Hub P-Value Calculator flags this boundary case and explains that the result is statistically significant at the 5% level, though replication is advisable.',
+  },
+  {
+    q: 'Is the p-value the same thing as the significance level alpha?',
+    a: 'No. The p-value is the probability of observing your data, or more extreme data, if the null hypothesis is true. Alpha is the threshold you choose before conducting the test, commonly 0.05, 0.01, or 0.10. You compare the p-value to alpha to make a decision. The Best Answer Hub P-Value Calculator displays both values side by side and explains the comparison in plain language.',
+  },
+  {
+    q: 'Can I use the Best Answer Hub P-Value Calculator for my AP Statistics homework?',
+    a: 'Yes. The Best Answer Hub P-Value Calculator shows full step-by-step work, including the formula, substituted values, and final probability, exactly what AP Statistics scoring rubrics require. It supports z-scores, t-scores, chi-square, and F-ratios, covering the full AP Stats curriculum. No signup is required, so you can use it during study sessions without creating an account.',
+  },
+  {
+    q: 'Why do different calculators sometimes give slightly different p-values?',
+    a: 'Small differences usually arise from rounding, different approximation algorithms, or floating-point precision limits. For example, one calculator might use a normal approximation for the t-distribution while another uses the exact cumulative density function. The Best Answer Hub P-Value Calculator uses precise numerical methods (continued fractions for incomplete beta and gamma functions) accurate to at least four decimal places.',
+  },
+  {
+    q: 'Is the Best Answer Hub P-Value Calculator free and private?',
+    a: 'Yes. The Best Answer Hub P-Value Calculator is completely free with no premium tiers, advertisements, or subscription plans. All calculations run entirely in your browser using client-side JavaScript. No data is uploaded, stored, or logged on any server, making it safe for sensitive research data and student assignments.',
+  },
+];
+
+const steps = [
+  { title: 'Choose your test statistic', description: 'Select whether you are working with a z-score, t-score, chi-square value, or F-ratio. Toggle between one-tailed and two-tailed tests as needed.' },
+  { title: 'Enter your values', description: 'Input the test statistic and degrees of freedom where required. The calculator validates inputs and provides inline guidance for calculating degrees of freedom.' },
+  { title: 'Get instant results', description: 'See the p-value, significance verdict at your chosen alpha level, step-by-step work, plain-English interpretation, and a distribution visual. Export to PDF with one click.' },
+];
+
+const seo = {
+  title: 'P-Value Calculator: Z, T, Chi-Square, F | Best Answer Hub',
+  description: 'Free p-value calculator for z-scores, t-scores, chi-square, and F-ratios. One-tailed and two-tailed results with step-by-step work. No signup.',
+  url: '/calculators/statistics-suite/p-value-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Statistics Suite', url: '/calculators/statistics-suite/' },
+    { name: 'P-Value Calculator', url: '/calculators/statistics-suite/p-value-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    backLink="/calculators/statistics-suite/"
+    backLabel="← Statistics Suite"
+    badge="Free Tool · Statistical Analysis"
+    title="P-Value Calculator"
+    accentText="with Steps, Alpha Comparison & Distribution Visual"
+    description="Calculate p-values instantly from z-scores, t-scores, chi-square values, and F-ratios. See one-tailed and two-tailed probabilities, step-by-step work, plain-English interpretation, and an interactive distribution visual. All calculations run in your browser, with no data sent to any server."
+  />
+
+  <!-- Calculator -->
+  <section class="py-6 md:py-8" aria-label="P-Value Calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Left: Inputs -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <!-- Mode Selector -->
+          <div class="mb-5">
+            <label class="block text-sm font-medium text-bae-ink mb-2">Test statistic type</label>
+            <div class="flex flex-wrap gap-2" id="mode-tabs">
+              <button type="button" data-mode="zscore" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium">Z-Score</button>
+              <button type="button" data-mode="tscore" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">T-Score</button>
+              <button type="button" data-mode="chisquare" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Chi-Square</button>
+              <button type="button" data-mode="fratio" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">F-Ratio</button>
+            </div>
+          </div>
+
+          <!-- Tail Type -->
+          <div class="mb-5" id="tail-wrapper">
+            <label class="block text-sm font-medium text-bae-ink mb-2">Tail type</label>
+            <div class="flex flex-wrap gap-2" id="tail-tabs">
+              <button type="button" data-tail="two" class="tail-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium">Two-Tailed</button>
+              <button type="button" data-tail="left" class="tail-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Left-Tailed</button>
+              <button type="button" data-tail="right" class="tail-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Right-Tailed</button>
+            </div>
+            <p class="text-xs text-bae-muted mt-1.5" id="tail-hint">Two-tailed tests for a difference in either direction.</p>
+          </div>
+
+          <!-- Inputs per mode -->
+          <div id="zscore-inputs" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Z-Score (z)</label>
+              <input type="number" id="input-z" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 1.96">
+            </div>
+          </div>
+
+          <div id="tscore-inputs" class="space-y-4 hidden">
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">T-Statistic (t)</label>
+              <input type="number" id="input-t" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 2.030">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Degrees of Freedom (df)</label>
+              <input type="number" id="input-df-t" step="any" min="0.1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 35">
+              <p class="text-xs text-bae-muted mt-1">One-sample t-test: df = n − 1. Two-sample: df = n₁ + n₂ − 2.</p>
+            </div>
+          </div>
+
+          <div id="chisquare-inputs" class="space-y-4 hidden">
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Chi-Square Value (χ²)</label>
+              <input type="number" id="input-chi" step="any" min="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 9.49">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Degrees of Freedom (df)</label>
+              <input type="number" id="input-df-chi" step="1" min="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 4">
+              <p class="text-xs text-bae-muted mt-1">Contingency table: df = (rows − 1)(columns − 1). Goodness-of-fit: df = k − 1.</p>
+            </div>
+          </div>
+
+          <div id="fratio-inputs" class="space-y-4 hidden">
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">F-Ratio (F)</label>
+              <input type="number" id="input-f" step="any" min="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 3.24">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Numerator df (df₁)</label>
+              <input type="number" id="input-df1" step="1" min="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 3">
+              <p class="text-xs text-bae-muted mt-1">One-way ANOVA: df₁ = k − 1 where k = number of groups.</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Denominator df (df₂)</label>
+              <input type="number" id="input-df2" step="1" min="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 27">
+              <p class="text-xs text-bae-muted mt-1">One-way ANOVA: df₂ = N − k where N = total sample size.</p>
+            </div>
+          </div>
+
+          <!-- Alpha Level -->
+          <div class="mt-5">
+            <label class="block text-sm font-medium text-bae-ink mb-2">Significance level (α)</label>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="0.10">0.10</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium" data-alpha="0.05">0.05</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="0.01">0.01</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="0.001">0.001</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="custom">Custom</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="off">None</button>
+            </div>
+            <p class="text-xs text-bae-muted mt-1">Choose <strong>None</strong> to show only the p-value (no significant/not-significant verdict or critical line).</p>
+            <div id="custom-alpha-wrapper" class="hidden">
+              <input type="number" id="input-custom-alpha" step="0.001" min="0.001" max="0.5" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 0.025">
+              <p class="text-xs text-bae-muted mt-1">Enter a value between 0.001 and 0.5</p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-3 mt-6">
+            <button type="button" id="calc-btn" class="bg-bae-primary text-white px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-primary-dark transition-colors">Calculate</button>
+            <button type="button" id="clear-btn" class="bg-white border border-bae-border text-bae-ink px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-border/20 transition-colors">Clear</button>
+            <button type="button" id="pdf-btn" class="bg-white border border-bae-border text-bae-ink px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-border/20 transition-colors hidden">Download PDF</button>
+          </div>
+        </div>
+
+        <!-- Right: Results -->
+        <div class="space-y-4">
+          <!-- Main Result Card -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="result-card" style="display: none;">
+            <h3 class="text-sm font-semibold text-bae-ink mb-4">Result</h3>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1" id="result-label-1">P-Value</p>
+                <p class="text-2xl font-bold text-bae-primary font-mono" id="result-pvalue">—</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Significance</p>
+                <p class="text-lg font-bold" id="result-significance">—</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4" id="extra-pvalues">
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">One-Tailed (Left)</p>
+                <p class="text-base font-semibold text-bae-ink font-mono" id="result-left">—</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">One-Tailed (Right)</p>
+                <p class="text-base font-semibold text-bae-ink font-mono" id="result-right">—</p>
+              </div>
+            </div>
+            <div class="p-3 rounded-bae-sm bg-bae-primary-soft border border-bae-primary/20 text-sm text-bae-ink" id="result-interpretation"></div>
+            <div id="validation-warning" class="mt-3 hidden">
+              <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-bae-sm px-3 py-2"></p>
+            </div>
+          </div>
+
+          <!-- Distribution Visual -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="dist-card" style="display: none;">
+            <h3 class="text-sm font-semibold text-bae-ink mb-3">Distribution Visual</h3>
+            <canvas id="dist-canvas" width="500" height="220" class="w-full rounded-bae-sm border border-bae-border bg-white"></canvas>
+            <p class="text-xs text-bae-muted mt-2 text-center">Blue area = p-value region (beyond your statistic). Amber dashed line = critical value at your chosen α.</p>
+          </div>
+
+          <!-- Step-by-Step -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="steps-card" style="display: none;">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-bae-ink">Step-by-Step Work</h3>
+              <button type="button" id="toggle-steps" class="text-xs text-bae-primary font-medium bg-transparent border-0 cursor-pointer">Hide</button>
+            </div>
+            <div id="steps-content" class="space-y-2 text-sm text-bae-ink"></div>
+          </div>
+
+          <!-- Initial State -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 text-center" id="empty-state">
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xl">🎯</div>
+            <p class="text-sm font-medium text-bae-ink mb-1">Enter your test statistic and click Calculate</p>
+            <p class="text-xs text-bae-muted">The p-value, significance verdict, distribution visual, and step-by-step work will appear here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Calculate P-Value -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">How to Calculate a P-Value</h2>
+      <p class="text-sm text-bae-muted mb-8">The formulas and worked examples for each type of test statistic.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">Z-Score P-Value</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-base font-mono text-bae-ink mb-1">Two-tailed: p = 2 × (1 − Φ(|z|))</p>
+            <p class="text-base font-mono text-bae-ink">One-tailed: p = 1 − Φ(z) or Φ(z)</p>
+          </div>
+          <p class="text-sm text-bae-muted mb-3">Where Φ is the standard normal cumulative distribution function.</p>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Worked Example (two-tailed)</p>
+            <p class="text-sm text-bae-muted mb-2">z = 1.96</p>
+            <div class="space-y-1 text-sm text-bae-muted">
+              <p>1. Φ(1.96) = <span class="font-mono text-bae-ink">0.9750</span></p>
+              <p>2. 1 − Φ(1.96) = <span class="font-mono text-bae-ink">0.0250</span></p>
+              <p>3. p = 2 × 0.0250 = <span class="font-mono text-bae-ink">0.0500</span></p>
+              <p>4. At α = 0.05: <span class="font-mono text-bae-ink">Significant (p = α)</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">T-Score P-Value</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-base font-mono text-bae-ink mb-1">Two-tailed: p = 2 × (1 − F_t(|t|, df))</p>
+            <p class="text-base font-mono text-bae-ink">One-tailed: p = 1 − F_t(t, df) or F_t(t, df)</p>
+          </div>
+          <p class="text-sm text-bae-muted mb-3">Where F_t is the Student's t cumulative distribution function with df degrees of freedom.</p>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Worked Example (two-tailed)</p>
+            <p class="text-sm text-bae-muted mb-2">t = 2.030, df = 35</p>
+            <div class="space-y-1 text-sm text-bae-muted">
+              <p>1. F_t(2.030, 35) = <span class="font-mono text-bae-ink">0.9750</span></p>
+              <p>2. 1 − 0.9750 = <span class="font-mono text-bae-ink">0.0250</span></p>
+              <p>3. p = 2 × 0.0250 = <span class="font-mono text-bae-ink">0.0500</span></p>
+              <p>4. At α = 0.05: <span class="font-mono text-bae-ink">Significant</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">Chi-Square P-Value</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-base font-mono text-bae-ink">p = P(χ² &gt; value) = 1 − F_χ²(value, df)</p>
+          </div>
+          <p class="text-sm text-bae-muted mb-3">Chi-square tests are always right-tailed. F_χ² is the chi-square cumulative distribution function.</p>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Worked Example</p>
+            <p class="text-sm text-bae-muted mb-2">χ² = 9.49, df = 4</p>
+            <div class="space-y-1 text-sm text-bae-muted">
+              <p>1. F_χ²(9.49, 4) = <span class="font-mono text-bae-ink">0.9500</span></p>
+              <p>2. p = 1 − 0.9500 = <span class="font-mono text-bae-ink">0.0500</span></p>
+              <p>3. At α = 0.05: <span class="font-mono text-bae-ink">Significant (borderline)</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">F-Ratio P-Value</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-base font-mono text-bae-ink">p = P(F &gt; value) = 1 − F_F(value, df₁, df₂)</p>
+          </div>
+          <p class="text-sm text-bae-muted mb-3">F-tests in ANOVA are always right-tailed. F_F is the F cumulative distribution function.</p>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Worked Example</p>
+            <p class="text-sm text-bae-muted mb-2">F = 3.24, df₁ = 3, df₂ = 27</p>
+            <div class="space-y-1 text-sm text-bae-muted">
+              <p>1. F_F(3.24, 3, 27) = <span class="font-mono text-bae-ink">0.9624</span></p>
+              <p>2. p = 1 − 0.9624 = <span class="font-mono text-bae-ink">0.0376</span></p>
+              <p>3. At α = 0.05: <span class="font-mono text-bae-ink">Significant</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Calculators -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Related Statistics Calculators</h2>
+      <p class="text-sm text-bae-muted mb-6">Explore the other tools in the Best Answer Hub Statistics Calculator Suite.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a href="/calculators/statistics-suite/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Hub</span>
+            <span class="text-lg">📊</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Statistics Suite</h3>
+          <p class="text-xs text-bae-muted">All four statistical calculators in one place.</p>
+        </a>
+        <a href="/calculators/statistics-suite/z-score-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="text-lg">📐</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Z-Score Calculator</h3>
+          <p class="text-xs text-bae-muted">Calculate z-scores with bell curve and percentile.</p>
+        </a>
+        <a href="/calculators/statistics-suite/confidence-interval-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="text-lg">📏</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Confidence Interval Calculator</h3>
+          <p class="text-xs text-bae-muted">Calculate intervals for means and proportions with steps.</p>
+        </a>
+        <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-5 text-inherit cursor-not-allowed">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">Academic</span>
+            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink/70 mb-1">T-Test Calculator</h3>
+          <p class="text-xs text-bae-muted/70">One-sample, independent, and paired t-tests.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people test with it</h2>
+      <p class="text-sm text-bae-muted mb-6">Real-world scenarios where researchers, students, and analysts reach for the Best Answer Hub P-Value Calculator.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify statistics homework and exam prep</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Covers AP Stats, undergrad, and graduate coursework</p>
+          <p class="text-sm text-bae-muted">Students enter z-scores and t-statistics from textbook problems to check manual calculations. The step-by-step work shows every formula substitution, helping learners understand exactly where p-values come from.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Researchers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Validate experimental results before publication</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Supports t-tests, chi-square, and ANOVA F-ratios</p>
+          <p class="text-sm text-bae-muted">Psychology and biology researchers calculate p-values from experimental data to verify statistical significance. The plain-English conclusion generator helps draft results sections without misinterpreting conditional probability.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Data Analysts</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Test categorical relationships in survey data</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Chi-square tests for contingency tables and A/B tests</p>
+          <p class="text-sm text-bae-muted">Analysts run chi-square tests on survey cross-tabs to see whether groups differ significantly in preferences or behaviour. The calculator converts chi-square statistics into p-values with built-in degrees-of-freedom guidance.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Quality Assurance</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Compare group means in process improvement</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">One-way ANOVA F-tests across multiple conditions</p>
+          <p class="text-sm text-bae-muted">QA engineers compare product measurements across production lines or time periods using ANOVA. The F-ratio p-value calculator confirms whether observed differences are statistically significant or attributable to random variation.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Results are for educational and analytical purposes. The Best Answer Hub P-Value Calculator does not replace formal statistical consultation for peer-reviewed research.</p>
+    </div>
+  </section>
+
+  <ToolRelatedCTA currentHref="/calculators/statistics-suite/p-value-calculator/" />
+
+  <!-- Hidden PDF Report -->
+  <div id="print-report" class="hidden bg-white p-8">
+    <div class="max-w-[190mm] mx-auto">
+      <h1 class="text-2xl font-bold text-bae-ink mb-1">P-Value Calculation Report</h1>
+      <p class="text-sm text-bae-muted mb-6">Generated by Best Answer Hub P-Value Calculator</p>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">P-Value</p>
+          <p class="text-xl font-bold text-bae-primary font-mono" id="report-pvalue">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Significance</p>
+          <p class="text-xl font-bold text-bae-ink" id="report-significance">—</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-4 mb-6" id="report-extra-grid">
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Test Statistic</p>
+          <p class="text-base font-bold text-bae-ink font-mono" id="report-stat">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Alpha Level</p>
+          <p class="text-base font-bold text-bae-ink font-mono" id="report-alpha">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Tail Type</p>
+          <p class="text-base font-bold text-bae-ink" id="report-tail">—</p>
+        </div>
+      </div>
+      <div class="mb-6">
+        <p class="text-xs text-gray-500 uppercase mb-1">Interpretation</p>
+        <p class="text-sm text-bae-ink" id="report-interpretation"></p>
+      </div>
+      <div class="mb-6" id="report-dist-wrapper">
+        <p class="text-xs text-gray-500 uppercase mb-2">Distribution Visual</p>
+        <img id="report-dist" src="" alt="Distribution showing p-value region" style="max-width:100%;height:auto;display:block;border:1px solid #e5e7eb;border-radius:4px;">
+      </div>
+      <div class="mb-6">
+        <p class="text-xs text-gray-500 uppercase mb-2">Calculation Details</p>
+        <div id="report-details" class="text-sm text-bae-ink space-y-1"></div>
+      </div>
+      <div class="mt-8 pt-4 border-t text-xs text-gray-400">
+        <p>Best Answer Hub · www.bestanswerhub.com/calculators/statistics-suite/p-value-calculator/</p>
+        <p>All calculations performed client-side. No data stored.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/html2pdf.bundle.min.js" is:inline></script>
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+      let currentMode = 'zscore';
+      let currentTail = 'two';
+      let currentAlpha = 0.05;
+      let isCustomAlpha = false;
+      let stepsVisible = true;
+
+      const FPMIN = 1e-30;
+
+      // ── Lanczos lgamma ──
+      function lgamma(z) {
+        const g = 7;
+        const C = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+                   771.32342877765313, -176.61502916214059, 12.507343278686905,
+                   -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+        if (z < 0.5) return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - lgamma(1 - z);
+        z -= 1;
+        let x = C[0];
+        for (let i = 1; i < g + 2; i++) x += C[i] / (z + i);
+        const t = z + g + 0.5;
+        return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+      }
+
+      // ── Normal CDF (Abramowitz & Stegun) ──
+      function normalCDF(z) {
+        const b1 = 0.319381530, b2 = -0.356563782, b3 = 1.781477937;
+        const b4 = -1.821255978, b5 = 1.330274429, p = 0.2316419, c = 0.39894228;
+        if (z >= 0) {
+          const t = 1.0 / (1.0 + p * z);
+          return 1.0 - c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1);
+        }
+        return 1.0 - normalCDF(-z);
+      }
+
+      // ── Incomplete Beta Continued Fraction ──
+      function betacf(x, a, b) {
+        const MAXIT = 200;
+        const EPS = 3.0e-7;
+        let m2, aa, c, d, del, h;
+        const qab = a + b;
+        const qap = a + 1;
+        const qam = a - 1;
+        c = 1;
+        d = 1 - qab * x / qap;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        d = 1 / d;
+        h = d;
+        for (let m = 1; m <= MAXIT; m++) {
+          m2 = 2 * m;
+          aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+          d = 1 + aa * d;
+          if (Math.abs(d) < FPMIN) d = FPMIN;
+          c = 1 + aa / c;
+          if (Math.abs(c) < FPMIN) c = FPMIN;
+          d = 1 / d;
+          del = d * c;
+          h *= del;
+          aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+          d = 1 + aa * d;
+          if (Math.abs(d) < FPMIN) d = FPMIN;
+          c = 1 + aa / c;
+          if (Math.abs(c) < FPMIN) c = FPMIN;
+          d = 1 / d;
+          del = d * c;
+          h *= del;
+          if (Math.abs(del - 1) < EPS) break;
+        }
+        return h;
+      }
+
+      function incompleteBeta(x, a, b) {
+        if (x === 0 || x === 1) return x;
+        if (a <= 0 || b <= 0) return NaN;
+        const lnbeta = lgamma(a) + lgamma(b) - lgamma(a + b);
+        const bt = Math.exp(a * Math.log(x) + b * Math.log(1 - x) - lnbeta);
+        if (x < (a + 1) / (a + b + 2)) {
+          return bt * betacf(x, a, b) / a;
+        } else {
+          return 1 - bt * betacf(1 - x, b, a) / b;
+        }
+      }
+
+      // ── Incomplete Gamma ──
+      function incompleteGammaP(a, x) {
+        if (x < 0 || a <= 0) return 0;
+        if (x === 0) return 0;
+        if (x < a + 1) {
+          let ap = a;
+          let del = 1 / a;
+          let sum = del;
+          for (let n = 1; n <= 100; n++) {
+            ap++;
+            del *= x / ap;
+            sum += del;
+            if (Math.abs(del) < Math.abs(sum) * 3e-7) break;
+          }
+          return sum * Math.exp(-x + a * Math.log(x) - lgamma(a));
+        } else {
+          return 1 - incompleteGammaQ(a, x);
+        }
+      }
+
+      function incompleteGammaQ(a, x) {
+        let b = x + 1 - a;
+        let c = 1 / FPMIN;
+        let d = 1 / b;
+        let h = d;
+        for (let i = 1; i <= 100; i++) {
+          const an = -i * (i - a);
+          b += 2;
+          d = an * d + b;
+          if (Math.abs(d) < FPMIN) d = FPMIN;
+          c = b + an / c;
+          if (Math.abs(c) < FPMIN) c = FPMIN;
+          d = 1 / d;
+          const del = d * c;
+          h *= del;
+          if (Math.abs(del - 1) < 3e-7) break;
+        }
+        return h * Math.exp(-x + a * Math.log(x) - lgamma(a));
+      }
+
+      // ── Distribution CDFs ──
+      function tCDF(t, df) {
+        if (df > 100) return normalCDF(t);
+        const x = df / (df + t * t);
+        const ib = incompleteBeta(x, df / 2, 0.5);
+        if (t >= 0) return 1 - 0.5 * ib;
+        return 0.5 * ib;
+      }
+
+      function chiSquareCDF(x, df) {
+        if (x <= 0) return 0;
+        return incompleteGammaP(df / 2, x / 2);
+      }
+
+      function fCDF(f, df1, df2) {
+        if (f <= 0) return 0;
+        const x = (df1 * f) / (df1 * f + df2);
+        return incompleteBeta(x, df1 / 2, df2 / 2);
+      }
+
+      // ── Critical value finder: inverts a (monotonic) CDF by bisection ──
+      function findCritical(cdfFn, targetP, lo, hi) {
+        for (let i = 0; i < 100; i++) {
+          const mid = (lo + hi) / 2;
+          if (cdfFn(mid) < targetP) lo = mid; else hi = mid;
+        }
+        return (lo + hi) / 2;
+      }
+
+      // Returns the critical x-position(s) for the current test, tail, and alpha
+      function getCriticals(mode, tail, alpha, df, df1, df2) {
+        if (mode === 'zscore') {
+          if (tail === 'two') { const m = findCritical(normalCDF, 1 - alpha / 2, 0, 40); return [-m, m]; }
+          const m = findCritical(normalCDF, 1 - alpha, 0, 40);
+          return tail === 'left' ? [-m] : [m];
+        }
+        if (mode === 'tscore') {
+          const f = (x) => tCDF(x, df);
+          if (tail === 'two') { const m = findCritical(f, 1 - alpha / 2, 0, 1e6); return [-m, m]; }
+          const m = findCritical(f, 1 - alpha, 0, 1e6);
+          return tail === 'left' ? [-m] : [m];
+        }
+        if (mode === 'chisquare') {
+          return [findCritical((x) => chiSquareCDF(x, df), 1 - alpha, 0, 1e6)];
+        }
+        return [findCritical((x) => fCDF(x, df1, df2), 1 - alpha, 0, 1e6)];
+      }
+
+      // ── PDFs for visualization ──
+      function normalPDF(x) {
+        return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * x * x);
+      }
+
+      function chiSquarePDF(x, k) {
+        if (x <= 0) return 0;
+        const halfK = k / 2;
+        return Math.exp(-x / 2 + (halfK - 1) * Math.log(x) - halfK * Math.log(2) - lgamma(halfK));
+      }
+
+      function fPDF(x, d1, d2) {
+        if (x <= 0) return 0;
+        const h1 = d1 / 2, h2 = d2 / 2;
+        const num = Math.exp(lgamma(h1 + h2) - lgamma(h1) - lgamma(h2));
+        return num * Math.pow(d1 / d2, h1) * Math.pow(x, h1 - 1) * Math.pow(1 + (d1 / d2) * x, -(h1 + h2));
+      }
+
+      // ── Drawing ──
+      function drawBellCurve(canvas, stat, tail, criticals) {
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        const padL = 45, padR = 15, padT = 15, padB = 30;
+        const graphW = w - padL - padR, graphH = h - padT - padB;
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+
+        const xMin = -3.5, xMax = 3.5;
+        const yMax = normalPDF(0);
+        const scaleX = graphW / (xMax - xMin);
+        const scaleY = graphH / (yMax * 1.15);
+
+        function toCanvasX(x) { return padL + (x - xMin) * scaleX; }
+        function toCanvasY(y) { return padT + graphH - y * scaleY; }
+
+        // Shaded area
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.15)';
+        const step = 0.02;
+        let first;
+
+        if (tail === 'two') {
+          const absStat = Math.abs(stat);
+          first = true;
+          ctx.beginPath();
+          for (let x = xMin; x <= -absStat; x += step) {
+            const px = toCanvasX(x), py = toCanvasY(normalPDF(x));
+            if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+          if (!first) { ctx.lineTo(toCanvasX(-absStat), toCanvasY(0)); ctx.closePath(); ctx.fill(); }
+
+          first = true;
+          ctx.beginPath();
+          for (let x = absStat; x <= xMax; x += step) {
+            const px = toCanvasX(x), py = toCanvasY(normalPDF(x));
+            if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+          if (!first) { ctx.lineTo(toCanvasX(xMax), toCanvasY(0)); ctx.closePath(); ctx.fill(); }
+        } else if (tail === 'left') {
+          first = true;
+          ctx.beginPath();
+          for (let x = xMin; x <= Math.min(stat, xMax); x += step) {
+            const px = toCanvasX(x), py = toCanvasY(normalPDF(x));
+            if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+          if (!first) { ctx.lineTo(toCanvasX(Math.min(stat, xMax)), toCanvasY(0)); ctx.closePath(); ctx.fill(); }
+        } else if (tail === 'right') {
+          first = true;
+          ctx.beginPath();
+          for (let x = Math.max(stat, xMin); x <= xMax; x += step) {
+            const px = toCanvasX(x), py = toCanvasY(normalPDF(x));
+            if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+          if (!first) { ctx.lineTo(toCanvasX(xMax), toCanvasY(0)); ctx.closePath(); ctx.fill(); }
+        }
+
+        // Grid lines
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        for (let x = -3; x <= 3; x++) {
+          const cx = toCanvasX(x);
+          ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, h - padB); ctx.stroke();
+        }
+
+        // X-axis
+        ctx.strokeStyle = '#9ca3af';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, toCanvasY(0));
+        ctx.lineTo(w - padR, toCanvasY(0));
+        ctx.stroke();
+
+        // X-axis labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        for (let x = -3; x <= 3; x++) {
+          ctx.fillText(x === 0 ? '0' : x.toString(), toCanvasX(x), h - 10);
+        }
+
+        // Curve
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        first = true;
+        for (let x = xMin; x <= xMax; x += step) {
+          const px = toCanvasX(x), py = toCanvasY(normalPDF(x));
+          if (first) { ctx.moveTo(px, py); first = false; }
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Statistic line
+        if (!isNaN(stat) && stat >= xMin && stat <= xMax) {
+          const sx = toCanvasX(stat);
+          ctx.strokeStyle = '#dc2626';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([4, 3]);
+          ctx.beginPath();
+          ctx.moveTo(sx, padT);
+          ctx.lineTo(sx, toCanvasY(0));
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = '#dc2626';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          const label = (currentMode === 'zscore' ? 'z' : 't') + ' = ' + stat.toFixed(2);
+          ctx.fillText(label, sx, padT + 12);
+        }
+
+        // Critical value line(s) at the chosen alpha
+        if (Array.isArray(criticals)) {
+          criticals.forEach(cv => {
+            if (cv >= xMin && cv <= xMax) {
+              const cx = toCanvasX(cv);
+              ctx.strokeStyle = '#f59e0b';
+              ctx.lineWidth = 1.5;
+              ctx.setLineDash([2, 2]);
+              ctx.beginPath();
+              ctx.moveTo(cx, padT);
+              ctx.lineTo(cx, toCanvasY(0));
+              ctx.stroke();
+              ctx.setLineDash([]);
+              ctx.fillStyle = '#f59e0b';
+              ctx.font = 'bold 10px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText('crit', cx, padT + 24);
+            }
+          });
+        }
+      }
+
+      function drawRightSkewCurve(canvas, stat, mode, df, df1, df2, criticals) {
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        const padL = 45, padR = 15, padT = 15, padB = 30;
+        const graphW = w - padL - padR, graphH = h - padT - padB;
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+
+        let xMax, pdfFunc;
+        if (mode === 'chisquare') {
+          xMax = Math.max(stat * 1.5, df + 5 * Math.sqrt(2 * df), 8);
+          pdfFunc = (x) => chiSquarePDF(x, df);
+        } else {
+          const meanF = df2 > 2 ? df2 / (df2 - 2) : 1;
+          xMax = Math.max(stat * 1.5, meanF * 5, 8);
+          pdfFunc = (x) => fPDF(x, df1, df2);
+        }
+        const xMin = 0;
+
+        let yMax = 0;
+        for (let x = xMin; x <= xMax; x += 0.05) {
+          yMax = Math.max(yMax, pdfFunc(x));
+        }
+        if (yMax === 0) yMax = 0.1;
+
+        const scaleX = graphW / (xMax - xMin);
+        const scaleY = graphH / (yMax * 1.15);
+
+        function toCanvasX(x) { return padL + (x - xMin) * scaleX; }
+        function toCanvasY(y) { return padT + graphH - y * scaleY; }
+
+        // Shaded right tail
+        if (!isNaN(stat) && stat >= xMin) {
+          ctx.fillStyle = 'rgba(59, 130, 246, 0.15)';
+          ctx.beginPath();
+          let first = true;
+          const step = xMax / 200;
+          for (let x = Math.max(stat, xMin); x <= xMax; x += step) {
+            const px = toCanvasX(x), py = toCanvasY(pdfFunc(x));
+            if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+          if (!first) { ctx.lineTo(toCanvasX(xMax), toCanvasY(0)); ctx.closePath(); ctx.fill(); }
+        }
+
+        // X-axis
+        ctx.strokeStyle = '#9ca3af';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, toCanvasY(0));
+        ctx.lineTo(w - padR, toCanvasY(0));
+        ctx.stroke();
+
+        // X-axis labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        const labelStep = Math.max(1, Math.ceil(xMax / 5));
+        for (let x = 0; x <= xMax; x += labelStep) {
+          ctx.fillText(x.toFixed(0), toCanvasX(x), h - 10);
+        }
+
+        // Curve
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        let first = true;
+        const step = xMax / 200;
+        for (let x = xMin; x <= xMax; x += step) {
+          const px = toCanvasX(x), py = toCanvasY(pdfFunc(x));
+          if (py < h + 50) {
+            if (first) { ctx.moveTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+        }
+        ctx.stroke();
+
+        // Statistic line
+        if (!isNaN(stat) && stat >= xMin && stat <= xMax) {
+          const sx = toCanvasX(stat);
+          ctx.strokeStyle = '#dc2626';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([4, 3]);
+          ctx.beginPath();
+          ctx.moveTo(sx, padT);
+          ctx.lineTo(sx, toCanvasY(0));
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = '#dc2626';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          const label = (mode === 'chisquare' ? 'χ²' : 'F') + ' = ' + stat.toFixed(2);
+          ctx.fillText(label, sx, padT + 12);
+        }
+
+        // Critical value line at the chosen alpha (right-tailed)
+        if (Array.isArray(criticals)) {
+          criticals.forEach(cv => {
+            if (cv >= xMin && cv <= xMax) {
+              const cx = toCanvasX(cv);
+              ctx.strokeStyle = '#f59e0b';
+              ctx.lineWidth = 1.5;
+              ctx.setLineDash([2, 2]);
+              ctx.beginPath();
+              ctx.moveTo(cx, padT);
+              ctx.lineTo(cx, toCanvasY(0));
+              ctx.stroke();
+              ctx.setLineDash([]);
+              ctx.fillStyle = '#f59e0b';
+              ctx.font = 'bold 10px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText('crit', cx, padT + 24);
+            }
+          });
+        }
+      }
+
+      // ── Mode / Tail / Alpha Switching ──
+      function updateMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-tab').forEach(btn => {
+          if (btn.dataset.mode === mode) {
+            btn.classList.remove('bg-white', 'text-bae-ink');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-white', 'text-bae-ink');
+          }
+        });
+
+        $('zscore-inputs').classList.toggle('hidden', mode !== 'zscore');
+        $('tscore-inputs').classList.toggle('hidden', mode !== 'tscore');
+        $('chisquare-inputs').classList.toggle('hidden', mode !== 'chisquare');
+        $('fratio-inputs').classList.toggle('hidden', mode !== 'fratio');
+
+        // Tail toggle visibility
+        const tailWrapper = $('tail-wrapper');
+        if (mode === 'chisquare' || mode === 'fratio') {
+          tailWrapper.classList.add('hidden');
+          currentTail = 'right';
+        } else {
+          tailWrapper.classList.remove('hidden');
+        }
+      }
+
+      function updateTail(tail) {
+        currentTail = tail;
+        document.querySelectorAll('.tail-tab').forEach(btn => {
+          if (btn.dataset.tail === tail) {
+            btn.classList.remove('bg-white', 'text-bae-ink');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-white', 'text-bae-ink');
+          }
+        });
+        const hints = {
+          two: 'Two-tailed tests for a difference in either direction.',
+          left: 'Left-tailed tests if the alternative hypothesis is "less than".',
+          right: 'Right-tailed tests if the alternative hypothesis is "greater than".',
+        };
+        $('tail-hint').textContent = hints[tail];
+      }
+
+      function updateAlpha(alphaVal) {
+        isCustomAlpha = alphaVal === 'custom';
+        document.querySelectorAll('.alpha-btn').forEach(btn => {
+          if (btn.dataset.alpha === alphaVal) {
+            btn.classList.remove('bg-white', 'text-bae-ink');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-white', 'text-bae-ink');
+          }
+        });
+        if (alphaVal === 'off') {
+          $('custom-alpha-wrapper').classList.add('hidden');
+          currentAlpha = null;
+        } else if (isCustomAlpha) {
+          $('custom-alpha-wrapper').classList.remove('hidden');
+          currentAlpha = parseFloat($('input-custom-alpha').value) || 0.05;
+        } else {
+          $('custom-alpha-wrapper').classList.add('hidden');
+          currentAlpha = parseFloat(alphaVal);
+        }
+      }
+
+      document.querySelectorAll('.mode-tab').forEach(btn => {
+        btn.addEventListener('click', () => updateMode(btn.dataset.mode));
+      });
+      document.querySelectorAll('.tail-tab').forEach(btn => {
+        btn.addEventListener('click', () => updateTail(btn.dataset.tail));
+      });
+      document.querySelectorAll('.alpha-btn').forEach(btn => {
+        btn.addEventListener('click', () => { updateAlpha(btn.dataset.alpha); if ($('result-card').style.display !== 'none') calculate(); });
+      });
+      $('input-custom-alpha').addEventListener('input', (e) => {
+        currentAlpha = parseFloat(e.target.value) || 0.05;
+        if ($('result-card').style.display !== 'none') calculate();
+      });
+
+      // ── Calculate ──
+      function formatP(p) {
+        if (p < 0.0001) return '< 0.0001';
+        return p.toFixed(4);
+      }
+
+      function getSignificanceText(p, alpha) {
+        // APA convention: reject the null when p ≤ α (matches FAQ #10 and the worked examples)
+        if (p <= alpha) {
+          return { text: 'Significant', color: 'text-green-600', verdict: 'significant' };
+        }
+        return { text: 'Not Significant', color: 'text-bae-muted', verdict: 'not significant' };
+      }
+
+      function calculate() {
+        const sigOff = (currentAlpha === null);
+        const alpha = sigOff ? null : Math.min(Math.max(currentAlpha, 0.0001), 0.5);
+        let stat, pValue, pLeft, pRight, pTwo, cdf, steps = [], interpretation = '', warning = '';
+
+        if (currentMode === 'zscore') {
+          const z = parseFloat($('input-z').value);
+          if (isNaN(z)) { showEmpty(); return; }
+          stat = z;
+          cdf = normalCDF(z);
+          pLeft = cdf;
+          pRight = 1 - cdf;
+          pTwo = 2 * Math.min(pLeft, pRight);
+
+          steps.push(`Distribution: Standard normal (z)`);
+          steps.push(`Test statistic: z = ${z.toFixed(4)}`);
+          steps.push(`Φ(z) = ${cdf.toFixed(4)}`);
+
+          if (currentTail === 'two') {
+            pValue = pTwo;
+            steps.push(`Two-tailed p = 2 × min(Φ(z), 1 − Φ(z)) = 2 × ${Math.min(pLeft, pRight).toFixed(4)} = ${pTwo.toFixed(4)}`);
+          } else if (currentTail === 'left') {
+            pValue = pLeft;
+            steps.push(`Left-tailed p = Φ(z) = ${pLeft.toFixed(4)}`);
+          } else {
+            pValue = pRight;
+            steps.push(`Right-tailed p = 1 − Φ(z) = ${pRight.toFixed(4)}`);
+          }
+        } else if (currentMode === 'tscore') {
+          const t = parseFloat($('input-t').value);
+          const df = parseFloat($('input-df-t').value);
+          if (isNaN(t) || isNaN(df) || df <= 0) { showEmpty(); return; }
+          stat = t;
+          cdf = tCDF(t, df);
+          pLeft = cdf;
+          pRight = 1 - cdf;
+          pTwo = 2 * Math.min(pLeft, pRight);
+
+          steps.push(`Distribution: Student's t with df = ${df.toFixed(2)}`);
+          steps.push(`Test statistic: t = ${t.toFixed(4)}`);
+          steps.push(`F_t(t, df) = ${cdf.toFixed(4)}`);
+
+          if (currentTail === 'two') {
+            pValue = pTwo;
+            steps.push(`Two-tailed p = 2 × min(F_t(t), 1 − F_t(t)) = 2 × ${Math.min(pLeft, pRight).toFixed(4)} = ${pTwo.toFixed(4)}`);
+          } else if (currentTail === 'left') {
+            pValue = pLeft;
+            steps.push(`Left-tailed p = F_t(t, df) = ${pLeft.toFixed(4)}`);
+          } else {
+            pValue = pRight;
+            steps.push(`Right-tailed p = 1 − F_t(t, df) = ${pRight.toFixed(4)}`);
+          }
+        } else if (currentMode === 'chisquare') {
+          const chi = parseFloat($('input-chi').value);
+          const df = parseFloat($('input-df-chi').value);
+          if (isNaN(chi) || isNaN(df) || chi < 0 || df <= 0) { showEmpty(); return; }
+          stat = chi;
+          cdf = chiSquareCDF(chi, df);
+          pValue = 1 - cdf;
+          pLeft = null;
+          pRight = pValue;
+          pTwo = null;
+          currentTail = 'right';
+
+          steps.push(`Distribution: Chi-square with df = ${df.toFixed(0)}`);
+          steps.push(`Test statistic: χ² = ${chi.toFixed(4)}`);
+          steps.push(`F_χ²(χ², df) = ${cdf.toFixed(4)}`);
+          steps.push(`p = 1 − F_χ² = ${pValue.toFixed(4)}`);
+
+          if (chi < df * 0.5) {
+            warning = 'The chi-square value is relatively small compared to the degrees of freedom. Ensure the correct statistic was entered.';
+          }
+        } else if (currentMode === 'fratio') {
+          const f = parseFloat($('input-f').value);
+          const df1 = parseFloat($('input-df1').value);
+          const df2 = parseFloat($('input-df2').value);
+          if (isNaN(f) || isNaN(df1) || isNaN(df2) || f < 0 || df1 <= 0 || df2 <= 0) { showEmpty(); return; }
+          stat = f;
+          cdf = fCDF(f, df1, df2);
+          pValue = 1 - cdf;
+          pLeft = null;
+          pRight = pValue;
+          pTwo = null;
+          currentTail = 'right';
+
+          steps.push(`Distribution: F with df₁ = ${df1.toFixed(0)}, df₂ = ${df2.toFixed(0)}`);
+          steps.push(`Test statistic: F = ${f.toFixed(4)}`);
+          steps.push(`F_F(F, df₁, df₂) = ${cdf.toFixed(4)}`);
+          steps.push(`p = 1 − F_F = ${pValue.toFixed(4)}`);
+        }
+
+        // A p-value is a probability — guard against tiny floating-point excursions outside [0, 1]
+        pValue = Math.min(1, Math.max(0, pValue));
+
+        // Interpretation
+        const pFormatted = formatP(pValue);
+        const tailName = currentTail === 'two' ? 'two-tailed' : currentTail === 'left' ? 'left-tailed' : 'right-tailed';
+        let sig;
+        if (sigOff) {
+          sig = { text: '—', color: 'text-bae-muted', verdict: 'not assessed' };
+          interpretation = `The ${tailName} p-value is ${pFormatted}. No significance level (α) was selected, so no significant / not-significant verdict is shown. Select an α to compare this p-value against a threshold.`;
+        } else {
+          sig = getSignificanceText(pValue, alpha);
+          const alphaPct = (alpha * 100).toFixed(1).replace(/\.0$/, '');
+          if (pValue <= alpha) {
+            interpretation = `With a p-value of ${pFormatted}, the result is statistically ${sig.verdict} at the ${alphaPct}% level (${tailName}). There is sufficient evidence to reject the null hypothesis.`;
+          } else {
+            interpretation = `With a p-value of ${pFormatted}, the result is ${sig.verdict} at the ${alphaPct}% level (${tailName}). There is insufficient evidence to reject the null hypothesis.`;
+          }
+          if (Math.abs(pValue - alpha) < 0.001) {
+            interpretation += ' This is a borderline result. Replication is advisable.';
+          }
+        }
+
+        // Show results
+        $('empty-state').style.display = 'none';
+        $('result-card').style.display = 'block';
+        $('dist-card').style.display = 'block';
+        $('steps-card').style.display = 'block';
+        $('pdf-btn').classList.remove('hidden');
+
+        $('result-pvalue').textContent = pFormatted;
+        const sigEl = $('result-significance');
+        sigEl.textContent = sig.text;
+        sigEl.className = 'text-lg font-bold ' + sig.color;
+
+        const extraGrid = $('extra-pvalues');
+        if (currentMode === 'zscore' || currentMode === 'tscore') {
+          extraGrid.style.display = 'grid';
+          $('result-left').textContent = formatP(pLeft);
+          $('result-right').textContent = formatP(pRight);
+        } else {
+          extraGrid.style.display = 'none';
+        }
+
+        $('result-interpretation').textContent = interpretation;
+
+        const warnEl = $('validation-warning');
+        if (warning) {
+          warnEl.classList.remove('hidden');
+          warnEl.querySelector('p').textContent = warning;
+        } else {
+          warnEl.classList.add('hidden');
+        }
+
+        $('steps-content').innerHTML = steps.map(s => '<p class="font-mono text-xs bg-white border border-bae-border rounded-bae-sm px-3 py-2">' + s + '</p>').join('');
+
+        // Draw distribution
+        const canvas = $('dist-canvas');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = 220 * 2;
+        const dfChiVal = parseFloat($('input-df-chi').value);
+        const dfTVal = parseFloat($('input-df-t').value);
+        const df1Val = parseFloat($('input-df1').value);
+        const df2Val = parseFloat($('input-df2').value);
+        const criticals = sigOff ? [] : getCriticals(currentMode, currentTail, alpha, currentMode === 'tscore' ? dfTVal : dfChiVal, df1Val, df2Val);
+        if (currentMode === 'zscore' || currentMode === 'tscore') {
+          drawBellCurve(canvas, stat, currentTail, criticals);
+        } else {
+          drawRightSkewCurve(canvas, stat, currentMode, dfChiVal, df1Val, df2Val, criticals);
+        }
+
+        // PDF report
+        $('report-pvalue').textContent = pFormatted;
+        $('report-significance').textContent = sig.text;
+        $('report-significance').className = 'text-xl font-bold ' + sig.color;
+        $('report-stat').textContent = currentMode === 'zscore' ? 'z = ' + stat.toFixed(4) : currentMode === 'tscore' ? 't = ' + stat.toFixed(4) : currentMode === 'chisquare' ? 'χ² = ' + stat.toFixed(4) : 'F = ' + stat.toFixed(4);
+        $('report-alpha').textContent = sigOff ? 'Not set' : alpha.toFixed(4);
+        $('report-tail').textContent = currentTail === 'two' ? 'Two-Tailed' : currentTail === 'left' ? 'Left-Tailed' : 'Right-Tailed';
+        $('report-interpretation').textContent = interpretation;
+        $('report-details').innerHTML = steps.map(s => '<p>' + s + '</p>').join('');
+        $('report-dist').src = canvas.toDataURL('image/png');
+        $('report-dist-wrapper').style.display = 'block';
+
+        updateURL();
+      }
+
+      function showEmpty() {
+        $('empty-state').style.display = 'block';
+        $('result-card').style.display = 'none';
+        $('dist-card').style.display = 'none';
+        $('steps-card').style.display = 'none';
+        $('pdf-btn').classList.add('hidden');
+      }
+
+      $('calc-btn').addEventListener('click', calculate);
+      $('clear-btn').addEventListener('click', () => {
+        $('input-z').value = '';
+        $('input-t').value = '';
+        $('input-df-t').value = '';
+        $('input-chi').value = '';
+        $('input-df-chi').value = '';
+        $('input-f').value = '';
+        $('input-df1').value = '';
+        $('input-df2').value = '';
+        $('input-custom-alpha').value = '';
+        updateAlpha('0.05');
+        showEmpty();
+      });
+
+      // Toggle steps
+      $('toggle-steps').addEventListener('click', () => {
+        stepsVisible = !stepsVisible;
+        $('steps-content').style.display = stepsVisible ? 'block' : 'none';
+        $('toggle-steps').textContent = stepsVisible ? 'Hide' : 'Show';
+      });
+
+      // PDF generation
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating...';
+        btn.disabled = true;
+
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '210mm';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.style.margin = '0';
+
+        const report = $('print-report').cloneNode(true);
+        report.removeAttribute('id');
+        report.classList.remove('hidden');
+        wrapper.appendChild(report);
+        document.body.appendChild(wrapper);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'p-value-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(wrapper).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (wrapper.parentNode) document.body.removeChild(wrapper);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // URL sharing
+      function updateURL() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('mode', currentMode);
+        url.searchParams.set('tail', currentTail);
+        url.searchParams.set('alpha', currentAlpha === null ? 'off' : currentAlpha);
+        if (currentMode === 'zscore') {
+          if ($('input-z').value) url.searchParams.set('z', $('input-z').value);
+          else url.searchParams.delete('z');
+        } else if (currentMode === 'tscore') {
+          if ($('input-t').value) url.searchParams.set('t', $('input-t').value);
+          else url.searchParams.delete('t');
+          if ($('input-df-t').value) url.searchParams.set('df', $('input-df-t').value);
+          else url.searchParams.delete('df');
+        } else if (currentMode === 'chisquare') {
+          if ($('input-chi').value) url.searchParams.set('chi', $('input-chi').value);
+          else url.searchParams.delete('chi');
+          if ($('input-df-chi').value) url.searchParams.set('df', $('input-df-chi').value);
+          else url.searchParams.delete('df');
+        } else if (currentMode === 'fratio') {
+          if ($('input-f').value) url.searchParams.set('f', $('input-f').value);
+          else url.searchParams.delete('f');
+          if ($('input-df1').value) url.searchParams.set('df1', $('input-df1').value);
+          else url.searchParams.delete('df1');
+          if ($('input-df2').value) url.searchParams.set('df2', $('input-df2').value);
+          else url.searchParams.delete('df2');
+        }
+        window.history.replaceState({}, '', url);
+      }
+
+      function readURL() {
+        const url = new URL(window.location.href);
+        const mode = url.searchParams.get('mode');
+        if (mode && ['zscore', 'tscore', 'chisquare', 'fratio'].includes(mode)) {
+          updateMode(mode);
+        }
+        const tail = url.searchParams.get('tail');
+        if (tail && ['two', 'left', 'right'].includes(tail)) {
+          updateTail(tail);
+        }
+        const alpha = url.searchParams.get('alpha');
+        if (alpha === 'off') {
+          updateAlpha('off');
+        } else if (alpha) {
+          const a = parseFloat(alpha);
+          if ([0.10, 0.05, 0.01, 0.001].includes(a)) {
+            updateAlpha(a.toString());
+          } else {
+            updateAlpha('custom');
+            $('input-custom-alpha').value = a;
+            currentAlpha = a;
+          }
+        }
+        if (mode === 'zscore' && url.searchParams.has('z')) $('input-z').value = url.searchParams.get('z');
+        if (mode === 'tscore') {
+          if (url.searchParams.has('t')) $('input-t').value = url.searchParams.get('t');
+          if (url.searchParams.has('df')) $('input-df-t').value = url.searchParams.get('df');
+        }
+        if (mode === 'chisquare') {
+          if (url.searchParams.has('chi')) $('input-chi').value = url.searchParams.get('chi');
+          if (url.searchParams.has('df')) $('input-df-chi').value = url.searchParams.get('df');
+        }
+        if (mode === 'fratio') {
+          if (url.searchParams.has('f')) $('input-f').value = url.searchParams.get('f');
+          if (url.searchParams.has('df1')) $('input-df1').value = url.searchParams.get('df1');
+          if (url.searchParams.has('df2')) $('input-df2').value = url.searchParams.get('df2');
+        }
+        if ($('input-z').value || $('input-t').value || $('input-chi').value || $('input-f').value) {
+          calculate();
+        }
+      }
+
+      readURL();
+    })();
+  </script>
+</BaseLayout>

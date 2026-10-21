@@ -1,0 +1,331 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-14T00:00:00+00:00';
+
+const faqs = [
+  { q: "What is the Best Answer Hub Grad Student Tax Calculator?", a: "The Best Answer Hub Grad Student Tax Calculator is a free, browser-based tool that estimates US federal tax for grad students on fellowships, assistantships, and stipends, and flags the Kiddie Tax, self-employment tax, and quarterly payments. It runs in your browser with no signup and nothing uploaded." },
+  { q: "Is my fellowship or stipend taxable?", a: "Partly. Money used for tuition and required fees and books is tax-free, but money for room, board, travel, or a living stipend is taxable, as is pay for required teaching or research. The Best Answer Hub Grad Student Tax Calculator asks for this split to estimate the taxable amount." },
+  { q: "What part of a scholarship is tax-free?", a: "Only the part a degree candidate uses for qualified expenses: tuition, required fees, and required course materials. Anything for living costs is taxable. The Best Answer Hub Grad Student Tax Calculator separates the two so the tax-free portion is not counted as income." },
+  { q: "Why is no tax withheld from my fellowship?", a: "Pure fellowship income is generally paid in full without withholding, unlike a W-2 assistantship. That means the tax on it goes unpaid until you send it. The Best Answer Hub Grad Student Tax Calculator estimates that unwithheld tax so it is not a shock at filing." },
+  { q: "Do I need to pay quarterly estimated tax?", a: "Often yes, if you expect to owe $1,000 or more with nothing withheld, paid via Form 1040-ES. The IRS says taxable grant income may require estimated payments. The Best Answer Hub Grad Student Tax Calculator flags when quarterly payments are likely due." },
+  { q: "What is the Kiddie Tax?", a: "It taxes a young person's unearned income above a threshold at their parents' rate. For 2026 it can apply once unearned income tops $2,700 for a full-time student under 24. The Best Answer Hub Grad Student Tax Calculator flags when your taxable stipend may trigger it." },
+  { q: "Does taxable scholarship count as unearned income?", a: "Yes. The IRS Form 8615 instructions list taxable scholarship and fellowship grants not on a W-2 as unearned income, which is what pulls a stipend into the Kiddie Tax. The Best Answer Hub Grad Student Tax Calculator treats it correctly in that test." },
+  { q: "Do I owe self-employment tax on a fellowship?", a: "Generally no. A fellowship is not compensation for services in the self-employment sense, so it is not reported on Schedule SE and carries no self-employment tax. The Best Answer Hub Grad Student Tax Calculator keeps fellowship income out of that tax." },
+  { q: "What is the difference between a fellowship and 1099 work?", a: "A fellowship funds your studies and is not self-employment, while 1099 work like freelance consulting is a trade or business and does owe self-employment tax. The Best Answer Hub Grad Student Tax Calculator treats fellowship stipends and side 1099 income differently." },
+  { q: "What is Box 5 on my 1098-T?", a: "Box 5 is the total scholarships and grants your school processed, and Box 1 is qualified tuition paid. When Box 5 is larger than Box 1, the excess likely went to living costs and may be taxable. The Best Answer Hub Grad Student Tax Calculator helps you work through that difference." },
+  { q: "Why can't I just use TurboTax or SmartAsset?", a: "Those calculators are built around W-2 wages and funnel toward paid filing or advisor matching, and none model taxable stipends, missing withholding, or the Kiddie Tax. The Best Answer Hub Grad Student Tax Calculator is built for the grad-specific rules they skip." },
+  { q: "What is the 2026 standard deduction?", a: "For a single filer in 2026 it is $16,100, which reduces your taxable income before the brackets apply. The Best Answer Hub Grad Student Tax Calculator applies the current standard deduction so your estimated taxable income is right." },
+  { q: "How much tax will I owe on a $30,000 stipend?", a: "As a rough 2026 single-filer estimate, a $30,000 taxable stipend minus the $16,100 standard deduction leaves $13,900, taxed at about $1,420. The Best Answer Hub Grad Student Tax Calculator runs this for your actual numbers, including any tax-free portion." },
+  { q: "Does the tool upload my information?", a: "No. The Best Answer Hub Grad Student Tax Calculator runs entirely in your browser, so the figures you enter stay on your device and are never sent to a server. There is no account and no data collection." },
+  { q: "Is the Best Answer Hub Grad Student Tax Calculator free?", a: "Yes, completely free with no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so it never upsells you into a paid filing product the way general tax calculators do." }
+];
+
+const seo = {
+  title: "How Are Grad Student Stipends Taxed?",
+  description: "How grad student fellowships and stipends are taxed: which parts are taxable, why nothing is withheld, the Kiddie Tax trap, and why general calculators miss it.",
+  url: '/playbooks/grad-student-tax-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: "Grad Student Tax Calculator", url: '/playbooks/grad-student-tax-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+  <div class="hero">
+    <span class="glow"></span>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div class="masthead">
+          <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+          <span class="word">Best Answer Hub<i>.</i></span>
+        </div>
+        <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+      </div>
+      <span class="eyebrow">Best Answer Hub Playbooks &middot; Academic</span>
+      <div class="cav">Know what you owe</div>
+      <h1>How Are Grad Student <em>Stipends Taxed?</em></h1>
+      <p class="dek">Grad funding is taxed in ways that catch people out: part of it is taxable, nothing is withheld, and a rule meant for kids can tax your stipend at your parents' rate. General tax calculators assume a W-2 paycheck and miss all of it. Here is how fellowship and stipend income really works.</p>
+      <div class="byline"><span><b>Best Answer Hub</b></span><span>~10 min read</span><span>Academic</span><span>No signup</span></div>
+      <div class="bandstrip">
+        <div class="seg b1">Split your funding<small>taxable or not</small></div>
+        <div class="seg b2">Estimate the tax<small>with no withholding</small></div>
+        <div class="seg b3">Catch the traps<small>Kiddie and quarterly</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n">$2,700</div><div class="l">unearned income above this can trigger the Kiddie Tax</div><div class="src">IRS, 2026</div></div>
+    <div class="stat"><div class="n">$16,100</div><div class="l">the 2026 standard deduction for a single filer</div><div class="src">IRS</div></div>
+    <div class="stat"><div class="n">Quarterly</div><div class="l">stipends often have no tax withheld</div><div class="src">Form 1040-ES</div></div>
+    <div class="stat"><div class="n">$0</div><div class="l">no signup, no upsell to paid filing</div><div class="src">free</div></div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="On this page">
+      <div class="t">On this page</div>
+      <a href="#what">What it is</a>
+      <a href="#taxable">What funding is taxable</a>
+      <a href="#owe">Owing with nothing withheld</a>
+      <a href="#kiddie">The Kiddie Tax trap</a>
+      <a href="#se">The self-employment myth</a>
+      <a href="#different">Why general calculators miss it</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <article>
+      <p class="lead"><strong>A graduate fellowship or stipend is partly taxable: money used for tuition and required fees is tax-free, but money for living costs like room, board, and travel is taxable income, and it usually has no tax withheld.</strong> That combination surprises students every spring, and the general refund calculators most people use do not model any of it. The Best Answer Hub <a href="/calculators/grad-student-tax-calculator/">Grad Student Tax Calculator</a> estimates federal tax on fellowships, assistantships, and stipends, and flags the Kiddie Tax, the self-employment tax question, and whether you owe quarterly payments.</p>
+
+      <p>This guide covers which parts of your funding are taxable, why you can owe tax with nothing withheld, the Kiddie Tax that can hit a student's stipend, the self-employment tax myth, and why a general tax calculator gives grad students the wrong answer. The Best Answer Hub Grad Student Tax Calculator sits in the <a href="/calculators/">Calculators hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+      <div class="callout"><div class="h">An estimate, not tax advice</div><p>The Best Answer Hub Grad Student Tax Calculator and this guide give a federal estimate to help you plan, and Best Answer Hub is not a tax advisor. Tax depends on your full situation, so confirm the details with the IRS or a qualified professional before you file or make a payment.</p></div>
+
+      <div class="cav">Start here</div>
+      <h2 id="what">What is the Best Answer Hub Grad Student Tax Calculator?</h2>
+      <p>The Best Answer Hub Grad Student Tax Calculator is a free, browser-based tool that estimates US federal income tax for graduate students funded by fellowships, assistantships, and stipends. You enter your funding and how it breaks down, and it estimates the tax, flags whether the Kiddie Tax applies, checks the self-employment tax question, and tells you if you likely owe quarterly estimated payments. It runs entirely in your browser, so nothing you enter is uploaded, there is no account, and there is no funnel into a paid filing product.</p>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">1</span><div><b>Built for fellowships.</b> The Best Answer Hub Grad Student Tax Calculator models taxable stipends, not just W-2 wages.</div></li>
+          <li><span class="dot">2</span><div><b>Flags the traps.</b> It checks the Kiddie Tax, the self-employment question, and quarterly estimated payments.</div></li>
+          <li><span class="dot">3</span><div><b>Private and free.</b> It runs in your browser with no signup and no upsell to paid tax filing.</div></li>
+        </ul>
+      </div>
+
+      <div class="cav">The split</div>
+      <h2 id="taxable">Which parts of your funding are taxable?</h2>
+      <p>The line is what the money pays for. Scholarship or fellowship money is tax-free only when a degree candidate uses it for qualified expenses: tuition, required fees, and required books, supplies, and equipment. Anything used for "room and board, travel," or optional equipment is taxable, and so are "amounts received as payments for teaching, research, or other services" required for the grant (<a href="https://www.irs.gov/taxtopics/tc421" target="_blank" rel="noopener noreferrer">IRS Tax Topic 421</a>). So the tuition waiver on your award is not taxed, but the living stipend generally is. The Best Answer Hub Grad Student Tax Calculator asks for this split so the estimate starts from the right taxable amount.</p>
+      <figure class="chart">
+        <figcaption class="chart-title">A $30,000 funding package, split by tax</figcaption>
+        <svg viewBox="0 0 600 150" role="img" aria-label="Of a 30,000 dollar package, 19,000 for tuition and required books and fees is tax-free, and 11,000 for a living stipend is taxable.">
+          <text x="20" y="26" font-family="Karla, sans-serif" font-size="12" fill="#847B6B">Example package: $30,000 total</text>
+          <rect x="20" y="40" width="349" height="44" rx="8" fill="#E4EADD" stroke="#cdd9c8"/><text x="194" y="60" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#5a7355">$19,000 tax-free</text><text x="194" y="77" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#5a7355">tuition, required fees and books</text>
+          <rect x="373" y="40" width="207" height="44" rx="8" fill="#F3E2D6" stroke="#ecd6c5"/><text x="476" y="60" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">$11,000 taxable</text><text x="476" y="77" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#8a4429">living stipend</text>
+          <text x="20" y="116" font-family="Karla, sans-serif" font-size="11.5" fill="#847B6B">Only the living-cost portion is taxable income. The tuition portion is not.</text>
+          <text x="20" y="136" font-family="Karla, sans-serif" font-size="11" fill="#a89c87">Illustrative split. Rule: IRS Publication 970 and Tax Topic 421.</text>
+        </svg>
+        <p class="chart-src">Qualified vs non-qualified expenses per IRS Publication 970 and Tax Topic 421.</p>
+      </figure>
+
+      <div class="cav">The surprise bill</div>
+      <h2 id="owe">Why can you owe tax with nothing withheld?</h2>
+      <p>Because a fellowship stipend usually arrives with no tax taken out, unlike a job's paycheck. A W-2 assistantship withholds tax through the year, but pure fellowship income is generally paid in full, so the tax builds up unpaid. The IRS is explicit: "if any part of your scholarship or fellowship grant is taxable, you may have to make estimated tax payments on the additional income" through Form 1040-ES (<a href="https://www.irs.gov/taxtopics/tc421" target="_blank" rel="noopener noreferrer">IRS Tax Topic 421</a>). You generally owe estimated tax if you expect to owe $1,000 or more at filing. The Best Answer Hub Grad Student Tax Calculator estimates the bill and flags when quarterly payments are likely needed.</p>
+      <div class="callout sage"><div class="h">A worked 2026 example</div><p>Take a $30,000 fellowship that is all taxable stipend. Subtract the 2026 single standard deduction of $16,100 and $13,900 is taxable. The tax is 10 percent on the first $12,400 ($1,240) plus 12 percent on the next $1,500 ($180), which is about $1,420. Because that is over $1,000 with nothing withheld, quarterly estimated payments via Form 1040-ES are due across the year. All figures are the verified 2026 IRS amounts.</p></div>
+
+      <div class="cav">The rule for kids</div>
+      <h2 id="kiddie">What is the Kiddie Tax, and why does it hit grad students?</h2>
+      <p>It is a rule that taxes a young person's unearned income at their parents' rate, and taxable scholarship counts as unearned income. The Form 8615 instructions list "taxable scholarship and fellowship grants not reported on Form W-2" as unearned income, and for 2026 the rule can apply once that unearned income tops $2,700 (<a href="https://www.irs.gov/instructions/i8615" target="_blank" rel="noopener noreferrer">IRS Form 8615</a>). It reaches full-time students under age 24 whose earned income is not more than half their support, which describes many funded grad students. So a taxable stipend can be taxed at a parent's higher rate. The Best Answer Hub Grad Student Tax Calculator flags when the Kiddie Tax may apply.</p>
+
+      <div class="cav">A common myth</div>
+      <h2 id="se">Do you owe self-employment tax on a fellowship?</h2>
+      <p>Generally no, and this is a frequent point of panic. Self-employment tax, about 15.3 percent, applies to net earnings from a trade or business, reported on Schedule SE. A fellowship is not that: the IRS treats a fellowship grant as something that "does not constitute compensation for personal services" (<a href="https://www.irs.gov/individuals/international-taxpayers/fulbright-grants" target="_blank" rel="noopener noreferrer">IRS, Fulbright grants</a>), so taxable fellowship income is reported as other income, never on Schedule SE. Real self-employment, like 1099 consulting on the side, is different and does carry the tax. The Best Answer Hub Grad Student Tax Calculator keeps fellowship income out of self-employment tax so the estimate is not inflated.</p>
+
+      <div class="cav">Why this one</div>
+      <h2 id="different">Why do general tax calculators mislead grad students?</h2>
+      <p>Because they are built for a W-2 paycheck and funnel toward paid filing. TurboTax's estimator asks for "your W-2s, 1099s" and never mentions scholarships or stipends; SmartAsset's is an advisor-matching front end; NerdWallet's income list does not include taxable fellowship income; and H&amp;R Block markets its calculator as "great for W-2, students, or unemployment income" while modeling only the W-2 student, not the fellowship recipient. None of them asks whether your funding is taxable, flags the missing withholding, applies the Kiddie Tax, or checks for quarterly payments. The Best Answer Hub Grad Student Tax Calculator is built for exactly those questions.</p>
+      <table>
+        <thead><tr><th>Calculator</th><th>Models taxable stipends</th><th>Flags Kiddie or quarterly</th><th>Funnels to paid product</th></tr></thead>
+        <tbody>
+          <tr><td class="band">Best Answer Hub</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+          <tr><td>TurboTax TaxCaster</td><td>No, W-2 based</td><td>No</td><td>Paid filing</td></tr>
+          <tr><td>SmartAsset</td><td>No</td><td>No</td><td>Advisor matching</td></tr>
+          <tr><td>H&amp;R Block</td><td>No, W-2 student only</td><td>No</td><td>Paid filing</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cta">
+        <span class="kicker">Estimate it the right way</span>
+        <h3>Try the free Grad Student Tax Calculator</h3>
+        <p>Estimate federal tax on your fellowship, assistantship, or stipend, with the Kiddie Tax, self-employment tax, and quarterly payment checks built in. It runs in your browser. No signup, no upsell.</p>
+        <a class="btn" href="/calculators/grad-student-tax-calculator/">Open the Grad Student Tax Calculator</a>
+      </div>
+
+      <div class="cav">Good questions</div>
+      <h2 id="faq">Frequently asked questions about grad student tax</h2>
+      <div class="faq">
+        {faqs.map((f) => (
+          <div class="qa">
+            <div class="q" set:html={f.q}></div>
+            <div class="a" set:html={f.a}></div>
+          </div>
+        ))}
+      </div>
+
+      <div class="cav">People also read</div>
+      <h2>Keep going</h2>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/tax-calculator/">Estimate Your Income Tax, Honestly</a></b> The general 2026 tax picture, for W-2 and 1099 income.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/semester-schedule-builder/">Build a Realistic Semester Schedule</a></b> Plan the whole student week, not just classes.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, Nothing Uploaded</a></b> The whole Calculators hub, all client-side.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, No Signup</a></b> The entire Best Answer Hub toolkit.</div></li>
+        </ul>
+      </div>
+
+      <h2>Sources</h2>
+      <ul class="sources">
+        <li>IRS, <a href="https://www.irs.gov/taxtopics/tc421" target="_blank" rel="noopener noreferrer">Tax Topic 421</a> and <a href="https://www.irs.gov/publications/p970" target="_blank" rel="noopener noreferrer">Publication 970</a> (taxable vs tax-free scholarship and fellowship income).</li>
+        <li>IRS, <a href="https://www.irs.gov/instructions/i8615" target="_blank" rel="noopener noreferrer">Instructions for Form 8615</a> (taxable scholarship as unearned income; the Kiddie Tax).</li>
+        <li>IRS, <a href="https://www.irs.gov/forms-pubs/about-form-1040-es" target="_blank" rel="noopener noreferrer">About Form 1040-ES</a> (estimated tax on income without withholding) and <a href="https://www.irs.gov/individuals/international-taxpayers/fulbright-grants" target="_blank" rel="noopener noreferrer">Fulbright grants</a> (a fellowship is not compensation for services).</li>
+        <li>IRS, <a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" target="_blank" rel="noopener noreferrer">2026 inflation adjustments</a> (single standard deduction $16,100; Kiddie Tax threshold).</li>
+      </ul>
+      <p class="foot">More free tools: <a href="/calculators/">Calculators hub</a>, <a href="/calculators/tax-calculator/">Tax Calculator</a>, <a href="/tools/semester-schedule-builder/">Semester Schedule Builder</a>, and <a href="/tools/">all free tools</a>.</p>
+    </article>
+  </div>
+</div>
+</BaseLayout>
+
+<style>.pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.7rem;color:var(--clay);line-height:1}
+  .pb .stat .n sup{font-size:.6em}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote .cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-size:.82rem;color:var(--label);margin-top:10px;letter-spacing:0}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  .pb .foot{max-width:1080px;margin:0 auto;padding:0 24px 50px;font-size:.85rem;color:var(--muted)}
+  .pb .foot a{color:var(--clay-deep)}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

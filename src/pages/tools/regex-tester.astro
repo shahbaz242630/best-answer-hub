@@ -1,0 +1,309 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Regex Tester?',
+    a: 'The Best Answer Hub Regex Tester is a free browser-based utility that lets you write, test, and debug regular expressions in real time. It highlights matches, shows capture groups, and tests replacements instantly using the native JavaScript RegExp engine. Unlike desktop apps, it requires zero installation and works on macOS, Windows, Linux, iOS, and Android. Everything runs locally in your browser. No data is uploaded.',
+  },
+  {
+    q: 'Is the Regex Tester free and safe?',
+    a: 'Yes, the Best Answer Hub Regex Tester is completely free with no usage limits, no watermarks, and no signup required. It is safe because all pattern matching happens locally inside your browser using native JavaScript. Your regex patterns and test strings are never sent to a server, stored in a database, or logged anywhere. Disconnect from the internet after loading the page and the Best Answer Hub Regex Tester will continue to work perfectly.',
+  },
+  {
+    q: 'What is a regular expression (regex)?',
+    a: 'A regular expression is a sequence of characters that defines a search pattern. Developers use regex to validate email addresses, extract phone numbers from text, parse log files, replace text in Visual Studio Code, and filter data in programming languages like Python, JavaScript, Java, and PHP. Regex is supported by virtually every modern text editor, database engine, and command-line tool including grep, awk, and sed. Paste any pattern into the Best Answer Hub Regex Tester to verify it immediately.',
+  },
+  {
+    q: 'What regex flags does this tool support?',
+    a: 'The Best Answer Hub Regex Tester supports four JavaScript regex flags. The <code>g</code> (global) flag finds all matches instead of stopping after the first. The <code>i</code> (ignore case) flag makes matching case-insensitive. The <code>m</code> (multiline) flag makes <code>^</code> and <code>$</code> match the start and end of each line, not just the whole string. The <code>s</code> (dotAll) flag lets the dot (<code>.</code>) match newline characters. The <code>i</code> flag is enabled by default for convenience.',
+  },
+  {
+    q: 'How do capture groups work?',
+    a: 'Capture groups let you isolate and extract parts of a match by wrapping them in parentheses. For example, the pattern <code>(\d{3})-(\d{4})</code> captures an area code and local number separately. When global mode is off, the Best Answer Hub Regex Tester displays the full match plus each captured group labeled underneath. In JavaScript, you can reference captured groups in replacement strings using <code>$1</code>, <code>$2</code>, and so on.',
+  },
+  {
+    q: 'Global vs non-global regex behavior',
+    a: 'With the global (<code>g</code>) flag enabled, the Best Answer Hub Regex Tester lists every match as a separate numbered item. With global disabled, it shows only the first match but reveals all capture groups in that match. This distinction matters in code too: <code>String.match</code> with the <code>g</code> flag returns an array of strings, while <code>match</code> without <code>g</code> returns a Match object with group details. Choose global for counting or listing, and non-global for group extraction.',
+  },
+  {
+    q: 'Can I test replacements?',
+    a: 'Yes. Enter a replacement string in the Replace box and the Best Answer Hub Regex Tester instantly previews the result. You can use <code>$1</code>, <code>$2</code>, and so on to insert captured groups, or <code>$&amp;</code> to insert the entire match. For example, replacing <code>(\w+)</code> with <code>[$1]</code> wraps every matched word in brackets. This mirrors JavaScript\'s <code>String.prototype.replace</code> behavior exactly, so what you see here works identically in Node.js or Chrome.',
+  },
+  {
+    q: 'Why is my pattern showing an error?',
+    a: 'Common errors include unescaped special characters like <code>+</code>, <code>?</code>, <code>*</code>, and <code>.</code>, which must be prefixed with a backslash when used literally. Unclosed brackets, parentheses, or curly braces also cause failures. Another frequent mistake is using PCRE-only features like <code>\Q...\E</code> or recursive patterns, which JavaScript does not support. The Best Answer Hub Regex Tester displays a clear red error message with the exact problem so you can fix it quickly.',
+  },
+  {
+    q: 'Can I use it offline?',
+    a: 'Yes. After you load the page once, the Best Answer Hub Regex Tester works without an internet connection. It is built entirely with vanilla JavaScript and uses only browser-native APIs: no external library downloads, no CDN dependencies, and no server-side processing. This makes it ideal for working on sensitive data in restricted or air-gapped environments where you cannot access online services like Regex101.',
+  },
+  {
+    q: 'Common regex patterns for developers (email, phone, URL, IP)',
+    a: 'Email validation often uses patterns like <code>[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}</code>. Phone numbers vary by country but US formats often match <code>\d{3}-\d{3}-\d{4}</code>. URL validation might use <code>https?://[\w\-\.]+\.\w{2,}</code>. IPv4 addresses match <code>\b(?:\d{1,3}\.){3}\d{1,3}\b</code>. Paste any of these into the Best Answer Hub Regex Tester to verify or adjust them. For production-grade validation, pair regex with libraries like <code>validator.js</code> or Zod.',
+  },
+  {
+    q: 'How does this compare to Regex101 or regexr.com?',
+    a: 'Regex101 and regexr.com are excellent tools with advanced features like explanation panels, regex libraries, and community sharing. The Best Answer Hub Regex Tester focuses on speed, privacy, and simplicity: no ads, no account requirements, and no data leaves your device. It is perfect for quick tests on a colleague\'s machine, restricted networks, or when you need instant results without navigating a complex interface.',
+  },
+  {
+    q: 'Regex engine compatibility (PCRE, JavaScript, Python)',
+    a: 'The Best Answer Hub Regex Tester uses the JavaScript RegExp engine built into your browser, which is ECMAScript compliant. It supports lookaheads and lookbehinds but does not support PCRE features like atomic grouping, possessive quantifiers, or <code>\Q...\E</code> literal quoting. Python\'s <code>re</code> module is closer to PCRE and supports named groups with <code>(?P&lt;name&gt;...)</code>, while JavaScript uses <code>(?&lt;name&gt;...)</code>. If you need PCRE, test your pattern in PHP or Perl before deploying.',
+  },
+  {
+    q: 'Is my test data sent to a server?',
+    a: 'No. Your regex patterns and test strings never leave your browser when using the Best Answer Hub Regex Tester. The tool uses only client-side JavaScript to evaluate matches: there are no network requests, no analytics pings containing your data, and no cloud processing. You can verify this by opening the Network tab in your browser\'s Developer Tools and confirming zero outgoing requests when you type, match, or replace text.',
+  },
+  {
+    q: 'Can I save or share my regex patterns?',
+    a: 'The Best Answer Hub Regex Tester does not currently offer built-in saving or sharing. You can bookmark the page and your browser will remember any text left in the fields during the session. For sharing, copy the pattern and flags to a code snippet, Gist, or documentation page. URL-based sharing may be added in a future update. In the meantime, explore the <a href="/developer-toolbox/">Best Answer Hub Developer Toolbox</a> for more utilities.',
+  },
+  {
+    q: 'What is ReDoS and how can it affect a Node.js application?',
+    a: 'ReDoS (Regular Expression Denial of Service) exploits catastrophic backtracking in regex engines. When a vulnerable pattern (typically one with nested quantifiers like <code>(a+)+</code>) is matched against crafted input, backtracking steps grow exponentially, stalling the Node.js event loop for seconds or indefinitely. Real-world CVEs have hit widely-used npm packages including <code>minimatch</code> (CVE-2026-26996), <code>path-to-regexp</code>, <code>picomatch</code> (CVE-2026-33671), and <code>brace-expansion</code> (CVE-2025-5889). OWASP lists ReDoS as a well-known input-validation risk. Mitigations include the <code>safe-regex</code> npm package, <code>vuln-regex-detector</code>, or switching to Google\'s RE2 engine (which guarantees linear-time matching by rejecting backreferences) via the <code>re2</code> npm binding. The Best Answer Hub Regex Tester warns when it detects dangerous nested quantifier patterns.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your pattern', description: 'Type a regular expression into the pattern field and select the flags you need: g for global, i for ignore case, m for multiline, and s for dotAll.' },
+  { title: 'Paste test text', description: 'Add the string you want to search in the test area. Matches appear instantly in the matches box, including capture groups when global mode is off.' },
+  { title: 'Test replacements', description: 'Optionally enter replacement text to preview the transformed output in real time. Copy the result or refine your pattern until it is perfect.' },
+];
+
+const seo = {
+  title: 'Free Regex Tester — Real-Time Match & Replace (2026)',
+  description: 'Free online regex tester with real-time matching, capture groups, and replace preview. Test JavaScript regular expressions instantly in your browser. No signup.',
+  url: '/tools/regex-tester/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Regex Tester', url: '/tools/regex-tester/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Regex Tester:"
+    accentText="Real-time pattern matching"
+    description="Write, test, and debug regular expressions instantly. See matches, capture groups, and replacement previews in real time. All processing runs locally in your browser."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- Regex Tester Interface -->
+  <section class="py-6 md:py-8" aria-label="Regex tester">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Regex Tester</h2>
+
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-medium text-bae-muted">Pattern</label>
+            <button type="button" id="regex-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+          </div>
+          <input type="text" id="regex-pattern" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" placeholder="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" spellcheck="false" />
+        </div>
+
+        <div class="flex flex-wrap gap-4 mb-4">
+          <label class="inline-flex items-center gap-1.5 text-xs text-bae-muted">
+            <input type="checkbox" id="regex-flag-g" class="accent-bae-primary" />
+            g: global
+          </label>
+          <label class="inline-flex items-center gap-1.5 text-xs text-bae-muted">
+            <input type="checkbox" id="regex-flag-i" class="accent-bae-primary" checked />
+            i: ignore case
+          </label>
+          <label class="inline-flex items-center gap-1.5 text-xs text-bae-muted">
+            <input type="checkbox" id="regex-flag-m" class="accent-bae-primary" />
+            m: multiline
+          </label>
+          <label class="inline-flex items-center gap-1.5 text-xs text-bae-muted">
+            <input type="checkbox" id="regex-flag-s" class="accent-bae-primary" />
+            s: dotAll
+          </label>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-bae-muted mb-1.5">Test string</label>
+          <textarea id="regex-input" class="w-full h-32 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Paste text to test against your regex..." spellcheck="false"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Matches (<span id="regex-count">0</span>)</label>
+            <div id="regex-matches" class="w-full h-32 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2.5 text-xs text-bae-ink font-mono overflow-auto">
+              <span class="text-bae-muted">Enter a pattern and test string...</span>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Replace (optional)</label>
+            <input type="text" id="regex-replace" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary mb-2" placeholder="Replacement text..." spellcheck="false" />
+            <div id="regex-replaced" class="w-full h-[88px] bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2.5 text-xs text-bae-ink font-mono overflow-auto whitespace-pre-wrap"></div>
+          </div>
+        </div>
+
+        <p id="regex-error" class="text-xs text-red-500 hidden"></p>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">When developers reach for this tool</h2>
+      <p class="text-sm text-bae-muted mb-8">From validating form inputs to parsing log files, here are the four situations where the Best Answer Hub Regex Tester saves the most time.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Form Validation</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Validating form inputs</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Test before production code</p>
+          <p class="text-sm text-bae-muted">Build and test email, phone, postcode, and URL patterns before wiring them into React or Vue form validation. Confirm edge cases (Gmail aliases with <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">+</code> signs, international phone prefixes) without touching production code.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Log Parsing</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Parsing log files</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Extract IPs, timestamps &amp; codes</p>
+          <p class="text-sm text-bae-muted">Extract timestamps, IP addresses, error codes, and status lines from Nginx access logs, AWS CloudWatch output, or application stack traces. Paste a sample log line and iterate on the pattern until capture groups isolate exactly what you need.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Code Refactoring</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Find-and-replace in VS Code</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Test before multi-file replace</p>
+          <p class="text-sm text-bae-muted">VS Code's regex search uses the same ECMAScript engine. Test the pattern and replacement string here first, including <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">$1</code>/<code class="text-xs bg-bae-bg px-1 py-0.5 rounded">$2</code> group references, before running a multi-file replace across an entire codebase.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Security Audit</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Security auditing regex patterns</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Catch ReDoS vulnerabilities</p>
+          <p class="text-sm text-bae-muted">Check whether patterns in your codebase contain nested quantifiers that could enable a ReDoS attack. The tool warns on dangerous constructs like <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">(a+)+</code>, helping you catch vulnerabilities before Snyk or Dependabot does.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, and <a href="/tools/timestamp-converter/" class="text-bae-primary hover:underline">Timestamp</a>, all free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+      const regexPattern = document.getElementById('regex-pattern');
+      const regexInput = document.getElementById('regex-input');
+      const regexMatches = document.getElementById('regex-matches');
+      const regexCount = document.getElementById('regex-count');
+      const regexReplaced = document.getElementById('regex-replaced');
+      const regexReplace = document.getElementById('regex-replace');
+      const regexError = document.getElementById('regex-error');
+      const regexFlags = { g: document.getElementById('regex-flag-g'), i: document.getElementById('regex-flag-i'), m: document.getElementById('regex-flag-m'), s: document.getElementById('regex-flag-s') };
+      // ReDoS protection: detect dangerous nested quantifiers
+      function isDangerousPattern(pattern) {
+        // Detect patterns like (a+)+, (a*)*, (a+)*, (a*)+, (a{1,})+
+        return /\([^)]*\+\)\+|\([^)]*\*\)\*|\([^)]*\+\)\*|\([^)]*\*\)\+|\([^)]*\{\d*,\d*\}\)[+*]/i.test(pattern);
+      }
+      const MAX_TEST_LENGTH = 50000;
+
+      function runRegex() {
+        const pattern = regexPattern.value;
+        let text = regexInput.value;
+        const flags = Object.keys(regexFlags).filter(f => regexFlags[f].checked).join('');
+        if (!pattern || !text) { regexMatches.innerHTML = '<span class="text-bae-muted">Enter a pattern and test string...</span>'; regexCount.textContent = '0'; regexReplaced.textContent = ''; showError(regexError, ''); return; }
+        let warning = '';
+        if (text.length > MAX_TEST_LENGTH) {
+          text = text.slice(0, MAX_TEST_LENGTH);
+          warning = 'Test text truncated to ' + MAX_TEST_LENGTH + ' characters for performance.';
+        }
+        if (isDangerousPattern(pattern)) {
+          warning = (warning ? warning + ' ' : '') + 'Warning: Pattern may cause catastrophic backtracking (ReDoS). Test with short strings only.';
+        }
+        try {
+          const re = new RegExp(pattern, flags);
+          const matches = text.match(re);
+          // Without the g flag, match() returns [fullMatch, ...groups], so the
+          // array length is not the match count — there is exactly one match.
+          regexCount.textContent = matches ? (flags.includes('g') ? matches.length : 1).toString() : '0';
+          if (matches) {
+            let html = '';
+            if (flags.includes('g')) {
+              matches.forEach((m, i) => {
+                html += '<div class="mb-1 pb-1 border-b border-bae-border-light"><span class="text-bae-primary font-bold">#' + (i + 1) + '</span> <span class="text-emerald-600">' + escapeHtml(m) + '</span></div>';
+              });
+            } else {
+              html += '<div class="mb-1 pb-1 border-b border-bae-border-light"><span class="text-bae-primary font-bold">#1</span> <span class="text-emerald-600">' + escapeHtml(matches[0]) + '</span></div>';
+              for (let i = 1; i < matches.length; i++) {
+                if (matches[i] !== undefined) {
+                  html += '<div class="mb-1 pb-1 border-b border-bae-border-light pl-4"><span class="text-bae-muted font-bold">Group ' + i + ':</span> <span class="text-emerald-600">' + escapeHtml(matches[i]) + '</span></div>';
+                }
+              }
+            }
+            regexMatches.innerHTML = html;
+          } else {
+            regexMatches.innerHTML = '<span class="text-bae-muted">No matches found</span>';
+          }
+          const replaceText = regexReplace.value;
+          if (replaceText !== '') {
+            regexReplaced.textContent = text.replace(re, replaceText);
+          } else {
+            regexReplaced.textContent = '';
+          }
+          showError(regexError, warning);
+        } catch (e) { showError(regexError, 'Invalid regex: ' + e.message); regexMatches.innerHTML = ''; regexCount.textContent = '0'; regexReplaced.textContent = ''; }
+      }
+      function showError(el, msg) {
+        if (!msg) { el.classList.add('hidden'); el.textContent = ''; return; }
+        el.textContent = msg;
+        el.classList.remove('hidden');
+      }
+      regexPattern.addEventListener('input', runRegex);
+      regexInput.addEventListener('input', runRegex);
+      regexReplace.addEventListener('input', runRegex);
+      document.getElementById('regex-clear').addEventListener('click', () => {
+        regexPattern.value = '';
+        regexInput.value = '';
+        regexReplace.value = '';
+        regexMatches.innerHTML = '<span class="text-bae-muted">Enter a pattern and test string...</span>';
+        regexCount.textContent = '0';
+        regexReplaced.textContent = '';
+        showError(regexError, '');
+        regexFlags.g.checked = false;
+        regexFlags.i.checked = true;
+        regexFlags.m.checked = false;
+        regexFlags.s.checked = false;
+        regexPattern.focus();
+      });
+      Object.values(regexFlags).forEach(f => f.addEventListener('change', runRegex));
+    })();
+  </script>
+</BaseLayout>

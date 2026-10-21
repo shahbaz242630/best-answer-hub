@@ -1,0 +1,286 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub JWT Decoder?',
+    a: 'The Best Answer Hub JWT Decoder is a free browser-based utility that splits JSON Web Tokens into their three parts and decodes the header and payload into readable JSON. It displays algorithm details, user claims, expiration status, and signature length instantly. Everything runs entirely inside your browser using native JavaScript. No token data is ever uploaded to servers.',
+  },
+  {
+    q: 'Is the JWT Decoder free and safe?',
+    a: 'Yes, the Best Answer Hub JWT Decoder is completely free with no usage limits and no signup required. It is safe because all decoding happens locally inside your browser using native JavaScript APIs like <code>atob</code> and <code>TextDecoder</code>. Your tokens are never sent to a server, stored in a database, or logged anywhere. Disconnect from the internet after loading the page and the Best Answer Hub JWT Decoder will still work perfectly.',
+  },
+  {
+    q: 'What is a JWT token and how does it work?',
+    a: 'A JWT is an open standard from RFC 7519 that transmits claims between parties as a compact, URL-safe string. It contains three dot-separated parts: a Base64url header defining the algorithm, a payload with claims like user ID and expiry, and a signature for integrity. Platforms like Auth0, Clerk, and Firebase use JWTs for stateless authentication across APIs and microservices. The Best Answer Hub JWT Decoder displays all three parts in formatted, readable JSON.',
+  },
+  {
+    q: 'What does the JWT Decoder show me?',
+    a: 'The Best Answer Hub JWT Decoder reveals the header JSON showing the algorithm and token type, the payload JSON containing claims such as <code>sub</code>, <code>exp</code>, <code>iat</code>, <code>aud</code>, and <code>iss</code>, and a truncated preview of the signature. It also calculates the remaining time before expiration using the <code>exp</code> claim, or warns you if the token has already expired and should be refreshed or rejected.',
+  },
+  {
+    q: 'Why does it say "signature not verified"?',
+    a: 'The Best Answer Hub JWT Decoder displays "signature not verified" because it only Base64url-decodes the header and payload for readability. It does not cryptographically verify the signature. Verification requires the secret key or public key that signed the token, which you should never paste into online tools. Use server-side libraries like <code>jsonwebtoken</code> for Node.js or <code>PyJWT</code> for Python for proper signature checking.',
+  },
+  {
+    q: 'Can this tool verify the JWT signature?',
+    a: 'No, the Best Answer Hub JWT Decoder cannot verify signatures. Signature verification requires the signing secret or public key, which would be unsafe to enter in any browser utility. For production verification, use trusted server-side libraries such as <code>jsonwebtoken</code> for Node.js, <code>PyJWT</code> for Python, or the <code>jose</code> library for Go. Always keep private keys offline and away from web-based tools.',
+  },
+  {
+    q: 'Is it safe to paste production JWT tokens?',
+    a: 'Pasting production tokens into any online tool carries risk because payloads may contain sensitive claims like user IDs, emails, or roles. Although the Best Answer Hub JWT Decoder processes everything locally without network requests, you should still prefer test tokens or run the tool offline. For maximum safety, disconnect from the internet before examining sensitive JWTs from production systems like Auth0 or AWS Cognito.',
+  },
+  {
+    q: 'Can I use it offline?',
+    a: 'Yes. After loading the page once, the Best Answer Hub JWT Decoder works without an internet connection. It is built entirely with vanilla JavaScript and uses only browser-native APIs. No external library downloads, no CDN dependencies, and no server-side processing. This makes it ideal for working on tokens in restricted, air-gapped, or high-security environments.',
+  },
+  {
+    q: 'What are common JWT claims (exp, iat, sub, aud, iss)?',
+    a: '<code>exp</code> is the expiration timestamp in seconds since the Unix epoch. <code>iat</code> is the issued-at time. <code>sub</code> is the subject, typically a user ID. <code>aud</code> is the intended audience, like an API identifier. <code>iss</code> is the issuer, such as Auth0 or Clerk. Other common claims include <code>jti</code> for token ID, <code>nbf</code> for not-before time, and <code>scope</code> for permissions. You can inspect nested claim objects with the Best Answer Hub <a href="/tools/json-formatter/">JSON Formatter</a>.',
+  },
+  {
+    q: 'JWT vs session cookies',
+    a: 'JWTs are stateless tokens that carry all user claims and are validated cryptographically without database lookups. Session cookies store only a session ID on the server, requiring a database or cache lookup on every request. JWTs scale better for distributed microservices, while session cookies offer simpler revocation. Frameworks like Next.js and Express often combine both approaches depending on the architecture. The Best Answer Hub JWT Decoder helps inspect the claims payload to understand exactly what a token contains.',
+  },
+  {
+    q: 'How do I know if a JWT has expired?',
+    a: 'The Best Answer Hub JWT Decoder automatically reads the <code>exp</code> claim and compares it against your local system clock. If the expiration timestamp is in the future, it displays how many minutes remain. If it has already passed, it shows how many minutes ago the token expired. You can also verify manually by comparing the Unix timestamp in the payload to the current time from any source like time.is.',
+  },
+  {
+    q: 'Popular JWT libraries (jsonwebtoken, PyJWT, jose, Auth0, Clerk)',
+    a: 'In Node.js, <code>jsonwebtoken</code> by Auth0 dominates with millions of weekly downloads. Python developers rely on <code>PyJWT</code>. Go projects often use the <code>jose</code> library or <code>golang-jwt</code>. Java has the <code>jjwt</code> library. Frontend frameworks like Next.js integrate <code>next-auth</code> or Clerk, which manage JWTs internally. For .NET, Microsoft ships <code>System.IdentityModel.Tokens.Jwt</code>. Always verify signatures server-side using these trusted libraries rather than browser-based tools like the Best Answer Hub JWT Decoder.',
+  },
+  {
+    q: 'Is my token sent to a server?',
+    a: 'No. Your JWT never leaves your browser when using the Best Answer Hub JWT Decoder. The tool uses only client-side JavaScript to Base64url-decode the header and payload sections. There are no network requests, no analytics pings containing your token, and no cloud processing. You can verify this by opening the Network tab in your browser\'s Developer Tools and confirming zero outgoing requests when you paste or decode a token.',
+  },
+  {
+    q: 'What is Base64url and why does JWT use it?',
+    a: 'Base64url is a URL-safe variant of Base64 that replaces <code>+</code> with <code>-</code> and <code>/</code> with <code>_</code>, and omits padding equals signs. JWT uses it because tokens frequently travel in HTTP headers, URL query parameters, and form fields where standard Base64 characters would be URL-encoded or misinterpreted. The Best Answer Hub <a href="/tools/base64-encoder/">Base64 Encoder</a> handles standard RFC 4648 Base64, while the Best Answer Hub JWT Decoder manages Base64url automatically.',
+  },
+  {
+    q: 'What is the "alg: none" vulnerability and what is algorithm confusion in JWTs?',
+    a: 'Two critical JWT vulnerabilities stem from trusting the token\'s own <code>alg</code> header. The <strong>alg: none attack</strong> (RFC 7519 §6, CVE-2015-9235 affecting <code>jsonwebtoken</code>) exploits servers that accept unsigned tokens when the header declares <code>"alg": "none"</code>, bypassing signature verification entirely. <strong>Algorithm confusion</strong> (RS256 → HS256) tricks a server configured for RSA verification into using the RSA public key as an HMAC secret, forging valid signatures with publicly available data. Both require server-side enforcement: always allowlist the expected algorithm in every <code>verify()</code> call. Vulnerable libraries have included <code>jsonwebtoken</code>, <code>PyJWT</code>, and Hono (patched in v4.11.4). The Best Answer Hub JWT Decoder shows the <code>alg</code> field in the decoded header so you can spot unexpected algorithm values instantly.',
+  },
+];
+
+const steps = [
+  { title: 'Paste your token', description: 'Enter a JWT into the input field. The decoder accepts any standard JWT with three dot-separated Base64url sections.' },
+  { title: 'Inspect header & payload', description: 'The tool instantly decodes the header and payload into formatted JSON, shows the signature preview, and calculates expiration status.' },
+  { title: 'Copy results', description: 'Use the copy buttons to save the decoded header or payload JSON to your clipboard for debugging in Postman, VS Code, or your terminal.' },
+];
+
+const seo = {
+  title: 'Free JWT Decoder — Inspect Tokens Safely in Browser (2026)',
+  description: 'Free online JWT decoder. Inspect header, payload, and expiry instantly in your browser. No signup, no data sent to servers.',
+  url: '/tools/jwt-decoder/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'JWT Decoder', url: '/tools/jwt-decoder/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="JWT Decoder:"
+    accentText="Inspect tokens safely"
+    description="Paste any JWT token to decode its header and payload into readable JSON. See expiration status, claims, and signature info instantly, all in your browser."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- JWT Decoder Interface -->
+  <section class="py-6 md:py-8" aria-label="JWT decoder">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">JWT Decoder</h2>
+
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-medium text-bae-muted">Paste JWT token</label>
+            <button type="button" id="jwt-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+          </div>
+          <input
+            type="text"
+            id="jwt-input"
+            class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary"
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            spellcheck="false"
+          />
+          <p id="jwt-error" class="text-xs text-red-500 mt-1.5 hidden"></p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-medium text-bae-muted">Header</label>
+              <button type="button" id="jwt-copy-header" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">Copy</button>
+            </div>
+            <pre id="jwt-header" class="w-full h-40 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2.5 text-xs text-bae-ink font-mono overflow-auto whitespace-pre-wrap"></pre>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-medium text-bae-muted">Payload</label>
+              <button type="button" id="jwt-copy-payload" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">Copy</button>
+            </div>
+            <pre id="jwt-payload" class="w-full h-40 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2.5 text-xs text-bae-ink font-mono overflow-auto whitespace-pre-wrap"></pre>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-x-4 gap-y-1">
+          <span id="jwt-expiry" class="text-bae-muted"></span>
+          <span id="jwt-signature" class="text-bae-muted"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">When developers reach for this tool</h2>
+      <p class="text-sm text-bae-muted mb-8">From debugging auth failures to catching security misconfigurations, here are the four situations where the Best Answer Hub JWT Decoder saves the most time.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Auth Debugging</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Debugging auth failures</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Check aud, iss &amp; scope claims</p>
+          <p class="text-sm text-bae-muted">When a request returns 401, decode the bearer token from the <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">Authorization</code> header to confirm the correct <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">aud</code>, <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">iss</code>, and <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">scope</code> claims are present before reaching for server logs.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Token Expiry</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Checking token expiry</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">See expiration countdown instantly</p>
+          <p class="text-sm text-bae-muted">Paste an Auth0, Clerk, or Firebase token to instantly see the expiration countdown. Confirm whether a reported "session expired" error is genuinely a stale <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">exp</code> claim or a backend misconfiguration.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Security Audit</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Auditing the alg field</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Spot dangerous algorithm values</p>
+          <p class="text-sm text-bae-muted">Spot dangerous algorithm values like <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">none</code> or unexpected <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">HS256</code> on tokens that should use RSA. Critical when reviewing tokens from third-party integrations or legacy systems before deployment.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">API Integration</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Onboarding to a new API</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Understand claim structure fast</p>
+          <p class="text-sm text-bae-muted">When integrating with Stripe, Twilio, or a new OAuth provider, decode their example tokens to understand the claim structure before writing parsing logic. Faster than reading docs and immediately shows the real payload shape.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, and <a href="/tools/timestamp-converter/" class="text-bae-primary hover:underline">Timestamp</a>. All free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+      function showError(el, msg) {
+        if (!msg) { el.classList.add('hidden'); el.textContent = ''; return; }
+        el.textContent = msg;
+        el.classList.remove('hidden');
+      }
+      const jwtInput = document.getElementById('jwt-input');
+      const jwtHeader = document.getElementById('jwt-header');
+      const jwtPayload = document.getElementById('jwt-payload');
+      const jwtError = document.getElementById('jwt-error');
+      const jwtExpiry = document.getElementById('jwt-expiry');
+      const jwtSignature = document.getElementById('jwt-signature');
+      function base64UrlDecode(str) {
+        while (str.length % 4 !== 0) str += '=';
+        str = str.replace(/\-/g, '+').replace(/\_/g, '/');
+        const binString = atob(str);
+        const bytes = Uint8Array.from(binString, c => c.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+      }
+      function decodeJwt() {
+        const token = jwtInput.value.trim();
+        if (!token) { jwtHeader.textContent = ''; jwtPayload.textContent = ''; showError(jwtError, ''); jwtExpiry.textContent = ''; jwtSignature.textContent = ''; return; }
+        const parts = token.split('.');
+        if (parts.length !== 3) { showError(jwtError, 'Invalid JWT: expected 3 parts separated by dots'); jwtHeader.textContent = ''; jwtPayload.textContent = ''; jwtExpiry.textContent = ''; jwtSignature.textContent = ''; return; }
+        try {
+          const header = JSON.parse(base64UrlDecode(parts[0]));
+          const payload = JSON.parse(base64UrlDecode(parts[1]));
+          jwtHeader.textContent = JSON.stringify(header, null, 2);
+          jwtPayload.textContent = JSON.stringify(payload, null, 2);
+          jwtSignature.textContent = 'Signature: ' + parts[2].substring(0, 20) + '… (' + parts[2].length + ' chars, not verified)';
+          showError(jwtError, '');
+          if (payload.exp) {
+            const expDate = new Date(payload.exp * 1000);
+            const now = new Date();
+            const diff = expDate - now;
+            if (diff > 0) {
+              jwtExpiry.textContent = '⏳ Expires in ' + Math.ceil(diff / 1000 / 60) + ' min (' + expDate.toISOString() + ')';
+              jwtExpiry.className = 'text-emerald-600 font-medium';
+            } else {
+              jwtExpiry.textContent = '❌ Expired ' + Math.ceil(Math.abs(diff) / 1000 / 60) + ' min ago (' + expDate.toISOString() + ')';
+              jwtExpiry.className = 'text-red-500 font-medium';
+            }
+          } else {
+            jwtExpiry.textContent = 'No expiration claim (exp) found';
+            jwtExpiry.className = 'text-bae-muted';
+          }
+        } catch (e) {
+          showError(jwtError, 'Decoding failed: ' + e.message);
+          jwtHeader.textContent = ''; jwtPayload.textContent = ''; jwtExpiry.textContent = ''; jwtSignature.textContent = '';
+        }
+      }
+      jwtInput.addEventListener('input', decodeJwt);
+      document.getElementById('jwt-clear').addEventListener('click', () => {
+        jwtInput.value = '';
+        jwtHeader.textContent = '';
+        jwtPayload.textContent = '';
+        jwtExpiry.textContent = '';
+        jwtSignature.textContent = '';
+        showError(jwtError, '');
+        jwtInput.focus();
+      });
+      document.getElementById('jwt-copy-header').addEventListener('click', () => copyText(jwtHeader.textContent));
+      document.getElementById('jwt-copy-payload').addEventListener('click', () => copyText(jwtPayload.textContent));
+    })();
+  </script>
+</BaseLayout>

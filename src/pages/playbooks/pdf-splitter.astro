@@ -1,0 +1,363 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-12T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub PDF Splitter?', a: 'The Best Answer Hub PDF Splitter is a free, browser-based tool that extracts specific pages or splits a PDF into multiple files. It offers Extract Range, Split Every N Pages, and Extract All Pages, which saves each page as its own file in a ZIP. Every split runs on your device using pdf-lib, so no file is uploaded and no account is needed.' },
+  { q: 'Is it safe to upload a confidential PDF to a free splitter?', a: 'It is safest not to upload it at all. Smallpdf, iLovePDF, and PDF2Go process files on their servers and hold them from one to 24 hours before deleting. For bank statements, medical records, or contracts, that is a real exposure. The Best Answer Hub PDF Splitter processes the file in your browser, so it never reaches a server.' },
+  { q: 'How do I extract specific pages from a PDF?', a: 'Open the Best Answer Hub PDF Splitter, choose Extract Range, and type the pages with commas and dashes. Entering 1-3, 5, 8-10 keeps pages 1 through 3, page 5, and pages 8 through 10, and non-consecutive single pages like 2, 7, 15 work too. Page numbers are 1-based, so page 1 is the first page.' },
+  { q: 'How do I split a PDF into individual pages?', a: 'Select Extract All Pages in the Best Answer Hub PDF Splitter and run the split. The tool saves every page as its own PDF, named in sequence, and bundles them into a single ZIP archive. This is ideal for separating batch-scanned invoices or forms where each page needs to become a separate file.' },
+  { q: 'How do I remove pages from a PDF?', a: 'Use Extract Range to keep only the pages you want, which removes the rest. To drop page 5 of a 10-page file, enter 1-4, 6-10, and the new PDF contains every page except page 5. The Best Answer Hub PDF Splitter builds the result in your browser with no watermark and no upload.' },
+  { q: 'Does splitting a PDF reduce quality?', a: 'No. Splitting copies the selected pages exactly, without re-rendering, rasterizing, or compressing them, so text stays selectable and images keep their resolution. The Best Answer Hub PDF Splitter uses the native page-copying in pdf-lib, which transfers page content at full fidelity. The only change is that pages move into one or more new files.' },
+  { q: 'Are bookmarks and form fields kept when you split a PDF?', a: 'No. Bookmarks, internal links, and form fields are document-level structures, so a split produces clean static PDFs without them. The Best Answer Hub PDF Splitter is upfront about this. If you need to keep a clickable table of contents or an interactive form, a desktop tool such as PDFsam or Adobe Acrobat is the right choice.' },
+  { q: 'Does splitting break a digital signature?', a: 'Yes. A digital signature covers a specific byte range of the original file, so a new file made of copied pages cannot carry a valid signature. This is true of any splitter, not just this one. If a signed PDF must stay valid, do not split it; keep the original and share it whole instead.' },
+  { q: 'Do online PDF splitters upload my file to a server?', a: 'Most do. Smallpdf, iLovePDF, Sejda, PDF2Go, and Adobe process files on their own servers, which means your document is transmitted and stored for a period. The Best Answer Hub PDF Splitter is different: it splits the file in your browser with pdf-lib, so nothing is uploaded, which you can confirm in the Network tab.' },
+  { q: 'How long do online tools keep my uploaded PDF?', a: 'It varies by tool. Smallpdf states one hour, iLovePDF two hours, and PDF2Go up to 24 hours before automatic deletion, per their own pages. During that window the file sits on their servers. The Best Answer Hub PDF Splitter keeps the file on your device, so there is no server copy to retain in the first place.' },
+  { q: 'Can I split a password-protected PDF?', a: 'Not directly. An encrypted or password-protected PDF cannot be split without the password, and the Best Answer Hub PDF Splitter will show an error. To split it, first open the file with your password and save an unencrypted copy, for example by printing to PDF, then split that copy in your browser.' },
+  { q: 'How do I split a large PDF that is too big to email?', a: 'Gmail and Outlook cap attachments around 25 MB. Use Split Every N Pages in the Best Answer Hub PDF Splitter to divide the document into smaller parts, or Extract Range to send only the pages needed. If the recipient needs the whole document as one lighter file, the Best Answer Hub PDF Compressor reduces size without splitting.' },
+  { q: 'Does the PDF Splitter work offline?', a: 'Yes. After the page loads once, the Best Answer Hub PDF Splitter works with no internet connection, because it splits files locally with pdf-lib and JSZip. Nothing is transmitted or stored off your device. That makes it safe for HIPAA-sensitive records, NDA-protected contracts, and financial statements that should not leave your computer.' },
+  { q: 'How is it different from Smallpdf and iLovePDF?', a: 'Smallpdf and iLovePDF upload your file to their servers, cap free tasks, and can add watermarks past those limits. The iLovePDF free tier also is not ad-free. The Best Answer Hub PDF Splitter runs entirely in your browser with no upload, no watermark, no task caps, and no signup. The trade-off is that it does not split by bookmarks or chapters.' },
+  { q: 'Is the Best Answer Hub PDF Splitter free?', a: 'Yes. The Best Answer Hub PDF Splitter is completely free with no usage limits, no watermarks, and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so the tool carries no ads and never asks you to upgrade to finish a split.' },
+];
+
+const seo = {
+  title: 'How to Split a PDF Without Uploading It (2026)',
+  description: 'How to extract a page range or split a PDF into separate files, what a split quietly breaks, and why online splitters upload your file when this one does not.',
+  url: '/playbooks/pdf-splitter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'PDF Splitter', url: '/playbooks/pdf-splitter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; PDF Tools</span>
+        <div class="cav">Your file never leaves your device</div>
+        <h1>Split a PDF, <em>Nothing Uploaded</em></h1>
+        <p class="dek">A plain guide to splitting a PDF: how to pull out a page range, save each page separately, what quietly breaks when you split, and why pasting a bank statement or contract into an online splitter can be a privacy risk. The Best Answer Hub PDF Splitter does every split in your browser, so the file is never uploaded.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Privacy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Extract<small>range or single pages</small></div>
+          <div class="seg b2">Private<small>never uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">0</div><div class="l">files uploaded to a server</div><div class="src">split on your device</div></div>
+      <div class="stat"><div class="n">Up to 24h</div><div class="l">online tools can hold your upload</div><div class="src">PDF2Go, 2026</div></div>
+      <div class="stat"><div class="n">$10.22M</div><div class="l">average US data breach cost</div><div class="src">IBM, 2025</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#safe">Is it safe to upload?</a>
+        <a href="#how">How to split pages</a>
+        <a href="#quality">Does it lose quality?</a>
+        <a href="#breaks">What a split breaks</a>
+        <a href="#why">Why split a PDF</a>
+        <a href="#different">Versus Smallpdf</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>Splitting a PDF means copying selected pages into one or more new files, and the Best Answer Hub PDF Splitter does it entirely in your browser, so a bank statement, contract, or medical record is never uploaded to a server.</strong> This guide explains how to extract a page range or save each page separately, why splitting does not lose quality, what a split can quietly break (bookmarks, form fields, and digital signatures), why the source documents are usually sensitive, and how most free online splitters differ from a tool that keeps the file on your device.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub PDF Splitter?</h2>
+        <p>The Best Answer Hub <a href="/tools/pdf-splitter/">PDF Splitter</a> is a single-page tool that breaks one PDF into smaller files, with three modes: Extract Range pulls out specific pages such as <code>1-3, 5, 8-10</code>, Split Every N Pages divides the document into equal chunks, and Extract All Pages saves every page as its own file bundled in a ZIP. It runs entirely in your browser using the pdf-lib library, so the file is never transmitted, nothing is stored, and it keeps working with the internet switched off. It needs no account, adds no watermark, and shows no ads. The tool sits in the Best Answer Hub <a href="/pdf-toolkit/">PDF Toolkit</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The part that matters</div>
+        <h2 id="safe">Is it safe to upload a PDF to a free online splitter?</h2>
+        <p>Uploading is only as safe as where the file lands, and most free online splitters send your document to their servers to process it. Smallpdf states that files are processed on its infrastructure and "permanently removed from our servers after one hour" (<a href="https://smallpdf.com/blog/is-smallpdf-safe" target="_blank" rel="noopener noreferrer">Smallpdf</a>). iLovePDF says uploads are "automatically and permanently deleted within two hours of being processed" (<a href="https://www.ilovepdf.com/help/security" target="_blank" rel="noopener noreferrer">iLovePDF</a>). PDF2Go keeps files and deletes them "automatically within 24 hours" (<a href="https://www.pdf2go.com/security" target="_blank" rel="noopener noreferrer">PDF2Go</a>). Even with prompt deletion, the file still leaves your device and sits on someone else server for a window. That matters because the documents people split are often the sensitive kind: bank statements, tax forms, medical records, and contracts. The FTC guidance is blunt: <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">"If it's not in your system, it can't be stolen by hackers."</a></p>
+        <blockquote>The safest way to split a document is to never send it anywhere. <span class="accent">If the pages are separated in your browser, there is nothing to upload, store, or leak.</span></blockquote>
+        <p>The stakes are set by the wider numbers. The average data breach reached 4.44 million dollars globally and a record 10.22 million dollars in the United States in 2025, with the financial sector averaging 5.56 million dollars (<a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">IBM</a>). Third-party involvement in breaches doubled to 30 percent (<a href="https://www.verizon.com/about/news/2025-data-breach-investigations-report" target="_blank" rel="noopener noreferrer">Verizon DBIR</a>), which is exactly the risk a third-party upload introduces. The Best Answer Hub PDF Splitter avoids the whole question by processing the file locally: the pages never reach a server.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">Where your PDF goes</figcaption>
+          <svg viewBox="0 0 620 244" role="img" aria-label="Diagram: a PDF split in this tool is processed in your browser and nothing is uploaded; a PDF sent to many online splitters is uploaded to a server and held for a retention window before deletion.">
+            <rect x="200" y="14" width="220" height="46" rx="12" fill="#33302A"/>
+            <text x="310" y="42" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="700" fill="#fff">You choose pages to split</text>
+            <line x1="310" y1="60" x2="150" y2="96" stroke="#ddd0bb" stroke-width="2"/>
+            <line x1="310" y1="60" x2="470" y2="96" stroke="#ddd0bb" stroke-width="2"/>
+            <text x="150" y="86" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">This tool</text>
+            <rect x="40" y="96" width="220" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="150" y="124" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">Split in your browser</text>
+            <line x1="150" y1="142" x2="150" y2="176" stroke="#ddd0bb" stroke-width="2"/>
+            <rect x="40" y="176" width="220" height="54" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="150" y="200" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#5a7355">Nothing uploaded</text>
+            <text x="150" y="218" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">and it works offline</text>
+            <text x="470" y="86" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">Many online splitters</text>
+            <rect x="360" y="96" width="220" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="470" y="124" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">Uploaded to a server</text>
+            <line x1="470" y1="142" x2="470" y2="176" stroke="#ddd0bb" stroke-width="2"/>
+            <rect x="360" y="176" width="220" height="54" rx="10" fill="#F3E2D6" stroke="#ecd6c5" stroke-width="2"/>
+            <text x="470" y="200" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#8a4429">Held, then deleted</text>
+            <text x="470" y="218" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#B0512F">1 to 24 hours on their servers</text>
+          </svg>
+          <p class="chart-src">A client-side splitter processes the PDF in your browser and sends nothing. Many online splitters upload the file and hold it for a retention window: one hour (Smallpdf), two hours (iLovePDF), up to 24 hours (PDF2Go). Sources in the list below.</p>
+        </figure>
+        <div class="callout sage"><div class="h">How to check any online tool in ten seconds</div><p>Open your browser developer tools, switch to the Network tab, then run the split. If the file truly stays on your device, you will see no file being uploaded. Do this once with the Best Answer Hub PDF Splitter and you can confirm the document never leaves your machine.</p></div>
+
+        <div class="cav">The how-to</div>
+        <h2 id="how">How do you split or extract pages from a PDF?</h2>
+        <p>You split a PDF by choosing which pages go into the new file, and the Best Answer Hub PDF Splitter offers three ways to do it. To pull out specific pages, use Extract Range and type the pages with commas and dashes, so <code>1-3, 5, 8-10</code> keeps pages 1 through 3, page 5, and pages 8 through 10. To break a long document into even parts, use Split Every N Pages, so a 100-page file split every 25 pages becomes four files. To separate every page, use Extract All Pages and each page downloads as its own PDF inside a ZIP. Page numbers are 1-based, matching what you see in a viewer, so page 1 is the first page. Removing pages works the same way in reverse: to drop page 5 of a 10-page file, extract <code>1-4, 6-10</code>.</p>
+        <table>
+          <thead><tr><th>Mode</th><th>What it does</th><th>Good for</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Extract Range</td><td>Keeps the pages you list, including non-consecutive ones</td><td>Pulling a few pages from a statement or contract</td></tr>
+            <tr><td class="band">Split Every N Pages</td><td>Divides the document into equal chunks</td><td>Breaking a large file into email-sized parts</td></tr>
+            <tr><td class="band">Extract All Pages</td><td>Saves every page as its own PDF in a ZIP</td><td>Separating batch-scanned invoices or forms</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">Fidelity</div>
+        <h2 id="quality">Does splitting a PDF reduce quality?</h2>
+        <p>No. Splitting copies the selected pages exactly as they are, so nothing is re-rendered, rasterized, or compressed. A PDF stores each page as an object that references its own content and resources, and splitting copies those page objects into a new document rather than redrawing them (<a href="https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf" target="_blank" rel="noopener noreferrer">ISO 32000-1</a>). Text stays selectable, images keep their original resolution, and vector graphics stay sharp. The Best Answer Hub PDF Splitter uses the native page-copying in pdf-lib, which moves the page content at full fidelity (<a href="https://pdf-lib.js.org/" target="_blank" rel="noopener noreferrer">pdf-lib</a>). One honest caveat: fewer pages does not always mean a proportionally smaller file, because a copied page can carry over resources it references, so if the goal is a smaller file rather than fewer pages, compression is the better tool.</p>
+        <div class="callout"><div class="h">Splitting versus compressing</div><p>If the file is too big to email, splitting into parts is one fix, but for a single smaller file the Best Answer Hub <a href="/tools/pdf-compressor/">PDF Compressor</a> reduces size directly, also in your browser. Split when you need specific pages; compress when you need a lighter file.</p></div>
+
+        <div class="cav">The honest limits</div>
+        <h2 id="breaks">What breaks when you split a PDF?</h2>
+        <p>Splitting always preserves the visible page content, but some document-level features do not survive, and it is better to know that up front. Bookmarks and internal links point to destinations elsewhere in the document, so once a target page is not in the split, they have nothing to point to (<a href="https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf" target="_blank" rel="noopener noreferrer">ISO 32000-1</a>). Form fields live in a single document-wide structure, so separating pages can orphan them. Digital signatures cover a specific byte range of the original file, so writing a new file with copied pages will not carry a valid signature. The Best Answer Hub PDF Splitter is deliberate about this: it produces clean, static PDFs of the page content, and if you need to keep an interactive table of contents or a signed form intact, a desktop tool such as PDFsam or Adobe Acrobat is the right choice.</p>
+        <table>
+          <thead><tr><th>Element</th><th>What happens in a split</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Page content (text, images, vectors)</td><td>Preserved at full quality; copied as-is, not re-encoded</td></tr>
+            <tr><td class="band">Bookmarks and internal links</td><td>Not preserved; their destinations may no longer exist</td></tr>
+            <tr><td class="band">Form fields (AcroForm)</td><td>Not preserved; the document-wide field structure is broken up</td></tr>
+            <tr><td class="band">Digital signatures</td><td>Broken; a new file cannot carry the original signature</td></tr>
+            <tr><td class="band">Document metadata</td><td>Starts fresh on the new file</td></tr>
+          </tbody>
+        </table>
+        <div class="callout peach"><div class="h">If the PDF is signed or encrypted</div><p>Splitting invalidates a digital signature, and a password-protected PDF cannot be split without the password. Remove the protection first by opening it with your password and saving an unencrypted copy, then split that. The Best Answer Hub PDF Splitter shows an error rather than guessing at a protected file.</p></div>
+
+        <div class="cav">The reasons</div>
+        <h2 id="why">Why do people split PDFs?</h2>
+        <p>People split PDFs to share only what is needed rather than a whole document, and the common cases explain why privacy matters. Someone pulls one month out of a multi-year bank statement before sending it to a lender. An accountant separates a batch-scanned stack back into individual invoices. A patient extracts two pages of a medical record for a referral. A contractor removes an internal pricing page before sending a proposal. In almost every case the source file holds exactly the data the FTC lists as sensitive: account numbers, Social Security numbers, and financial or medical detail whose exposure "can lead to fraud, identity theft, or similar harms" (<a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">FTC</a>). That is the case for keeping the split on your own device: the fewer places a sensitive file travels, the smaller the risk.</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from Smallpdf and iLovePDF?</h2>
+        <p>The difference is that the Best Answer Hub PDF Splitter keeps the file in your browser, while Smallpdf and iLovePDF upload it to their servers to process. The iLovePDF free tier allows a single split task, is not ad-free by its own pricing page, and deletes uploads after two hours (<a href="https://www.ilovepdf.com/pricing" target="_blank" rel="noopener noreferrer">iLovePDF pricing</a>). Smallpdf removes files after an hour (<a href="https://smallpdf.com/blog/is-smallpdf-safe" target="_blank" rel="noopener noreferrer">Smallpdf</a>). Sejda caps free documents at 50 MB and 200 pages (<a href="https://www.sejda.com/desktop" target="_blank" rel="noopener noreferrer">Sejda</a>). The table sets the usual experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical online splitter</th></tr></thead>
+          <tbody>
+            <tr><td>Where the file is processed</td><td class="band">In your browser</td><td>Uploaded to a server</td></tr>
+            <tr><td>File retained on a server</td><td class="band">None</td><td>1 to 24 hours (Smallpdf, iLovePDF, PDF2Go)</td></tr>
+            <tr><td>Signup or account</td><td class="band">Not required</td><td>Pushed for repeat use</td></tr>
+            <tr><td>Watermarks</td><td class="band">None</td><td>Added past free limits</td></tr>
+            <tr><td>Free-tier caps</td><td class="band">None</td><td>Task and size caps common</td></tr>
+            <tr><td>Works offline</td><td class="band">Yes</td><td>Usually not</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolkit</div><p>The Best Answer Hub <a href="/pdf-toolkit/">PDF Toolkit</a> has the neighbors you reach for next: a <a href="/tools/pdf-merger/">PDF Merger</a> to recombine files, a <a href="/tools/pdf-compressor/">PDF Compressor</a> to shrink them, and an <a href="/tools/images-to-pdf/">Images to PDF</a> converter, each running in the browser and sending nothing.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Split it now</span>
+          <h3>Open the PDF Splitter</h3>
+          <p>Free, no signup, and processed entirely in your browser. Extract a page range, split every N pages, or save each page as its own file, without uploading a thing.</p>
+          <a class="btn" href="/tools/pdf-splitter/">Split your PDF</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about splitting PDFs</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-pdf-tools/">Free PDF Tools, Nothing Uploaded</a></b> The PDF Toolkit guide, from splitting to compressing, all keeping your file on your device.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/pdf-compressor/">Shrink a PDF Without Uploading It</a></b> How compression works and why online compressors send your file to a server.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to PDFs.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>ISO 32000-1:2008 (PDF standard, Adobe-published copy), <a href="https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf" target="_blank" rel="noopener noreferrer">Document management, Portable document format</a> (page objects and the page tree; outlines and destinations; the AcroForm dictionary; signature byte ranges).</li>
+          <li>pdf-lib, <a href="https://pdf-lib.js.org/" target="_blank" rel="noopener noreferrer">Create and modify PDF documents in any JavaScript environment</a> (copy pages between documents; split a single PDF into separate ones; runs in the browser).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/API/File_API" target="_blank" rel="noopener noreferrer">File API</a> (a selected file is read client-side in memory, without a server upload).</li>
+          <li>Smallpdf, <a href="https://smallpdf.com/blog/is-smallpdf-safe" target="_blank" rel="noopener noreferrer">Is Smallpdf safe?</a> (files processed on its servers and removed after one hour).</li>
+          <li>iLovePDF, <a href="https://www.ilovepdf.com/help/security" target="_blank" rel="noopener noreferrer">Security</a> and <a href="https://www.ilovepdf.com/pricing" target="_blank" rel="noopener noreferrer">Pricing</a> (uploads deleted within two hours; free tier is limited and not ad-free).</li>
+          <li>PDF2Go, <a href="https://www.pdf2go.com/security" target="_blank" rel="noopener noreferrer">Security</a> (files automatically deleted within 24 hours).</li>
+          <li>Sejda, <a href="https://www.sejda.com/desktop" target="_blank" rel="noopener noreferrer">Desktop</a> (free documents up to 50 MB and 200 pages).</li>
+          <li>IBM, <a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">Cost of a Data Breach Report 2025</a> (global average 4.44 million dollars; United States record 10.22 million dollars; financial sector 5.56 million dollars).</li>
+          <li>Verizon, <a href="https://www.verizon.com/about/news/2025-data-breach-investigations-report" target="_blank" rel="noopener noreferrer">2025 Data Breach Investigations Report</a> (third-party involvement doubled to 30 percent).</li>
+          <li>FTC, <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">Protecting Personal Information: A Guide for Business</a> (keep only what you need; if it is not in your system it cannot be stolen).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/pdf-splitter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Splitter</a>, <a href="/pdf-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Toolkit</a>, <a href="/tools/pdf-merger/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Merger</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

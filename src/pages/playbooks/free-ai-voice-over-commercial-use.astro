@@ -1,0 +1,409 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-10-08T00:00:00+00:00';
+
+// RelatedPlaybooks omitted while the skills track is under 3 spokes (§11.3 / §13.5 / §14.5).
+
+const faqs = [
+  { q: 'What is the Best Answer Hub guide to free AI voice overs for commercial use?', a: 'This Best Answer Hub playbook is a license-first guide to AI narration you can legally sell. It reads the terms at source rather than repeating listicles, sorts the free options into safe, conditional and non-commercial, and covers what YouTube actually requires for a synthetic voice.' },
+  { q: 'Which free text to speech can be used commercially?', a: 'Kokoro-82M under Apache 2.0, Chatterbox and MeloTTS under MIT, and Google Cloud\'s free monthly allowance under its commercial terms. Each grants commercial use and none requires attribution on the audio. The famous free tiers are usually the ones that do not, which is the reverse of what most people assume.' },
+  { q: 'Can you use the ElevenLabs free plan for commercial use?', a: 'No. ElevenLabs states that the free plan does not include a commercial license and cannot be used for any commercial purpose, and its terms of use restrict free users to non-commercial purposes. Even non-commercial sharing requires crediting elevenlabs.io in the title. Starter at $6 a month is the cheapest tier that grants commercial rights.' },
+  { q: 'Is Kokoro TTS free for commercial use?', a: 'Yes. Kokoro-82M is published under Apache 2.0, which permits commercial use, and its model card states it has been deployed in commercial products. One 82-million-parameter model carries 54 voices across 8 languages. Five voices, four Japanese and one French, trace to CC BY sources; every English voice is clear.' },
+  { q: 'What is a genuinely free alternative to ElevenLabs?', a: 'A local open-weight model, or Google Cloud\'s free tier. Kokoro-82M runs on an ordinary processor with no account and no per-character cost. Google Cloud gives four million Standard characters a month free with full commercial rights. Both avoid the free-tier commercial restriction that applies at ElevenLabs.' },
+  { q: 'Is there royalty free AI voice for YouTube?', a: 'Yes, if you choose on license rather than on price. Audio generated from an Apache 2.0 or MIT model carries no royalty, no attribution and no per-use fee, which is what people usually mean by royalty free. Check the model license and, for Piper, the individual voice license, because those differ.' },
+  { q: 'Does an AI voice stop a YouTube channel being monetized?', a: 'No. YouTube\'s policy targets content that is templated and interchangeable, not narration that happens to be synthetic. What is disallowed is AI-generated content made with generic or unoriginal templates giving the impression of mass production. Original research and writing with a synthetic voice remains eligible.' },
+  { q: 'Do you have to disclose an AI voice over on YouTube?', a: 'Usually not. YouTube requires disclosure when AI meaningfully alters or generates photorealistic content, and its list of exemptions names cloning your own voice for voice overs or dubs. A synthetic stock narration over your own footage is not on the disclosure list. Meta\'s rule is broader and does cover realistic-sounding generated audio.' },
+  { q: 'Is Coqui XTTS-v2 free for commercial use?', a: 'No, and this is the most common mistake in AI voice licensing. The Coqui Public Model License permits only non-commercial use of the model and its outputs, and defines non-commercial as use from which you receive no direct or indirect payment. The restriction follows the audio file, not just the download.' },
+  { q: 'Is Piper TTS MIT licensed?', a: 'Not any more. The archived repository was MIT; development moved and the current engine is GPL 3.0. More importantly, each Piper voice carries its own license from the dataset that trained it. Several popular English voices are CC BY-NC-SA 4.0, which forbids commercial use, so check the voice rather than the engine.' },
+  { q: 'How much does an AI voice over cost per million characters?', a: 'From nothing to about $200. A local open-weight model costs only electricity. Google Cloud charges $4 per million characters for Standard voices, $16 for Neural2 and $30 for Chirp 3 HD. ElevenLabs Starter works out near $200 per million, since each character consumes one credit.' },
+  { q: 'What is the best offline text to speech?', a: 'Kokoro-82M is the usual answer for English narration, because it pairs a permissive Apache 2.0 license with a size that runs on a processor rather than a graphics card. Independent benchmarks on four CPU cores measured roughly two minutes of audio per minute of compute, though results vary widely with thread count.' },
+  { q: 'Can you clone someone else\'s voice legally?', a: 'Only with documented consent, and sometimes not even then. Microsoft\'s speech code of conduct forbids impersonation without explicit valid consent and bars simulating politicians even with consent. Tennessee\'s ELVIS Act protects voice directly, and California, Indiana and Nevada include voice in right-of-publicity law.' },
+  { q: 'Does a free AI voice require attribution?', a: 'It depends on the tool, and attribution is often a condition rather than a courtesy. ElevenLabs requires free-plan output to credit elevenlabs.io in the title. Apache 2.0 and MIT models impose no attribution on generated audio. Kokoro documents five voices, four Japanese and one French, that trace to CC BY sources.' },
+  { q: 'Which AI voice tools cannot be used commercially even though they are free?', a: 'Coqui XTTS-v2, whose license covers its outputs; F5-TTS, whose pre-trained weights are CC BY-NC even though its code is MIT; several Piper voices licensed CC BY-NC-SA; and the ElevenLabs free plan. Murf grants commercial rights but its free trial does not allow downloads at all.' },
+];
+
+const seo = {
+  title: 'Free AI Voice Over for Commercial Use: What You Can Sell',
+  description: 'Most free AI voices cannot be sold with, and the ones that can carry conditions. The licenses that matter, what YouTube requires, and the safe picks.',
+  url: '/playbooks/free-ai-voice-over-commercial-use/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Free AI Voice Over for Commercial Use', url: '/playbooks/free-ai-voice-over-commercial-use/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+<div class="hero">
+  <span class="glow"></span>
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="masthead"><img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44"><span class="word">Best Answer Hub<i>.</i></span></div>
+      <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+    </div>
+    <span class="eyebrow">Best Answer Hub Playbooks &middot; AI Agent Skills</span>
+    <div class="cav">Read this before you publish</div>
+    <h1>Which Free AI Voice Overs Can You <em>Actually Sell?</em></h1>
+    <p class="dek">"Free" means five different things in AI voice, and only two of them let you monetize. Here is what each license really permits, which popular free voices quietly forbid commercial use, and the one YouTube rule everybody gets backwards.</p>
+    <div class="byline"><span><b>Best Answer Hub</b></span><span>~13 min read</span><span>Every license read at source</span><span>No signup</span></div>
+    <div class="bandstrip">
+      <div class="seg b1">Safe to sell<small>Permissive, no strings</small></div>
+      <div class="seg b2">Safe with conditions<small>Attribution or disclosure</small></div>
+      <div class="seg b3">Not sellable<small>Free, but non-commercial</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat"><div class="n">$0</div><div class="l">ElevenLabs free plan, which grants no commercial license</div><div class="src">ElevenLabs terms, March 2026</div></div>
+  <div class="stat"><div class="n">4M</div><div class="l">characters a month free from Google, commercially usable</div><div class="src">Google Cloud pricing, 2026</div></div>
+  <div class="stat"><div class="n">54</div><div class="l">voices in one Apache 2.0 model you can run yourself</div><div class="src">Kokoro-82M model card</div></div>
+  <div class="stat"><div class="n">$6</div><div class="l">cheapest ElevenLabs tier that grants commercial rights</div><div class="src">ElevenLabs pricing, 2026</div></div>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="On this page">
+    <div class="t">On this page</div>
+    <a href="#free">What "free" actually means</a>
+    <a href="#commercial">Which ones you can sell with</a>
+    <a href="#elevenlabs">The ElevenLabs free plan</a>
+    <a href="#traps">Free, but not sellable</a>
+    <a href="#local">Running it yourself</a>
+    <a href="#cost">What it costs either way</a>
+    <a href="#youtube">AI voice and YouTube money</a>
+    <a href="#clone">Cloning a voice</a>
+    <a href="#picking">How to pick</a>
+    <a href="#faq">FAQs</a>
+  </nav>
+
+  <article>
+
+    <p class="lead"><strong>Most free AI voice tools do not let you sell what you make with them, and the ones that do are rarely the famous ones.</strong> The license sits on the model or the plan, not on the audio file, so nothing warns you at the moment you export. The safe options are real and they are free, but you have to know which they are before you build a channel on the wrong one.</p>
+
+    <div class="cav">Five different things</div>
+    <h2 id="free">What does "free" actually mean for an AI voice?</h2>
+    <p>It means five different things, and only two of them let you monetize. Free to try, free but non-commercial, free with attribution as a condition, free with a recurring allowance, and genuinely free to run yourself. Almost every argument about AI voice licensing is really two people using the same word for different things.</p>
+
+    <div class="sec">
+      <ul class="pillars">
+        <li><span class="dot">1</span><div><b>Free to try.</b> A trial with a cap, and often no export. Murf's free tier gives access to over 300 voices and states plainly that the free trial does not support downloads.</div></li>
+        <li><span class="dot">2</span><div><b>Free but non-commercial.</b> The audio exists, sounds excellent, and may not legally earn money. This is the trap, and ElevenLabs' free plan is the most common example.</div></li>
+        <li><span class="dot">3</span><div><b>Free with attribution as a condition.</b> Not a courtesy. Credit the vendor or the license is not satisfied.</div></li>
+        <li><span class="dot">4</span><div><b>Free within a monthly allowance.</b> Google Cloud gives four million characters a month on its Standard and WaveNet voices at no cost, with no attribution requirement.</div></li>
+        <li><span class="dot">5</span><div><b>Free to run yourself.</b> An open-weight model on your own machine, with no counter, no account, and a license you read once.</div></li>
+      </ul>
+    </div>
+
+    <div class="cav">The short answer</div>
+    <h2 id="commercial">Which free text to speech can you use commercially?</h2>
+    <p>Kokoro-82M, Chatterbox, MeloTTS, Parler-TTS and Google Cloud's free allowance are the clean picks. Each grants commercial use in its own terms, and none of them makes you credit anyone. The table below is the whole decision, and every row was read at the license itself rather than taken from a listicle.</p>
+
+    <table>
+      <thead><tr><th>Option</th><th>License</th><th>Sell the output?</th><th>The condition</th></tr></thead>
+      <tbody>
+        <tr><td class="band">Kokoro-82M</td><td>Apache 2.0</td><td><span class="score lv1">Yes</span></td><td>None for the English voices</td></tr>
+        <tr><td class="band">Chatterbox</td><td>MIT</td><td><span class="score lv1">Yes</span></td><td>Every output carries an inaudible watermark</td></tr>
+        <tr><td class="band">MeloTTS</td><td>MIT</td><td><span class="score lv1">Yes</span></td><td>None</td></tr>
+        <tr><td class="band">Google Cloud TTS</td><td>Commercial terms</td><td><span class="score lv1">Yes</span></td><td>Free only to 4M characters a month</td></tr>
+        <tr><td class="band">ElevenLabs free</td><td>Free plan terms</td><td><span class="score lv3">No</span></td><td>Non-commercial only, attribution required</td></tr>
+        <tr><td class="band">Coqui XTTS-v2</td><td>Coqui CPML</td><td><span class="score lv3">No</span></td><td>The license explicitly covers the output audio</td></tr>
+        <tr><td class="band">F5-TTS</td><td>CC BY-NC 4.0 weights</td><td><span class="score lv3">No</span></td><td>MIT code, non-commercial model</td></tr>
+        <tr><td class="band">Piper</td><td>GPL 3.0 engine</td><td><span class="score lv2">Per voice</span></td><td>Individual voices carry their own terms</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout sage"><div class="h">The distinction nobody explains</div><p>A permissive license on the model does not always reach the audio, and a restrictive one sometimes does. Apache 2.0 and MIT govern the software; they impose nothing on a file you generate. Coqui's license is the opposite case, stating that it "allows only non-commercial use of a machine learning model <em>and its outputs</em>". That phrase is why a model can be free to download and still make your video unsellable.</p></div>
+
+    <div class="cav">The famous one</div>
+    <h2 id="elevenlabs">Can you use the ElevenLabs free plan commercially?</h2>
+    <p>No. ElevenLabs states it in two separate places, and it is the single most consequential fact on this page because ElevenLabs is what most people try first. Its help center says the free plan <em>"does not include a commercial license and cannot be used for any commercial purpose."</em> Its terms of use, updated March 2026, say a free user <em>"may only use the Services for non-commercial purposes."</em></p>
+
+    <p>There is a second condition people miss. Even for non-commercial sharing, free-plan output must be credited: you <em>"must attribute it to ElevenLabs by including 'elevenlabs.io' or '11.ai' in the title."</em> Not in the description, in the title.</p>
+
+    <p>The cheapest tier that grants commercial rights is Starter at <strong>$6 a month</strong> for 30,000 credits, where one character of text costs one credit. That works out to roughly <strong>$200 per million characters</strong>, which is worth holding next to the numbers in the cost section below.</p>
+
+    <div class="cav">The ones that catch people</div>
+    <h2 id="traps">Which free AI voices look free but are not?</h2>
+    <p>Four in particular, and they are popular precisely because they are good. Coqui XTTS-v2 is the sharpest trap: it is a free download, widely recommended, and its Coqui Public Model License permits <em>"only non-commercial use of a machine learning model and its outputs"</em>, defining non-commercial as use from which you receive no direct or indirect payment.</p>
+
+    <p>F5-TTS splits the difference in a way that is easy to misread. Its code is MIT, which sounds permissive, but the project states that <em>"the pre-trained models are licensed under the CC-BY-NC license due to the training data."</em> The weights are what you actually ship audio from, so the weights are what binds.</p>
+
+    <p>Piper is the subtlest of the four. It is frequently listed as MIT, and that was true of the archived repository. Development moved and the current engine is <strong>GPL 3.0</strong>. More importantly, a Piper license is per voice, not per engine: its own documentation warns that <em>"some voices may have restrictive licenses"</em> and that each voice's model card carries the terms. Two of the most-used English voices are CC BY-NC-SA 4.0, which is non-commercial.</p>
+
+    <div class="callout peach"><div class="h">Two more that are about practice, not licensing</div><p>Murf grants commercial rights on paper, but its free trial does not support downloads, so there is no file to sell. Speechify's terms restrict commercial use to one product only, stating that the services <em>"with the exception of Speechify Voice Over Studio, are not intended for your commercial use."</em> Read the tier, not the homepage.</p></div>
+
+    <div class="cav">Doing it locally</div>
+    <h2 id="local">What is the best open source text to speech to run locally?</h2>
+    <p>Kokoro-82M, for most people, because it is the one that combines a permissive license with a size that runs on an ordinary processor. It is 82 million parameters, published under Apache 2.0, and its model card states that it <em>"was trained exclusively on permissive/non-copyrighted audio data"</em> and that <em>"Kokoro has been deployed in numerous projects and commercial APIs."</em> One model carries <strong>54 voices</strong> across 8 languages.</p>
+
+    <p>Speed depends heavily on the machine, and published benchmarks disagree enough to be worth stating honestly. One independent test on four CPU cores with no graphics card measured a real-time factor of roughly <strong>0.47</strong>, meaning about two minutes of audio per minute of compute. Another measurement on a single thread put Kokoro above 1.0, which is slower than real time. Both are true; thread count is doing the work.</p>
+
+    <div class="callout"><div class="h">One caveat on "no attribution ever"</div><p>Kokoro's Apache 2.0 weights impose no attribution duty on audio you generate. But the model's own voice documentation credits five voices to CC BY sources: four Japanese voices and the single French voice. Every English voice is clear. If you narrate in Japanese or French, check that column before you publish.</p></div>
+
+    <div class="cav">The money</div>
+    <h2 id="cost">What does an AI voice over actually cost?</h2>
+    <p>Between nothing and roughly $200 per million characters, depending entirely on which of the five kinds of free you picked. A million characters is a lot of narration: at around 1,000 characters per spoken minute, it is roughly 16 hours of finished audio.</p>
+
+    <div class="chart">
+      <div class="chart-title">Cost per million characters of narration</div>
+      <svg viewBox="0 0 700 250" role="img" aria-label="Bar chart of cost per million characters: local open-weight model $0, Google Cloud Standard $4, Google Neural2 $16, Google Chirp 3 HD $30, ElevenLabs Starter about $200.">
+        <defs><linearGradient id="vbar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C6603F"/><stop offset="100%" stop-color="#8a4429"/></linearGradient></defs>
+        <line x1="230" y1="14" x2="230" y2="212" stroke="#E1D4be" stroke-width="1"/>
+        <text x="222" y="34" text-anchor="end" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">Local open-weight model</text>
+        <rect x="230" y="20" width="3" height="20" fill="url(#vbar)"/>
+        <text x="242" y="34" font-family="Bricolage Grotesque,sans-serif" font-size="15" font-weight="700" fill="#33302A">$0</text>
+        <text x="222" y="76" text-anchor="end" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">Google Cloud, Standard</text>
+        <rect x="230" y="62" width="9" height="20" fill="url(#vbar)"/>
+        <text x="249" y="76" font-family="Bricolage Grotesque,sans-serif" font-size="15" font-weight="700" fill="#33302A">$4</text>
+        <text x="222" y="118" text-anchor="end" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">Google Cloud, Neural2</text>
+        <rect x="230" y="104" width="36" height="20" fill="url(#vbar)"/>
+        <text x="276" y="118" font-family="Bricolage Grotesque,sans-serif" font-size="15" font-weight="700" fill="#33302A">$16</text>
+        <text x="222" y="160" text-anchor="end" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">Google Cloud, Chirp 3 HD</text>
+        <rect x="230" y="146" width="68" height="20" fill="url(#vbar)"/>
+        <text x="308" y="160" font-family="Bricolage Grotesque,sans-serif" font-size="15" font-weight="700" fill="#33302A">$30</text>
+        <text x="222" y="202" text-anchor="end" font-family="Karla,sans-serif" font-size="13" fill="#847B6B">ElevenLabs Starter</text>
+        <rect x="230" y="188" width="450" height="20" fill="url(#vbar)"/>
+        <text x="670" y="202" text-anchor="end" font-family="Bricolage Grotesque,sans-serif" font-size="15" font-weight="700" fill="#fff">~$200</text>
+        <text x="230" y="236" font-family="Karla,sans-serif" font-size="12" fill="#847B6B">Published list prices, August 2026. Google's first 4M Standard characters each month are free.</text>
+      </svg>
+      <div class="chart-src">Sources: Google Cloud Text-to-Speech pricing; ElevenLabs pricing and credit documentation.</div>
+    </div>
+
+    <p>Reading those bars: a local open-weight model costs <strong>$0</strong> beyond electricity. Google Cloud charges <strong>$4</strong> per million characters for Standard and WaveNet voices, <strong>$16</strong> for Neural2 and <strong>$30</strong> for Chirp 3 HD, with the first four million Standard characters each month free. ElevenLabs Starter works out at about <strong>$200</strong> per million, because its 30,000 credits for $6 are consumed one per character.</p>
+
+    <div class="callout sage"><div class="h">The honest counter-argument to running it locally</div><p>Google's free tier is genuinely hard to beat. Four million characters a month, renewed monthly, commercially licensed, with no attribution and no hardware. At roughly 1,000 characters a minute that is about 66 hours of narration a month, free. If you have no objection to a cloud account and your script leaving your machine, that is the least effort path, and this guide would be dishonest not to say so.</p></div>
+
+    <div class="cav">The rule everyone gets backwards</div>
+    <h2 id="youtube">Can you use an AI voice on YouTube and still get monetized?</h2>
+    <p>Yes. The voice is never the disqualifier. YouTube's monetization policy targets content that is templated and interchangeable, not content that is narrated by a machine. The policy disallows <em>"AI-generated content made with generic or unoriginal templates giving the impression of mass production without adding the creator's original, authentic insights or perspective"</em>, and says <em>"channels where content feels interchangeable from video to video are not allowed to monetize."</em></p>
+
+    <p>Disclosure is a separate question, and the answer surprises people. YouTube requires disclosure when creators <em>"use AI to meaningfully alter or generate photorealistic content"</em>. Its own list of things that do <strong>not</strong> require disclosure includes, word for word, <em>"Cloning one's own voice to create voice overs or dubs"</em>, alongside script assistance, caption creation and audio repair. A synthetic narration voice over your own footage is not on the disclosure list at all.</p>
+
+    <blockquote><span class="accent">Meta's rule is drafted more broadly, and this asymmetry is real.</span> Facebook and Instagram require disclosure for organic content with <em>"realistic-sounding audio that was digitally created or altered"</em>, with no equivalent carve-out for your own cloned voice. The same video can be exempt on YouTube and disclosable on Meta.</blockquote>
+
+    <p>One newer rule deserves attention if you narrate a faceless channel. YouTube now restricts monetization for channels using AI-generated personas to deliver information on sensitive topics, giving the example of an AI "doctor" providing medical diagnoses or health advice. A synthetic voice reading health or finance content is now specifically exposed.</p>
+
+    <div class="cav">Whose voice is it</div>
+    <h2 id="clone">Can you clone a voice, and whose?</h2>
+    <p>Your own, freely. Anyone else's, only with documented consent, and in several places not even then. The vendors draw this line themselves before any law does. Microsoft's code of conduct for its speech services prohibits using them <em>"to impersonate any person without explicit and valid consent"</em>, and forbids simulating the voice of politicians or government officials <em>"even with their consent."</em></p>
+
+    <p>The law is catching up unevenly. Tennessee's ELVIS Act protects a person's voice directly, and California, Indiana and Nevada name voice in their right-of-publicity statutes. Illinois treats a voiceprint as a biometric identifier requiring written consent before collection. In the EU, Article 50 of the AI Act has applied since 2 August 2026. It obliges the provider of a generative system to mark its output machine-readably, and obliges business users to disclose deep fakes — audio or video resembling a real person or event that could pass as genuine. A synthetic narration voice imitating nobody is not a deep fake, and purely personal use falls outside the Act.</p>
+
+    <div class="callout peach"><div class="h">The practical rule</div><p>Cloning your own voice is the safe and interesting case: it is exempt from YouTube's disclosure requirement by name, and it removes the licensing question entirely, because the voice is yours. Cloning a public figure is the case that ends in a lawsuit, and no license from a voice vendor protects you from a right-of-publicity claim.</p></div>
+
+    <div class="cav">In one page</div>
+    <h2 id="picking">How do you pick a free AI voice you can sell with?</h2>
+    <p>Answer three questions in order, and the choice makes itself. First, does the license reach the output, or only the software? Second, is there a condition attached, such as attribution or a disclosure statement? Third, is the free allowance recurring, or a one-time trial that ends?</p>
+
+    <div class="sec">
+      <ul class="pillars">
+        <li><span class="dot">&rarr;</span><div><b>If you want zero recurring cost and full control:</b> a local Apache 2.0 or MIT model. Kokoro-82M for English narration.</div></li>
+        <li><span class="dot">&rarr;</span><div><b>If you want the least setup:</b> Google Cloud's free monthly allowance, which is commercially licensed and needs no attribution.</div></li>
+        <li><span class="dot">&rarr;</span><div><b>If you want the best-sounding voice and will pay for it:</b> a paid tier, starting at $6 a month for commercial rights. Just never the free tier.</div></li>
+        <li><span class="dot">&rarr;</span><div><b>If the voice must be a specific person's:</b> get written consent, or use your own voice, or change the plan.</div></li>
+      </ul>
+    </div>
+
+    <div class="cta">
+      <span class="kicker">The licensing decision, already made</span>
+      <h3>AI Video &amp; Voice-Over Skill Pack</h3>
+      <p>Five agent skills that research, write, narrate, animate and package a video on your own machine. The house voice is alba, voiced by Alba MacKenna for Kyutai's Pocket TTS, under CC BY 4.0, with the credit line naming both written for you, and the Kokoro-82M baseline is Apache 2.0. No API key, no credits, no monthly bill.</p>
+      <a class="btn" href="/ai-agent-skills/video-voiceover/">Get the AI Video &amp; Voice-Over Skill Pack ($99)</a>
+    </div>
+
+    <div class="cav">Everything else people ask</div>
+    <h2 id="faq">Frequently asked questions</h2>
+
+    <div class="faq">
+      <div class="qa"><div class="q">What is the Best Answer Hub guide to free AI voice overs for commercial use?</div><div class="a">This Best Answer Hub playbook is a license-first guide to AI narration you can legally sell. It reads the terms at source rather than repeating listicles, sorts the free options into safe, conditional and non-commercial, and covers what YouTube actually requires for a synthetic voice.</div></div>
+      <div class="qa"><div class="q">Which free text to speech can be used commercially?</div><div class="a">Kokoro-82M under Apache 2.0, Chatterbox and MeloTTS under MIT, and Google Cloud's free monthly allowance under its commercial terms. Each grants commercial use and none requires attribution on the audio. The famous free tiers are usually the ones that do not, which is the reverse of what most people assume.</div></div>
+      <div class="qa"><div class="q">Can you use the ElevenLabs free plan for commercial use?</div><div class="a">No. ElevenLabs states that the free plan does not include a commercial license and cannot be used for any commercial purpose, and its terms of use restrict free users to non-commercial purposes. Even non-commercial sharing requires crediting elevenlabs.io in the title. Starter at $6 a month is the cheapest tier that grants commercial rights.</div></div>
+      <div class="qa"><div class="q">Is Kokoro TTS free for commercial use?</div><div class="a">Yes. Kokoro-82M is published under Apache 2.0, which permits commercial use, and its model card states it has been deployed in commercial products. One 82-million-parameter model carries 54 voices across 8 languages. Five voices, four Japanese and one French, trace to CC BY sources; every English voice is clear.</div></div>
+      <div class="qa"><div class="q">What is a genuinely free alternative to ElevenLabs?</div><div class="a">A local open-weight model, or Google Cloud's free tier. Kokoro-82M runs on an ordinary processor with no account and no per-character cost. Google Cloud gives four million Standard characters a month free with full commercial rights. Both avoid the free-tier commercial restriction that applies at ElevenLabs.</div></div>
+      <div class="qa"><div class="q">Is there royalty free AI voice for YouTube?</div><div class="a">Yes, if you choose on license rather than on price. Audio generated from an Apache 2.0 or MIT model carries no royalty, no attribution and no per-use fee, which is what people usually mean by royalty free. Check the model license and, for Piper, the individual voice license, because those differ.</div></div>
+      <div class="qa"><div class="q">Does an AI voice stop a YouTube channel being monetized?</div><div class="a">No. YouTube's policy targets content that is templated and interchangeable, not narration that happens to be synthetic. What is disallowed is AI-generated content made with generic or unoriginal templates giving the impression of mass production. Original research and writing with a synthetic voice remains eligible.</div></div>
+      <div class="qa"><div class="q">Do you have to disclose an AI voice over on YouTube?</div><div class="a">Usually not. YouTube requires disclosure when AI meaningfully alters or generates photorealistic content, and its list of exemptions names cloning your own voice for voice overs or dubs. A synthetic stock narration over your own footage is not on the disclosure list. Meta's rule is broader and does cover realistic-sounding generated audio.</div></div>
+      <div class="qa"><div class="q">Is Coqui XTTS-v2 free for commercial use?</div><div class="a">No, and this is the most common mistake in AI voice licensing. The Coqui Public Model License permits only non-commercial use of the model and its outputs, and defines non-commercial as use from which you receive no direct or indirect payment. The restriction follows the audio file, not just the download.</div></div>
+      <div class="qa"><div class="q">Is Piper TTS MIT licensed?</div><div class="a">Not any more. The archived repository was MIT; development moved and the current engine is GPL 3.0. More importantly, each Piper voice carries its own license from the dataset that trained it. Several popular English voices are CC BY-NC-SA 4.0, which forbids commercial use, so check the voice rather than the engine.</div></div>
+      <div class="qa"><div class="q">How much does an AI voice over cost per million characters?</div><div class="a">From nothing to about $200. A local open-weight model costs only electricity. Google Cloud charges $4 per million characters for Standard voices, $16 for Neural2 and $30 for Chirp 3 HD. ElevenLabs Starter works out near $200 per million, since each character consumes one credit.</div></div>
+      <div class="qa"><div class="q">What is the best offline text to speech?</div><div class="a">Kokoro-82M is the usual answer for English narration, because it pairs a permissive Apache 2.0 license with a size that runs on a processor rather than a graphics card. Independent benchmarks on four CPU cores measured roughly two minutes of audio per minute of compute, though results vary widely with thread count.</div></div>
+      <div class="qa"><div class="q">Can you clone someone else's voice legally?</div><div class="a">Only with documented consent, and sometimes not even then. Microsoft's speech code of conduct forbids impersonation without explicit valid consent and bars simulating politicians even with consent. Tennessee's ELVIS Act protects voice directly, and California, Indiana and Nevada include voice in right-of-publicity law.</div></div>
+      <div class="qa"><div class="q">Does a free AI voice require attribution?</div><div class="a">It depends on the tool, and attribution is often a condition rather than a courtesy. ElevenLabs requires free-plan output to credit elevenlabs.io in the title. Apache 2.0 and MIT models impose no attribution on generated audio. Kokoro documents five voices, four Japanese and one French, that trace to CC BY sources.</div></div>
+      <div class="qa"><div class="q">Which AI voice tools cannot be used commercially even though they are free?</div><div class="a">Coqui XTTS-v2, whose license covers its outputs; F5-TTS, whose pre-trained weights are CC BY-NC even though its code is MIT; several Piper voices licensed CC BY-NC-SA; and the ElevenLabs free plan. Murf grants commercial rights but its free trial does not allow downloads at all.</div></div>
+    </div>
+
+    <div class="cav">Where these terms came from</div>
+    <h2 id="sources">Sources</h2>
+    <ul class="sources">
+      <li><a href="https://huggingface.co/hexgrad/Kokoro-82M" target="_blank" rel="noopener noreferrer">Kokoro-82M model card</a> and its <a href="https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md" target="_blank" rel="noopener noreferrer">voice documentation</a>: Apache 2.0, 54 voices, 8 languages, and the CC BY credits on four Japanese voices and one French voice.</li>
+      <li><a href="https://elevenlabs.io/docs/help-center/legal/can-i-publish-the-content-i-generate-on-the-platform" target="_blank" rel="noopener noreferrer">ElevenLabs commercial license policy</a> and <a href="https://elevenlabs.io/terms-of-use" target="_blank" rel="noopener noreferrer">terms of use</a> (updated 31 March 2026): the free plan grants no commercial license, and requires attribution in the title.</li>
+      <li><a href="https://elevenlabs.io/pricing" target="_blank" rel="noopener noreferrer">ElevenLabs pricing</a>: Starter at $6 a month for 30,000 credits, one credit per character.</li>
+      <li><a href="https://cloud.google.com/text-to-speech/pricing" target="_blank" rel="noopener noreferrer">Google Cloud Text-to-Speech pricing</a>: four million free Standard and WaveNet characters a month, then $4, $16 and $30 per million for Standard, Neural2 and Chirp 3 HD.</li>
+      <li><a href="https://coqui.ai/cpml" target="_blank" rel="noopener noreferrer">Coqui Public Model License</a>: non-commercial use of the model "and its outputs".</li>
+      <li><a href="https://github.com/SWivid/F5-TTS" target="_blank" rel="noopener noreferrer">F5-TTS</a>: MIT code, CC BY-NC pre-trained models.</li>
+      <li><a href="https://github.com/OHF-Voice/piper1-gpl" target="_blank" rel="noopener noreferrer">Piper (current repository)</a> and its <a href="https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md" target="_blank" rel="noopener noreferrer">voice documentation</a>: GPL 3.0 engine, per-voice licenses, several non-commercial.</li>
+      <li><a href="https://github.com/resemble-ai/chatterbox" target="_blank" rel="noopener noreferrer">Chatterbox</a>: MIT, with a neural watermark in every generated file.</li>
+      <li><a href="https://help.murf.ai/is-murf-free-to-use" target="_blank" rel="noopener noreferrer">Murf free tier</a>: no downloads on the free trial. <a href="https://speechify.com/terms/" target="_blank" rel="noopener noreferrer">Speechify terms</a>: commercial use limited to Voice Over Studio.</li>
+      <li><a href="https://support.google.com/youtube/answer/1311392" target="_blank" rel="noopener noreferrer">YouTube channel monetization policies</a>: the inauthentic content rule and the AI personas restriction.</li>
+      <li><a href="https://support.google.com/youtube/answer/14328491" target="_blank" rel="noopener noreferrer">YouTube altered or synthetic content disclosure</a>: the requirement, and the exemption for cloning your own voice.</li>
+      <li><a href="https://transparency.meta.com/policies/community-standards/misinformation/" target="_blank" rel="noopener noreferrer">Meta Community Standards on misinformation</a>: disclosure for realistic-sounding generated audio.</li>
+      <li><a href="https://learn.microsoft.com/en-us/legal/cognitive-services/speech-service/tts-code-of-conduct" target="_blank" rel="noopener noreferrer">Microsoft code of conduct for text to speech</a> (updated 1 May 2026): consent and impersonation rules.</li>
+      <li><a href="https://artificialintelligenceact.eu/article/50/" target="_blank" rel="noopener noreferrer">EU AI Act, Article 50</a>: provider marking duty for generated output, and a deployer duty to disclose deep fakes; applicable since 2 August 2026.</li>
+    </ul>
+
+    <p class="toolsrow">Related reading from Best Answer Hub: <a href="/playbooks/make-videos-with-claude-code/">how to make videos with Claude Code</a>, <a href="/playbooks/ai-tools-worth-paying-for/">which AI tools are worth paying for</a>, and the free <a href="/tools/">Best Answer Hub tools</a>. The pipeline that uses these voices lives at <a href="/ai-agent-skills/">AI Agent Skills</a>.</p>
+  </article>
+</div>
+  </div>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 11px;border-radius:999px;display:inline-block;white-space:nowrap;font-family:'Bricolage Grotesque',sans-serif}
+  .pb .lv1{background:var(--sage)}
+  .pb .lv2{background:var(--clay)}
+  .pb .lv3{background:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>
+</BaseLayout>

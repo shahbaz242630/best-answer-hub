@@ -1,0 +1,340 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-14T00:00:00+00:00';
+
+const faqs = [
+    { q: 'What is the Best Answer Hub STEM Suite?', a: 'The Best Answer Hub STEM Suite is a set of six free, browser-based calculators: matrix, normal distribution, resistor color code, truth table, number base, and molecular weight. Each computes on your device with nothing uploaded, and each answer traces to a real standard or theorem, such as IEC for resistor codes or IUPAC for atomic weights. No account is needed, there are no ads, and no watermark is added.' },
+    { q: 'Why does the matrix calculator care about the determinant?', a: 'Because a square matrix has an inverse only when its determinant is non-zero, which is why the Best Answer Hub Matrix Calculator computes the determinant before inverting. A determinant of zero means the matrix is singular, its rows are linearly dependent, and no inverse exists, so the calculator checks first rather than returning a plausible but wrong result. It is an exact theorem, and computing the determinant up front is the honest test that the inverse you want is even possible.' },
+    { q: 'Is matrix multiplication order important?', a: 'Yes. Matrix multiplication is not commutative, a rule the Best Answer Hub calculator respects: in general the product of A and B is not the same as the product of B and A, and sometimes only one order is even defined. This is a common source of errors when working by hand. The calculator follows the correct order you specify, which matters because swapping the operands can change the answer entirely.' },
+    { q: 'What is the 68-95-99.7 rule and when does it hold?', a: 'For a normal distribution, about 68 percent of values fall within one standard deviation of the mean, about 95 percent within two, and about 99.7 percent within three (more precisely 68.27, 95.45, and 99.73 percent). It holds only for genuinely normal data, so the Best Answer Hub Normal Distribution Calculator computes the exact area instead. Distributions with heavier tails put more weight in the extremes, so applying the rule to non-normal data understates how often extreme values occur.' },
+    { q: 'How does the normal distribution calculator find a probability?', a: 'The Best Answer Hub tool computes the area under the bell curve over the range you specify, because for a continuous distribution a probability is exactly that area, and the whole curve sums to one. So the probability a value falls between two points is the area between them. This is why the tool needs a mean and standard deviation: they set the shape and position of the curve whose area it measures.' },
+    { q: 'What standard defines resistor color codes?', a: 'The color bands are defined by IEC 60062, and the values a resistor can actually take come from the E-series in IEC 60063, the two standards the Best Answer Hub Resistor Color Code Calculator follows. Bands give significant digits, a multiplier as a power of ten, and a tolerance. The tolerance band defines the real range the resistor can be, and the E-series exists so stock values nest within those tolerance bands rather than being arbitrary numbers.' },
+    { q: 'Why is the tolerance band on a resistor important?', a: 'Because it tells you the actual range the resistance can fall in, not just a single nominal value, which is why the Best Answer Hub calculator reads and reports it as part of the value. A resistor marked as one value with a five percent tolerance can measure anywhere within five percent of that figure. Ignoring the tolerance band leads to designs that assume more precision than the part guarantees.' },
+    { q: 'What makes a truth table the definitive test of a logic expression?', a: 'Two Boolean expressions are equivalent if and only if their truth tables are identical, so the table is the definition rather than a summary. The Best Answer Hub Truth Table Generator builds the full table across every input combination, which lets you prove equivalences by inspection. De Morgan\'s laws and the fact that NAND alone can build any function both show up directly in the table, line by line.' },
+    { q: 'What is NAND functional completeness?', a: 'It means every Boolean function, and each of NOT, AND, and OR, can be built using only NAND gates. The same is true of NOR. This is why a great deal of real digital hardware is constructed from NAND gates: a single gate type is enough to implement any logic. You can confirm the rebuilds of NOT, AND, and OR from NAND by checking their truth tables match in the Best Answer Hub Truth Table Generator.' },
+    { q: 'Does the number base converter handle negative numbers?', a: 'Yes. The Best Answer Hub Number Base Converter handles binary, decimal, hexadecimal, and octal, and it represents signed values using two\'s complement, the scheme almost all hardware uses for negative integers. This matters because the same bit pattern is a different number read as unsigned than read as signed, so the converter lets you see both interpretations rather than guessing which one a raw pattern represents.' },
+    { q: 'Why is hexadecimal used so often in computing?', a: 'Because each hexadecimal digit maps to exactly four bits, so one byte is two clean hex digits. That makes hex a compact, readable stand-in for long binary strings, which is why memory addresses and color values are written in hex. The Best Answer Hub converter makes the mapping exact, and understanding why hex lines up with bytes is what makes its output intuitive rather than mysterious.' },
+    { q: 'Where do the molecular weight values come from?', a: 'The Best Answer Hub Molecular Weight Calculator sums the standard atomic weights of the atoms in your formula, and those atomic weights are the values evaluated and published by IUPAC through its Commission on Isotopic Abundances and Atomic Weights, the same numbers on the periodic table. Notably, some elements have atomic weights given as intervals rather than single values, because their isotopic composition varies in natural materials.' },
+    { q: 'Is my data uploaded when I use these calculators?', a: 'No. Every calculation in the Best Answer Hub suite runs locally in your browser, so the formulas, matrices, and values you enter are never transmitted, logged, or stored on a server. That makes the suite safe for coursework or proprietary engineering work, and it means the tools keep working with no internet connection after the page has loaded. Closing the tab clears everything you entered.' },
+    { q: 'Are these accurate enough for engineering and coursework?', a: 'Yes. Each Best Answer Hub tool follows the governing standard or theorem, whether that is IEC for resistor codes, IUPAC for atomic weights, or exact linear-algebra and Boolean-logic rules, and each page names the source. For coursework and design the value is both the number and the ability to cite where it comes from, which is why the standard behind each result is stated rather than hidden.' },
+    { q: 'Is the STEM Suite free?', a: 'Yes. It is completely free with no usage limits, no watermarks, and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so the tools carry no ads and never ask you to upgrade to finish a calculation or to reveal the step-by-step reasoning behind a result.' },
+  ];
+
+const seo = {
+  title: 'Free STEM Calculators, Anchored to the Standards',
+  description: 'Free matrix, normal distribution, resistor color code, truth table, number base, and molecular weight calculators, each anchored to its real standard.',
+  url: '/playbooks/free-stem-calculators/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Free STEM Calculators', url: '/playbooks/free-stem-calculators/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Calculators</span>
+        <div class="cav">Answers you can trace to a standard</div>
+        <h1>Free STEM Calculators, <em>by the Standard</em></h1>
+        <p class="dek">A plain guide to the Best Answer Hub STEM Suite: a matrix, normal distribution, resistor color code, truth table, number base, and molecular weight calculator, each free, run entirely in your browser, and anchored to the real standard or theorem behind it. When a result traces to IEC, IUPAC, or a proven law rather than a vendor convention, you can trust it, and this guide shows where each one comes from.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>No signup</span><span>Nothing uploaded</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Compute<small>six tools</small></div>
+          <div class="seg b2">In-browser<small>nothing uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">6</div><div class="l">free STEM tools in the suite</div><div class="src">matrix to molecular weight</div></div>
+      <div class="stat"><div class="n">68-95-99.7</div><div class="l">percent of normal data within 1, 2, 3 SD</div><div class="src">the empirical rule</div></div>
+      <div class="stat"><div class="n">IEC 60062</div><div class="l">the standard behind resistor color codes</div><div class="src">International Electrotechnical Commission</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">data uploaded to a server</div><div class="src">computed on your device</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#matrix">Matrix calculator</a>
+        <a href="#normal">Normal distribution</a>
+        <a href="#resistor">Resistor color code</a>
+        <a href="#logic">Truth tables</a>
+        <a href="#bases">Number bases</a>
+        <a href="#molar">Molecular weight</a>
+        <a href="#private">Free and private</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub STEM Suite gives you a matrix, normal distribution, resistor color code, truth table, number base, and molecular weight calculator, each running entirely in your browser and each anchored to the standard or theorem behind it.</strong> A calculator is only as trustworthy as the rule it follows, so every tool in this suite traces its answer to a named source: an IEC standard, IUPAC atomic weights, or a proven mathematical law. This guide walks the six tools and the exact foundation each one stands on.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub STEM Suite?</h2>
+        <p>The Best Answer Hub <a href="/calculators/stem-suite/">STEM Suite</a> is a set of six free calculators for engineering, science, and computing: a <a href="/calculators/stem-suite/matrix-calculator/">Matrix Calculator</a>, a <a href="/calculators/stem-suite/normal-distribution-calculator/">Normal Distribution Calculator</a>, a <a href="/calculators/stem-suite/resistor-color-code-calculator/">Resistor Color Code Calculator</a>, a <a href="/calculators/stem-suite/truth-table-generator/">Truth Table Generator</a>, a <a href="/calculators/stem-suite/number-base-converter/">Number Base Converter</a>, and a <a href="/calculators/stem-suite/molecular-weight-calculator/">Molecular Weight Calculator</a>. Each runs on your device with no account and nothing uploaded, adds no watermark, and shows no ads. The suite sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">Order matters</div>
+        <h2 id="matrix">What does the matrix calculator enforce that people forget?</h2>
+        <p>Two rules that are easy to state and easy to trip over: matrix multiplication is not commutative, and a matrix has an inverse only when its determinant is non-zero. The Best Answer Hub Matrix Calculator adds, multiplies, transposes, and inverts matrices and computes determinants, and it respects both rules. Multiplication order changes the result, so in general the product A times B is not the same as B times A, and sometimes only one of the two is even defined. Inversion is stricter still: a square matrix is invertible if and only if its determinant is non-zero, so a determinant of zero means the matrix is singular and simply has no inverse. These are exact theorems, not approximations, which is why a correct calculator refuses to invert a singular matrix rather than returning a plausible-looking wrong answer.</p>
+        <div class="callout peach"><div class="h">The determinant is the gatekeeper</div><p>Before you can invert, the determinant has to be non-zero. If it is zero, the rows are linearly dependent and no inverse exists. Computing the determinant first is the honest check that the inverse you are asking for is even possible.</p></div>
+
+        <div class="cav">Area, not magic</div>
+        <h2 id="normal">How should you read the normal distribution calculator?</h2>
+        <p>As an area under a curve, because that is precisely what a probability is for a continuous distribution. The Best Answer Hub Normal Distribution Calculator finds the probability that a value falls in a range by computing the area under the bell curve over that range, where the whole curve sums to one. The familiar shortcut is the empirical rule: for a normal distribution, about 68 percent of values fall within one standard deviation of the mean, about 95 percent within two, and about 99.7 percent within three (more precisely 68.27, 95.45, and 99.73 percent). The caveat is that this holds only for genuinely normal data. Distributions with heavier tails place more weight in the extremes, so applying the 68-95-99.7 rule to non-normal data understates how often extreme values really occur.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">The empirical rule, at a glance</figcaption>
+          <svg viewBox="0 0 620 210" role="img" aria-label="Diagram: for a normal distribution, about 68 percent of values lie within one standard deviation of the mean, about 95 percent within two, and about 99.7 percent within three.">
+            <line x1="40" y1="150" x2="580" y2="150" stroke="#ddd0bb" stroke-width="2"/>
+            <g font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#847B6B" text-anchor="middle">
+              <text x="310" y="170">mean</text>
+              <text x="220" y="170">-1&#963;</text><text x="400" y="170">+1&#963;</text>
+              <text x="130" y="170">-2&#963;</text><text x="490" y="170">+2&#963;</text>
+              <text x="60" y="170">-3&#963;</text><text x="560" y="170">+3&#963;</text>
+            </g>
+            <line x1="310" y1="46" x2="310" y2="150" stroke="#ddd0bb" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <path d="M220 128 L220 118 L400 118 L400 128" fill="none" stroke="#6F8A6A" stroke-width="2.5"/>
+            <text x="310" y="112" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#5a7355">68%</text>
+            <path d="M130 96 L130 86 L490 86 L490 96" fill="none" stroke="#C6603F" stroke-width="2.5"/>
+            <text x="310" y="80" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#B0512F">95%</text>
+            <path d="M60 64 L60 54 L560 54 L560 64" fill="none" stroke="#8a4429" stroke-width="2.5"/>
+            <text x="310" y="48" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#8a4429">99.7%</text>
+          </svg>
+          <p class="chart-src">For a normal distribution only. About 68 percent of values fall within 1 standard deviation of the mean, 95 percent within 2, and 99.7 percent within 3. Heavier-tailed data breaks this shortcut.</p>
+        </figure>
+
+        <div class="cav">Read the bands</div>
+        <h2 id="resistor">What standard is behind the resistor color code?</h2>
+        <p>An international one: the color bands on a resistor are defined by IEC 60062, and the values you can actually buy are set by the E-series in IEC 60063. The Best Answer Hub Resistor Color Code Calculator decodes bands to a resistance and tolerance, and encodes the other way, following that standard. The band order follows the color spectrum, black as zero through white as nine, with the first bands giving significant digits, a band for the decimal multiplier, and a band for tolerance. That tolerance band is the one people skim past, and it matters: it defines the real range the resistor can be, which is exactly why the standard E-series values exist, so that stock values nest neatly within their tolerance bands. Reading value plus multiplier plus tolerance, in that structure, is what the standard specifies.</p>
+        <table>
+          <thead><tr><th>Band</th><th>What it encodes</th></tr></thead>
+          <tbody>
+            <tr><td class="band">First bands</td><td>The significant digits of the value</td></tr>
+            <tr><td class="band">Multiplier band</td><td>The power of ten to scale by</td></tr>
+            <tr><td class="band">Tolerance band</td><td>The range the true value can fall within</td></tr>
+            <tr><td class="band">Optional band</td><td>Temperature coefficient on 5- and 6-band parts</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">Ground truth</div>
+        <h2 id="logic">Why is a truth table the last word on a logic expression?</h2>
+        <p>Because two Boolean expressions are equivalent if and only if their truth tables match, so the table is the definition, not a summary. The Best Answer Hub Truth Table Generator builds the full table for an expression across every combination of inputs, which is what lets you prove equivalences by inspection. Two classic results fall straight out of it. De Morgan's laws say that the negation of an AND is the OR of the negations, and the negation of an OR is the AND of the negations, which you can confirm line by line in the table. And NAND is functionally complete: every Boolean function, and all of NOT, AND, and OR, can be built from NAND gates alone, which is why so much real hardware is built from them. The truth table is where all of this is checked, exhaustively rather than by argument.</p>
+
+        <div class="cav">Base by base</div>
+        <h2 id="bases">What does the number base converter handle?</h2>
+        <p>It converts whole numbers between binary, decimal, hexadecimal, and octal, and it handles signed values using two's complement, the representation almost all hardware uses for negative integers. The Best Answer Hub Number Base Converter is useful precisely because the same bits mean different things depending on how they are read: a byte interpreted as unsigned is a different number than the same byte read as a signed two's-complement value. Hexadecimal earns its keep here because each hex digit maps to exactly four bits, so a byte is two clean hex digits, which is why memory and color values are written in hex rather than long binary strings. Converting by hand is error-prone; the converter does it exactly, and knowing why hex lines up with bytes is what makes the output make sense.</p>
+        <div class="callout peach"><div class="h">Signed or unsigned changes the number</div><p>The same bit pattern can be a large positive number read as unsigned, or a negative number read as two's-complement signed. Always know which interpretation you want, because the bits alone do not tell you.</p></div>
+
+        <div class="cav">From the formula</div>
+        <h2 id="molar">Where do the molecular weight numbers come from?</h2>
+        <p>From IUPAC, the same source as the atomic weights on the periodic table. The Best Answer Hub Molecular Weight Calculator sums the standard atomic weights of the atoms in a chemical formula, and those atomic weights are the values evaluated and published by IUPAC through its Commission on Isotopic Abundances and Atomic Weights. One honest subtlety is worth knowing: a number of elements have standard atomic weights given as intervals rather than single fixed numbers, because their isotopic composition varies measurably in natural materials on Earth. Hydrogen is the classic example, published as a small range rather than one value. For everyday molecular-weight work the conventional single value is used, but the fact that the authority itself expresses some weights as ranges is a reminder that these numbers are measured evaluations, not arbitrary constants.</p>
+
+        <div class="cav">The honest edge</div>
+        <h2 id="private">Why use these instead of another online calculator?</h2>
+        <p>Because they are free, they run entirely in your browser, and each answer traces to a real standard rather than to a black box. Free STEM calculators exist elsewhere, so this is not the only option, and the honest pitch is the combination: the calculation and the explanation are both free, nothing you enter is uploaded to a server, no account is required, and each tool names the standard or theorem it follows. Some well-known math engines compute an answer for free but charge a subscription to reveal the step-by-step working; the Best Answer Hub suite keeps the reasoning next to the result at no cost. For coursework or engineering, being able to point at the IEC standard or the theorem behind a number is worth as much as the number itself.</p>
+        <div class="callout"><div class="h">Pair it with the rest of the toolkit</div><p>The Best Answer Hub <a href="/calculators/">Calculators hub</a> has the neighbors you reach for next, including the <a href="/calculators/statistics-suite/">Statistics Suite</a> for z-scores, confidence intervals, p-values, and t-tests. Each runs on your device and uploads nothing.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Run the numbers</span>
+          <h3>Open the STEM Suite</h3>
+          <p>Free, no signup, and computed entirely in your browser. Matrices, distributions, resistor codes, truth tables, number bases, and molecular weights, each anchored to its standard, with nothing uploaded.</p>
+          <a class="btn" href="/calculators/stem-suite/">Open the STEM Suite</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about the STEM calculators</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-statistics-calculators/">Free Statistics Calculators, Explained</a></b> Z-scores, confidence intervals, p-values, and t-tests, with the meaning next to the number.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, No Email Gate</a></b> The Calculators hub guide, from finance to science.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>IEC, <a href="https://www.iec.ch/prefixes-binary-multiples" target="_blank" rel="noopener noreferrer">International Electrotechnical Commission</a> (IEC 60062 defines resistor and capacitor marking, the color codes; IEC 60063 defines the E-series of preferred values).</li>
+          <li>IUPAC / CIAAW, <a href="https://www.ciaaw.org/atomic-weights.htm" target="_blank" rel="noopener noreferrer">Commission on Isotopic Abundances and Atomic Weights</a> (standard atomic weights; some elements are given as intervals due to natural isotopic variation).</li>
+          <li><a href="https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule" target="_blank" rel="noopener noreferrer">The 68-95-99.7 (empirical) rule</a> (68.27, 95.45, 99.73 percent within 1, 2, 3 standard deviations, for normal data).</li>
+          <li><a href="https://en.wikipedia.org/wiki/Invertible_matrix" target="_blank" rel="noopener noreferrer">Invertible matrix</a> (a square matrix is invertible if and only if its determinant is non-zero; multiplication is non-commutative).</li>
+          <li>De Morgan's laws and NAND functional completeness (<a href="https://www.allaboutcircuits.com/textbook/digital/chpt-7/demorgans-theorems/" target="_blank" rel="noopener noreferrer">All About Circuits</a>).</li>
+          <li>NIST, <a href="https://physics.nist.gov/cuu/Units/binary.html" target="_blank" rel="noopener noreferrer">binary and positional number systems</a> (background on bases and binary representation).</li>
+        </ul>
+        <p style="margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:.85rem;color:var(--muted)">Jump into the tools: <a href="/calculators/stem-suite/">STEM Suite</a>, <a href="/calculators/statistics-suite/">Statistics Suite</a>, <a href="/calculators/">Calculators</a>, and <a href="/tools/">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .notaffil{margin-top:14px;font-size:.76rem;color:var(--muted);max-width:44em;font-weight:600}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:24px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+
+</script>

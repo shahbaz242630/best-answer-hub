@@ -1,0 +1,984 @@
+---
+import kcAvailability from '../../data/kc-availability.json';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../components/tools/ToolRelatedCTA.astro';
+import ResumeState from '../../components/assessments/ResumeState.astro';
+
+const today = '2026-07-19T00:00:00+00:00';
+
+// Paddle checkout config (publishable values only; the secret API key never touches the build).
+// Price id is left empty until Claude Code wires the $29 product; button shows "Coming soon" until then.
+const PADDLE_ENV = import.meta.env.PUBLIC_PADDLE_ENV || 'sandbox';
+const PADDLE_CLIENT_TOKEN = import.meta.env.PUBLIC_PADDLE_CLIENT_TOKEN || '';
+const PADDLE_CAREER_PRICE = import.meta.env.PUBLIC_PADDLE_CAREER_PRICE || '';
+
+// Which of the 8 archetype editions actually have a template PDF to serve.
+// DERIVED at build time from the templates that get deployed to the bouncer, never hardcoded:
+// an edition turns itself on the moment its PDF lands, and can never be listed before it exists.
+// Without this, a buyer in an unbuilt bucket pays at Paddle and only THEN hits the 503 in
+// download_handler.php (the template check happens after the money moves). See §13.4.
+// The template list is snapshotted by scripts/kc-availability.mjs (paddle-server/ is private, not in CI).
+const BUILT_BUCKETS = (kcAvailability.templates || [])
+  .map((f) => /^cs-([a-z]+)-template\.pdf$/.exec(f))
+  .filter(Boolean)
+  .map((m) => m[1])
+  .sort(); // no templates listed -> nothing is buyable (fail closed)
+
+const steps = [
+  { title: 'Answer about 53 quick questions', description: 'Three short sections (strengths, work-style, and interests) with a progress rail and an elapsed timer. Behavioral questions with no right or wrong answers, plus a quick attention check. Back navigation keeps your answers. About 16 to 18 minutes, with no account and no email.' },
+  { title: 'Get your free Work Signature', description: 'See your archetype, your eight strengths ranked on a radar, your five work-style sliders, your interests, and three matched modern roles, all computed in your browser the moment you finish.' },
+  { title: 'Act on your matches', description: 'The free result names the roles that fit and how you work best. An optional $29 report adds your top role matches ranked in depth plus a wider modern-role library, each tagged for AI outlook, your blind spots, and a next-90-days plan with resume phrasing.' },
+];
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Career Path & Strengths Map?',
+    a: 'The Best Answer Hub Career Path & Strengths Map is a free assessment that measures your strengths, work-style, and interests across about 53 questions, then names your archetype and matches you to modern roles including remote, gig, and AI-era jobs. It runs entirely in your browser, takes about 16 to 18 minutes, needs no signup, and ends with an optional $29 report. More assessments live in the <a href="/knowledge-center/">Knowledge Center</a>.',
+  },
+  {
+    q: 'Is the Career Path & Strengths Map free?',
+    a: 'Yes. The full on-screen result is completely free with no signup and no email: your archetype, your ranked strengths, your work-style sliders, your interests, and three matched roles. An optional $29 PDF report adds your full role shortlist, blind spots, and a next-90-days plan. The result is never hidden behind a paywall.',
+  },
+  {
+    q: 'How is this different from MBTI, CliftonStrengths, or 16Personalities?',
+    a: 'MBTI and 16Personalities sort you into fixed personality types that many people fail to reproduce on retake. The Best Answer Hub Career Path & Strengths Map uses an original framework built on strengths, work-style, and interests, ranked for you rather than boxed into a type, and it maps to real modern roles. The same answers always give the same result.',
+  },
+  {
+    q: 'Do I need to create an account or give my email?',
+    a: 'No. No account, email, or signup of any kind is required. Open the page, answer about 53 questions, and your full result appears instantly. There are no email gates and no paywall on the free result. An email is only involved if you choose to buy the optional $29 report, and that is handled by the payment processor.',
+  },
+  {
+    q: 'Are my answers stored or sent to a server?',
+    a: 'No. Every answer and score is computed inside your browser with client-side JavaScript. Nothing is uploaded, logged, or transmitted. Progress is held only in the tab session memory so a refresh does not lose your place, and it clears when the tab closes. The page even keeps working if you disconnect from the internet after loading.',
+  },
+  {
+    q: 'How long does the assessment take and how many questions are there?',
+    a: 'The Best Answer Hub Career Path & Strengths Map has about 53 questions plus a quick attention check, and takes about 16 to 18 minutes. The number of questions and the time are shown before you start, so there are no surprises. Questions are grouped into three sections (strengths, work-style, and interests) with a visible progress rail, and you can go back and change any answer.',
+  },
+  {
+    q: 'How do I figure out what career I want if I do not know what I am good at?',
+    a: 'Start by measuring how you actually work, not by guessing. The Best Answer Hub Career Path & Strengths Map infers your strengths from behavioral questions (for example, what you do when a project stalls) rather than asking you to rate yourself, then ranks eight strength themes and matches them to roles. Most people surface strengths they had never named.',
+  },
+  {
+    q: 'Can I use this to change careers at 30, 40, or 50?',
+    a: 'Yes. The assessment is built for career changers. Instead of your job title, it reads your underlying strengths, work-style, and interests, which transfer across fields, then shows modern roles that fit them. It is designed to reveal where your existing experience carries over, so a mid-career pivot starts from your strengths rather than from zero.',
+  },
+  {
+    q: 'What are the signs I am in the wrong career?',
+    a: 'Common signs are a job that drains rather than energizes you, work that clashes with how you prefer to operate, and using few of your real strengths day to day. The Best Answer Hub Career Path & Strengths Map surfaces these by comparing your work-style and interests against the kind of work a role demands, so a mismatch becomes visible instead of just felt.',
+  },
+  {
+    q: 'Which careers hold up best as AI changes work?',
+    a: 'No career is fully safe, but some strengths stay human-led as AI reshapes work. The Best Answer Hub Career Path & Strengths Map tags every matched role with an AI outlook, whether AI amplifies the role or its core stays human-led, so you can aim at roles where your human strengths keep their value. This is a read on the direction of travel, not a guarantee, and it is something legacy career tests ignore entirely.',
+  },
+  {
+    q: 'What is the difference between the free result and the paid report?',
+    a: 'The free result is a complete diagnosis: archetype, ranked strengths, work-style, interests, and three sample roles, with nothing held back for an email. The $29 PDF report turns that into a plan: your full strengths ranking with each shadow side, your top role matches ranked in depth plus a wider modern-role library, your blind spots, and a next-90-days plan with resume and LinkedIn phrasing.',
+  },
+  {
+    q: 'How is my result calculated?',
+    a: 'Each question maps to one dimension. Behavioral answers build a score for each of eight strength themes, five work-style sliders, and six interest areas, all shown on a 0 to 100 scale. Your strength themes are then ranked against each other, a within-person (ipsative) ranking rather than a comparison to other people, and your archetype is your top theme. The method is transparent and deterministic: the same answers always produce the same result.',
+  },
+  {
+    q: 'How rigorous is the Career Path & Strengths Map?',
+    a: 'It is built on established work-psychology ideas (trait-style dimensions, work values, and interest areas) expressed in an original framework, not a clinical or hiring-grade psychometric. It ranks your own themes against each other (a within-person, or ipsative, profile) rather than against a population, uses multiple questions per dimension, and is deterministic, so the same answers always produce the same result. Treat it as a structured starting point for career thinking, not a validated personality type.',
+  },
+  {
+    q: 'Can I retake the assessment to track how I change?',
+    a: 'Yes, with unlimited free retakes. Every attempt starts fresh with no cached answers, so each result reflects your honest current answers. Because scoring is deterministic, a genuine shift in how you answer is a genuine shift in your result, which makes it a useful check-in when your situation or priorities change over time.',
+  },
+  {
+    q: 'What kind of roles does it match me to, including remote and AI jobs?',
+    a: 'The Best Answer Hub Career Path & Strengths Map matches you to a modern role library that legacy tests overlook: remote-first roles, gig and creator paths, and AI-augmented jobs such as AI workflow specialist or prompt designer. Each role is tagged for remote-friendliness and AI outlook, and the free result shows your three closest matches.',
+  },
+];
+
+const seo = {
+  title: 'Career Path & Strengths Map: Free Strengths Test (2026)',
+  description: 'Free strengths and career-fit test: about 53 questions, instant result with your archetype and matched modern roles, no signup. Answers stay in your browser.',
+  url: '/knowledge-center/career-strengths/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Knowledge Center', url: '/knowledge-center/' },
+    { name: 'Career Path & Strengths Map', url: '/knowledge-center/career-strengths/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <div id="as-hero">
+  <ToolHero
+    badge="Free Assessment · No Signup, No Email"
+    title="Career Path & Strengths Map:"
+    accentText="what are you built for?"
+    description="A short, honest map of your real strengths, how you work best, and the modern roles that fit, including remote, gig, and AI-era jobs the old tests ignore. About 53 questions, roughly 16 to 18 minutes. Answers never leave your browser."
+    backLink="/knowledge-center/"
+    backLabel="Knowledge Center"
+  />
+  </div>
+
+  <!-- ============ ASSESSMENT ============ -->
+  <section class="py-6 md:py-10" aria-label="Career Path and Strengths Map assessment">
+    <div class="container max-w-page mx-auto px-6">
+
+      <!-- Intro / start card -->
+      <div id="as-intro" class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-8 md:p-10 max-w-content mx-auto text-center">
+        <h2 class="font-serif text-2xl font-bold text-bae-ink mb-3">A map of how you actually work</h2>
+        <p class="text-sm text-bae-muted max-w-lg mx-auto mb-6">This is not a personality horoscope. It measures your strengths, your work-style, and what genuinely pulls you, then matches you to real modern roles and shows you what to do next.</p>
+        <div class="grid grid-cols-3 gap-2 mb-7 max-w-md mx-auto">
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3"><span class="block text-xs font-bold text-bae-ink">Strengths</span><span class="block text-[11px] text-bae-muted mt-0.5">8 themes</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3"><span class="block text-xs font-bold text-bae-ink">Work-Style</span><span class="block text-[11px] text-bae-muted mt-0.5">5 sliders</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3"><span class="block text-xs font-bold text-bae-ink">Interests</span><span class="block text-[11px] text-bae-muted mt-0.5">6 areas</span></div>
+        </div>
+        <button id="as-start" type="button" class="bg-bae-primary text-white font-semibold text-sm px-8 py-3.5 rounded-bae-sm hover:opacity-90 transition-all hover:-translate-y-0.5">Start the assessment →</button>
+        <p class="text-xs text-bae-muted mt-4 font-medium">about 53 questions + a quick check · roughly 16–18 minutes · no signup, nothing saved · your full result is free</p>
+      </div>
+
+      <!-- Optional situation (tailors result framing; never scored) -->
+      <div id="as-situation" class="hidden bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-8 md:p-10 max-w-content mx-auto">
+        <h2 class="font-serif text-2xl font-bold text-bae-ink mb-2 text-center">First, where are you right now?</h2>
+        <p class="text-sm text-bae-muted text-center max-w-lg mx-auto mb-7">Optional, and takes ten seconds. It only tailors the wording of your result. It never affects your scores, and like everything here it never leaves this browser tab.</p>
+        <div id="sit-opts" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 max-w-lg mx-auto"></div>
+        <div class="text-center">
+          <button id="as-begin" type="button" class="bg-bae-primary text-white font-semibold text-sm px-8 py-3.5 rounded-bae-sm hover:opacity-90 transition-all hover:-translate-y-0.5">Continue to the questions →</button>
+          <button id="as-skip" type="button" class="block mx-auto mt-3 text-xs font-semibold text-bae-muted hover:text-bae-ink underline underline-offset-4">Skip this step</button>
+        </div>
+      </div>
+
+      <!-- Quiz -->
+      <div id="as-quiz" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-5 items-stretch">
+          <aside class="bg-bae-ink rounded-bae p-5 md:p-6 text-white flex flex-col h-full">
+            <h3 class="font-serif text-base font-semibold">Your Work Signature</h3>
+            <p class="text-xs text-gray-400 mb-4">3 sections · 54 items</p>
+            <div id="as-rail"></div>
+            <div class="mt-auto pt-4 border-t border-white/10 text-xs text-gray-400">
+              Elapsed <b class="text-white tabular-nums" id="as-timer">00:00</b> · <b class="text-white" id="as-pct">0%</b> complete
+            </div>
+          </aside>
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-9">
+            <div class="text-xs font-bold uppercase tracking-wider text-bae-primary mb-1" id="as-seclabel"></div>
+            <div class="text-xs font-semibold text-bae-muted mb-3">Question <span id="as-num">1</span> of <span id="as-total">54</span></div>
+            <h2 class="font-serif text-xl md:text-2xl font-semibold text-bae-ink leading-snug mb-1.5" id="as-q"></h2>
+            <p class="text-sm text-bae-muted mb-6" id="as-help"></p>
+            <div class="flex flex-col gap-2.5" id="as-opts" role="group" aria-label="Answer options"></div>
+            <div class="flex justify-between items-center mt-6">
+              <button id="as-back" type="button" class="text-sm font-semibold text-bae-muted hover:text-bae-ink px-3 py-2 rounded-bae-sm hover:bg-bae-border-light transition-colors disabled:opacity-30">← Back</button>
+              <span class="text-xs text-bae-muted hidden sm:inline">Press <kbd class="px-1.5 py-0.5 bg-bae-border-light border border-bae-border rounded text-[11px] font-semibold">1</kbd>–<kbd class="px-1.5 py-0.5 bg-bae-border-light border border-bae-border rounded text-[11px] font-semibold">4</kbd> to answer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calculating interstitial -->
+      <div id="as-calc" class="hidden bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-10 md:p-14 max-w-content mx-auto text-center">
+        <div class="mx-auto mb-6 w-12 h-12 rounded-full border-[3px] border-bae-border border-t-bae-primary animate-spin" aria-hidden="true"></div>
+        <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-2">Building your Work Signature</h2>
+        <p id="as-calcmsg" class="text-sm text-bae-muted min-h-[1.5rem] transition-opacity duration-300" aria-live="polite"></p>
+        <div class="max-w-xs mx-auto mt-6 h-1.5 rounded-full overflow-hidden" style="background:#f0f0f6">
+          <i id="as-calcbar" class="block h-full rounded-full bg-bae-primary" style="width:0%;transition:width 1s linear"></i>
+        </div>
+        <p class="text-xs text-bae-muted mt-5">All of this happens in your browser. Nothing is uploaded.</p>
+      </div>
+
+      <!-- Result -->
+      <div id="as-result" class="hidden">
+        <div id="as-resulthead" class="text-center mb-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">Your free result</span>
+          <h2 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink mt-1">This is not a horoscope. It is a map of how you work.</h2>
+          <p class="text-sm text-bae-muted mt-1.5" id="res-stamp"></p>
+        </div>
+
+        <div class="w-full">
+
+          <!-- Archetype headline sits ABOVE the split: on phones that lets the buy card fall
+               directly under it and above the detail; on desktop the detail and the sticky buy
+               rail sit side by side beneath it. -->
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-9">
+          <div class="text-center">
+            <span class="text-xs font-bold uppercase tracking-wider text-bae-muted">You are</span>
+            <h3 class="font-serif text-3xl md:text-4xl font-bold text-bae-primary mt-1 mb-2" id="res-arch">—</h3>
+            <p class="text-sm text-bae-muted max-w-xl mx-auto" id="res-archdesc"></p>
+            <p class="text-xs font-semibold text-bae-primary mt-2" id="res-note" style="display:none"></p>
+            <p class="text-xs font-semibold text-bae-muted mt-2" id="res-situation"></p>
+          </div>
+          </div>
+
+          <div class="grid lg:grid-cols-[minmax(0,1fr)_330px] gap-6 lg:gap-7 items-start mt-6">
+          <div class="order-2 lg:order-1 bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-9">
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-7">
+            <div class="text-center">
+              <svg id="res-radar" viewBox="0 0 400 320" width="100%" style="max-width:400px" aria-label="Strength radar chart" role="img"></svg>
+              <div class="text-xs text-bae-muted mt-1">Your 8 strength themes</div>
+            </div>
+            <div>
+              <h4 class="font-serif text-lg font-semibold text-bae-ink mb-1">Your strengths, ranked</h4>
+              <p class="text-xs text-bae-muted mb-3.5">Your top themes are what to build a career around. <span class="text-bae-primary font-semibold">The paid report adds each one's shadow side, the overuse trap to watch.</span></p>
+              <div id="res-strengths" class="flex flex-col gap-2.5"></div>
+            </div>
+          </div>
+
+          <div class="mt-8 pt-7 border-t border-bae-border-light">
+            <h4 class="font-serif text-lg font-semibold text-bae-ink mb-1">How you work best</h4>
+            <p class="text-xs text-bae-muted mb-5">No right or wrong end, just how you work best. This is what routes you toward the right kind of role.</p>
+            <div id="res-sliders" class="flex flex-col gap-4 max-w-2xl"></div>
+          </div>
+
+          <div class="mt-8 pt-7 border-t border-bae-border-light">
+            <h4 class="font-serif text-lg font-semibold text-bae-ink mb-4">What pulls you</h4>
+            <div id="res-interests" class="flex flex-col gap-2.5 max-w-2xl"></div>
+          </div>
+
+          <div class="mt-8 pt-7 border-t border-bae-border-light">
+            <h4 class="font-serif text-lg font-semibold text-bae-ink mb-1">3 modern roles that fit you</h4>
+            <p class="text-xs text-bae-muted mb-4">Matched to your strengths and interests, and tagged for remote-friendliness and how AI is changing the role, the thing the legacy tests never tell you. <span class="text-bae-primary font-semibold">The paid report ranks your top matches in depth, with a reason each one fits.</span></p>
+            <div id="res-roles" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+          </div>
+
+          </div>
+
+          <!-- Paid CTA. Sticky on desktop so it follows the reader down their result; on phones it
+               drops to order-1, directly under the archetype headline. The card MUST stay shorter
+               than the viewport or the browser cannot pin it - hence the compact cover. -->
+          <aside class="order-1 lg:order-2 lg:sticky lg:top-6">
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-5 md:p-6">
+            <div id="res-ctagrid">
+              <!-- Live cover preview: the buyer's own edition cover with their real radar drawn on it.
+                   Kept compact (158px) so the whole card stays shorter than the viewport and can pin. -->
+              <div class="mx-auto w-full max-w-[158px]">
+                <div id="res-cover" class="relative rounded-bae-sm overflow-hidden shadow-xl ring-1 ring-black/20">
+                  <img id="res-coverimg" alt="" decoding="async" class="block w-full h-auto select-none" draggable="false" />
+                  <svg id="res-coversvg" class="absolute inset-0 w-full h-full" viewBox="0 0 595.28 841.89" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+                </div>
+                <p class="text-center text-[11px] font-medium text-bae-muted mt-2.5">Your personalized cover · 17-page fillable PDF</p>
+              </div>
+              <!-- Value text + buy button -->
+              <div class="mt-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">Your Career Playbook</span>
+                <h4 class="font-serif text-lg font-bold text-bae-ink mt-1 mb-2">Turn this map into a plan, <span id="res-ctaname" class="text-bae-primary italic">built for you</span></h4>
+                <ul class="grid grid-cols-1 gap-y-1.5 text-[12.5px] font-medium text-bae-ink mt-1">
+                  <li class="flex gap-2"><span class="text-bae-primary font-bold">✓</span> Full strengths ranking, plus each shadow side</li>
+                  <li class="flex gap-2"><span class="text-bae-primary font-bold">✓</span> Your top three matches in depth, plus a wider role library</li>
+                  <li class="flex gap-2"><span class="text-bae-primary font-bold">✓</span> An AI outlook read on every role</li>
+                  <li class="flex gap-2"><span class="text-bae-primary font-bold">✓</span> Your blind spots, named honestly</li>
+                  <li class="flex gap-2"><span class="text-bae-primary font-bold">✓</span> Your five work-style sliders and six interest areas, scored</li>
+                  <li class="flex gap-2"><span class="text-bae-primary font-bold">✓</span> A next-90-days plan with resume phrasing</li>
+                </ul>
+                <div class="mt-5">
+                  <button id="res-buy" type="button" class="block w-full text-center bg-bae-primary text-white font-extrabold text-sm px-6 py-3.5 rounded-bae-sm opacity-90 cursor-default select-none transition hover:opacity-100">Coming soon · $29</button>
+                  <span id="res-buynote" class="block text-center text-[11px] font-semibold mt-2 text-bae-muted">One-time · no signup · no subscription</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          </aside>
+          </div>
+
+          <div class="text-center mt-6">
+            <button id="as-retake" type="button" class="text-sm font-semibold text-bae-muted hover:text-bae-ink underline underline-offset-4">Retake the assessment (fresh start)</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people map with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people map with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from career changers, students, and people who feel stuck.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Career Changers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">See where your strengths transfer, not just your job title</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Modern roles matched to your profile</p>
+          <p class="text-sm text-bae-muted">A pivot is scary when it feels like starting from zero. The Best Answer Hub Career Path & Strengths Map reads the strengths, work-style, and interests underneath your experience, which carry across fields, then shows the modern roles that fit them, so the next move starts from what you already do well.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Students & New Grads</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Find your direction without needing experience first</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">No CV required, no signup</p>
+          <p class="text-sm text-bae-muted">You do not need a track record to read this. The assessment shows the kind of work that will fit how you think and what pulls you, and points to modern roles worth aiming at, including remote and AI-era jobs that did not exist a few years ago.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Stuck or Burned Out</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Understand why a job that looks fine still drains you</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Work-style and interest mismatch made visible</p>
+          <p class="text-sm text-bae-muted">Feeling flat in a decent job usually means a mismatch, not a character flaw. The work-style sliders and interest ranking make it obvious when a role runs against how you naturally work, which is often the real reason the days feel heavy.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">The Self-Aware</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Get an honest mirror, not flattery</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Ranked strengths and blind spots</p>
+          <p class="text-sm text-bae-muted">Most tests tell you what you want to hear. This one ranks your strengths against each other and, in the paid report, names the shadow side of your top themes and your blind spots, so you get something specific enough to act on rather than a warm description that fits everyone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+
+  <ResumeState />
+  <script is:inline src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script is:inline define:vars={{ PADDLE_ENV, PADDLE_CLIENT_TOKEN, PADDLE_CAREER_PRICE, BUILT_BUCKETS }}>
+    window.__BAE_PADDLE = { env: PADDLE_ENV, token: PADDLE_CLIENT_TOKEN, price: PADDLE_CAREER_PRICE };
+    window.__BAE_CS_BUILT = BUILT_BUCKETS;
+  </script>
+  <script is:inline>
+(function(){
+  'use strict';
+
+  /* ───────────────────────── CONFIG (Work Signature framework; no magic numbers) ───────────────────────── */
+  var CONFIG = {
+    storageKey: 'bae_career_v2',
+    scaleStrength: ['Rarely me','Sometimes','Often','Almost always'],
+    scaleInterest: ['No real pull','A little','Quite a bit','Strong pull'],
+
+    /* All scoring tunables live here (no magic numbers in the engine). */
+    scoring: {
+      fcWeight: 2,              // points to the theme chosen in a forced-choice pair
+      flatThreshold: 0.10,      // (top1-top3)/100 below this -> balanced/blended profile
+      archetypeMargin: 0.08,    // (top1-top2)/100 below this -> composite ("X-leaning Y")
+      roleCapPct: 0.20,         // max share of surfaced roles from one cluster (PDF/paid side)
+      // Role-affinity weights: role.s[0] is the role's PRIMARY (strong) theme, the rest SECONDARY
+      // (moderate). Without this the scorer reads only the BUYER's ranking and treats every entry in
+      // role.s alike, so a role listing all 3 of the buyer's top themes wins regardless of whose role
+      // it is — Builder roles out-scored Navigator roles FOR A NAVIGATOR BUYER (only 67% of buyers got
+      // a role of their own archetype; 95% with this). MUST stay identical to ROLE_AFFINITY in
+      // paddle-server/kc-web/report/handlers/career-strengths.js or the free result and paid PDF
+      // disagree. Guarded by test_cs_copy_banks.mjs.
+      roleAffinity: { primary: 1, secondary: 0.5 },
+      attentionExpected: 1,     // instructed answer index for the attention check ("Sometimes")
+      fixedThemeOrder: ['builder','navigator','investigator','synthesizer','catalyst','anchor','connector','storyteller']
+    },
+
+    strengths: [
+      { id:'builder',      name:'Builder',      short:'Builder',      blurb:'You turn plans into working things.' },
+      { id:'navigator',    name:'Navigator',    short:'Navigator',    blurb:'You see the path and set the direction.' },
+      { id:'investigator', name:'Investigator', short:'Investigator', blurb:'You dig until you understand the real problem.' },
+      { id:'synthesizer',  name:'Synthesizer',  short:'Synthesizer',  blurb:'You connect ideas others keep separate.' },
+      { id:'catalyst',     name:'Catalyst',     short:'Catalyst',     blurb:'You get things moving and bring the energy.' },
+      { id:'anchor',       name:'Anchor',       short:'Anchor',       blurb:'You are the steady one under pressure.' },
+      { id:'connector',    name:'Connector',    short:'Connector',    blurb:'You read people and build the trust.' },
+      { id:'storyteller',  name:'Storyteller',  short:'Story',        blurb:'You make complex things land and move people.' }
+    ],
+
+    workstyle: [
+      { id:'structure', left:'Clear plan & steps',   right:'Room to improvise' },
+      { id:'social',    left:'Deep solo focus',      right:'Energized with people' },
+      { id:'pace',      left:'Steady & considered',  right:'Fast & variable' },
+      { id:'lens',      left:'Big-picture first',    right:'Detail first' },
+      { id:'novelty',   left:'Mastery & stability',  right:'Novelty & change' }
+    ],
+
+    interests: [
+      { id:'makeBuild',        name:'Make & Build' },
+      { id:'analyzeSolve',     name:'Analyze & Solve' },
+      { id:'createExpress',    name:'Create & Express' },
+      { id:'guideHelp',        name:'Guide & Help' },
+      { id:'leadPersuade',     name:'Lead & Persuade' },
+      { id:'organizeOptimize', name:'Organize & Optimize' }
+    ],
+
+    archetypes: {
+      builder:      { name:'The Independent Maker',  desc:'You turn ideas into working things, and you would rather just build it than talk about it.' },
+      navigator:    { name:'The Strategic Navigator',desc:'You see the whole board, set the direction, and keep everyone pointed the right way.' },
+      investigator: { name:'The Diagnostician',    desc:'You dig past the symptom to the real cause, and you trust evidence over opinion.' },
+      synthesizer:  { name:'The Creative Translator',desc:'You connect ideas nobody else joins up, and make them make sense to other people.' },
+      catalyst:     { name:'The People Catalyst',    desc:'You bring the energy and the momentum, and people move when you do.' },
+      anchor:       { name:'The Steady Backbone',    desc:'You are the calm, reliable center a team quietly runs on.' },
+      connector:    { name:'The Frontline Connector',desc:'You read people, build trust fast, and bring everyone along with you.' },
+      storyteller:  { name:'The Voice',   desc:'You make ideas matter and move people to actually act on them.' }
+    },
+
+    roles: [
+      { name:'Data / Insights Analyst', remote:'High', ai:'Amplified', s:['investigator','synthesizer','storyteller'], i:['analyzeSolve'] },
+      { name:'Internal Auditor', remote:'Medium', ai:'Durable', s:['investigator','anchor','navigator'], i:['analyzeSolve'] },
+      { name:'Risk & Compliance Analyst', remote:'High', ai:'Durable', s:['investigator','anchor','navigator'], i:['analyzeSolve'] },
+      { name:'Fraud / Financial-Crime Analyst', remote:'High', ai:'Amplified', s:['investigator','anchor','synthesizer'], i:['analyzeSolve'] },
+      { name:'UX Researcher', remote:'High', ai:'Durable', s:['investigator','connector','storyteller'], i:['analyzeSolve'] },
+      { name:'Security / SOC Analyst', remote:'High', ai:'Amplified', s:['investigator','anchor','builder'], i:['analyzeSolve'] },
+      { name:'AI Evaluation / Red-Team Specialist', remote:'High', ai:'Durable', s:['investigator','builder','catalyst'], i:['analyzeSolve'] },
+      { name:'Product Manager', remote:'High', ai:'Durable', s:['navigator','connector','storyteller'], i:['leadPersuade'] },
+      { name:'Program / Delivery Manager', remote:'High', ai:'Durable', s:['navigator','anchor','connector'], i:['organizeOptimize'] },
+      { name:'Chief of Staff', remote:'Medium', ai:'Durable', s:['navigator','connector','synthesizer'], i:['leadPersuade'] },
+      { name:'Strategy Analyst / Management Consultant', remote:'Medium', ai:'Amplified', s:['navigator','investigator','storyteller'], i:['analyzeSolve'] },
+      { name:'RevOps Manager', remote:'High', ai:'Amplified', s:['navigator','anchor','investigator'], i:['organizeOptimize'] },
+      { name:'Product / Full-stack Engineer', remote:'High', ai:'Amplified', s:['builder','navigator','investigator'], i:['makeBuild'] },
+      { name:'No-Code / Automation Builder', remote:'High', ai:'Amplified', s:['builder','catalyst','synthesizer'], i:['makeBuild'] },
+      { name:'Solutions Architect', remote:'High', ai:'Durable', s:['builder','connector','navigator'], i:['makeBuild'] },
+      { name:'Technical PM / Forward-Deployed Engineer', remote:'High', ai:'Amplified', s:['builder','connector','navigator'], i:['makeBuild'] },
+      { name:'AI Prototyper / Applied AI Builder', remote:'High', ai:'Amplified', s:['builder','catalyst','investigator'], i:['makeBuild'] },
+      { name:'Service / Systems Designer', remote:'High', ai:'Durable', s:['synthesizer','investigator','storyteller'], i:['createExpress'] },
+      { name:'Product Marketing Manager', remote:'High', ai:'Amplified', s:['synthesizer','storyteller','navigator'], i:['leadPersuade'] },
+      { name:'Foresight / Strategic Insights Analyst', remote:'High', ai:'Durable', s:['synthesizer','investigator','navigator'], i:['analyzeSolve'] },
+      { name:'Knowledge / Ontology Manager', remote:'High', ai:'Amplified', s:['synthesizer','anchor','builder'], i:['organizeOptimize'] },
+      { name:'Growth Marketer', remote:'High', ai:'Amplified', s:['catalyst','investigator','storyteller'], i:['leadPersuade'] },
+      { name:'Founder / Venture Builder', remote:'High', ai:'Durable', s:['catalyst','navigator','builder'], i:['leadPersuade'] },
+      { name:'Partnerships Lead', remote:'High', ai:'Durable', s:['catalyst','connector','navigator'], i:['leadPersuade'] },
+      { name:'Business Development / Sales Development Rep', remote:'High', ai:'Amplified', s:['catalyst','connector','storyteller'], i:['leadPersuade'] },
+      { name:'Operations Manager', remote:'Medium', ai:'Amplified', s:['anchor','navigator','connector'], i:['organizeOptimize'] },
+      { name:'Implementation / Onboarding Manager', remote:'High', ai:'Durable', s:['anchor','connector','builder'], i:['guideHelp'] },
+      { name:'Compliance Operations Specialist', remote:'High', ai:'Amplified', s:['anchor','investigator','navigator'], i:['organizeOptimize'] },
+      { name:'QA / Quality Systems Specialist', remote:'High', ai:'Amplified', s:['anchor','investigator','builder'], i:['organizeOptimize'] },
+      { name:'Customer Success Manager', remote:'High', ai:'Durable', s:['connector','storyteller','anchor'], i:['guideHelp'] },
+      { name:'Strategic Account / Relationship Manager', remote:'High', ai:'Durable', s:['connector','storyteller','catalyst'], i:['leadPersuade'] },
+      { name:'People / HR Business Partner', remote:'Medium', ai:'Durable', s:['connector','navigator','anchor'], i:['guideHelp'] },
+      { name:'Community Manager', remote:'High', ai:'Durable', s:['connector','storyteller','catalyst'], i:['guideHelp'] },
+      { name:'Content / Communications Strategist', remote:'High', ai:'Amplified', s:['storyteller','synthesizer','navigator'], i:['createExpress'] },
+      { name:'Technical Writer', remote:'High', ai:'Amplified', s:['storyteller','investigator','builder'], i:['createExpress'] },
+      { name:'Developer Advocate (DevRel)', remote:'High', ai:'Durable', s:['storyteller','builder','connector'], i:['createExpress'] },
+      { name:'Instructional Designer', remote:'High', ai:'Amplified', s:['storyteller','synthesizer','anchor'], i:['guideHelp'] },
+      { name:'PR / Communications Manager', remote:'High', ai:'Durable', s:['storyteller','connector','navigator'], i:['leadPersuade'] },
+    ],
+
+    situations: [
+      { id:'changing', label:'Changing careers',    note:'This map is built to show you where your existing strengths transfer, so you are not starting from zero.' },
+      { id:'stuck',    label:'Stuck or burned out',  note:'Watch your work-style and interests below: a mismatch there is the usual reason a job drains you.' },
+      { id:'student',  label:'Student / new grad',   note:'You do not need experience to read this. It shows the kind of work that will fit you, and the modern roles worth aiming at.' },
+      { id:'exploring',label:'Just exploring',       note:'No agenda needed. Use this as an honest mirror of how you work, and what to explore next.' }
+    ],
+
+    aiTag: { Amplified:{c:'#10b981',bg:'rgba(16,185,129,.10)',t:'AI: amplifies you'}, Durable:{c:'#6366f1',bg:'rgba(99,102,241,.10)',t:'AI: human-led'}, Exposed:{c:'#f59e0b',bg:'rgba(245,158,11,.12)',t:'AI: shifting'} },
+
+    /* map of internal slider ids -> the custom_data key names the bouncer/stamper expects */
+    workstyleKey: { structure:'structureFlex', social:'soloCollab', pace:'pace', lens:'bigDetail', novelty:'stabilityNovelty' },
+
+    calc: { stepMs: 950, messages: [
+      'Scoring your strength themes','Ranking your top strengths','Reading your work-style',
+      'Mapping what pulls you','Finding your archetype','Matching you to modern roles',
+      'Checking how AI is changing each role','Your Work Signature is ready'
+    ] },
+
+    questions: [
+      /* ── Layer 1 · Strength Likert (16 = 2 per theme); scale scored 0-3 ── */
+      { layer:'strength', dim:'builder',      text:"Give me a rough idea and I'll have a rough working version of it before long." },
+      { layer:'strength', dim:'navigator',    text:"Before a project starts, I've usually mapped where it's heading and the order of the moves." },
+      { layer:'strength', dim:'investigator', text:"When something doesn't add up, I keep digging until I find the real cause, not just the symptom." },
+      { layer:'strength', dim:'synthesizer',  text:"I notice patterns and connections between things other people treat as unrelated." },
+      { layer:'strength', dim:'catalyst',     text:"When a group loses momentum, I'm usually the one who gets things moving again." },
+      { layer:'strength', dim:'anchor',       text:"Even in a crisis, I keep doing exactly what I said I would do." },
+      { layer:'strength', dim:'connector',    text:"I'm the person who keeps a team's relationships healthy, not just its tasks." },
+      { layer:'strength', dim:'storyteller',  text:"I can take something complicated and explain it so almost anyone follows it." },
+      { layer:'strength', dim:'builder',      text:"I learn a new tool or skill fastest by building something real with it, rather than by reading about it." },
+      { layer:'strength', dim:'navigator',    text:"Before committing to anything, I've usually worked out which single thing matters most and what can wait." },
+      { layer:'strength', dim:'investigator', text:"I'm uncomfortable acting on a claim until I've checked whether it's actually true." },
+      { layer:'strength', dim:'synthesizer',  text:"I often work out a problem by borrowing an idea from a completely different field." },
+      { layer:'strength', dim:'catalyst',     text:"People tend to leave conversations with me more motivated than they arrived." },
+      { layer:'strength', dim:'anchor',       text:"If I say I'll do something, people can count on it getting done." },
+      { layer:'strength', dim:'connector',    text:"I remember the personal details people mention, even weeks later." },
+      { layer:'strength', dim:'storyteller',  text:"I know how to frame an idea so people actually care about it." },
+
+      /* ── Layer 1 · Forced-choice (4); each theme appears in exactly one pair ── */
+      { layer:'strength', type:'fc', text:'Which is closer to you?', dim:['anchor','catalyst'],       opts:["I'm the one who keeps commitments on track.","I'm the one who gets new things moving."] },
+      { layer:'strength', type:'fc', text:'Which is closer to you?', dim:['connector','investigator'], opts:['I read the room and the people.','I read the evidence and the claims.'] },
+      { layer:'strength', type:'fc', text:'Which is closer to you?', dim:['storyteller','builder'],    opts:['I make ideas land with people.','I make ideas work in practice.'] },
+      { layer:'strength', type:'fc', text:'Which is closer to you?', dim:['navigator','synthesizer'],  opts:['I map the route forward.',"I connect the dots others don't see."] },
+
+      /* ── Layer 1 · Attention check (NOT scored; strength scale) ── */
+      { layer:'strength', type:'attention', text:'For this one, please select "Sometimes" to confirm the questions are being read.' },
+
+      /* ── Layer 2 · Work-Style (15); temperatures matched between poles ── */
+      { layer:'workstyle', dim:'structure', text:'When you take on something new, you would rather...', opts:['Have a clear plan and defined steps','Lean on a plan but stay flexible','Keep a rough direction and improvise','Just start and figure it out as you go'] },
+      { layer:'workstyle', dim:'social',    text:'You do your best thinking...', opts:['Alone, in deep focus','Mostly alone, checking in sometimes','Talking it through with a couple of people','Out loud with a group'] },
+      { layer:'workstyle', dim:'pace',      text:'You are at your best when work is...', opts:['Steady and predictable','Mostly steady','Varied, with some pressure','Fast, changing, high-tempo'] },
+      { layer:'workstyle', dim:'lens',      text:'You naturally start with...', opts:['The big picture and the why','Mostly the big picture','Mostly the details','The details, and getting them right'] },
+      { layer:'workstyle', dim:'novelty',   text:'You would rather...', opts:['Master one thing deeply','Go deep, dabble a little','Keep picking up new things','Always be onto the next new thing'] },
+      { layer:'workstyle', dim:'structure', text:'A detailed checklist for your work feels...', opts:['Essential — you would make one yourself','Useful for the big things','More restrictive than helpful','Unnecessary — you would work without one'] },
+      { layer:'workstyle', dim:'social',    text:'A full day of meetings and people leaves you...', opts:['Drained — you need quiet to recover','A little tired','Fine — it is part of the job','Energized — you feed off it'] },
+      { layer:'workstyle', dim:'pace',      text:'A sudden change of plan makes you feel...', opts:['Unsettled','Slightly thrown','Ready to adapt','Energized — you like the shake-up'] },
+      { layer:'workstyle', dim:'lens',      text:'People are more likely to say you...', opts:['See the whole board','Keep the vision in view','Catch what others miss','Naturally check the finer details'] },
+      { layer:'workstyle', dim:'novelty',   text:'Doing the same role well for years sounds...', opts:['Deeply satisfying','Mostly good','A little repetitive','Restless — you would be looking to move'] },
+      { layer:'workstyle', dim:'structure', text:'Your ideal week is...', opts:['Mapped out in advance','Mostly planned ahead','Loosely sketched','Open, decided as it goes'] },
+      { layer:'workstyle', dim:'social',    text:'When you are really focused, people nearby...', opts:['Usually interrupt your concentration','Are best kept at arm’s length','Are fine to have around','Are part of how you focus'] },
+      { layer:'workstyle', dim:'pace',      text:'Deadlines and pressure...', opts:['Wear you down','Are better avoided','Sharpen you a little','Are when you do your best work'] },
+      { layer:'workstyle', dim:'lens',      text:'You would rather be responsible for...', opts:['Setting the overall strategy','Mostly the strategy','Mostly the execution detail','Getting every detail right'] },
+      { layer:'workstyle', dim:'novelty',   text:'You get the biggest kick from...', opts:['Getting genuinely good at something','Deepening what you know','Learning something new','The pull of the unfamiliar'] },
+
+      /* ── Layer 3 · Interest pulls (18); felt draw of the activity ── */
+      { layer:'interest', dim:'makeBuild',        text:'Building or making something you can point to at the end of the day.' },
+      { layer:'interest', dim:'analyzeSolve',     text:'Digging into a hard problem to work out why it behaves the way it does.' },
+      { layer:'interest', dim:'createExpress',    text:'Designing, writing, or creating something original.' },
+      { layer:'interest', dim:'guideHelp',        text:'Helping someone learn, grow, or get through something hard.' },
+      { layer:'interest', dim:'leadPersuade',     text:'Rallying people around a goal and leading the way.' },
+      { layer:'interest', dim:'organizeOptimize', text:'Bringing order to something messy: systems, plans, clean processes.' },
+      { layer:'interest', dim:'makeBuild',        text:'Working hands-on with tools, physical or digital, to create things.' },
+      { layer:'interest', dim:'analyzeSolve',     text:'Working with data, logic, or numbers to reach an answer.' },
+      { layer:'interest', dim:'createExpress',    text:'Expressing ideas through words, visuals, or story.' },
+      { layer:'interest', dim:'guideHelp',        text:'Being a person others come to for support or advice.' },
+      { layer:'interest', dim:'leadPersuade',     text:'Persuading, pitching, or negotiating to make something happen.' },
+      { layer:'interest', dim:'organizeOptimize', text:'Making something run smoother, faster, or cleaner than before.' },
+      { layer:'interest', dim:'makeBuild',        text:'Fixing or improving something until it works just right.' },
+      { layer:'interest', dim:'analyzeSolve',     text:"The pull of a puzzle you can't put down until it's solved." },
+      { layer:'interest', dim:'createExpress',    text:'Coming up with new ideas and concepts from a blank page.' },
+      { layer:'interest', dim:'guideHelp',        text:'The satisfaction of seeing someone else succeed.' },
+      { layer:'interest', dim:'leadPersuade',     text:'Being the one who sets the direction and owns the call.' },
+      { layer:'interest', dim:'organizeOptimize', text:'Setting up a system so a repetitive task runs itself next time.' }
+    ]
+  };
+
+  var SECTIONS = [ { id:'strength', label:'Strengths' }, { id:'workstyle', label:'Work-Style' }, { id:'interest', label:'Interests' } ];
+
+  /* ───────────────────────── SCORING (pure, testable; reads only cfg.scoring) ───────────────────────── */
+  function computeResult(answers, cfg){
+    var sc = cfg.scoring;
+    var likert={}, fcWon={}, iRaw={}, iCnt={}, wSum={}, wCnt={};
+    cfg.strengths.forEach(function(x){ likert[x.id]=0; fcWon[x.id]=false; });
+    cfg.interests.forEach(function(x){ iRaw[x.id]=0; iCnt[x.id]=0; });
+    cfg.workstyle.forEach(function(x){ wSum[x.id]=0; wCnt[x.id]=0; });
+    var attentionSeen=false, attentionPass=true;
+    cfg.questions.forEach(function(q,idx){
+      var a = answers[idx]; if(a===null||a===undefined) return;
+      if(q.type==='attention'){ attentionSeen=true; attentionPass=(a===sc.attentionExpected); return; }   // excluded from every score
+      if(q.type==='fc'){ var win=q.dim[a]; if(win) fcWon[win]=true; return; }
+      if(q.layer==='strength'){ likert[q.dim]+= a; }
+      else if(q.layer==='interest'){ iRaw[q.dim]+= a; iCnt[q.dim]++; }
+      else if(q.layer==='workstyle'){ wSum[q.dim]+= (a/3)*100; wCnt[q.dim]++; }
+    });
+    var maxRaw = 6 + sc.fcWeight;   // 2 Likert items (max 3 each) + one forced-choice bonus
+    function norm(raw,cnt){ return cnt? Math.round((raw/(cnt*3))*100) : 0; }
+    var strengths = cfg.strengths.map(function(x){
+      var raw = likert[x.id] + (fcWon[x.id]?sc.fcWeight:0);
+      return { id:x.id, name:x.name, short:x.short, blurb:x.blurb, score:Math.round(raw/maxRaw*100), raw:raw, likert:likert[x.id], fcWon:fcWon[x.id] };
+    });
+    var interests = cfg.interests.map(function(x){ return { id:x.id, name:x.name, score:norm(iRaw[x.id],iCnt[x.id]) }; });
+    var sliders   = cfg.workstyle.map(function(x){ return { id:x.id, left:x.left, right:x.right, pos: wCnt[x.id]? Math.round(wSum[x.id]/wCnt[x.id]) : 50 }; });
+    var order = sc.fixedThemeOrder;
+    function ord(id){ return order.indexOf(id); }
+    /* Ranking + deterministic tie-break chain: score -> forcedChoiceWins -> higherLikertSum -> fixedThemeOrder */
+    var sRank = strengths.slice().sort(function(a,b){
+      if(b.score!==a.score) return b.score-a.score;
+      if(a.fcWon!==b.fcWon)  return a.fcWon? -1 : 1;
+      if(b.likert!==a.likert) return b.likert-a.likert;
+      return ord(a.id)-ord(b.id);
+    });
+    var iRank = interests.slice().sort(function(a,b){
+      return b.score-a.score || cfg.interests.findIndex(function(z){return z.id===a.id;}) - cfg.interests.findIndex(function(z){return z.id===b.id;});
+    });
+    var topS = sRank.slice(0,3).map(function(x){return x.id;});
+    var topI = iRank.slice(0,3).map(function(x){return x.id;});
+    /* Flat-profile + composite-archetype are DISPLAY states only; never change bucket or scores. */
+    var gap13 = (sRank[0].score - sRank[2].score)/100;
+    var gap12 = (sRank[0].score - sRank[1].score)/100;
+    var blended   = gap13 < sc.flatThreshold;
+    var composite = !blended && gap12 < sc.archetypeMargin;
+    var confidence = (blended || (attentionSeen && !attentionPass)) ? 'soft' : 'clear';
+    var arch = cfg.archetypes[sRank[0].id] || { name:'The All-Rounder', desc:'A balanced mix across the board.' };
+    /* Roles ranked with a stable secondary key so identical inputs always order identically. */
+    var rolesRanked = cfg.roles.map(function(role){
+      var s=0, aff=cfg.scoring.roleAffinity;
+      role.s.forEach(function(id,pos){
+        if(topS.indexOf(id)!==-1){
+          var rankW = (id===sRank[0].id?3:id===sRank[1].id?2:1.5);
+          s += rankW * (pos===0 ? aff.primary : aff.secondary);
+        }
+      });
+      role.i.forEach(function(id){ if(topI.indexOf(id)!==-1) s+= 1.2; });
+      return { role:role, score:s };
+    }).sort(function(a,b){
+      return b.score-a.score || cfg.roles.findIndex(function(z){return z.name===a.role.name;}) - cfg.roles.findIndex(function(z){return z.name===b.role.name;});
+    });
+    return {
+      strengths:strengths, strengthsRanked:sRank, interests:interests, interestsRanked:iRank,
+      sliders:sliders, topStrengths:topS, topInterests:topI, archetypeId:sRank[0].id, archetype:arch,
+      roles:rolesRanked.slice(0,3), rolesRanked:rolesRanked, growthEdge:sRank[sRank.length-1],
+      blended:blended, composite:composite, runnerUpId:sRank[1].id, confidence:confidence, attentionPass:attentionPass
+    };
+  }
+  /* The Paddle custom_data contract (must match the bouncer/stamper exactly). Shape:
+     0-100 theme/interest scores + 0-100 slider positions; bucket = top theme slug (PDF routing);
+     themeOrder/interestOrder = the AUTHORITATIVE rankings this page already computed (full tie-break
+     chain: score -> fcWon -> likert -> fixedThemeOrder). The paid PDF derives every ranked field
+     (r1-8, low1/2, runner-up, role matches) from these so it matches this screen exactly; the raw
+     scores alone can't reproduce the tie-breaks (only 9 possible score values across 8 themes → ties
+     are common). Purely additive: an older/absent order lets the server fall back to score-desc order.
+     Blended/composite/confidence stay display-only and are deliberately NOT sent. */
+  function buildLastResult(r, cfg){
+    var ts={}; r.strengths.forEach(function(x){ ts[x.id]=x.score; });
+    var ws={}; r.sliders.forEach(function(s){ ws[cfg.workstyleKey[s.id]]=s.pos; });
+    var is={}; r.interests.forEach(function(x){ is[x.id]=x.score; });
+    var themeOrder    = r.strengthsRanked.map(function(x){ return x.id; }); // 8 theme slugs, best-first
+    var interestOrder = r.interestsRanked.map(function(x){ return x.id; }); // 6 interest keys, best-first
+    return { assessment:'career-strengths', bucket:r.archetypeId, themeScores:ts, workStyle:ws, interests:is, themeOrder:themeOrder, interestOrder:interestOrder };
+  }
+  if(typeof window!=='undefined'){ window.__baeCareer={ computeResult:computeResult, buildLastResult:buildLastResult, CONFIG:CONFIG }; }
+
+  /* ───────────────────────── STATE & PERSISTENCE ───────────────────────── */
+  var N = CONFIG.questions.length;
+  var st = { i:0, answers:[], elapsed:0, done:false, timerId:null, situation:null };
+  function freshState(){ st.i=0; st.answers=new Array(N).fill(null); st.elapsed=0; st.done=false; st.situation=null; }
+  function save(){ try{ sessionStorage.setItem(CONFIG.storageKey, JSON.stringify({ i:st.i, answers:st.answers, elapsed:st.elapsed, situation:st.situation, done:!!st.done })); }catch(e){} }
+  function clearSaved(){ try{ sessionStorage.removeItem(CONFIG.storageKey); }catch(e){} }
+  function restore(){
+    try{
+      var raw=sessionStorage.getItem(CONFIG.storageKey); if(!raw) return false;
+      var s=JSON.parse(raw); if(!s||!Array.isArray(s.answers)||s.answers.length!==N) return false;
+      st.answers = s.answers.map(function(a){ return (a===0||a===1||a===2||a===3)?a:null; });
+      st.i = Math.min(Math.max(parseInt(s.i,10)||0,0), N-1);
+      st.elapsed = Math.max(parseInt(s.elapsed,10)||0,0);
+      st.situation = s.situation || null;
+      st.done = s.done===true;
+      return st.answers.some(function(a){ return a!==null; });
+    }catch(e){ return false; }
+  }
+
+  /* ───────────────────────── HELPERS ───────────────────────── */
+  function el(id){ return document.getElementById(id); }
+  function show(id){ el(id).classList.remove('hidden'); }
+  function hide(id){ el(id).classList.add('hidden'); }
+  function fmt(s){ var m=Math.floor(s/60), x=s%60; return (m<10?'0':'')+m+':'+(x<10?'0':'')+x; }
+  function scaleFor(q){
+    if(q.type==='fc') return q.opts;                 // 2 matched options
+    if(q.layer==='interest') return CONFIG.scaleInterest;
+    if(q.layer==='workstyle') return q.opts;
+    return CONFIG.scaleStrength;                      // strength Likert + attention check
+  }
+
+  function startTimer(){ stopTimer(); st.timerId=setInterval(function(){ if(st.done)return; st.elapsed++; el('as-timer').textContent=fmt(st.elapsed); if(st.elapsed%5===0) save(); },1000); }
+  function stopTimer(){ if(st.timerId){ clearInterval(st.timerId); st.timerId=null; } }
+
+  /* ───────────────────────── QUIZ RENDER ───────────────────────── */
+  function renderQuiz(){
+    var q=CONFIG.questions[st.i];
+    var sec=SECTIONS.filter(function(s){return s.id===q.layer;})[0];
+    el('as-seclabel').textContent=sec.label;
+    el('as-num').textContent=String(st.i+1);
+    el('as-total').textContent=String(N);
+    el('as-q').textContent=q.text;
+    el('as-help').textContent = q.type==='fc' ? 'Neither is better — pick the one that fits you.' : q.type==='attention' ? '' : q.layer==='strength'?'How true is this of you?' : q.layer==='interest'?'How much does this pull you?' : '';
+    el('as-help').style.display = el('as-help').textContent ? 'block':'none';
+    el('as-back').disabled = st.i===0;
+    el('as-timer').textContent=fmt(st.elapsed);
+    var answered=st.answers.filter(function(a){return a!==null;}).length;
+    el('as-pct').textContent=Math.round((answered/N)*100)+'%';
+
+    var rail=el('as-rail'); rail.textContent='';
+    SECTIONS.forEach(function(s,si){
+      var qs=CONFIG.questions.map(function(qq,qi){return {qq:qq,qi:qi};}).filter(function(o){return o.qq.layer===s.id;});
+      var doneCount=qs.filter(function(o){return st.answers[o.qi]!==null;}).length;
+      var isNow=s.id===sec.id, complete=doneCount===qs.length;
+      var row=document.createElement('div');
+      row.className='flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium '+(isNow?'bg-white/10 text-white font-semibold':complete?'text-gray-300':'text-gray-500');
+      var ic=document.createElement('span');
+      ic.className='shrink-0 w-[22px] h-[22px] rounded-full border grid place-items-center text-[10px] font-bold '+(complete?'bg-bae-accent border-bae-accent text-white':isNow?'border-bae-accent text-bae-accent':'border-gray-600 text-gray-500');
+      ic.textContent=complete?'✓':String(si+1);
+      var lab=document.createElement('span'); lab.textContent=s.label;
+      var cnt=document.createElement('span'); cnt.className='ml-auto text-[11px] '+(isNow?'text-gray-300':'text-gray-500'); cnt.textContent=doneCount+'/'+qs.length;
+      row.appendChild(ic); row.appendChild(lab); row.appendChild(cnt); rail.appendChild(row);
+    });
+
+    var box=el('as-opts'); box.textContent='';
+    scaleFor(q).forEach(function(txt,idx){
+      var b=document.createElement('button'); b.type='button';
+      b.className='w-full flex items-center gap-3.5 text-left rounded-bae-sm border-[1.5px] px-4 py-3 transition-all cursor-pointer '+
+        (st.answers[st.i]===idx?'border-bae-primary bg-bae-primary-soft shadow-[0_0_0_3px_rgba(99,102,241,.12)]':'border-bae-border bg-bae-bg hover:border-bae-primary hover:bg-bae-primary-soft');
+      var big=document.createElement('span'); big.className='shrink-0 grid place-items-center w-7 h-7 rounded-full border border-bae-border bg-bae-card text-[13px] font-bold text-bae-primary'; big.textContent=String(idx+1);
+      var sub=document.createElement('span'); sub.className='block text-sm font-medium text-bae-ink leading-snug'; sub.textContent=txt;
+      b.appendChild(big); b.appendChild(sub);
+      b.addEventListener('click',function(){ answer(idx); });
+      box.appendChild(b);
+    });
+  }
+
+  function answer(idx){
+    if(st.done)return;
+    st.answers[st.i]=idx; save(); renderQuiz();
+    setTimeout(function(){ var next=st.answers.indexOf(null); if(next===-1){ finish(); return; } st.i=next; save(); renderQuiz(); },240);
+  }
+
+  /* ───────────────────────── RESULT ───────────────────────── */
+  function finish(skipCalc){
+    /* Persist (do NOT clear): a reload of the results page, or the return trip from Paddle, must
+       land back on the result rather than the intro. Cleared only by an explicit retake. */
+    st.done=true; stopTimer(); save();
+    var r=computeResult(st.answers,CONFIG);
+    if(typeof window!=='undefined' && window.__baeCareer){ window.__baeCareer.lastResult=buildLastResult(r,CONFIG); }
+    hide('as-quiz');
+    /* skipCalc: a RESUMED session goes straight to the result. Everything above still runs, so
+       lastResult is always populated — bypassing finish() on resume is how the buy button ends up
+       dead after a refresh (caught in test, 2026-07-19). Only the animation is skipped, because on
+       a reload a "calculating..." sequence reads as the test restarting. */
+    if(skipCalc){ hide('as-calc'); revealResult(r); } else { runCalc(function(){ revealResult(r); }); }
+  }
+  function runCalc(done){
+    var msgs=CONFIG.calc.messages, msgEl=el('as-calcmsg'), bar=el('as-calcbar');
+    msgEl.style.opacity='1'; msgEl.textContent=msgs[0]; bar.style.width='0%';
+    show('as-calc'); el('as-calc').scrollIntoView({behavior:'smooth',block:'start'});
+    requestAnimationFrame(function(){ bar.style.width=Math.round((1/msgs.length)*100)+'%'; });
+    var mi=0;
+    var iv=setInterval(function(){
+      mi++;
+      if(mi>=msgs.length){ clearInterval(iv); hide('as-calc'); done(); return; }
+      msgEl.style.opacity='0';
+      setTimeout(function(){ msgEl.textContent=msgs[mi]; msgEl.style.opacity='1'; },240);
+      bar.style.width=Math.round(((mi+1)/msgs.length)*100)+'%';
+    },CONFIG.calc.stepMs);
+  }
+  function revealResult(r){
+    if (window.__baeResume) window.__baeResume.focusResult();
+    show('as-result');
+    var scored=CONFIG.questions.filter(function(q){return q.type!=='attention';}).length;
+    el('res-stamp').textContent='Completed in '+fmt(st.elapsed)+' · '+scored+' questions · your full result, free';
+    el('res-arch').textContent=r.archetype.name;
+    el('res-archdesc').textContent=r.archetype.desc;
+    el('res-ctaname').textContent='the '+r.archetype.name.replace(/^The /,'')+' playbook';
+    if(st.situation){ var s=CONFIG.situations.filter(function(x){return x.id===st.situation;})[0]; el('res-situation').textContent=s?s.note:''; } else { el('res-situation').textContent=''; }
+    var note='';
+    if(r.blended){ note='Your top themes sit close together, so this reads as a balanced blend rather than one clear type. This result leads with '+r.archetype.name+', but treat your top three as a set.'; }
+    else if(r.composite){ note='You lead as '+r.archetype.name+', with a strong '+strengthName(r.runnerUpId)+' streak.'; }
+    if(r.confidence==='soft' && !r.attentionPass){ note += (note?' ':'') + 'A couple of answers looked rushed, so a retake would give a sharper read.'; }
+    var noteEl=el('res-note'); if(noteEl){ noteEl.textContent=note; noteEl.style.display=note?'block':'none'; }
+    renderRadar(r); renderStrengths(r); renderSliders(r); renderInterests(r); renderRoles(r);
+    renderCoverPreview(r);
+    setupBuyButton();
+    el('as-result').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function renderRadar(r){
+    var svg=el('res-radar'); svg.textContent=''; var NS='http://www.w3.org/2000/svg';
+    var cx=200, cy=160, R=110, P=CONFIG.strengths.length;
+    function pt(i,rad){ var a=-Math.PI/2+i*2*Math.PI/P; return [cx+rad*Math.cos(a), cy+rad*Math.sin(a)]; }
+    function poly(points,attrs){ var p=document.createElementNS(NS,'polygon'); p.setAttribute('points',points.map(function(q){return q.join(',');}).join(' ')); for(var k in attrs) p.setAttribute(k,attrs[k]); svg.appendChild(p); return p; }
+    [0.25,0.5,0.75,1].forEach(function(f){ var pts=[]; for(var i=0;i<P;i++)pts.push(pt(i,R*f)); poly(pts,{fill:'none',stroke:'#e8e8f0','stroke-width':'1'}); });
+    var scoreById={}; r.strengths.forEach(function(x){scoreById[x.id]=x.score;});
+    CONFIG.strengths.forEach(function(p,i){
+      var e=pt(i,R); var ln=document.createElementNS(NS,'line');
+      ln.setAttribute('x1',cx);ln.setAttribute('y1',cy);ln.setAttribute('x2',e[0]);ln.setAttribute('y2',e[1]);ln.setAttribute('stroke','#e8e8f0');ln.setAttribute('stroke-width','1'); svg.appendChild(ln);
+      var lp=pt(i,R+22); var t=document.createElementNS(NS,'text');
+      t.setAttribute('x',lp[0]); t.setAttribute('y',lp[1]+4);
+      t.setAttribute('text-anchor', Math.abs(lp[0]-cx)<14?'middle':lp[0]>cx?'start':'end');
+      t.setAttribute('font-size','10.5'); t.setAttribute('font-family','Inter, system-ui, sans-serif');
+      var top=r.topStrengths.indexOf(p.id)!==-1;
+      t.setAttribute('font-weight',top?'700':'500'); t.setAttribute('fill',top?'#6366f1':'#8b8b9e');
+      t.textContent=p.short; svg.appendChild(t);
+    });
+    var target=CONFIG.strengths.map(function(p,i){ return pt(i,R*(scoreById[p.id]||0)/100); });
+    var start=[]; for(var s=0;s<P;s++)start.push([cx,cy]);
+    var dp=poly(start,{fill:'rgba(99,102,241,0.18)',stroke:'#6366f1','stroke-width':'2.5','stroke-linejoin':'round'});
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      dp.style.transition='all 1s cubic-bezier(.4,0,.2,1)';
+      dp.setAttribute('points',target.map(function(q){return q.join(',');}).join(' '));
+      target.forEach(function(q,i){
+        var c=document.createElementNS(NS,'circle'); c.setAttribute('cx',q[0]);c.setAttribute('cy',q[1]);c.setAttribute('r','3.5');
+        c.setAttribute('fill', r.topStrengths.indexOf(CONFIG.strengths[i].id)!==-1?'#6366f1':'#c7d2fe'); c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','1.5');
+        c.style.opacity='0'; c.style.transition='opacity .4s ease '+(0.6+i*0.05)+'s'; svg.appendChild(c);
+        requestAnimationFrame(function(){ c.style.opacity='1'; });
+      });
+    }); });
+  }
+  function renderStrengths(r){
+    var box=el('res-strengths'); box.textContent='';
+    r.strengthsRanked.forEach(function(x,rank){
+      var top=rank<3, row=document.createElement('div');
+      var head=document.createElement('div'); head.className='flex justify-between items-baseline mb-1';
+      var left=document.createElement('span'); left.className='text-[13px] font-semibold '+(top?'text-bae-ink':'text-bae-muted'); left.textContent=(rank+1)+'. '+x.name;
+      if(rank===0){ var tag=document.createElement('span'); tag.className='ml-2 text-[10px] font-bold px-2 py-0.5 rounded-full align-middle'; tag.style.background='rgba(99,102,241,.10)'; tag.style.color='#6366f1'; tag.textContent='SIGNATURE'; left.appendChild(tag); }
+      var val=document.createElement('span'); val.className='text-[12px] text-bae-muted tabular-nums'; val.textContent=x.score;
+      head.appendChild(left); head.appendChild(val);
+      var bar=document.createElement('div'); bar.className='h-2 rounded-full overflow-hidden'; bar.style.background='#f0f0f6';
+      var fill=document.createElement('i'); fill.className='block h-full rounded-full'; fill.style.width='0%'; fill.style.background=top?'#6366f1':'#c7d2fe'; fill.style.transition='width .9s cubic-bezier(.4,0,.2,1)';
+      bar.appendChild(fill); row.appendChild(head); row.appendChild(bar); box.appendChild(row);
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ fill.style.width=Math.max(x.score,3)+'%'; }); });
+    });
+    var ge=document.createElement('p'); ge.className='text-[12px] text-bae-muted mt-1.5';
+    var b=document.createElement('span'); b.textContent='Your growth edge is '; ge.appendChild(b);
+    var strong=document.createElement('b'); strong.className='text-bae-ink'; strong.textContent=r.growthEdge.name+'. '; ge.appendChild(strong);
+    var rest=document.createElement('span'); rest.textContent='The paid report shows how to work around a low theme, and the shadow side of your top ones.'; ge.appendChild(rest);
+    box.appendChild(ge);
+  }
+  function renderSliders(r){
+    var box=el('res-sliders'); box.textContent='';
+    r.sliders.forEach(function(s){
+      var wrap=document.createElement('div');
+      var lab=document.createElement('div'); lab.className='flex justify-between text-[12px] font-semibold text-bae-muted mb-1.5';
+      var l=document.createElement('span'); l.textContent=s.left; var rt=document.createElement('span'); rt.textContent=s.right; lab.appendChild(l); lab.appendChild(rt);
+      var track=document.createElement('div'); track.className='relative h-2 rounded-full'; track.style.background='linear-gradient(90deg,#eef0fe,#c7d2fe)';
+      var dot=document.createElement('div'); dot.className='absolute top-1/2 w-4 h-4 rounded-full bg-bae-primary border-2 border-white shadow'; dot.style.transform='translate(-50%,-50%)'; dot.style.left='50%'; dot.style.transition='left 1s cubic-bezier(.4,0,.2,1)';
+      track.appendChild(dot); wrap.appendChild(lab); wrap.appendChild(track); box.appendChild(wrap);
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ dot.style.left=Math.min(Math.max(s.pos,4),96)+'%'; }); });
+    });
+  }
+  function renderInterests(r){
+    var box=el('res-interests'); box.textContent='';
+    r.interestsRanked.forEach(function(x,rank){
+      var row=document.createElement('div'), head=document.createElement('div'); head.className='flex justify-between text-[13px] font-semibold mb-1';
+      var left=document.createElement('span'); left.className= rank<2?'text-bae-ink':'text-bae-muted'; left.textContent=x.name;
+      var val=document.createElement('span'); val.className='text-[12px] text-bae-muted tabular-nums'; val.textContent=x.score;
+      head.appendChild(left); head.appendChild(val);
+      var bar=document.createElement('div'); bar.className='h-2 rounded-full overflow-hidden'; bar.style.background='#f0f0f6';
+      var fill=document.createElement('i'); fill.className='block h-full rounded-full'; fill.style.width='0%'; fill.style.background= rank<2?'#10b981':'#a7f3d0'; fill.style.transition='width .9s cubic-bezier(.4,0,.2,1)';
+      bar.appendChild(fill); row.appendChild(head); row.appendChild(bar); box.appendChild(row);
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ fill.style.width=Math.max(x.score,3)+'%'; }); });
+    });
+  }
+  function renderRoles(r){
+    var box=el('res-roles'); box.textContent='';
+    r.roles.forEach(function(m){
+      var role=m.role, card=document.createElement('div'); card.className='bg-bae-bg border border-bae-border rounded-bae p-4 flex flex-col';
+      var nm=document.createElement('h5'); nm.className='text-sm font-bold text-bae-ink mt-1 mb-2 leading-snug'; nm.textContent=role.name;
+      var tags=document.createElement('div'); tags.className='flex flex-wrap gap-1.5 mb-2';
+      var rem=document.createElement('span'); rem.className='text-[10px] font-semibold px-2 py-0.5 rounded-full'; rem.style.background='rgba(107,107,128,.10)'; rem.style.color='#6b6b80'; rem.textContent='Remote: '+role.remote;
+      var ai=CONFIG.aiTag[role.ai]; var ait=document.createElement('span'); ait.className='text-[10px] font-semibold px-2 py-0.5 rounded-full'; ait.style.background=ai.bg; ait.style.color=ai.c; ait.textContent=ai.t;
+      tags.appendChild(rem); tags.appendChild(ait);
+      var why=document.createElement('p'); why.className='text-[12px] text-bae-muted mt-auto'; why.textContent='Fits your '+strengthName(r.strengthsRanked[0].id)+' and '+strengthName(r.strengthsRanked[1].id)+'.';
+      card.appendChild(nm); card.appendChild(tags); card.appendChild(why); box.appendChild(card);
+    });
+  }
+  function strengthName(id){ var x=CONFIG.strengths.filter(function(z){return z.id===id;})[0]; return x?x.name:id; }
+
+  /* ───────────────────────── FLOW ───────────────────────── */
+  function renderSituations(){
+    var box=el('sit-opts'); box.textContent='';
+    CONFIG.situations.forEach(function(s){
+      var b=document.createElement('button'); b.type='button';
+      var baseCls='text-left rounded-bae-sm border-[1.5px] border-bae-border bg-bae-bg px-4 py-3 text-sm font-medium text-bae-ink hover:border-bae-primary hover:bg-bae-primary-soft transition-all';
+      var selCls='text-left rounded-bae-sm border-[1.5px] border-bae-primary bg-bae-primary-soft px-4 py-3 text-sm font-semibold text-bae-ink transition-all';
+      b.className=baseCls; b.textContent=s.label;
+      b.addEventListener('click',function(){ st.situation=s.id; Array.prototype.forEach.call(box.children,function(c){ c.className=baseCls; }); b.className=selCls; });
+      box.appendChild(b);
+    });
+  }
+  function startFresh(){ clearSaved(); freshState(); stopTimer(); hide('as-intro'); hide('as-result'); hide('as-quiz'); renderSituations(); show('as-situation'); el('as-situation').scrollIntoView({behavior:'smooth',block:'start'}); }
+  function beginQuiz(){ hide('as-situation'); show('as-quiz'); save(); renderQuiz(); startTimer(); el('as-quiz').scrollIntoView({behavior:'smooth',block:'start'}); }
+  el('as-start').addEventListener('click',startFresh);
+  el('as-retake').addEventListener('click',startFresh);
+  el('as-begin').addEventListener('click',beginQuiz);
+  el('as-skip').addEventListener('click',function(){ st.situation=null; beginQuiz(); });
+  el('as-back').addEventListener('click',function(){ if(st.i>0&&!st.done){ st.i--; save(); renderQuiz(); } });
+  document.addEventListener('keydown',function(e){
+    if(st.done||el('as-quiz').classList.contains('hidden'))return;
+    if(e.target && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT'))return;
+    var optCount=scaleFor(CONFIG.questions[st.i]).length;
+    var n=parseInt(e.key,10); if(n>=1&&n<=optCount) answer(n-1);
+  });
+
+  /* ───────────────────────── LIVE COVER PREVIEW ─────────────────────────
+     The buyer's OWN edition cover (a PNG rendered from the real cs-<bucket>-template.pdf) with
+     their real 8-spoke radar drawn over it, so the preview is 1:1 with the PDF they download.
+     Every number below is the SAME one the stamper uses:
+       stamp_radar rect = x 82.80, yTop 485.10, w 173.40, h 172.80 (A4 points, extracted from the
+                          built template; identical across editions)
+       radar geometry   = report/specs/career-strengths.json (vb 320x300, centre 160,150, r 108)
+     ⚠ ORIENTATION: stamp-core's drawRadar normalizes the widget rect to a top-left origin with y
+     running DOWN, which is exactly this SVG viewBox's convention — so do NOT flip y here. A sign
+     error at this step is precisely what drew every buyer's radar mirrored on SMB/AIKT for a month. */
+  var COVER={
+    dir:'/kc-covers/cover-cs-', W:595.28, H:841.89,
+    radar:{ x:82.80, yTop:485.10, w:173.40, h:172.80 },
+    vb:320, vbh:300, cx:160, cy:150, r:108,
+    gold:'#E9C36A', fillOpacity:0.2, strokeWidth:2.6, dotR:4
+  };
+  function renderCoverPreview(rr){
+    var wrap=el('res-cover'), img=el('res-coverimg'), svg=el('res-coversvg');
+    if(!wrap||!img||!svg) return;
+    var col=wrap.parentNode, bucket=rr.archetypeId, isBuilt=false;
+    for(var b=0;b<BUILT_BUCKETS.length;b++){ if(BUILT_BUCKETS[b]===bucket) isBuilt=true; }
+    /* No cover art exists for an edition that hasn't been built — hide the image rather than show a
+       broken one. The card is a single column in the rail now, so there is no grid to reflow. */
+    if(!isBuilt){ if(col) col.style.display='none'; return; }
+    if(col) col.style.display='';
+    img.src=COVER.dir+bucket+'.png';
+    img.alt='The Best Answer Hub '+rr.archetype.name+' report cover, personalized with your strengths radar';
+    svg.textContent='';
+    var NS='http://www.w3.org/2000/svg', n=CONFIG.strengths.length;
+    var sx=COVER.radar.w/COVER.vb, sy=COVER.radar.h/COVER.vbh;
+    var scoreById={}; rr.strengths.forEach(function(x){ scoreById[x.id]=x.score; });
+    var pts=[];
+    for(var i=0;i<n;i++){
+      var sc=scoreById[CONFIG.strengths[i].id]||0;
+      var rad=COVER.r*sc/100, a=-Math.PI/2+i*2*Math.PI/n;
+      pts.push([ COVER.radar.x+(COVER.cx+rad*Math.cos(a))*sx,
+                 COVER.radar.yTop+(COVER.cy+rad*Math.sin(a))*sy ]);
+    }
+    var poly=document.createElementNS(NS,'polygon');
+    poly.setAttribute('points',pts.map(function(q){ return q[0].toFixed(2)+','+q[1].toFixed(2); }).join(' '));
+    poly.setAttribute('fill',COVER.gold); poly.setAttribute('fill-opacity',String(COVER.fillOpacity));
+    poly.setAttribute('stroke',COVER.gold); poly.setAttribute('stroke-width',String(COVER.strokeWidth));
+    poly.setAttribute('stroke-linejoin','round');
+    svg.appendChild(poly);
+    for(var k=0;k<pts.length;k++){
+      var dot=document.createElementNS(NS,'circle');
+      dot.setAttribute('cx',pts[k][0].toFixed(2)); dot.setAttribute('cy',pts[k][1].toFixed(2));
+      dot.setAttribute('r',String(Math.max(1,COVER.dotR*sx))); dot.setAttribute('fill',COVER.gold);
+      svg.appendChild(dot);
+    }
+  }
+
+  /* ───────────────────────── PADDLE CHECKOUT (scaffold; price id wired by Claude Code) ───────────────────────── */
+  var PADDLE=(typeof window!=='undefined'&&window.__BAE_PADDLE)||{ env:'sandbox', token:'', price:'' };
+  var BUILT_BUCKETS=(typeof window!=='undefined'&&window.__BAE_CS_BUILT)||[];
+  var paddleReady=false;
+  function paddleLive(){ return PADDLE.env==='production'; }
+  function paddleTestFlag(){ try{ return new URLSearchParams(location.search).has('testbuy'); }catch(e){ return false; } }
+  /* Only sell an edition whose PDF exists to be served. The bouncer's template check runs at
+     DOWNLOAD time, i.e. after payment, so an ungated unbuilt bucket takes money then 503s. */
+  function bucketBuyable(){
+    var lr=(typeof window!=='undefined'&&window.__baeCareer&&window.__baeCareer.lastResult)||null;
+    if(!lr||typeof lr.bucket!=='string'||!lr.bucket) return false;
+    for(var i=0;i<BUILT_BUCKETS.length;i++){ if(BUILT_BUCKETS[i]===lr.bucket) return true; }
+    return false;
+  }
+  function checkoutEnabled(){ return !!PADDLE.token && /^pri_[a-z0-9]+$/i.test(PADDLE.price) && (paddleLive()||paddleTestFlag()) && bucketBuyable(); }
+  function initPaddle(){
+    if(paddleReady||typeof Paddle==='undefined'||!PADDLE.token) return;
+    try{
+      if(PADDLE.env==='sandbox') Paddle.Environment.set('sandbox');
+      Paddle.Initialize({ token:PADDLE.token, eventCallback:function(ev){
+        if(!ev||!ev.name)return;
+        if(ev.name==='checkout.completed'){ var txn=ev.data&&ev.data.transaction_id; if(txn&&/^txn_[a-z0-9]+$/i.test(txn)) window.location.href='/kc/report/?txn='+encodeURIComponent(txn); }
+      }});
+      paddleReady=true;
+    }catch(e){}
+  }
+  function openCheckout(){
+    initPaddle();
+    if(typeof Paddle==='undefined'||!paddleReady) return;
+    var lr=(window.__baeCareer&&window.__baeCareer.lastResult)||null; if(!lr) return;
+    if(!bucketBuyable()) return; /* defense in depth: never open checkout for an unbuilt edition */
+    try{ Paddle.Checkout.open({ items:[{ priceId:PADDLE.price, quantity:1 }], customData:lr }); }catch(e){}
+  }
+  function setupBuyButton(){
+    var btn=el('res-buy'), note=el('res-buynote'); if(!btn) return;
+    if(!checkoutEnabled()){
+      /* Tell a buyer whose edition isn't built yet WHY, rather than a bare "Coming soon". */
+      if(note && !bucketBuyable() && PADDLE.token && /^pri_[a-z0-9]+$/i.test(PADDLE.price)){
+        note.textContent='The detailed report for your archetype is still in production. Your free result above is complete.';
+      }
+      return; /* keep "Coming soon · $29" */
+    }
+    btn.textContent='Buy now · $29'+(paddleLive()?'':' (test)');
+    btn.classList.remove('cursor-default','opacity-90','select-none'); btn.classList.add('cursor-pointer');
+    if(note) note.textContent=paddleLive()?'Secure checkout by Paddle · instant download':'Sandbox test mode · no real charge';
+    btn.addEventListener('click',openCheckout); initPaddle();
+  }
+
+  /* Resume after a reload. A FINISHED session goes straight back to the result — no quiz flash and
+     no replay of the calculating animation, which on a refresh reads as the test restarting. */
+  (function(){
+    var mode=window.__baeResume.mode(window.__baeResume.read(CONFIG.storageKey), N);
+    if(mode==='intro' || !restore()) return;
+    if(mode==='result'){
+      hide('as-intro');
+      finish(true);   /* the one code path that also populates lastResult for the buy button */
+      return;
+    }
+    hide('as-intro'); show('as-quiz');
+    var firstUnanswered=st.answers.indexOf(null);
+    st.i = firstUnanswered===-1 ? 0 : firstUnanswered;
+    renderQuiz(); startTimer();
+  })();
+})();
+  </script>
+</BaseLayout>

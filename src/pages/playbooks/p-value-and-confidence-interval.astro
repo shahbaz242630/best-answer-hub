@@ -1,0 +1,356 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-12T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What are the Best Answer Hub p-value and confidence interval calculators?', a: 'They are two tools in the Best Answer Hub Statistics Suite. The P-Value Calculator turns a z, t, chi-square, or F statistic into one-tailed and two-tailed p-values, and the Confidence Interval Calculator builds an interval around a mean or proportion with the margin of error. Both run in your browser, show the steps, and explain the result, with no signup.' },
+  { q: 'What is a p-value in simple terms?', a: 'A p-value is the probability of getting a result at least as extreme as the one you observed, assuming the null hypothesis is true. A small p-value means the data would be surprising if the null were true. The Best Answer Hub P-Value Calculator prints this meaning next to the number so it is read correctly.' },
+  { q: 'Does a p-value tell you the probability the null hypothesis is true?', a: 'No. The American Statistical Association is explicit that p-values do not measure the probability that the studied hypothesis is true, or that the data arose by chance alone. A p-value assumes the null is true and asks how extreme the data are under that assumption. It cannot then report the probability that the null itself is true.' },
+  { q: 'Does a small p-value mean the effect is large or important?', a: 'No. The ASA states that statistical significance does not measure the size of an effect or the importance of a result. A tiny p-value can accompany a trivial effect in a large sample, and a meaningful effect can show a modest p-value in a small one. Report the effect size alongside the p-value, which the Best Answer Hub suite makes easy.' },
+  { q: 'What does a 95 percent confidence interval actually mean?', a: 'It means the interval was produced by a method that captures the true value about 95 percent of the time across repeated samples. The confidence is in the procedure, not in the single interval you computed. The Best Answer Hub Confidence Interval Calculator reports the interval, the margin of error, and this interpretation together.' },
+  { q: 'Is there a 95 percent chance the true value is in my confidence interval?', a: 'No. The particular interval you computed either contains the true value or it does not, so a 95 percent probability for that one interval is the wrong reading. The 95 percent describes the long-run success rate of the method, as NIST states. The Best Answer Hub calculator frames the result this way to prevent the mistake.' },
+  { q: 'How do you calculate a confidence interval?', a: 'For a mean, take the point estimate plus and minus a critical value times the standard error, where the standard error is the sample standard deviation divided by the square root of the sample size. Use a z value when the population standard deviation is known and a t value when it is estimated. The Best Answer Hub calculator shows every step.' },
+  { q: 'When do you use z versus t for a confidence interval?', a: 'Use a z critical value when the population standard deviation is known, and the t distribution with n minus 1 degrees of freedom when it is estimated from the sample, which covers most real data. The t interval is slightly wider and converges toward z as the sample grows. The Best Answer Hub calculator selects the right one automatically.' },
+  { q: 'What z value do you use for a 95 percent confidence interval?', a: 'The z value for a 95 percent confidence interval is 1.96, which leaves 2.5 percent of the area in each tail. R. A. Fisher tabulated it in 1925. For 90 percent the value is 1.645 and for 99 percent it is 2.576. The Best Answer Hub Confidence Interval Calculator applies the correct value for the level you choose.' },
+  { q: 'Is p less than 0.05 always significant?', a: 'By convention a p-value below 0.05 is called statistically significant, but the line is a convenience, not a rule of nature. The ASA warns against basing decisions only on whether a p-value passes a threshold. Report the actual value and the effect size rather than treating 0.05 as a bright line, which the Best Answer Hub suite encourages.' },
+  { q: 'Where did the 0.05 threshold come from?', a: 'R. A. Fisher proposed one in twenty, or 0.05, as a convenient cutoff in 1925, and later wrote that no single fixed level should apply to every situation. It became a convention through use, not because 0.05 has any special mathematical status. The Best Answer Hub P-Value Calculator lets you set any alpha you need.' },
+  { q: 'What is the difference between one-tailed and two-tailed?', a: 'A one-tailed test looks for an effect in a single direction, while a two-tailed test looks for a difference in either direction and is the default when direction is not specified in advance. For a symmetric distribution the two-tailed p-value is twice the one-tailed. The Best Answer Hub P-Value Calculator reports both with a shaded-tail diagram.' },
+  { q: 'How are a p-value and a confidence interval related?', a: 'They are two views of the same test. A 95 percent confidence interval contains the null values a two-sided test would not reject at 0.05, so if the interval excludes the null value the result is significant, and if it includes it the result is not. NIST states this equivalence directly. The Best Answer Hub suite computes both.' },
+  { q: 'What is p-hacking?', a: 'P-hacking is coaxing a p-value below 0.05 by running many tests, trying many variables, or stopping data collection the moment the result dips under the line. It inflates false positives. The ASA calls for full reporting and transparency as the remedy. Reporting the actual p-value and effect size, as the Best Answer Hub suite shows, is the honest alternative.' },
+  { q: 'Are the calculators free and do they work offline?', a: 'Yes. The Best Answer Hub Statistics Suite is completely free with no usage limits and no signup, and after the page loads once each calculator works with no internet connection because it uses only browser-native JavaScript. That makes it dependable for coursework or analysis on a restricted network.' },
+];
+
+const seo = {
+  title: 'How to Read a P-Value and Confidence Interval (2026)',
+  description: 'What a p-value is and is not, what a 95 percent confidence interval really means, how it is calculated, and why the 0.05 threshold is a convention, not a law.',
+  url: '/playbooks/p-value-and-confidence-interval/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'P-Value and Confidence Interval', url: '/playbooks/p-value-and-confidence-interval/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Calculators</span>
+        <div class="cav">The number is the easy part</div>
+        <h1>Read a P-Value and a Confidence Interval, <em>Correctly</em></h1>
+        <p class="dek">A plain guide to the two numbers people report most and misread most: what a p-value actually is, what it is not, what a 95 percent confidence interval really means, and why the 0.05 line is a convention rather than a law. The Best Answer Hub Statistics Suite computes each value and explains what it does and does not mean, in your browser.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~10 min read</span><span>Accuracy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Compute<small>p-value or interval</small></div>
+          <div class="seg b2">Interpret<small>what it means</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">1.96</div><div class="l">z value for a 95% confidence interval</div><div class="src">Fisher, 1925</div></div>
+      <div class="stat"><div class="n">0.05</div><div class="l">a convention from Fisher, not a law</div><div class="src">ASA, 2016</div></div>
+      <div class="stat"><div class="n">&ne;</div><div class="l">a p-value is not the chance the null is true</div><div class="src">ASA, 2016</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#pvalue">What a p-value is</a>
+        <a href="#misread">What it is not</a>
+        <a href="#ci">The confidence interval</a>
+        <a href="#formula">How a CI is built</a>
+        <a href="#threshold">Is p &lt; 0.05 significant?</a>
+        <a href="#duality">How they connect</a>
+        <a href="#different">Versus other tools</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>A p-value is the probability of data at least as extreme as yours if the null hypothesis were true, and a 95 percent confidence interval is a range built by a method that captures the true value about 95 percent of the time, not a 95 percent chance for the single interval in front of you.</strong> Both are easy to compute and easy to misreport, which is why the Best Answer Hub Statistics Suite prints the number and the plain-English meaning together. This guide covers what each one is, the two misreadings that trip up students and researchers alike, how a confidence interval is calculated, where the 0.05 line came from, and how the two numbers relate.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What are the Best Answer Hub p-value and confidence interval calculators?</h2>
+        <p>They are two tools in the Best Answer Hub <a href="/calculators/statistics-suite/">Statistics Suite</a> that turn inputs into a result with an interpretation attached. The <a href="/calculators/statistics-suite/p-value-calculator/">P-Value Calculator</a> converts a z, t, chi-square, or F statistic into one-tailed and two-tailed p-values, compares them to your chosen alpha, and shows the working. The <a href="/calculators/statistics-suite/confidence-interval-calculator/">Confidence Interval Calculator</a> builds an interval around a mean or proportion with the margin of error and a graph. Every calculation runs in your browser with plain JavaScript, so nothing is sent to a server and it works offline, with no account and no ads. The suite sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The real definition</div>
+        <h2 id="pvalue">What is a p-value, really?</h2>
+        <p>A p-value is the probability, under a specified statistical model, of getting a result equal to or more extreme than the one you observed, assuming the null hypothesis is true. The American Statistical Association put it precisely in its 2016 statement: <a href="https://www.stat.berkeley.edu/~aldous/Real_World/ASA_statement.pdf" target="_blank" rel="noopener noreferrer">"a p-value is the probability under a specified statistical model that a statistical summary of the data ... would be equal to or more extreme than its observed value."</a> A small p-value means the data would be surprising if the null were true. It does not, on its own, tell you the null is false, how big any effect is, or whether the finding matters. The Best Answer Hub P-Value Calculator states this conclusion in plain language next to the number so the result is read the way the ASA intends.</p>
+
+        <div class="cav">The two misreadings</div>
+        <h2 id="misread">What does a p-value NOT mean?</h2>
+        <p>A p-value is not the probability that the null hypothesis is true, and it is not a measure of how large or important an effect is. These are the two most common errors, and the ASA addressed both directly. Its second principle: <a href="https://www.stat.berkeley.edu/~aldous/Real_World/ASA_statement.pdf" target="_blank" rel="noopener noreferrer">"P-values do not measure the probability that the studied hypothesis is true, or the probability that the data were produced by random chance alone."</a> Its fifth: "a p-value, or statistical significance, does not measure the size of an effect or the importance of a result." A tiny p-value on a trivial effect and a modest p-value on a large effect are both possible. That is why the ASA recommends reporting the actual value and the effect size, not just whether a threshold was crossed.</p>
+        <blockquote>P-values do not measure the probability that the studied hypothesis is true, or the probability that the data were produced by random chance alone. <span class="accent">Statistical significance does not measure the size of an effect or the importance of a result.</span><cite>American Statistical Association, Statement on p-Values, 2016</cite></blockquote>
+        <table>
+          <thead><tr><th>Number</th><th>The common wrong reading</th><th>What it actually means</th></tr></thead>
+          <tbody>
+            <tr><td class="band">p-value</td><td>The probability the null hypothesis is true</td><td>Probability of data this extreme if the null were true</td></tr>
+            <tr><td class="band">p-value</td><td>How big or important the effect is</td><td>Nothing about effect size or importance</td></tr>
+            <tr><td class="band">95% CI</td><td>95% chance the true value is in this interval</td><td>The method captures the true value 95% of the time</td></tr>
+            <tr><td class="band">p &lt; 0.05</td><td>A hard line between real and fake</td><td>A convention, not a law of nature</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The other number</div>
+        <h2 id="ci">What does a 95 percent confidence interval mean?</h2>
+        <p>A 95 percent confidence interval is a range produced by a procedure that, repeated across many samples, would contain the true value about 95 percent of the time. The confidence is in the method, not in any single interval. As NIST puts it, <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm" target="_blank" rel="noopener noreferrer">"the confidence coefficient is simply the proportion of samples of a given size that may be expected to contain the true mean."</a> The interval you actually computed either contains the true value or it does not, so it is wrong to say there is a 95 percent probability the parameter sits inside this particular range. The Best Answer Hub Confidence Interval Calculator reports the interval, the margin of error, and this interpretation together.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">What a confidence interval is</figcaption>
+          <svg viewBox="0 0 620 200" role="img" aria-label="A confidence interval shown as a point estimate in the center with a lower and upper limit on either side, spanning the margin of error, labeled as a 95 percent confidence interval.">
+            <line x1="60" y1="150" x2="560" y2="150" stroke="#E1D4be" stroke-width="2"/>
+            <text x="310" y="52" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">95% confidence interval</text>
+            <text x="310" y="72" text-anchor="middle" font-family="Karla, sans-serif" font-size="11.5" font-weight="600" fill="#847B6B">estimate ± (critical value × standard error)</text>
+            <line x1="180" y1="110" x2="440" y2="110" stroke="#C6603F" stroke-width="3"/>
+            <line x1="180" y1="96" x2="180" y2="124" stroke="#C6603F" stroke-width="3"/>
+            <line x1="440" y1="96" x2="440" y2="124" stroke="#C6603F" stroke-width="3"/>
+            <circle cx="310" cy="110" r="7" fill="#8a4429"/>
+            <text x="180" y="142" text-anchor="middle" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#B0512F">lower limit</text>
+            <text x="440" y="142" text-anchor="middle" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#B0512F">upper limit</text>
+            <text x="310" y="92" text-anchor="middle" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#33302A">point estimate</text>
+            <text x="250" y="182" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">margin of error</text>
+            <line x1="310" y1="168" x2="440" y2="168" stroke="#6F8A6A" stroke-width="1.5" stroke-dasharray="3 3"/>
+          </svg>
+          <p class="chart-src">A confidence interval is the point estimate plus and minus a margin of error. The 95 percent refers to the long-run success rate of the method, not the chance that this one interval contains the truth. Source: NIST/SEMATECH e-Handbook.</p>
+        </figure>
+
+        <div class="cav">The arithmetic</div>
+        <h2 id="formula">How is a confidence interval calculated?</h2>
+        <p>A confidence interval for a mean is the point estimate plus and minus a critical value times the standard error, where the standard error of the mean is the sample standard deviation divided by the square root of the sample size. When the population standard deviation is known you use a z critical value; when it is estimated from the sample you use the t distribution with n minus 1 degrees of freedom, which is slightly wider and converges toward z as the sample grows (<a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm" target="_blank" rel="noopener noreferrer">NIST</a>). The z value for 95 percent is 1.96, a number R. A. Fisher tabulated in 1925 when he wrote that <a href="https://en.wikipedia.org/wiki/97.5th_percentile_point" target="_blank" rel="noopener noreferrer">"the value for which P = .05 ... is 1.96 or nearly 2."</a> The Best Answer Hub Confidence Interval Calculator applies the right critical value automatically and shows the steps.</p>
+        <table>
+          <thead><tr><th>Confidence level</th><th>z critical value</th><th>Tail area each side</th></tr></thead>
+          <tbody>
+            <tr><td class="band">90%</td><td>1.645</td><td>5%</td></tr>
+            <tr><td class="band">95%</td><td>1.96</td><td>2.5%</td></tr>
+            <tr><td class="band">99%</td><td>2.576</td><td>0.5%</td></tr>
+          </tbody>
+        </table>
+        <div class="callout sage"><div class="h">z or t: which to use</div><p>Use a z critical value when the population standard deviation is known, and the t distribution with n minus 1 degrees of freedom when you estimate it from the sample, which is almost always the case with real data. For a large sample the two are nearly identical, so the distinction matters most for small samples.</p></div>
+
+        <div class="cav">The famous line</div>
+        <h2 id="threshold">Is p less than 0.05 significant?</h2>
+        <p>By convention, a p-value below 0.05 is called statistically significant, but that line is a convenience, not a law. Fisher proposed one in twenty as a handy cutoff in 1925 and later wrote that no single fixed level should be applied to every case. The ASA warns against exactly this reflex: <a href="https://www.stat.berkeley.edu/~aldous/Real_World/ASA_statement.pdf" target="_blank" rel="noopener noreferrer">"Scientific conclusions and business or policy decisions should not be based only on whether a p-value passes a specific threshold."</a> In 2019 the same authors went further and argued for dropping the phrase statistically significant altogether (<a href="https://www.usu.edu/math/jrstevens/stat5200/4.Wasserstein2019.pdf" target="_blank" rel="noopener noreferrer">Wasserstein, Schirm, and Lazar, 2019</a>). One practical note the tool handles for you: a two-tailed test, used when the direction is not specified in advance, has a p-value twice that of the matching one-tailed test (<a href="https://online.stat.psu.edu/statprogram/reviews/statistical-concepts/hypothesis-testing/p-value-approach" target="_blank" rel="noopener noreferrer">Penn State</a>).</p>
+        <div class="callout peach"><div class="h">The habit to drop</div><p>Chasing a p-value under 0.05 by running many tests or stopping data collection the moment it dips below the line inflates false positives, the pattern known as p-hacking. The ASA's fourth principle is the antidote: proper inference requires full reporting and transparency. Report the actual p-value and the effect size, and let the reader judge.</p></div>
+
+        <div class="cav">The connection</div>
+        <h2 id="duality">How do a p-value and a confidence interval relate?</h2>
+        <p>They are two views of the same test. A 95 percent confidence interval contains exactly the null values that a two-sided test would not reject at the 0.05 level, so if the interval excludes the null value, the test is significant at 0.05, and if it includes it, the test is not. NIST states the equivalence plainly: <a href="https://www.itl.nist.gov/div898/handbook/prc/section2/prc221.htm" target="_blank" rel="noopener noreferrer">"The 95 % confidence interval includes the null hypothesis if, and only if, it would be accepted at the 5 % level."</a> This is why a confidence interval is often the more informative report: it shows significance and the plausible range of the effect at once, where a bare p-value shows only the first. The Best Answer Hub Statistics Suite lets you move between the two without relearning a new screen.</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from other stats calculators?</h2>
+        <p>The difference is that the Best Answer Hub suite pairs each result with a plain-English interpretation and the common misreadings to avoid, rather than returning a bare number. Several good calculators do explain their output, so the wedge is not explanation alone; it is that the p-value and confidence interval live in one consistent suite, run entirely in your browser, and flag the specific errors the ASA warned about. Some widely used stats sites process on their servers and give little or no interpretation for confidence intervals in particular. The table sets the usual experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical stats calculator</th></tr></thead>
+          <tbody>
+            <tr><td>Computes the p-value and CI</td><td class="band">Both, one suite</td><td>Often separate sites</td></tr>
+            <tr><td>Plain-English interpretation by the result</td><td class="band">Yes</td><td>Sometimes, often generic</td></tr>
+            <tr><td>Flags the p-value misreadings</td><td class="band">Yes</td><td>Rarely</td></tr>
+            <tr><td>Flags the confidence-interval misreading</td><td class="band">Yes</td><td>Rarely</td></tr>
+            <tr><td>Runs in your browser, works offline</td><td class="band">Yes</td><td>Several are server-side</td></tr>
+            <tr><td>No signup, no ads</td><td class="band">Yes</td><td>Often ad-supported</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the suite</div><p>The Best Answer Hub <a href="/calculators/statistics-suite/">Statistics Suite</a> also has a <a href="/calculators/statistics-suite/z-score-calculator/">Z-Score Calculator</a> and a <a href="/calculators/statistics-suite/t-test-calculator/">T-Test Calculator</a>, each running in the browser and showing its working, so you can carry one analysis through from statistic to interval without switching tools.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Try it now</span>
+          <h3>Open the Statistics Suite</h3>
+          <p>Free, no signup, and calculated entirely in your browser. Compute a p-value or a confidence interval, see the steps, and read what the result does and does not mean.</p>
+          <a class="btn" href="/calculators/statistics-suite/">Open the calculators</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about p-values and confidence intervals</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, No Email Gate</a></b> The Calculators hub guide, from statistics to finance, all running in your browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/gpa-calculator/">Calculate Your GPA the Right Way</a></b> Weighted versus unweighted, and the scales that trip students up.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to PDFs.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>Wasserstein, R. L., and Lazar, N. A., <a href="https://www.stat.berkeley.edu/~aldous/Real_World/ASA_statement.pdf" target="_blank" rel="noopener noreferrer">The ASA Statement on Statistical Significance and P-Values</a>, The American Statistician, 2016 (the p-value definition; principles 2, 3, 4, and 5).</li>
+          <li>Wasserstein, R. L., Schirm, A. L., and Lazar, N. A., <a href="https://www.usu.edu/math/jrstevens/stat5200/4.Wasserstein2019.pdf" target="_blank" rel="noopener noreferrer">Moving to a World Beyond "p &lt; 0.05"</a>, The American Statistician, 2019 (argues against the term statistically significant).</li>
+          <li>NIST/SEMATECH e-Handbook of Statistical Methods, <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm" target="_blank" rel="noopener noreferrer">Confidence Limits for the Mean</a> (the confidence-coefficient meaning; the CI formula; z versus t).</li>
+          <li>NIST/SEMATECH e-Handbook, <a href="https://www.itl.nist.gov/div898/handbook/prc/section2/prc221.htm" target="_blank" rel="noopener noreferrer">Confidence interval approach</a> (a 95 percent CI includes the null if and only if it would be accepted at the 5 percent level).</li>
+          <li>Penn State STAT ONLINE, <a href="https://online.stat.psu.edu/statprogram/reviews/statistical-concepts/hypothesis-testing/p-value-approach" target="_blank" rel="noopener noreferrer">Hypothesis Testing, P-Value Approach</a> (one-tailed versus two-tailed; the two-tailed p-value is twice the one-tailed).</li>
+          <li>R. A. Fisher, Statistical Methods for Research Workers, 1925, via <a href="https://en.wikipedia.org/wiki/97.5th_percentile_point" target="_blank" rel="noopener noreferrer">97.5th percentile point</a> (the 0.05 convention and the 1.96 value for 95 percent).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/calculators/statistics-suite/p-value-calculator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">P-Value Calculator</a>, <a href="/calculators/statistics-suite/confidence-interval-calculator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Confidence Interval Calculator</a>, <a href="/calculators/statistics-suite/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Statistics Suite</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-style:normal;font-size:.82rem;color:var(--label);margin-top:10px}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

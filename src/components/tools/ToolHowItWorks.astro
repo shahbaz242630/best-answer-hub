@@ -1,0 +1,45 @@
+---
+interface Step {
+  title: string;
+  description: string;
+}
+
+interface Props {
+  steps: Step[];
+}
+
+const { steps } = Astro.props;
+const pageUrl = Astro.url.pathname;
+const baseUrl = 'https://www.bestanswerhub.com';
+
+const howToSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${baseUrl}${pageUrl.replace(/\/$/, '')}/#howto`,
+  url: `${baseUrl}${pageUrl}`,
+  totalTime: 'PT1M',
+  step: steps.map((step, i) => ({
+    '@type': 'HowToStep',
+    position: i + 1,
+    name: step.title,
+    text: step.description,
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(howToSchema)} />
+
+<section class="py-10 md:py-14 border-t border-bae-border">
+  <div class="container max-w-page mx-auto px-6">
+    <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {steps.map((step, i) => (
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">{i + 1}</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">{step.title}</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">{step.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

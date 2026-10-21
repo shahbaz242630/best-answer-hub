@@ -1,0 +1,1179 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../components/tools/ToolRelatedCTA.astro';
+import ResumeState from '../../components/assessments/ResumeState.astro';
+
+const today = '2026-07-19T00:00:00+00:00';
+
+// Paddle checkout config (publishable values only; the secret API key never touches the build).
+// Go-live = set PUBLIC_PADDLE_ENV=production, the live client token, and the live price id in .env.
+const PADDLE_ENV = import.meta.env.PUBLIC_PADDLE_ENV || 'sandbox';
+const PADDLE_CLIENT_TOKEN = import.meta.env.PUBLIC_PADDLE_CLIENT_TOKEN || '';
+const PADDLE_SMB_PRICE = import.meta.env.PUBLIC_PADDLE_SMB_PRICE || '';
+
+const steps = [
+  { title: 'Answer 30 plain-English questions', description: 'Six questions per pillar, grouped in a visible audit rail with a progress tracker and elapsed timer. Back navigation preserves answers. Takes about 15 minutes, with no account and no email.' },
+  { title: 'Read your instant result', description: 'Get a 0–100 readiness score, a five-pillar radar chart, your readiness level, and your two weakest pillars, all computed in the browser the moment you finish.' },
+  { title: 'Act on your quick wins', description: 'The free result includes three concrete actions matched to your weakest pillars. An optional per-level PDF roadmap report with benchmarks and templates is in production.' },
+];
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub SMB AI Readiness Score?',
+    a: 'The Best Answer Hub SMB AI Readiness Score is a free 30-question assessment that audits a small or medium business across 5 pillars (Data Readiness, Tech Infrastructure, Process Maturity, Team Skills, and Governance & Risk) and returns an instant 0–100 score, radar chart, and readiness level with no signup. It runs entirely in the browser, takes about 15 minutes, and ends with practical quick wins for the weakest pillars. More assessments live in the <a href="/knowledge-center/">Knowledge Center</a>.',
+  },
+  {
+    q: 'How do I know if my small business is actually ready for AI?',
+    a: 'A business is ready for AI when its data is organized and trustworthy, core processes are documented, the team uses its existing tools confidently, and basic guardrails exist for how staff use AI. The Best Answer Hub SMB AI Readiness Score measures all five of those areas in about 15 minutes and names the two pillars holding adoption back, so the next step is obvious instead of guesswork.',
+  },
+  {
+    q: 'Can I check my AI readiness without hiring a consultant?',
+    a: 'Yes. Consultant-led AI readiness assessments typically cost $2,000–$8,000 and take 2–4 weeks, according to 2026 consulting price guides. The Best Answer Hub SMB AI Readiness Score covers the same five diagnostic areas free, in about 15 minutes, with no sales call attached. The questions use plain business language (spreadsheets, invoices, onboarding), so no technical background is needed to answer honestly.',
+  },
+  {
+    q: 'Why are most free AI readiness assessments email-gated or tied to a sales pitch?',
+    a: 'Because most exist to generate leads, not diagnoses. Managed service providers openly market AI readiness checklists as lead magnets, and enterprise versions from Cisco or Microsoft route results toward their own infrastructure and cloud products. The Best Answer Hub SMB AI Readiness Score shows the complete result on screen (score, radar, weak pillars, and quick wins) with no email field, no booking link, and no vendor agenda.',
+  },
+  {
+    q: 'What are the signs my business is NOT ready for AI?',
+    a: 'Classic signs: customer data scattered across spreadsheets and inboxes, processes that live only in people’s heads, staff pasting business information into personal ChatGPT accounts with no agreed rules, and no clear picture of which tasks repeat enough to be worth automating. Scoring 40 or below marks the AI-Curious level, and the honest advice at that level is to fix foundations first; most of that work costs nothing.',
+  },
+  {
+    q: 'How do I know if my data is good enough for AI?',
+    a: 'Data is good enough for AI when there is one trusted version of key records, information is entered consistently, someone owns keeping it clean, and it stays reasonably current. The Data Readiness pillar tests exactly those habits with six plain-English questions, with no mention of data lakes or pipelines. A low score there means AI tools would amplify the mess rather than fix it, which is why it is pillar number one.',
+  },
+  {
+    q: 'Do I need an AI policy if staff already use ChatGPT on their own?',
+    a: 'Yes: informal use without rules is precisely when a policy matters most. A one-page document stating what may and may not be pasted into AI tools, which tools are approved, and who to ask costs an afternoon to write and prevents customer data from leaking into personal chatbot accounts. The Governance & Risk pillar checks whether such rules exist, and writing one is the most common quick win the assessment hands out.',
+  },
+  {
+    q: 'What is shadow AI and why does it matter for a small business?',
+    a: 'Shadow AI is staff using AI tools the business never approved, typically personal ChatGPT, Gemini, or Copilot accounts, with business information inside. It matters because customer details, pricing, and contracts leave controlled systems with no record, and a small business absorbs the fallout of one bad leak far less easily than an enterprise. The assessment dedicates two Governance questions to spotting it.',
+  },
+  {
+    q: 'Why do most small business AI projects fail?',
+    a: 'The recurring causes are messy source data, undocumented workflows, no named owner for the project, and no baseline to measure savings against: readiness gaps, not bad tools. That is why the Best Answer Hub SMB AI Readiness Score measures process maturity and data readiness before any tool talk, and why the <a href="/calculators/roi-calculator/">ROI Calculator</a> is a useful companion for setting a baseline before spending.',
+  },
+  {
+    q: 'Do I need an IT person or developer to adopt AI?',
+    a: 'Not for the first steps. The most useful early wins are AI features already inside tools the business pays for (Microsoft 365, Google Workspace, modern accounting software), which need configuration, not code. A developer only becomes relevant for custom integrations much later. The Tech Infrastructure pillar shows whether current foundations support those later steps, and the <a href="/tools/ai-cost-calculator/">AI Cost Calculator</a> helps estimate spend before committing.',
+  },
+  {
+    q: 'Is my business falling behind if it has not started with AI yet?',
+    a: 'Less than the hype suggests. OECD research published in 2025 found AI adoption in core business functions at small and medium enterprises still in the low single digits: most SMBs are at the starting line. The genuine risk is neglecting foundations like clean data and documented processes, because those decide how fast a business can adopt anything later. The assessment scores exactly those foundations.',
+  },
+  {
+    q: 'Are my answers stored or sent to a server?',
+    a: 'No. The Best Answer Hub SMB AI Readiness Score computes everything inside the browser with client-side JavaScript; answers and scores are never uploaded, logged, or transmitted anywhere. Progress lives only in the tab’s session memory so an accidental refresh does not lose your place, and it is wiped when the tab closes or a new attempt starts. The page even works offline once loaded.',
+  },
+  {
+    q: 'How is the readiness score calculated?',
+    a: 'Each of the 30 questions has four answers worth 0, 5, 10, or 15 points, six questions per pillar. Every pillar is scored 0–100, and the overall score is the equal-weighted average of the five pillars, shown in steps of five. Levels: AI-Curious (0–40), AI-Aware (45–65), AI-Ready (70–85), AI-Mature (90–100). The method is fully transparent: no black box, no hidden weighting.',
+  },
+  {
+    q: 'Can I retake the assessment to track progress?',
+    a: 'Yes, unlimited free retakes. Every attempt starts completely fresh (no cached answers, no carried-over state), so each result reflects honest current answers rather than a stale session. A practical rhythm is retaking quarterly after acting on the quick wins from the previous run, using the pillar scores as a simple progress tracker for the business.',
+  },
+  {
+    q: 'What is the difference between the free score and the paid roadmap report?',
+    a: 'The free result is a complete diagnosis: 0–100 score, five-pillar radar, readiness level, two named focus areas, and three quick wins, with nothing held back behind an email. The paid PDF roadmap report, planned at $59 per readiness level, turns that diagnosis into a treatment plan: benchmarks, a prioritized 90-day roadmap with owners and success metrics, and ready-to-use templates. As of June 2026 the reports are in production and not yet on sale.',
+  },
+];
+
+const seo = {
+  title: 'SMB AI Readiness Score — Free 5-Pillar Audit (2026)',
+  description: 'Free AI readiness assessment for small business: 30 questions, instant 5-pillar score and radar. No signup, answers never leave your browser. ~15 minutes.',
+  url: '/knowledge-center/smb-ai-readiness/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Knowledge Center', url: '/knowledge-center/' },
+    { name: 'SMB AI Readiness Score', url: '/knowledge-center/smb-ai-readiness/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <div id="as-hero">
+  <ToolHero
+    badge="Free Assessment · No Signup, No Email"
+    title="SMB AI Readiness Score:"
+    accentText="Is your business ready for AI?"
+    description="A serious 30-question diagnostic for small and medium businesses. Get an instant 0–100 readiness score across 5 pillars (data, infrastructure, process, skills, and governance), plus your weakest areas and quick wins. Answers never leave your browser."
+    backLink="/knowledge-center/"
+    backLabel="Knowledge Center"
+  />
+  </div>
+
+  <!-- ============ ASSESSMENT ============ -->
+  <section class="py-6 md:py-10" aria-label="SMB AI Readiness assessment">
+    <div class="container max-w-page mx-auto px-6">
+
+      <!-- Intro / start card -->
+      <div id="as-intro" class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-8 md:p-10 max-w-content mx-auto text-center">
+        <h2 class="font-serif text-2xl font-bold text-bae-ink mb-3">A 15-minute audit of your AI readiness</h2>
+        <p class="text-sm text-bae-muted max-w-lg mx-auto mb-6">30 plain-English questions across 5 pillars. No jargon, no email, no sales call at the end. Just an honest diagnosis with your score, radar, and quick wins.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-8">
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">Data Readiness</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">Tech Infrastructure</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">Process Maturity</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">Team Skills</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">Governance & Risk</span></div>
+        </div>
+        <button id="as-start" type="button" class="bg-bae-primary text-white font-semibold text-sm px-8 py-3.5 rounded-bae-sm hover:opacity-90 transition-all hover:-translate-y-0.5">Start the assessment →</button>
+        <p class="text-xs text-bae-muted mt-4">30 questions · ~15 min · 100% client-side: answers never leave this browser tab</p>
+      </div>
+
+      <!-- Business profile (optional, shown after Start, never affects scoring) -->
+      <div id="as-profile" class="hidden bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-8 md:p-10 max-w-content mx-auto">
+        <h2 class="font-serif text-2xl font-bold text-bae-ink mb-2 text-center">First, a little about your business</h2>
+        <p class="text-sm text-bae-muted text-center max-w-lg mx-auto mb-7">Optional, and takes ten seconds. These three answers tailor your result and report to a business like yours. They never affect your score, and like everything here they never leave this browser tab.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-left">
+          <label class="block">
+            <span class="block text-xs font-bold uppercase tracking-wider text-bae-muted mb-1.5">Industry</span>
+            <select id="pf-industry" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2.5 text-sm font-medium text-bae-ink focus:outline-none focus:border-bae-primary"></select>
+          </label>
+          <label class="block">
+            <span class="block text-xs font-bold uppercase tracking-wider text-bae-muted mb-1.5">Team size</span>
+            <select id="pf-employees" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2.5 text-sm font-medium text-bae-ink focus:outline-none focus:border-bae-primary"></select>
+          </label>
+          <label class="block">
+            <span class="block text-xs font-bold uppercase tracking-wider text-bae-muted mb-1.5">Business age</span>
+            <select id="pf-age" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2.5 text-sm font-medium text-bae-ink focus:outline-none focus:border-bae-primary"></select>
+          </label>
+        </div>
+        <div class="text-center">
+          <button id="as-begin" type="button" class="bg-bae-primary text-white font-semibold text-sm px-8 py-3.5 rounded-bae-sm hover:opacity-90 transition-all hover:-translate-y-0.5">Continue to the questions →</button>
+          <button id="as-skip" type="button" class="block mx-auto mt-3 text-xs font-semibold text-bae-muted hover:text-bae-ink underline underline-offset-4">Skip this step</button>
+        </div>
+      </div>
+
+      <!-- Quiz (hidden until start) -->
+      <div id="as-quiz" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-5 items-stretch">
+          <!-- Pillar rail (stretches to match the question card height) -->
+          <aside class="bg-bae-ink rounded-bae p-5 md:p-6 text-white flex flex-col h-full">
+            <h3 class="font-serif text-base font-semibold">AI Readiness Audit</h3>
+            <p class="text-xs text-gray-400 mb-4">5 pillars · 30 questions</p>
+            <div id="as-rail"></div>
+            <div class="mt-auto pt-4 border-t border-white/10 text-xs text-gray-400">
+              Elapsed <b class="text-white tabular-nums" id="as-timer">00:00</b> · <b class="text-white" id="as-pct">0%</b> complete
+            </div>
+          </aside>
+          <!-- Question card -->
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-9">
+            <div class="text-xs font-bold uppercase tracking-wider text-bae-primary mb-1" id="as-pillarlabel"></div>
+            <div class="text-xs font-semibold text-bae-muted mb-3">Question <span id="as-num">1</span> of 30</div>
+            <h2 class="font-serif text-xl md:text-2xl font-semibold text-bae-ink leading-snug mb-2" id="as-q"></h2>
+            <p class="text-sm text-bae-muted mb-6" id="as-help"></p>
+            <div class="flex flex-col gap-2.5" id="as-opts" role="group" aria-label="Answer options"></div>
+            <div class="flex justify-between items-center mt-6">
+              <button id="as-back" type="button" class="text-sm font-semibold text-bae-muted hover:text-bae-ink px-3 py-2 rounded-bae-sm hover:bg-bae-border-light transition-colors disabled:opacity-30">← Back</button>
+              <span class="text-xs text-bae-muted hidden sm:inline">Press <kbd class="px-1.5 py-0.5 bg-bae-border-light border border-bae-border rounded text-[11px] font-semibold">1</kbd>–<kbd class="px-1.5 py-0.5 bg-bae-border-light border border-bae-border rounded text-[11px] font-semibold">4</kbd> to answer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calculating interstitial (shown between last answer and result) -->
+      <div id="as-calc" class="hidden bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-10 md:p-14 max-w-content mx-auto text-center">
+        <div class="mx-auto mb-6 w-12 h-12 rounded-full border-[3px] border-bae-border border-t-bae-primary animate-spin" aria-hidden="true"></div>
+        <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-2">Building your result</h2>
+        <p id="as-calcmsg" class="text-sm text-bae-muted min-h-[1.5rem] transition-opacity duration-300" aria-live="polite"></p>
+        <div class="max-w-xs mx-auto mt-6 h-1.5 rounded-full overflow-hidden" style="background:#f0f0f6">
+          <i id="as-calcbar" class="block h-full rounded-full bg-bae-primary" style="width:0%;transition:width 1s linear"></i>
+        </div>
+        <p class="text-xs text-bae-muted mt-5">All of this happens in your browser. Nothing is uploaded.</p>
+      </div>
+
+      <!-- Result (hidden until finish) -->
+      <div id="as-result" class="hidden">
+        <div id="as-resulthead" class="text-center mb-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">Your free result</span>
+          <h2 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink mt-1">SMB AI Readiness: <em class="text-bae-accent not-italic font-serif italic">Diagnosis</em></h2>
+        </div>
+        <div class="w-full">
+
+          <!-- Score + breakdown sit ABOVE the split: on phones that puts the buy card directly under
+               the score and above the rest of the detail; on desktop the detail and the sticky buy
+               rail sit side by side beneath it. -->
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-9">
+          <div class="flex justify-between items-center flex-wrap gap-3">
+            <span id="res-badge" class="inline-block bg-bae-primary-soft text-bae-primary font-bold text-xs uppercase tracking-wide px-4 py-2 rounded-full"></span>
+            <span class="inline-flex items-center gap-1.5 bg-bae-border-light rounded-full px-3.5 py-1.5 text-xs font-semibold text-bae-muted">⏱ <span id="res-stamp"></span></span>
+          </div>
+          <p id="res-profile" class="hidden text-xs font-semibold text-bae-muted mt-3"></p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-6">
+            <div class="text-center">
+              <svg id="res-radar" viewBox="0 0 400 300" width="100%" style="max-width:400px" aria-label="Five-pillar readiness radar chart" role="img"></svg>
+              <div class="font-serif text-5xl font-bold text-bae-ink leading-none"><span id="res-score">0</span><span class="text-lg text-bae-muted font-sans font-semibold"> /100</span></div>
+              <div class="text-xs text-bae-muted mt-1">Overall readiness score</div>
+            </div>
+            <div>
+              <h3 class="font-serif text-lg font-semibold text-bae-ink mb-3.5">Pillar breakdown</h3>
+              <div id="res-pillars" class="flex flex-col gap-3"></div>
+            </div>
+          </div>
+          </div>
+
+          <div class="grid lg:grid-cols-[minmax(0,1fr)_330px] gap-6 lg:gap-7 items-start mt-6">
+          <div class="order-2 lg:order-1 bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-9">
+
+          <div>
+            <h3 class="font-serif text-lg font-semibold text-bae-ink mb-8">Where you are on the journey</h3>
+            <div class="relative">
+              <div id="res-you" class="absolute -top-8 bg-bae-ink text-white text-[11px] font-bold px-2.5 py-1 rounded whitespace-nowrap transition-all duration-1000" style="left:0%;transform:translateX(-50%)"></div>
+              <div class="grid grid-cols-4 gap-1.5" id="res-track"></div>
+            </div>
+            <p class="text-xs md:text-sm text-bae-muted mt-3.5" id="res-journeynote"></p>
+          </div>
+
+          <div class="mt-7 pt-6 border-t border-bae-border-light">
+            <h3 class="font-serif text-lg font-semibold text-bae-ink mb-3">Your 3 quick wins</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="res-wins"></div>
+          </div>
+
+          </div>
+
+          <!-- Paid CTA. Sticky on desktop so it follows the reader down their result; on phones
+               it drops to order-1, directly under the score. The card MUST stay shorter than the
+               viewport or the browser cannot pin it - hence the compact cover. -->
+          <aside class="order-1 lg:order-2 lg:sticky lg:top-6">
+          <!-- card — personalized to bucket + weakest pillars, with a live cover preview -->
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-5 md:p-6">
+            <div>
+              <!-- Live cover preview: the real report cover with the user's own score drawn on it -->
+              <div class="mx-auto w-full max-w-[132px]">
+                <div id="res-cover" class="relative rounded-bae-sm overflow-hidden shadow-xl ring-1 ring-black/20">
+                  <img id="res-coverimg" alt="" decoding="async" class="block w-full h-auto select-none" draggable="false" />
+                  <svg id="res-coversvg" class="absolute inset-0 w-full h-full" viewBox="0 0 595.3 841.9" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+                </div>
+                <p class="text-center text-[11px] font-medium text-bae-muted mt-2.5">Your personalized cover · 30+ page fillable PDF</p>
+              </div>
+              <!-- Value text + buy button -->
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">The report for your level</span>
+                <h4 class="font-serif text-base font-bold text-bae-ink mt-1 mb-1.5">The <em id="res-ctaname" class="italic text-bae-primary"></em></h4>
+                <p id="res-ctahead" class="text-[13px] font-semibold text-bae-ink mb-1"></p>
+                <p id="res-ctabody" class="text-[12px] leading-snug font-medium text-bae-muted"></p>
+                <ul id="res-ctapoints" class="mt-3 grid grid-cols-1 gap-y-1 text-[12px] leading-snug font-medium text-bae-ink"></ul>
+                <div class="mt-6">
+                  <button id="res-buy" type="button" class="block w-full text-center bg-bae-primary text-white font-extrabold text-sm px-7 py-3.5 rounded-bae-sm opacity-90 cursor-default select-none transition hover:opacity-100">Coming soon · $59</button>
+                  <span id="res-buynote" class="block text-center text-[11px] font-semibold mt-2 text-bae-muted">In production · Instant download at launch</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          </aside>
+          </div>
+
+          <div class="text-center mt-6">
+            <button id="as-retake" type="button" class="text-sm font-semibold text-bae-muted hover:text-bae-ink underline underline-offset-4">Retake the assessment (fresh start)</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people assess with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What small businesses assess with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from owners, operations leads, department heads, and advisors.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Small Business Owners</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Get an honest readiness audit before spending a penny</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">5-pillar score in ~15 minutes, no consultant</p>
+          <p class="text-sm text-bae-muted">Consultant-led AI readiness assessments run $2,000–$8,000 and end in a pitch. The Best Answer Hub SMB AI Readiness Score delivers the same five-pillar diagnosis free, names the two pillars blocking adoption, and is honest enough to say "fix your data first, spend nothing yet" when that is the right answer.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Operations Leads</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Find which pillar is actually blocking automation</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Radar chart pinpoints the bottleneck</p>
+          <p class="text-sm text-bae-muted">An ops lead who suspects messy data or undocumented processes can confirm it in one sitting. The radar makes lopsided readiness obvious: a business scoring 70 on Team Skills but 30 on Governance gets told exactly that, with quick wins matched to the weak pillars instead of generic AI advice.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Department Heads</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Build the case for (or against) an AI budget</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Objective score beats opinions in meetings</p>
+          <p class="text-sm text-bae-muted">A 0–100 score with five pillar sub-scores turns "I think there is potential" into a defensible position. Department heads use the result to justify a pilot, sequence foundation work first, or push back on AI pressure from above, then retake quarterly to show measurable progress.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Advisors & Bookkeepers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Walk a client through readiness in one meeting</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">No signup, works on the client's own device</p>
+          <p class="text-sm text-bae-muted">Accountants, bookkeepers, and fractional COOs run the assessment live with clients to ground AI conversations in evidence. Because everything is client-side with no account, there are no data-protection concerns about client information: answers never leave the client's browser.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+
+  <ResumeState />
+  <script is:inline src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script is:inline define:vars={{ PADDLE_ENV, PADDLE_CLIENT_TOKEN, PADDLE_SMB_PRICE }}>
+    window.__BAE_PADDLE = { env: PADDLE_ENV, token: PADDLE_CLIENT_TOKEN, price: PADDLE_SMB_PRICE };
+  </script>
+  <script is:inline>
+(function(){
+  'use strict';
+
+  /* ───────────────────────── CONFIG (no magic numbers in code) ───────────────────────── */
+  var CONFIG = {
+    storageKey: 'bae_smbai_v1',
+    weights: [0, 5, 10, 15],
+    scaleLabels: ['Not yet', 'Early days', 'Getting there', 'Strong'],
+    snapStep: 5,
+    pillarMax: 90,   /* 6 questions × 15 */
+    totalMax: 450,   /* 30 questions × 15 */
+    buckets: [
+      { id: 'curious', label: 'AI-Curious', min: 0,  max: 40,  report: 'Foundation Plan (AI-Curious)',
+        cta: {
+          headline: 'Your {score}/100 is a starting line, not a verdict.',
+          body: 'The honest advice at this level: don’t buy AI tools yet. The Foundation Plan lays out the groundwork that makes AI cheap and safe later, starting where your radar says to start: {weak1} and {weak2}.',
+          points: [
+            'A 90-day foundation plan that costs $0 in software',
+            'Data clean-up sheets you fill in as you go',
+            'Worksheets to document your 3 core processes',
+            'A one-page AI policy, pre-written and ready to adapt',
+            'An owner, a deadline and a success metric on every action',
+            'Fillable PDF: works like a workbook, not a slide deck'
+          ] } },
+      { id: 'aware',   label: 'AI-Aware',   min: 45, max: 65,  report: 'AI-Aware Roadmap Report',
+        cta: {
+          headline: 'At {score}/100 the foundations are real. The order of your next moves decides the payback.',
+          body: 'Written for businesses in the 45–65 band, with extra attention on your two focus areas: {weak1} and {weak2}. Every action carries an owner, a deadline and a success metric.',
+          points: [
+            'The exact fix order across all five pillars',
+            'Your first three AI implementations, chosen for payback',
+            'A buy-or-skip gate before any tool spend',
+            'A week-by-week 90-day plan, sized for an owner’s diary',
+            '8 fill-in worksheets, from process inventory to savings tracker',
+            'A pre-filled one-page AI policy template'
+          ] } },
+      { id: 'ready',   label: 'AI-Ready',   min: 70, max: 85,  report: 'AI-Ready Scale Plan',
+        cta: {
+          headline: 'At {score}/100 the basics hold. The next gains come from picking the right use cases.',
+          body: 'Built for the 70–85 band: less fixing, more scaling. It still pressure-tests your two focus areas, {weak1} and {weak2}, before anything new goes live.',
+          points: [
+            'How to pick high-ROI use cases and drop the rest',
+            'A baseline-and-savings method that proves results',
+            'A vendor scorecard for cutting through sales pitches',
+            'A team enablement plan that actually sticks',
+            'An owner, a deadline and a success metric on every action',
+            '8 fill-in worksheets, including a pilot savings tracker'
+          ] } },
+      { id: 'mature',  label: 'AI-Mature',  min: 90, max: 100, report: 'AI-Mature Edge Report',
+        cta: {
+          headline: 'At {score}/100 you’re ahead of most businesses your size. The job now is staying there.',
+          body: 'Built for the 90–100 band: no basics, no filler. Validation, benchmark context, and what to build next, with a closer look at {weak1} and {weak2}.',
+          points: [
+            'Benchmark context for a business at your level',
+            'Advanced governance that keeps pace with new tools',
+            'A build-vs-buy framework for the next investments',
+            'Frontier use cases worth piloting now',
+            'An owner, a deadline and a success metric on every action',
+            'Fill-in worksheets for vendor and pilot decisions'
+          ] } }
+    ],
+    calc: {
+      stepMs: 1100,
+      messages: [
+        'Scoring your 30 answers',
+        'Weighing all five pillars equally',
+        'Calculating your pillar scores',
+        'Checking the balance between pillars',
+        'Finding your two weakest areas',
+        'Drawing your readiness radar',
+        'Placing you on the maturity journey',
+        'Matching quick wins to your gaps',
+        'Sizing the advice for a business like yours',
+        'Selecting the right report for your level',
+        'Running a final check on the numbers',
+        'Your result is ready'
+      ]
+    },
+    bands: { low: 45, mid: 70 }, /* pillar color bands: <45 red, <70 amber, else green */
+    /* Live cover preview: the user's real score drawn onto the actual report cover (PNG), using the
+       EXACT same marker rectangles the fulfillment bouncer uses to stamp the real PDF. Coordinates are
+       % of the A4 cover (point space 595.3 x 841.9), extracted per bucket from the built templates
+       (pdf-src/*-template.pdf). Pillar-table rows differ per bucket because the cover lede length varies;
+       radar/score/profile are shared. Regenerate if a cover's HTML layout changes. Order: x%, ytop%, w%, h%. */
+    coverW: 595.3, coverH: 841.9,
+    coverCoords: {
+      curious:{p1:[47.85,40.66,5.04,1.31],b1:[60.49,40.66,12.1,1.31],p2:[47.85,43.34,5.04,1.31],b2:[60.49,43.34,12.1,1.31],p3:[47.85,46.03,5.04,1.31],b3:[60.49,46.03,12.1,1.31],p4:[47.85,48.71,5.04,1.31],b4:[60.49,48.71,12.1,1.31],p5:[47.85,51.4,5.04,1.31],b5:[60.49,51.4,12.1,1.31],radar:[14.17,75.78,13.86,9.15],score:[33.07,74.61,9.74,3.8],profile:[33.07,84.91,28.56,1.19]},
+      aware:{p1:[47.85,38.68,5.04,1.31],b1:[60.49,38.68,12.1,1.31],p2:[47.85,41.36,5.04,1.31],b2:[60.49,41.36,12.1,1.31],p3:[47.85,44.05,5.04,1.31],b3:[60.49,44.05,12.1,1.31],p4:[47.85,46.73,5.04,1.31],b4:[60.49,46.73,12.1,1.31],p5:[47.85,49.42,5.04,1.31],b5:[60.49,49.42,12.1,1.31],radar:[14.17,75.78,13.86,9.15],score:[33.07,74.61,9.74,3.8],profile:[33.07,84.91,28.56,1.19]},
+      ready:{p1:[47.85,40.66,5.04,1.31],b1:[60.49,40.66,12.1,1.31],p2:[47.85,43.34,5.04,1.31],b2:[60.49,43.34,12.1,1.31],p3:[47.85,46.03,5.04,1.31],b3:[60.49,46.03,12.1,1.31],p4:[47.85,48.71,5.04,1.31],b4:[60.49,48.71,12.1,1.31],p5:[47.85,51.4,5.04,1.31],b5:[60.49,51.4,12.1,1.31],radar:[14.17,75.78,13.86,9.15],score:[33.07,74.61,9.74,3.8],profile:[33.07,84.91,28.56,1.19]},
+      mature:{p1:[47.85,45.36,5.04,1.31],b1:[60.49,45.36,12.1,1.31],p2:[47.85,48.04,5.04,1.31],b2:[60.49,48.04,12.1,1.31],p3:[47.85,50.73,5.04,1.31],b3:[60.49,50.73,12.1,1.31],p4:[47.85,53.41,5.04,1.31],b4:[60.49,53.41,12.1,1.31],p5:[47.85,56.1,5.04,1.31],b5:[60.49,56.1,12.1,1.31],radar:[14.17,75.78,13.86,9.15],score:[33.07,74.61,9.74,3.8],profile:[33.07,84.91,28.56,1.19]}
+    },
+    /* band stamp words + colors must match the PDF cover stamp (stamp-core.js) exactly */
+    coverBands: [
+      { max: 45, word: 'Needs attention', color: '#ef4444' },
+      { max: 70, word: 'Developing',      color: '#f59e0b' },
+      { max: 101, word: 'Strong',         color: '#10b981' }
+    ],
+    /* The result/checkout payload sends the employee BAND (not the display label) so the bouncer's
+       composeProfile (stamp-core.js) renders "6–15 person professional services business" cleanly.
+       Keys must match profile.employees labels exactly. */
+    employeeBand: { 'Just me': '1', '2–5 people': '2-5', '6–15 people': '6-15', '16–50 people': '16-50', '50+ people': '50+' },
+    /* age label → ASCII band sent to the bouncer (UI keeps the en-dash; the stamp sanitizer strips
+       en-dashes, which would turn "2–5 years" into "25 years"). Keys must match profile.ages exactly. */
+    ageBand: { 'Under 2 years': 'Under 2 years', '2–5 years': '2-5 years', '5–10 years': '5-10 years', '10+ years': '10+ years' },
+    /* optional business profile: display & report tailoring only, NEVER scoring */
+    profile: {
+      placeholder: 'Prefer not to say',
+      industries: ['Retail & e-commerce', 'Professional services', 'Trades & construction', 'Hospitality & food', 'Health & wellness', 'Manufacturing & logistics', 'Creative & marketing', 'Technology & IT', 'Finance & insurance', 'Other'],
+      employees: ['Just me', '2–5 people', '6–15 people', '16–50 people', '50+ people'],
+      ages: ['Under 2 years', '2–5 years', '5–10 years', '10+ years']
+    },
+    pillars: [
+      { id: 'data', name: 'Data Readiness', short: 'Data',
+        win: 'Choose one system as the single source of truth for customer records and retire the duplicate copies.' },
+      { id: 'tech', name: 'Tech Infrastructure', short: 'Tech',
+        win: 'List every app and subscription in use, cancel the overlaps, and connect the two tools data gets re-typed between most.' },
+      { id: 'process', name: 'Process Maturity', short: 'Process',
+        win: 'Document the three most repeated processes as one-page checklists a new hire could follow.' },
+      { id: 'skills', name: 'Team Skills', short: 'Skills',
+        win: 'Run a 30-minute team session on the AI features already inside the tools the business pays for.' },
+      { id: 'governance', name: 'Governance & Risk', short: 'Governance',
+        win: 'Write a one-page AI usage policy: what staff may paste into AI tools, what is off-limits, and who to ask.' }
+    ],
+    questions: [
+      /* ── Pillar 1: Data Readiness ── */
+      { p: 0, text: 'Where does your core business data actually live today?',
+        help: 'Customer records, sales history, inventory: wherever they really are, not where they should be.',
+        opts: ['Scattered across spreadsheets, inboxes, and people’s heads', 'Mostly spreadsheets, but at least in shared folders', 'In proper systems (CRM, accounting), though not all connected', 'In connected systems where everything updates in one place'] },
+      { p: 0, text: 'If you needed your top 10 customers last quarter, how would that go?',
+        help: 'Think about the last time you actually needed a number like this.',
+        opts: ['Honestly, a lot of digging and guesswork', 'Someone could build it in a spreadsheet in a day or two', 'A report exists, but it needs manual cleanup first', 'A few clicks; reports like this are ready when needed'] },
+      { p: 0, text: 'Do you have one trusted version of key records, or several competing copies?',
+        help: 'e.g., the same customer’s details in three places, with three different phone numbers.',
+        opts: ['Several copies, and nobody’s sure which is right', 'Duplicates exist, but people know which copy to trust', 'One main version for most things, occasional strays', 'One source of truth, and duplicates get cleaned up'] },
+      { p: 0, text: 'How consistent is the way information gets entered?',
+        help: 'Names, dates, job labels, file naming: does everyone do it the same way?',
+        opts: ['Everyone has their own style', 'Some habits in common, nothing written down', 'Agreed formats for the important stuff, mostly followed', 'Clear conventions, followed by everyone, checked occasionally'] },
+      { p: 0, text: 'Is anyone actually responsible for keeping data clean and up to date?',
+        help: 'Not a job title, just a named human who owns it.',
+        opts: ['No one; it’s everyone’s job, so it’s no one’s job', 'Someone tidies things up when problems appear', 'Clear owner for key data, working without set routines', 'Named owner(s) with a regular cleanup routine'] },
+      { p: 0, text: 'How current is the information in your systems right now?',
+        help: 'If you opened your customer list or stock levels today, would you trust them?',
+        opts: ['Significantly out of date; updates happen in bursts', 'Updated when someone gets time, usually weeks behind', 'Mostly current; key data updated within days', 'Live or near-live; updated as part of daily work'] },
+      /* ── Pillar 2: Tech Infrastructure ── */
+      { p: 1, text: 'How would you describe the software your business runs on today?',
+        help: 'The tools people actually use daily: accounting, CRM, scheduling, files.',
+        opts: ['Ad-hoc; whatever each person picked over the years', 'A few key tools, with obvious gaps and workarounds', 'A solid stack, though some tools overlap or sit unused', 'A streamlined stack where each tool has a clear job'] },
+      { p: 1, text: 'How often does the same information get typed into two different systems?',
+        help: 'e.g., a sale entered in the invoice tool AND the spreadsheet AND the CRM.',
+        opts: ['Constantly; double entry is just how things work', 'Often; a few painful handoffs every week', 'Occasionally; main systems connect, edges don’t', 'Rarely; systems pass data automatically'] },
+      { p: 1, text: 'Where do your files and core software actually run?',
+        help: 'If your main office computer died today, what would stop working?',
+        opts: ['On specific computers; losing one would really hurt', 'A mix; some cloud, some trapped on machines', 'Mostly cloud; a dead laptop is an inconvenience', 'Fully cloud-based; any device, anywhere, nothing lost'] },
+      { p: 1, text: 'Who do you turn to when technology breaks or needs setting up?',
+        help: 'A named person or provider, not “whoever is least busy”.',
+        opts: ['Nobody; things stay broken or get worked around', 'The most tech-comfortable person fixes it when free', 'An IT provider or person, used reactively', 'Reliable IT support that also helps plan ahead'] },
+      { p: 1, text: 'When did you last review what you’re paying for in software subscriptions?',
+        help: 'Unused seats and forgotten subscriptions are where AI budget hides.',
+        opts: ['Never; no one knows the full list', 'A list exists somewhere, probably out of date', 'Reviewed in the past year; some fat trimmed', 'Reviewed regularly; spend is known and intentional'] },
+      { p: 1, text: 'How does a new tool get adopted in your business?',
+        help: 'Think about the last app or software you introduced.',
+        opts: ['Someone just starts using something; chaos follows', 'The owner picks; rollout is sink-or-swim', 'A quick trial, then a decision and basic handover', 'A short evaluation, a chosen owner, and proper rollout'] },
+      /* ── Pillar 3: Process Maturity ── */
+      { p: 2, text: 'Are your key business processes written down anywhere?',
+        help: 'Could a capable new hire follow them without asking around?',
+        opts: ['Nothing written down; it all lives in people’s heads', 'Scattered notes; mostly tribal knowledge', 'Core processes documented, not always current', 'Documented, kept current, and actually followed'] },
+      { p: 2, text: 'What happens when a new person joins the team?',
+        help: 'The first two weeks: smooth playbook or shadowing and hoping?',
+        opts: ['They shadow someone and pick things up over months', 'A rough induction; most learning is on the job', 'A checklist covers the basics; the rest is informal', 'A structured onboarding gets them productive fast'] },
+      { p: 2, text: 'How much of a typical week goes to repetitive copy-paste-style work?',
+        help: 'Re-typing, moving data between apps, formatting the same reports.',
+        opts: ['A lot, and nobody has mapped exactly where', 'A lot, and the worst spots are known', 'Some; a few repetitive tasks already streamlined', 'Little; repetitive work is tracked and automated where worth it'] },
+      { p: 2, text: 'If a process fails (an order missed, an invoice wrong), is it clear whose process it was?',
+        help: 'Ownership, not blame: a named person per process.',
+        opts: ['Not really; things fall between people', 'Informally: “that’s usually Sarah’s thing”', 'Key processes have clear owners', 'Every important process has an owner who improves it'] },
+      { p: 2, text: 'Do different people do the same job the same way?',
+        help: 'e.g., two staff handling a customer complaint: same steps, same records?',
+        opts: ['Everyone has their own way; results vary', 'Similar-ish, with personal variations that cause surprises', 'Consistent on the important steps', 'Consistent and checked; variation gets spotted and fixed'] },
+      { p: 2, text: 'Do you know what your key processes actually cost in time or money?',
+        help: 'e.g., hours from order received to job done, or cost per invoice processed.',
+        opts: ['No idea; never measured', 'Gut feel only', 'Rough numbers for the big ones', 'Measured for key processes; decisions use the numbers'] },
+      /* ── Pillar 4: Team Skills ── */
+      { p: 3, text: 'How comfortable is your team with AI tools today?',
+        help: 'ChatGPT, Copilot, or AI features inside tools they already use.',
+        opts: ['Haven’t really touched them', 'A few people experiment on their own', 'Regular use in some roles', 'Embedded in daily work across the team'] },
+      { p: 3, text: 'How confident is the team with the everyday software you already have?',
+        help: 'If they struggle with current tools, AI tools will be harder.',
+        opts: ['Many struggle with the basics', 'Comfortable with routines; anything new causes friction', 'Confident; a few people push the tools further', 'Strong across the board, with real power users'] },
+      { p: 3, text: 'Does anyone get time or budget to learn new tools and skills?',
+        help: 'Even an hour a month counts, formally or informally.',
+        opts: ['No; learning happens on personal time, if at all', 'Encouraged in words, not backed by time or money', 'Occasional training or paid courses when asked', 'Regular, planned learning time or budget per person'] },
+      { p: 3, text: 'Is there anyone who experiments with AI and shares what works?',
+        help: 'An informal champion counts: the person others ask “how did you do that?”',
+        opts: ['Nobody', 'One curious person, keeping findings to themselves', 'A champion or two who occasionally share', 'Champions actively spread what works across the team'] },
+      { p: 3, text: 'How does the team generally feel about AI coming into the business?',
+        help: 'Honest read of the room: fear, indifference, or curiosity?',
+        opts: ['Worried or resistant: “is this replacing us?”', 'Indifferent; seen as another management fad', 'Cautiously curious; open if it clearly helps', 'Energized; people suggest AI ideas themselves'] },
+      { p: 3, text: 'Has the team had any actual training on AI or digital tools?',
+        help: 'A real session or course, not just “have a play with it”.',
+        opts: ['None', 'Links and videos shared; no structured session', 'At least one proper session or course for some staff', 'Structured training, refreshed as tools change'] },
+      /* ── Pillar 5: Governance & Risk ── */
+      { p: 4, text: 'Do you have any policy on how staff may use AI at work?',
+        help: 'Even a one-page guideline counts.',
+        opts: ['No policy at all', 'Informal verbal guidance: “be sensible”', 'A draft or partial written policy', 'A clear written policy staff actually know about'] },
+      { p: 4, text: 'Do you know what staff are pasting into AI tools right now?',
+        help: 'Customer details, pricing, contracts, pasted into personal ChatGPT accounts.',
+        opts: ['No idea; it’s never been discussed', 'Probably happening; nothing agreed about it', 'Discussed with ground rules; not verified', 'Clear rules plus approved tools, so there’s no need to guess'] },
+      { p: 4, text: 'How is sensitive customer and business data protected?',
+        help: 'Who can see what, and would you know if the wrong person did?',
+        opts: ['Honestly not sure', 'Basic passwords; most staff can see most things', 'Access limited by role; backups in place', 'Role-based access, tested backups, and periodic reviews'] },
+      { p: 4, text: 'How does the team handle passwords and account access?',
+        help: 'The post-it note test.',
+        opts: ['Shared passwords, reused everywhere', 'Individual logins, but weak or reused passwords', 'Password manager or SSO for key systems', 'Password manager + two-factor authentication as standard'] },
+      { p: 4, text: 'If you collect customer data, how clear are you on legal obligations?',
+        help: 'Data protection rules (like GDPR) apply to small businesses too.',
+        opts: ['Haven’t really looked into it', 'Vaguely aware; nothing checked or written', 'Key obligations known; main bases covered', 'Obligations mapped, covered, and reviewed when things change'] },
+      { p: 4, text: 'When someone wants to use a new app with business data, what happens?',
+        help: 'This is how “shadow IT” (and shadow AI) starts.',
+        opts: ['They just use it; nobody would know', 'They’d probably mention it to someone first', 'A quick informal check before business data goes in', 'A simple, known approval step; fast, but nothing slips through'] }
+    ]
+  };
+
+  /* ───────────────────────── SCORING (pure, testable) ───────────────────────── */
+  function computeResult(answers, cfg) {
+    var pillarRaw = [0, 0, 0, 0, 0];
+    for (var i = 0; i < cfg.questions.length; i++) {
+      pillarRaw[cfg.questions[i].p] += cfg.weights[answers[i]];
+    }
+    var pillarScores = pillarRaw.map(function (raw) { return Math.round((raw / cfg.pillarMax) * 100); });
+    var totalRaw = pillarRaw.reduce(function (a, b) { return a + b; }, 0);
+    var overall = Math.round(((totalRaw / cfg.totalMax) * 100) / cfg.snapStep) * cfg.snapStep;
+    var bucket = cfg.buckets[cfg.buckets.length - 1];
+    for (var b = 0; b < cfg.buckets.length; b++) {
+      if (overall <= cfg.buckets[b].max) { bucket = cfg.buckets[b]; break; }
+    }
+    var order = pillarScores.map(function (s, idx) { return { idx: idx, s: s }; })
+      .sort(function (a, b2) { return a.s - b2.s || a.idx - b2.idx; });
+    return {
+      pillarScores: pillarScores,
+      overall: overall,
+      bucket: bucket,
+      weakest: [order[0].idx, order[1].idx],
+      winIdx: [order[0].idx, order[1].idx, order[2].idx]
+    };
+  }
+  /* profile values are only ever accepted from the known config lists */
+  function sanitizeProfile(p, cfg) {
+    var src = (p && typeof p === 'object') ? p : {};
+    function pick(v, list) { return list.indexOf(v) !== -1 ? v : null; }
+    return {
+      industry: pick(src.industry, cfg.profile.industries),
+      employees: pick(src.employees, cfg.profile.employees),
+      age: pick(src.age, cfg.profile.ages)
+    };
+  }
+  /* expose for node-testing */
+  if (typeof window !== 'undefined') { window.__baeSmbAi = { computeResult: computeResult, sanitizeProfile: sanitizeProfile, fillCta: fillCta, CONFIG: CONFIG }; }
+
+  /* ───────────────────────── STATE & PERSISTENCE ───────────────────────── */
+  var N = CONFIG.questions.length;
+  var st = { i: 0, answers: [], elapsed: 0, done: false, timerId: null, profile: null };
+
+  function freshState() { st.i = 0; st.answers = new Array(N).fill(null); st.elapsed = 0; st.done = false; st.profile = sanitizeProfile(null, CONFIG); }
+  function save() {
+    try { sessionStorage.setItem(CONFIG.storageKey, JSON.stringify({ i: st.i, answers: st.answers, elapsed: st.elapsed, profile: st.profile, done: !!st.done })); } catch (e) {}
+  }
+  function clearSaved() { try { sessionStorage.removeItem(CONFIG.storageKey); } catch (e) {} }
+  function restore() {
+    try {
+      var raw = sessionStorage.getItem(CONFIG.storageKey);
+      if (!raw) return false;
+      var s = JSON.parse(raw);
+      if (!s || !Array.isArray(s.answers) || s.answers.length !== N) return false;
+      var cleanAnswers = s.answers.map(function (a) { return (a === 0 || a === 1 || a === 2 || a === 3) ? a : null; });
+      st.answers = cleanAnswers;
+      st.i = Math.min(Math.max(parseInt(s.i, 10) || 0, 0), N - 1);
+      st.elapsed = Math.max(parseInt(s.elapsed, 10) || 0, 0);
+      st.profile = sanitizeProfile(s.profile, CONFIG);
+      st.done = s.done === true;
+      return cleanAnswers.some(function (a) { return a !== null; });
+    } catch (e) { return false; }
+  }
+
+  /* ───────────────────────── DOM HELPERS (no user input ever hits innerHTML) ───────────────────────── */
+  function el(id) { return document.getElementById(id); }
+  function show(id) { el(id).classList.remove('hidden'); }
+  function hide(id) { el(id).classList.add('hidden'); }
+  function fmt(sec) {
+    var m = Math.floor(sec / 60), s2 = sec % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (s2 < 10 ? '0' : '') + s2;
+  }
+  function bandColor(s) { return s < CONFIG.bands.low ? '#ef4444' : s < CONFIG.bands.mid ? '#f59e0b' : '#10b981'; }
+  function bandLabel(s) { return s < CONFIG.bands.low ? 'Needs attention' : s < CONFIG.bands.mid ? 'Developing' : 'Strong'; }
+
+  /* ───────────────────────── TIMER ───────────────────────── */
+  function startTimer() {
+    stopTimer();
+    st.timerId = setInterval(function () {
+      if (st.done) return;
+      st.elapsed++;
+      el('as-timer').textContent = fmt(st.elapsed);
+      if (st.elapsed % 5 === 0) save();
+    }, 1000);
+  }
+  function stopTimer() { if (st.timerId) { clearInterval(st.timerId); st.timerId = null; } }
+
+  /* ───────────────────────── QUIZ RENDER ───────────────────────── */
+  function renderQuiz() {
+    var q = CONFIG.questions[st.i];
+    el('as-pillarlabel').textContent = CONFIG.pillars[q.p].name;
+    el('as-num').textContent = String(st.i + 1);
+    el('as-q').textContent = q.text;
+    el('as-help').textContent = q.help;
+    el('as-back').disabled = st.i === 0;
+    el('as-timer').textContent = fmt(st.elapsed);
+
+    var answered = st.answers.filter(function (a) { return a !== null; }).length;
+    el('as-pct').textContent = Math.round((answered / N) * 100) + '%';
+
+    /* rail */
+    var rail = el('as-rail');
+    rail.textContent = '';
+    var pillarDone = CONFIG.pillars.map(function (_, pi) {
+      return CONFIG.questions.every(function (qq, qi) { return qq.p !== pi || st.answers[qi] !== null; });
+    });
+    CONFIG.pillars.forEach(function (p, pi) {
+      var row = document.createElement('div');
+      var isNow = q.p === pi;
+      row.className = 'flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium ' +
+        (isNow ? 'bg-white/10 text-white font-semibold' : pillarDone[pi] ? 'text-gray-300' : 'text-gray-500');
+      var ic = document.createElement('span');
+      ic.className = 'shrink-0 w-[22px] h-[22px] rounded-full border grid place-items-center text-[10px] font-bold ' +
+        (pillarDone[pi] ? 'bg-bae-accent border-bae-accent text-white' : isNow ? 'border-bae-accent text-bae-accent' : 'border-gray-600 text-gray-500');
+      ic.textContent = pillarDone[pi] ? '✓' : String(pi + 1);
+      row.appendChild(ic);
+      row.appendChild(document.createTextNode(p.name));
+      rail.appendChild(row);
+    });
+
+    /* options */
+    var box = el('as-opts');
+    box.textContent = '';
+    q.opts.forEach(function (txt, idx) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'w-full flex items-center gap-3.5 text-left rounded-bae-sm border-[1.5px] px-4 py-3 transition-all cursor-pointer ' +
+        (st.answers[st.i] === idx
+          ? 'border-bae-primary bg-bae-primary-soft shadow-[0_0_0_3px_rgba(99,102,241,.12)]'
+          : 'border-bae-border bg-bae-bg hover:border-bae-primary hover:bg-bae-primary-soft');
+      b.setAttribute('aria-label', CONFIG.scaleLabels[idx] + ': ' + txt);
+      var big = document.createElement('span');
+      big.className = 'shrink-0 grid place-items-center w-7 h-7 rounded-full border border-bae-border bg-bae-card text-[13px] font-bold text-bae-primary';
+      big.textContent = String(idx + 1);
+      var sub = document.createElement('span');
+      sub.className = 'block text-sm font-medium text-bae-ink leading-snug';
+      sub.textContent = txt;
+      b.appendChild(big); b.appendChild(sub);
+      b.addEventListener('click', function () { answer(idx); });
+      box.appendChild(b);
+    });
+  }
+
+  function answer(idx) {
+    if (st.done) return;
+    st.answers[st.i] = idx;
+    save();
+    renderQuiz();
+    setTimeout(function () {
+      var next = st.answers.indexOf(null);
+      if (next === -1) { finish(); return; }
+      /* always jump to the first unanswered question; after going back to
+         change an answer, the user lands where they left off, and the changed
+         answer is already in st.answers for scoring */
+      st.i = next;
+      save();
+      renderQuiz();
+    }, 300);
+  }
+
+  /* ───────────────────────── RESULT RENDER ───────────────────────── */
+  function finish(skipCalc) {
+    st.done = true;
+    stopTimer();
+    save(); /* keep the session: a reload of the results page must not restart the test */
+    var r = computeResult(st.answers, CONFIG);
+
+    /* result payload for checkout wiring (Paddle custom data + PDF cover stamp).
+       employees is normalized to a band token so the bouncer stamps a clean profile line. */
+    if (typeof window !== 'undefined' && window.__baeSmbAi) {
+      window.__baeSmbAi.lastResult = {
+        assessment: 'smb-ai-readiness',
+        bucket: r.bucket.id,
+        score: r.overall,
+        pillarScores: r.pillarScores,
+        profile: reportProfile(st.profile)
+      };
+    }
+
+    hide('as-quiz');
+    /* skipCalc: a RESUMED session goes straight to the result. Everything above still runs, so
+       lastResult is always populated — bypassing finish() on resume is how the buy button ends up
+       dead after a refresh (caught in test, 2026-07-19). Only the animation is skipped, because on
+       a reload a "calculating..." sequence reads as the test restarting. */
+    if (skipCalc) { hide('as-calc'); revealResult(r); } else { runCalc(function () { revealResult(r); }); }
+  }
+
+  /* the score is computed instantly; this interstitial paces the reveal so the
+     user can see each step of the evaluation it just performed */
+  function runCalc(done) {
+    var msgs = CONFIG.calc.messages;
+    var msgEl = el('as-calcmsg'), bar = el('as-calcbar');
+    msgEl.style.opacity = '1';
+    msgEl.textContent = msgs[0];
+    bar.style.width = '0%';
+    show('as-calc');
+    el('as-calc').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    requestAnimationFrame(function () { bar.style.width = Math.round((1 / msgs.length) * 100) + '%'; });
+    var mi = 0;
+    var iv = setInterval(function () {
+      mi++;
+      if (mi >= msgs.length) {
+        clearInterval(iv);
+        hide('as-calc');
+        done();
+        return;
+      }
+      msgEl.style.opacity = '0';
+      setTimeout(function () { msgEl.textContent = msgs[mi]; msgEl.style.opacity = '1'; }, 260);
+      bar.style.width = Math.round(((mi + 1) / msgs.length) * 100) + '%';
+    }, CONFIG.calc.stepMs);
+  }
+
+  function revealResult(r) {
+    if (window.__baeResume) window.__baeResume.focusResult();
+    show('as-result');
+
+    el('res-badge').textContent = 'Your level: ' + r.bucket.label;
+    el('res-stamp').textContent = 'Completed in ' + fmt(st.elapsed) + ' · 30 questions · 5 pillars';
+    renderCta(r);
+
+    /* optional business profile line (display only, never scoring) */
+    var pParts = [];
+    if (st.profile) {
+      if (st.profile.employees) pParts.push(st.profile.employees);
+      if (st.profile.industry) pParts.push(st.profile.industry);
+      if (st.profile.age) pParts.push('trading ' + st.profile.age.toLowerCase());
+    }
+    if (pParts.length) {
+      el('res-profile').textContent = 'Tailored to your business: ' + pParts.join(' · ');
+      show('res-profile');
+    } else {
+      hide('res-profile');
+    }
+
+    /* count-up score */
+    var scoreEl = el('res-score'), n = 0;
+    var iv = setInterval(function () { n += 2; if (n >= r.overall) { n = r.overall; clearInterval(iv); } scoreEl.textContent = String(n); }, 28);
+
+    renderRadar(r);
+    renderPillars(r);
+    renderJourney(r);
+    renderWins(r);
+    el('as-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderRadar(r) {
+    var svg = el('res-radar');
+    svg.textContent = '';
+    var NS = 'http://www.w3.org/2000/svg';
+    var cx = 200, cy = 150, R = 105, P = 5;
+    function pt(i, rad) {
+      var ang = -Math.PI / 2 + i * 2 * Math.PI / P;
+      return [cx + rad * Math.cos(ang), cy + rad * Math.sin(ang)];
+    }
+    function poly(points, attrs) {
+      var p2 = document.createElementNS(NS, 'polygon');
+      p2.setAttribute('points', points.map(function (p3) { return p3.join(','); }).join(' '));
+      Object.keys(attrs).forEach(function (k) { p2.setAttribute(k, attrs[k]); });
+      svg.appendChild(p2);
+      return p2;
+    }
+    [0.25, 0.5, 0.75, 1].forEach(function (f) {
+      var pts = [];
+      for (var i = 0; i < P; i++) pts.push(pt(i, R * f));
+      poly(pts, { fill: 'none', stroke: '#e8e8f0', 'stroke-width': '1' });
+    });
+    CONFIG.pillars.forEach(function (p, i) {
+      var line = document.createElementNS(NS, 'line');
+      var e = pt(i, R);
+      line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+      line.setAttribute('x2', e[0]); line.setAttribute('y2', e[1]);
+      line.setAttribute('stroke', '#e8e8f0'); line.setAttribute('stroke-width', '1');
+      svg.appendChild(line);
+      var lp = pt(i, R + 26);
+      var t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', lp[0]); t.setAttribute('y', lp[1] + 4);
+      t.setAttribute('text-anchor', Math.abs(lp[0] - cx) < 12 ? 'middle' : lp[0] > cx ? 'start' : 'end');
+      t.setAttribute('font-size', '11');
+      t.setAttribute('font-family', 'Inter, sans-serif');
+      var weak = r.weakest.indexOf(i) !== -1;
+      t.setAttribute('font-weight', weak ? '700' : '600');
+      t.setAttribute('fill', weak ? '#dc2626' : '#6b6b80');
+      t.textContent = p.short;
+      svg.appendChild(t);
+    });
+    var target = r.pillarScores.map(function (s, i) { return pt(i, R * s / 100); });
+    var startPts = [];
+    for (var i2 = 0; i2 < P; i2++) startPts.push([cx, cy]);
+    var dataPoly = poly(startPts, { fill: 'rgba(99,102,241,0.18)', stroke: '#6366f1', 'stroke-width': '2.5', 'stroke-linejoin': 'round' });
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      dataPoly.style.transition = 'all 1s cubic-bezier(.4,0,.2,1)';
+      dataPoly.setAttribute('points', target.map(function (p3) { return p3.join(','); }).join(' '));
+      target.forEach(function (p3, i3) {
+        var c = document.createElementNS(NS, 'circle');
+        c.setAttribute('cx', p3[0]); c.setAttribute('cy', p3[1]); c.setAttribute('r', '4');
+        c.setAttribute('fill', r.weakest.indexOf(i3) !== -1 ? '#dc2626' : '#6366f1');
+        c.setAttribute('stroke', '#fff'); c.setAttribute('stroke-width', '1.5');
+        c.style.opacity = '0';
+        c.style.transition = 'opacity .4s ease ' + (0.6 + i3 * 0.08) + 's';
+        svg.appendChild(c);
+        requestAnimationFrame(function () { c.style.opacity = '1'; });
+      });
+    }); });
+  }
+
+  function renderPillars(r) {
+    var box = el('res-pillars');
+    box.textContent = '';
+    CONFIG.pillars.forEach(function (p, i) {
+      var s = r.pillarScores[i];
+      var weak = r.weakest.indexOf(i) !== -1;
+      var row = document.createElement('div');
+      var top = document.createElement('div');
+      top.className = 'flex justify-between mb-1.5 text-[13px] font-semibold text-bae-ink';
+      var left = document.createElement('span');
+      left.textContent = p.name;
+      if (weak) {
+        var tag = document.createElement('span');
+        tag.className = 'inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full ml-2 align-middle';
+        tag.style.background = 'rgba(239,68,68,.08)';
+        tag.style.color = '#dc2626';
+        tag.textContent = 'Focus area';
+        left.appendChild(tag);
+      }
+      var right = document.createElement('span');
+      right.className = 'text-bae-muted tabular-nums';
+      right.textContent = s + '/100';
+      top.appendChild(left); top.appendChild(right);
+      var bar = document.createElement('div');
+      bar.className = 'h-2 rounded-full overflow-hidden';
+      bar.style.background = '#f0f0f6';
+      var fill = document.createElement('i');
+      fill.className = 'block h-full rounded-full';
+      fill.style.width = '0%';
+      fill.style.background = bandColor(s);
+      fill.style.transition = 'width 1s cubic-bezier(.4,0,.2,1)';
+      bar.appendChild(fill);
+      row.appendChild(top); row.appendChild(bar);
+      box.appendChild(row);
+      requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = s + '%'; }); });
+    });
+  }
+
+  function renderJourney(r) {
+    var track = el('res-track');
+    track.textContent = '';
+    var activeIdx = CONFIG.buckets.indexOf(r.bucket);
+    CONFIG.buckets.forEach(function (b, i) {
+      var seg = document.createElement('div');
+      seg.className = 'h-[52px] rounded-bae-sm grid place-items-center text-center text-[12px] font-bold leading-tight px-2 ' +
+        (i === activeIdx ? 'text-white' : i < activeIdx ? '' : '');
+      if (i === activeIdx) { seg.style.background = '#6366f1'; seg.style.boxShadow = '0 6px 18px rgba(99,102,241,.35)'; seg.style.color = '#fff'; }
+      else if (i < activeIdx) { seg.style.background = 'rgba(99,102,241,0.08)'; seg.style.color = '#6366f1'; }
+      else { seg.style.background = '#f0f0f6'; seg.style.color = '#6b6b80'; }
+      var l1 = document.createElement('span');
+      l1.textContent = b.label;
+      var l2 = document.createElement('span');
+      l2.className = 'block font-semibold text-[10px] opacity-80';
+      l2.textContent = b.min + '–' + b.max;
+      var wrap = document.createElement('span');
+      wrap.appendChild(l1); wrap.appendChild(l2);
+      seg.appendChild(wrap);
+      track.appendChild(seg);
+    });
+    var you = el('res-you');
+    you.textContent = 'YOU ARE HERE · ' + r.overall + '/100';
+    var b2 = r.bucket;
+    var span = Math.max(b2.max - b2.min, 1);
+    var pos = activeIdx * 25 + ((r.overall - b2.min) / span) * 25;
+    pos = Math.min(Math.max(pos, 4), 96);
+    setTimeout(function () { you.style.left = pos + '%'; }, 350);
+
+    var note = el('res-journeynote');
+    if (activeIdx < CONFIG.buckets.length - 1) {
+      var next = CONFIG.buckets[activeIdx + 1];
+      var gap = next.min - r.overall;
+      note.textContent = 'You’re ' + gap + ' points from ' + next.label + '. Businesses at your level usually get there fastest by fixing ' +
+        CONFIG.pillars[r.weakest[0]].name + ' and ' + CONFIG.pillars[r.weakest[1]].name + ' first; every later step gets cheaper once those hold.';
+    } else {
+      note.textContent = 'You’re in the top band. The work from here is staying ahead: keeping governance current as tools change, and squeezing measurable returns from what’s already deployed.';
+    }
+  }
+
+  function renderWins(r) {
+    var box = el('res-wins');
+    box.textContent = '';
+    r.winIdx.forEach(function (pi, n2) {
+      var card = document.createElement('div');
+      card.className = 'bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-[13px] text-bae-muted';
+      var num = document.createElement('span');
+      num.className = 'grid place-items-center w-6 h-6 rounded-full bg-bae-primary text-white text-xs font-bold mb-2';
+      num.textContent = String(n2 + 1);
+      var ttl = document.createElement('b');
+      ttl.className = 'block text-bae-ink text-sm mb-0.5';
+      ttl.textContent = CONFIG.pillars[pi].name;
+      var txt = document.createElement('span');
+      txt.textContent = CONFIG.pillars[pi].win;
+      card.appendChild(num); card.appendChild(ttl); card.appendChild(txt);
+      box.appendChild(card);
+    });
+  }
+
+  /* personalized paid-report CTA: bucket copy + the user's score and weakest pillars */
+  function fillCta(tpl, r) {
+    return tpl
+      .replace('{score}', String(r.overall))
+      .replace('{weak1}', CONFIG.pillars[r.weakest[0]].name)
+      .replace('{weak2}', CONFIG.pillars[r.weakest[1]].name);
+  }
+  function renderCta(r) {
+    var c = r.bucket.cta;
+    el('res-ctaname').textContent = r.bucket.report;
+    el('res-ctahead').textContent = fillCta(c.headline, r);
+    el('res-ctabody').textContent = fillCta(c.body, r);
+    var ul = el('res-ctapoints');
+    ul.textContent = '';
+    c.points.forEach(function (p) {
+      var li = document.createElement('li');
+      li.className = 'flex gap-2 items-start';
+      var mark = document.createElement('span');
+      mark.className = 'shrink-0 text-bae-primary font-bold';
+      mark.textContent = '✓';
+      var txt = document.createElement('span');
+      txt.textContent = p;
+      li.appendChild(mark); li.appendChild(txt);
+      ul.appendChild(li);
+    });
+    renderCoverPreview(r);
+  }
+
+  /* normalize the optional profile for the report payload + cover (employees → band token).
+     Mirrors stamp-core.js composeProfile's expectations so preview and real PDF match. */
+  function reportProfile(p) {
+    if (!p) return null;
+    return {
+      industry: p.industry || null,
+      employees: (p.employees && CONFIG.employeeBand[p.employees]) || null,
+      age: (p.age && CONFIG.ageBand[p.age]) || null
+    };
+  }
+  /* "6–15 person professional services business" (no company name in the preview) */
+  function composeCoverProfile(p) {
+    if (!p) return null;
+    var emp = p.employees ? String(p.employees).replace(/(\d)-(\d)/, '$1–$2') : null;
+    var ind = p.industry ? String(p.industry).toLowerCase() : null;
+    var parts = [];
+    if (emp) parts.push(emp + ' person');
+    if (ind) parts.push(ind);
+    return parts.length ? parts.join(' ') + ' business' : null;
+  }
+  function coverBand(score) {
+    var b = CONFIG.coverBands;
+    for (var i = 0; i < b.length; i++) { if (score < b[i].max) return b[i]; }
+    return b[b.length - 1];
+  }
+  function svgNode(tag, attrs) {
+    var n = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (var k in attrs) { if (Object.prototype.hasOwnProperty.call(attrs, k)) n.setAttribute(k, attrs[k]); }
+    return n;
+  }
+  /* Draw the user's real score onto the actual report cover, using the SAME marker rectangles the
+     fulfillment bouncer uses (point space 595.3 x 841.9 = the SVG viewBox). 1:1 with the stamped PDF. */
+  function renderCoverPreview(r) {
+    var img = el('res-coverimg'), svg = el('res-coversvg');
+    if (!img || !svg) return;
+    img.src = '/kc-covers/cover-' + r.bucket.id + '.png';
+    img.alt = 'The Best Answer Hub ' + r.bucket.report + ' cover, personalized with your score';
+    var C = CONFIG.coverCoords[r.bucket.id];
+    svg.textContent = '';
+    if (!C) return;
+    var W = CONFIG.coverW, H = CONFIG.coverH;
+    function px(rect) { return { x: rect[0] / 100 * W, y: rect[1] / 100 * H, w: rect[2] / 100 * W, h: rect[3] / 100 * H }; }
+    function drawText(rect, str, size, fill, family, weight) {
+      var g = px(rect);
+      var t = svgNode('text', { x: g.x + 1, y: g.y + g.h / 2, 'font-family': family || 'Inter, system-ui, sans-serif',
+        'font-size': size, 'font-weight': weight || '700', fill: fill, 'dominant-baseline': 'central', 'text-anchor': 'start' });
+      t.textContent = str;
+      svg.appendChild(t);
+    }
+    var sc = r.pillarScores;
+    /* overall score (Playfair bold ~28, white), left-aligned exactly like the stamp */
+    drawText(C.score, String(r.overall), 28, '#ffffff', '"Playfair Display", Georgia, serif', '700');
+    /* pillar rows: score (white) + band word (band color) */
+    for (var i = 0; i < 5; i++) {
+      var bd = coverBand(sc[i]);
+      drawText(C['p' + (i + 1)], String(sc[i]), 9, '#ffffff');
+      drawText(C['b' + (i + 1)], bd.word, 9, bd.color);
+    }
+    /* radar polygon (indigo), same geometry as the cover pentagon + the bouncer */
+    var rd = px(C.radar), sx = rd.w / 120, sy = rd.h / 112, pts = [];
+    for (var j = 0; j < 5; j++) {
+      var rr = 46 * sc[j] / 100, a = -Math.PI / 2 + j * 2 * Math.PI / 5;
+      pts.push((rd.x + (60 + rr * Math.cos(a)) * sx).toFixed(2) + ',' + (rd.y + (56 + rr * Math.sin(a)) * sy).toFixed(2));
+    }
+    svg.appendChild(svgNode('polygon', { points: pts.join(' '), fill: 'rgba(99,102,241,0.30)', stroke: '#a5b4fc', 'stroke-width': '1.3', 'stroke-linejoin': 'round' }));
+    /* optional profile line (gray), only if the user filled it in */
+    var prof = composeCoverProfile((window.__baeSmbAi && window.__baeSmbAi.lastResult && window.__baeSmbAi.lastResult.profile) || reportProfile(st.profile));
+    if (prof) drawText(C.profile, prof, 7.5, '#9ca3af', 'Inter, system-ui, sans-serif', '400');
+  }
+
+  /* ───────────────────────── FLOW CONTROL ───────────────────────── */
+  function populateProfileSelects() {
+    [['pf-industry', CONFIG.profile.industries], ['pf-employees', CONFIG.profile.employees], ['pf-age', CONFIG.profile.ages]].forEach(function (pair) {
+      var sel = el(pair[0]);
+      sel.textContent = '';
+      var blank = document.createElement('option');
+      blank.value = '';
+      blank.textContent = CONFIG.profile.placeholder;
+      sel.appendChild(blank);
+      pair[1].forEach(function (v) {
+        var o = document.createElement('option');
+        o.value = v;
+        o.textContent = v;
+        sel.appendChild(o);
+      });
+      sel.value = '';
+    });
+  }
+
+  function startFresh() {
+    clearSaved();          /* retake integrity: every attempt starts clean */
+    freshState();
+    stopTimer();
+    hide('as-intro'); hide('as-result'); hide('as-quiz');
+    populateProfileSelects();
+    show('as-profile');
+    el('as-profile').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function beginQuiz(useSelections) {
+    if (useSelections) {
+      st.profile = sanitizeProfile({
+        industry: el('pf-industry').value,
+        employees: el('pf-employees').value,
+        age: el('pf-age').value
+      }, CONFIG);
+    } else {
+      st.profile = sanitizeProfile(null, CONFIG);
+    }
+    hide('as-profile');
+    show('as-quiz');
+    save();
+    renderQuiz();
+    startTimer();   /* the ~15-min clock starts at question 1, not at the profile card */
+    el('as-quiz').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  el('as-start').addEventListener('click', startFresh);
+  el('as-retake').addEventListener('click', startFresh);
+  el('as-begin').addEventListener('click', function () { beginQuiz(true); });
+  el('as-skip').addEventListener('click', function () { beginQuiz(false); });
+  el('as-back').addEventListener('click', function () {
+    if (st.i > 0 && !st.done) { st.i--; save(); renderQuiz(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (st.done || el('as-quiz').classList.contains('hidden')) return;
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+    var n2 = parseInt(e.key, 10);
+    if (n2 >= 1 && n2 <= 4) answer(n2 - 1);
+  });
+
+  /* ───────────────────────── PADDLE CHECKOUT ─────────────────────────
+     Env-driven (sandbox now, production after go-live). Until go-live, the live button is gated
+     behind ?testbuy=1 so real visitors keep seeing "Coming soon" while we run the sandbox test on
+     the live page. Passes the FULL lastResult as Paddle custom data; on completion redirects to the
+     bouncer download page. */
+  var PADDLE = (typeof window !== 'undefined' && window.__BAE_PADDLE) || { env: 'sandbox', token: '', price: '' };
+  var paddleReady = false;
+  function paddleLive() { return PADDLE.env === 'production'; }
+  function paddleTestFlag() { try { return new URLSearchParams(location.search).has('testbuy'); } catch (e) { return false; } }
+  function checkoutEnabled() { return !!PADDLE.token && /^pri_[a-z0-9]+$/i.test(PADDLE.price) && (paddleLive() || paddleTestFlag()); }
+  function initPaddle() {
+    if (paddleReady || typeof Paddle === 'undefined' || !PADDLE.token) return;
+    try {
+      if (PADDLE.env === 'sandbox') Paddle.Environment.set('sandbox');
+      Paddle.Initialize({
+        token: PADDLE.token,
+        eventCallback: function (ev) {
+          if (!ev || !ev.name) return;
+          if (ev.name === 'checkout.completed') {
+            var txn = ev.data && ev.data.transaction_id;
+            if (txn && /^txn_[a-z0-9]+$/i.test(txn)) window.location.href = '/kc/report/?txn=' + encodeURIComponent(txn);
+          }
+        }
+      });
+      paddleReady = true;
+    } catch (e) {}
+  }
+  function openCheckout() {
+    initPaddle();
+    if (typeof Paddle === 'undefined' || !paddleReady) return;
+    var lr = (window.__baeSmbAi && window.__baeSmbAi.lastResult) || null;
+    if (!lr) return;
+    try { Paddle.Checkout.open({ items: [{ priceId: PADDLE.price, quantity: 1 }], customData: lr }); } catch (e) {}
+  }
+  function setupBuyButton() {
+    var btn = el('res-buy'), note = el('res-buynote');
+    if (!btn) return;
+    if (!checkoutEnabled()) return; /* leave "Coming soon · $59" for the public until go-live */
+    btn.textContent = 'Buy now · $59' + (paddleLive() ? '' : ' (test)');
+    btn.classList.remove('cursor-default', 'opacity-90', 'select-none');
+    btn.classList.add('cursor-pointer');
+    if (note) note.textContent = paddleLive() ? 'Secure checkout by Paddle · instant download' : 'Sandbox test mode · no real charge';
+    btn.addEventListener('click', openCheckout);
+    initPaddle();
+  }
+  setupBuyButton();
+
+  /* Resume after a reload. A FINISHED session goes straight back to the result — no quiz flash and
+     no replay of the calculating animation, which on a refresh reads as the test restarting.
+     Decision lives in the shared ResumeState component so every assessment behaves the same. */
+  (function () {
+    var saved = window.__baeResume.read(CONFIG.storageKey);
+    var mode = window.__baeResume.mode(saved, N);
+    if (mode === 'intro' || !restore()) return;
+    if (mode === 'result') {
+      hide('as-intro');
+      finish(true);   /* the one code path that also populates lastResult for the buy button */
+      return;
+    }
+    hide('as-intro');
+    show('as-quiz');
+    var firstUnanswered = st.answers.indexOf(null);
+    st.i = st.answers[st.i] === null ? st.i : (firstUnanswered === -1 ? 0 : firstUnanswered);
+    renderQuiz(); startTimer();
+  })();
+})();
+  </script>
+</BaseLayout>

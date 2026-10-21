@@ -1,0 +1,960 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-30T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Salary Converter?',
+    a: 'The Best Answer Hub Salary Converter is a free, privacy-first browser tool that converts between hourly rate, yearly salary, monthly pay, and weekly pay in real time. Enter any one number and see all four instantly, with optional overtime blending and W-2 versus 1099 contractor comparisons. Everything runs client-side. No signup, no server, no data collection.',
+  },
+  {
+    q: 'I make $32 an hour in Denver right now, if I move to a salaried role, what yearly number should I be aiming for to stay even?',
+    a: 'At $32 an hour working a standard 40-hour week for 52 weeks, you are earning about $66,560 per year before taxes. To stay even in a salaried role, aim for at least $67,000 to $70,000 depending on benefits quality. If the new job expects more than 40 hours regularly, adjust upward. At 45 hours a week, your effective hourly drops to about $28.50, so you would need roughly $74,000 to break even on time. Use the calculator above to plug in your exact schedule.',
+  },
+  {
+    q: 'How much is $28.50 an hour times 1.5 for overtime if I work 48 hours every week, and what is that yearly?',
+    a: 'At $28.50 an hour, your regular 40-hour week earns $1,140. The 8 overtime hours at time-and-a-half pay $342 per week. That brings your weekly total to $1,482. Over 52 weeks, you would earn roughly $77,064 per year, about $17,784 more than a straight 40-hour schedule. The Best Answer Hub Salary Converter blends overtime automatically so you can see your true annual at a glance.',
+  },
+  {
+    q: 'Should I take a $90k salary job or a $65 an hour contract role with no benefits?',
+    a: 'It depends on your hours and the value of benefits. A $65 an hour contract at 40 hours and 52 weeks grosses about $135,200 per year. But as a 1099 contractor, you pay the full 15.3% self-employment tax instead of splitting it with an employer, which costs roughly $19,100 on that income. You also lose employer-sponsored health insurance, typically worth $6,000 to $15,000 annually, plus any 401(k) match. After those adjustments, the $65 contract is closer to a $95,000 to $105,000 W-2 equivalent, not $135,000. If the $90k job includes solid health coverage and a 401(k) match, it may actually be the better deal.',
+  },
+  {
+    q: 'My employer says $28 an hour is equivalent to $58,240 a year, but I work 50-hour weeks with overtime. Am I getting screwed?',
+    a: 'If you are non-exempt hourly and working 50-hour weeks with 10 hours of time-and-a-half, your true annual at $28 an hour is roughly $80,080, not $58,240. That is $58,240 in base pay plus about $21,840 in overtime (10 hours a week at $42 for 52 weeks). The $58,240 figure only covers 40-hour weeks with no overtime. If your employer is treating you as salaried exempt while requiring 50-hour weeks, your effective hourly drops to about $22.40, which is well below your stated rate. Track your hours and compare your pay stubs to the overtime-blended total in the Best Answer Hub Salary Converter.',
+  },
+  {
+    q: 'Is $45 an hour as a 1099 really better than $40 an hour W-2? Someone told me to add 30% to my W-2 rate for 1099, is that accurate?',
+    a: 'The 30% rule is a decent starting point but not precise. At $40 an hour W-2 with standard benefits, your employer is also paying roughly 7.65% in payroll taxes and $6,000 to $12,000 in benefits on top of your wage. The true cost to employ you is closer to $48 to $52 an hour. As a 1099 at $45 an hour, you absorb the 15.3% self-employment tax yourself, which effectively reduces your net to about $38.20 an hour before health insurance costs. So $45 an hour 1099 is usually worse than $40 an hour W-2 unless you have very low overhead and deduct significant business expenses.',
+  },
+  {
+    q: 'I bill clients $125 an hour as a consultant but only bill 20 hours a week, what full-time salary does that actually match when you factor in unpaid admin time?',
+    a: 'Billing $125 an hour for 20 hours a week generates $130,000 per year over 52 weeks. But if you spend another 15 to 20 hours a week on admin, sales, and operations, your effective rate across a 40-hour work week is about $62.50 an hour. That translates to roughly $130,000 gross, but with self-employment tax and no paid time off, the W-2 equivalent is closer to $105,000 to $115,000 depending on your health insurance and equipment costs. The Best Answer Hub Salary Converter shows both your billed rate and your true effective rate based on actual hours worked.',
+  },
+  {
+    q: 'If I need $5,000 take-home per month in Oregon, what gross hourly rate should I negotiate for?',
+    a: 'To net $5,000 per month ($60,000 per year) in Oregon, you typically need to gross around $78,000 to $82,000 per year depending on your deductions and filing status. At 40 hours a week for 52 weeks, that works out to roughly $37.50 to $39.50 an hour before taxes. If you work fewer than 52 weeks (say 48 weeks after PTO and holidays) you would need about $40.50 to $42.50 an hour to hit the same net. Use the calculator above to test your exact weeks-worked assumptions.',
+  },
+  {
+    q: 'I am a nurse getting $45 an hour on night shift with a 15% differential, how does that convert to a yearly salary if I work three 12-hour shifts?',
+    a: 'Your blended base rate with the 15% night differential is $51.75 an hour. Three 12-hour shifts equal 36 hours per week. At 52 weeks, that is $96,876 per year before overtime. If you pick up one extra 12-hour shift every two weeks, add roughly $14,500 annually at time-and-a-half. Many nurses in this schedule clear $105,000 to $115,000 depending on shift differentials, weekend premiums, and occasional overtime. Enter your exact blend in the calculator to see your annualized number.',
+  },
+  {
+    q: 'A European offer pays €72,000 with 30 days PTO and 35-hour weeks. A US offer pays $105,000 with 10 days PTO and 40-hour weeks. Which is actually better per hour worked?',
+    a: 'The European role works roughly 1,645 hours per year after PTO, while the US role works about 2,000 hours. The European hourly equivalent is about €43.80 per hour, and the US hourly is about $52.50 per hour. However, the European position includes universal healthcare, stronger job protections, and pension contributions that can offset $10,000 to $20,000 in US out-of-pocket costs. On a pure hourly basis, the US offer pays more per hour worked, but on a total-compensation-per-hour-worked basis, the gap narrows significantly. Use the Best Answer Hub Salary Converter to plug in your actual benefits values.',
+  },
+  {
+    q: 'I work 4 ten-hour days for $36 an hour, what would a standard 5-day salary look like for the same yearly pay?',
+    a: 'At $36 an hour, four 10-hour days equal 40 hours per week, which is $74,880 per year over 52 weeks. A standard 5-day salary paying the same annual amount would also need to be $74,880 per year, which is about $6,240 per month or $1,440 per week. The difference is in quality of life: you get three-day weekends every week while earning the same as a 5-day employee. The Best Answer Hub Salary Converter converts any schedule to its annual, monthly, and weekly equivalents instantly.',
+  },
+  {
+    q: 'My startup offered me $110,000 a year with stock options instead of my current $75 an hour contract, how do I compare those apples to apples?',
+    a: 'At $75 an hour and 40 hours a week for 48 weeks (allowing for unpaid vacation) you gross about $144,000 per year. As a 1099, subtract roughly $20,400 in self-employment tax and $8,000 to $15,000 in health insurance, leaving a net comparable to about $110,000 to $115,000 W-2. So the $110,000 salary with stock options is roughly a wash on cash compensation. The stock options are the swing factor. If the options represent even 0.1% to 0.25% of a venture-backed startup, they could be worth $50,000 to $200,000 at a modest exit, making the startup offer stronger. If the equity is meaningless, stay contract.',
+  },
+  {
+    q: 'Is $140,000 a year in San Francisco the same buying power as $85,000 a year in Austin, and what does that make the hourly difference?',
+    a: 'No. San Francisco\'s cost of living is roughly 65% to 75% higher than Austin\'s, primarily driven by rent and state taxes. A $140,000 salary in San Francisco has roughly the same purchasing power as $85,000 to $90,000 in Austin. On an hourly basis at 40 hours and 52 weeks, San Francisco pays $67.30 an hour nominally, but the Austin equivalent is about $41.30 to $43.30 an hour in real terms. California state income tax also takes an additional 6% to 9% compared to Texas\'s zero state income tax, widening the gap further.',
+  },
+  {
+    q: 'Why does my $68,000 salary divided by 2,080 equal $32.69, but my paystub says my hourly rate is $34.12? What am I missing?',
+    a: 'Your employer is using a different denominator. $68,000 divided by 2,080 (the standard 40 hours times 52 weeks) gives $32.69. But if your employer calculates the hourly rate based on 2,000 hours (which accounts for roughly 10 paid holidays and 80 hours of PTO) you get $34.00. If they use exactly 1,992 hours or include additional paid leave, you land at $34.12. The key takeaway is that 2,080 is a theoretical maximum, not your actual working hours. The Best Answer Hub Salary Converter shows both the standard 2,080 hourly and your true hourly based on the exact weeks you actually work.',
+  },
+  {
+    q: 'Is my financial data stored or sent to a server?',
+    a: 'No. Your numbers never leave your browser. All conversions, overtime calculations, and chart rendering happen locally using JavaScript. The Best Answer Hub Salary Converter does not log, store, or transmit any wage amounts, hours, or results. You can verify this by disconnecting from the internet after loading the page. It will continue to work perfectly. This makes it safer than cloud-based salary calculators for sensitive compensation planning.',
+  },
+];
+
+const seo = {
+  title: 'Salary Converter: Hourly to Yearly & W-2 vs 1099 (2026)',
+  description: 'Free salary converter with overtime blending, true hourly rate, and W-2 vs 1099 comparison. Convert hourly, yearly, monthly, and weekly instantly. No signup.',
+  url: '/calculators/salary-converter/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-24T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Finance Toolkit', url: '/finance-toolkit/' },
+    { name: 'Salary Converter', url: '/calculators/salary-converter/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated May 2026 · No signup, no data stored
+          </div>
+          <a href="/finance-toolkit/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Finance Toolkit
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Salary Converter:<br/>
+          <em class="italic text-bae-primary">Hourly, yearly &amp; true rate</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Convert between hourly rate, yearly salary, monthly pay, and weekly pay instantly. Blend overtime, adjust for actual working weeks, and compare W-2 versus 1099 contractor earnings.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Salary converter">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Pay Rate Input -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Your Pay Rate</h2>
+
+            <!-- Mode Tabs -->
+            <div class="flex flex-wrap gap-2 mb-5" id="input-mode-tabs">
+              <button type="button" data-mode="hourly" class="tab-btn active px-4 py-2 text-sm font-semibold rounded-bae-sm border transition-colors">Hourly</button>
+              <button type="button" data-mode="salary" class="tab-btn px-4 py-2 text-sm font-semibold rounded-bae-sm border transition-colors">Yearly Salary</button>
+              <button type="button" data-mode="monthly" class="tab-btn px-4 py-2 text-sm font-semibold rounded-bae-sm border transition-colors">Monthly</button>
+              <button type="button" data-mode="weekly" class="tab-btn px-4 py-2 text-sm font-semibold rounded-bae-sm border transition-colors">Weekly</button>
+            </div>
+
+            <div class="mb-2">
+              <label class="text-sm font-semibold text-bae-ink mb-2 block" id="primary-label">Hourly Rate</label>
+              <div class="flex items-center gap-2">
+                <span class="text-lg text-bae-muted">$</span>
+                <input type="number" id="primary-input" min="0" step="0.01" value="32" class="flex-1 text-lg border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+            <p class="text-xs text-bae-muted mt-2" id="schedule-hint">Based on 40 hours/week × 52 weeks/year</p>
+          </div>
+
+          <!-- Work Schedule -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Work Schedule</h2>
+
+            <div class="space-y-5">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Hours per Week</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-hoursPerWeek">40</span>
+                </div>
+                <input type="range" id="hoursPerWeek-slider" min="1" max="80" step="1" value="40" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="hoursPerWeek" min="1" max="168" value="40" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Weeks per Year</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-weeksPerYear">52</span>
+                </div>
+                <input type="range" id="weeksPerYear-slider" min="40" max="52" step="1" value="52" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="weeksPerYear" min="1" max="52" value="52" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <button type="button" class="week-preset px-3 py-1 text-xs font-medium rounded-full border border-bae-border hover:border-bae-primary hover:text-bae-primary transition-colors" data-weeks="52">52 weeks</button>
+                  <button type="button" class="week-preset px-3 py-1 text-xs font-medium rounded-full border border-bae-border hover:border-bae-primary hover:text-bae-primary transition-colors" data-weeks="50">50 weeks</button>
+                  <button type="button" class="week-preset px-3 py-1 text-xs font-medium rounded-full border border-bae-border hover:border-bae-primary hover:text-bae-primary transition-colors" data-weeks="48">48 weeks</button>
+                  <button type="button" class="week-preset px-3 py-1 text-xs font-medium rounded-full border border-bae-border hover:border-bae-primary hover:text-bae-primary transition-colors" data-weeks="46">46 weeks</button>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 pt-3 border-t border-bae-border">
+                <div>
+                  <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Hours/Year</p>
+                  <p class="text-lg font-bold text-bae-ink" id="display-totalHours">2,080</p>
+                </div>
+                <div>
+                  <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Standard 2080 Hours</p>
+                  <p class="text-lg font-bold text-bae-ink" id="display-standardHours">2,080</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overtime -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Overtime (Optional)</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink mb-2 block">OT Hours per Week</label>
+                <input type="number" id="otHours" min="0" max="40" step="0.5" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink mb-2 block">OT Multiplier</label>
+                <select id="otMultiplier" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                  <option value="1.5">1.5× Time-and-a-half</option>
+                  <option value="2">2× Double time</option>
+                </select>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-bae-border">
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Overtime Annual Value</p>
+              <p class="text-lg font-bold text-bae-primary" id="display-otAnnual">$0</p>
+            </div>
+          </div>
+
+          <!-- Employment Type -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Employment Type</h2>
+            <div class="flex flex-wrap gap-3" id="employment-type-tabs">
+              <button type="button" data-type="w2" class="type-btn active px-4 py-2 text-sm font-semibold rounded-bae-sm border transition-colors">W-2 Employee</button>
+              <button type="button" data-type="1099" class="type-btn px-4 py-2 text-sm font-semibold rounded-bae-sm border transition-colors">1099 Contractor</button>
+            </div>
+            <div class="mt-4 p-3 bg-bae-primary-soft border border-bae-primary/10 rounded-bae-sm text-sm text-bae-ink" id="employment-note">
+              W-2 employees split payroll taxes with their employer and typically receive health insurance and retirement matching.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Results -->
+        <div class="space-y-4 xl:sticky xl:top-6">
+          <!-- Main Results -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Your Results</h2>
+
+            <div class="mb-5">
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Annual Salary</p>
+              <p class="text-3xl font-bold text-bae-ink font-serif" id="result-annual">$66,560</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-5">
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Monthly</p>
+                <p class="text-xl font-bold text-bae-ink" id="result-monthly">$5,547</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Weekly</p>
+                <p class="text-xl font-bold text-bae-ink" id="result-weekly">$1,280</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Daily (5-day)</p>
+                <p class="text-xl font-bold text-bae-ink" id="result-daily">$256</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Standard Hourly (2080)</p>
+                <p class="text-xl font-bold text-bae-ink" id="result-standardHourly">$32.00</p>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-bae-border mb-4">
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">True Hourly Rate</p>
+              <p class="text-2xl font-bold text-bae-primary font-serif" id="result-trueHourly">$32.00</p>
+              <p class="text-xs text-bae-muted mt-1">Based on your actual hours and weeks worked</p>
+            </div>
+
+            <div id="w2-benefits-box" class="pt-4 border-t border-bae-border mb-4">
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Estimated Employer Benefits Value</p>
+              <p class="text-lg font-bold text-bae-ink" id="result-benefits">+$9,588</p>
+              <p class="text-xs text-bae-muted mt-1">Includes employer payroll tax (7.65%) and estimated health coverage</p>
+            </div>
+
+            <div id="1099-tax-box" class="hidden pt-4 border-t border-bae-border mb-4">
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Est. Self-Employment Tax (15.3%)</p>
+              <p class="text-lg font-bold text-red-500" id="result-seTax">-$10,194</p>
+              <p class="text-xs text-bae-muted mt-1">Applied to 92.35% of net earnings. Does not include income tax.</p>
+            </div>
+
+            <div class="pt-4 border-t border-bae-border">
+              <p class="text-xs text-bae-muted mb-2">Show your work:</p>
+              <p class="text-sm text-bae-ink font-mono bg-bae-bg border border-bae-border rounded-bae-sm p-3" id="formula-display">$32.00 × 40 hrs × 52 weeks = $66,560</p>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-col gap-3">
+            <button type="button" id="share-btn" class="w-full bg-white border border-bae-border hover:border-bae-primary text-bae-ink font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+              Copy Shareable Link
+            </button>
+            <button type="button" id="pdf-btn" class="w-full bg-bae-ink hover:bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+              Download PDF Report
+            </button>
+            <button type="button" id="reset-btn" class="w-full bg-white border border-bae-border hover:border-red-400 hover:text-red-500 text-bae-ink font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chart Section -->
+  <section class="py-6 md:py-8 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+        <h2 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Cumulative Earnings by Week</h2>
+        <div class="relative w-full" style="height: 260px;">
+          <canvas id="earnings-chart" class="w-full h-full"></canvas>
+        </div>
+        <div class="flex items-center justify-center gap-4 mt-3 text-xs text-bae-muted">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-bae-primary"></span> Total with Overtime</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-bae-muted"></span> Base Pay Only</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Enter any pay rate', text: 'Type your hourly rate, yearly salary, monthly pay, or weekly check. Pick the number you actually know and the calculator fills in the rest instantly.' },
+    { name: 'Adjust your real schedule', text: 'Set your actual hours per week and working weeks per year, accounting for PTO, holidays, and unpaid leave. See your true hourly rate, not the naive 2,080 calculation.' },
+    { name: 'Blend overtime and compare', text: 'Add overtime hours and rates to see your real annual. Toggle between W-2 and 1099 to estimate self-employment tax or employer benefits value. Share or export your results.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter any pay rate</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Type your hourly rate, yearly salary, monthly pay, or weekly check. Pick the number you actually know and the calculator fills in the rest instantly.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Adjust your real schedule</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Set your actual hours per week and working weeks per year, accounting for PTO, holidays, and unpaid leave. See your true hourly rate, not the naive 2,080 calculation.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Blend overtime and compare</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Add overtime hours and rates to see your real annual. Toggle between W-2 and 1099 to estimate self-employment tax or employer benefits value. Share or export your results.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/compound-interest/" class="text-bae-primary hover:underline">Compound Interest Calculator</a>, <a href="/calculators/mortgage-calculator/" class="text-bae-primary hover:underline">Mortgage Calculator</a>, and the <a href="/finance-toolkit/" class="text-bae-primary hover:underline">Finance Toolkit</a>.</p>
+        </div>
+        <a href="/finance-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse the Finance Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What People Pay -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What people earn</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$28/hr, 40 + 5 OT hrs/wk, 1.5× OT, 50 weeks</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Hourly worker with overtime</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $66,500/yr</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Base pay at 40 hours over 50 weeks is $56,000. Five overtime hours a week at time-and-a-half add $10,500. Working 50 weeks instead of 52 accounts for two weeks of unpaid time off.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$90k W-2 vs $65/hr 1099, 40 hrs, 52 weeks</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">W-2 vs contractor equivalence</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $95k–$105k equiv.</div>
+          <p class="text-sm text-bae-muted leading-relaxed">The $65/hr contract grosses $135,200 but after self-employment tax and lost benefits, its true W-2 equivalent is roughly $95k to $105k. The $90k W-2 with health insurance often wins.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$100/hr billed, 25 hrs billable, 48 weeks</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Freelancer with admin overhead</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $120k gross / $62.50 true hr</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Twenty-five billable hours at $100/hr yields $120,000 over 48 weeks. But across a full 40-hour work week including admin, the effective rate is $62.50 per hour, a critical number for pricing.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$36/hr, 4×10-hr days, 52 weeks</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Compressed work week</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $74,880/yr</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Four 10-hour days equals the same 40 hours as a standard 5-day week, so the annual is identical at $74,880. The value is quality of life: three-day weekends every week with zero pay cut.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are modeled estimates based on standard formulas and typical benefit values as of May 2026. Actual taxes and benefits vary by employer, location, and individual circumstances.</p>
+    </div>
+  </section>
+
+  <!-- Hidden PDF Report -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Salary Conversion Report</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Salary Converter Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Annual Salary</p>
+              <p class="text-3xl font-bold text-bae-ink" id="report-annual">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">True Hourly Rate</p>
+              <p class="text-2xl font-bold text-bae-primary" id="report-trueHourly">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Standard Hourly (2080)</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-standardHourly">$0</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" id="report-details">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="mt-6">
+          <img id="report-chart-img" src="" alt="Cumulative earnings chart" class="w-full max-w-md mx-auto" style="display:none;" />
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>Estimates are based on standard conversion formulas and typical tax rates as of May 2026. Actual compensation varies by employer, location, tax filing status, and individual circumstances. Self-employment tax is estimated at 15.3% of 92.35% of net earnings. Benefits values are illustrative averages.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      function formatMoney(n) {
+        if (typeof n !== 'number' || isNaN(n) || !isFinite(n)) return '$0.00';
+        const abs = Math.abs(n);
+        if (abs >= 1000) {
+          const rounded = Math.round(n);
+          return '$' + rounded.toLocaleString();
+        }
+        return '$' + n.toFixed(2);
+      }
+
+      function formatNumber(n) {
+        if (typeof n !== 'number' || isNaN(n) || !isFinite(n)) return '0';
+        return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+      }
+
+      let inputMode = 'hourly';
+      let employmentType = 'w2';
+
+      const primaryInput = $('primary-input');
+      const hoursPerWeekSlider = $('hoursPerWeek-slider');
+      const hoursPerWeekInput = $('hoursPerWeek');
+      const weeksPerYearSlider = $('weeksPerYear-slider');
+      const weeksPerYearInput = $('weeksPerYear');
+      const otHoursInput = $('otHours');
+      const otMultiplierSelect = $('otMultiplier');
+
+      function calculate() {
+        let baseValue = parseFloat(primaryInput.value);
+        if (isNaN(baseValue) || baseValue < 0) baseValue = 0;
+
+        let hoursPerWeek = parseFloat(hoursPerWeekInput.value);
+        if (isNaN(hoursPerWeek) || hoursPerWeek < 1) hoursPerWeek = 1;
+        if (hoursPerWeek > 168) hoursPerWeek = 168;
+
+        let weeksPerYear = parseFloat(weeksPerYearInput.value);
+        if (isNaN(weeksPerYear) || weeksPerYear < 1) weeksPerYear = 1;
+        if (weeksPerYear > 52) weeksPerYear = 52;
+
+        let otHours = parseFloat(otHoursInput.value);
+        if (isNaN(otHours) || otHours < 0) otHours = 0;
+        if (otHours > 40) otHours = 40;
+
+        let otMultiplier = parseFloat(otMultiplierSelect.value);
+        if (isNaN(otMultiplier) || otMultiplier < 1) otMultiplier = 1.5;
+
+        const totalHours = hoursPerWeek * weeksPerYear;
+        const actualHours = (hoursPerWeek + otHours) * weeksPerYear;
+        const standardHours = 2080;
+
+        // Derive hourly from whatever input mode is active
+        let hourly = 0;
+        if (inputMode === 'hourly') {
+          hourly = baseValue;
+        } else if (inputMode === 'salary') {
+          hourly = totalHours > 0 ? baseValue / totalHours : 0;
+        } else if (inputMode === 'monthly') {
+          hourly = totalHours > 0 ? (baseValue * 12) / totalHours : 0;
+        } else if (inputMode === 'weekly') {
+          hourly = hoursPerWeek > 0 ? baseValue / hoursPerWeek : 0;
+        }
+
+        const annualBase = hourly * hoursPerWeek * weeksPerYear;
+        const otAnnual = hourly * otMultiplier * otHours * weeksPerYear;
+        const totalAnnual = annualBase + otAnnual;
+
+        const monthly = totalAnnual / 12;
+        const weekly = totalAnnual / weeksPerYear;
+        const daily = weeksPerYear > 0 ? totalAnnual / (weeksPerYear * 5) : 0;
+        const standardHourly = standardHours > 0 ? totalAnnual / standardHours : 0;
+        const trueHourly = actualHours > 0 ? totalAnnual / actualHours : 0;
+
+        const employerFica = totalAnnual * 0.0765;
+        const healthEstimate = 6000;
+        const benefitsValue = employerFica + healthEstimate;
+        const seTax = totalAnnual * 0.9235 * 0.153;
+
+        // Update displays
+        $('display-hoursPerWeek').textContent = hoursPerWeek;
+        $('display-weeksPerYear').textContent = weeksPerYear;
+        $('display-totalHours').textContent = actualHours.toLocaleString();
+        $('display-standardHours').textContent = standardHours.toLocaleString();
+        $('display-otAnnual').textContent = formatMoney(otAnnual);
+
+        $('result-annual').textContent = formatMoney(totalAnnual);
+        $('result-monthly').textContent = formatMoney(monthly);
+        $('result-weekly').textContent = formatMoney(weekly);
+        $('result-daily').textContent = formatMoney(daily);
+        $('result-standardHourly').textContent = formatMoney(standardHourly) + '/hr';
+        $('result-trueHourly').textContent = formatMoney(trueHourly) + '/hr';
+
+        if (employmentType === 'w2') {
+          $('w2-benefits-box').classList.remove('hidden');
+          $('1099-tax-box').classList.add('hidden');
+          $('result-benefits').textContent = '+' + formatMoney(benefitsValue);
+        } else {
+          $('w2-benefits-box').classList.add('hidden');
+          $('1099-tax-box').classList.remove('hidden');
+          $('result-seTax').textContent = '-' + formatMoney(seTax);
+        }
+
+        // Formula
+        let formula = '';
+        if (inputMode === 'hourly') {
+          formula = formatMoney(hourly) + ' \u00d7 ' + hoursPerWeek + ' hrs \u00d7 ' + weeksPerYear + ' weeks = ' + formatMoney(annualBase);
+          if (otAnnual > 0) formula += ' + ' + formatMoney(otAnnual) + ' OT = ' + formatMoney(totalAnnual);
+        } else {
+          formula = formatMoney(totalAnnual) + ' \u00f7 (' + (hoursPerWeek + otHours) + ' hrs \u00d7 ' + weeksPerYear + ' weeks) = ' + formatMoney(trueHourly) + '/hr true rate';
+        }
+        $('formula-display').textContent = formula;
+
+        // Chart
+        drawChart(hourly, hoursPerWeek, weeksPerYear, otHours, otMultiplier);
+
+        // PDF report
+        $('report-annual').textContent = formatMoney(totalAnnual);
+        $('report-trueHourly').textContent = formatMoney(trueHourly) + '/hr';
+        $('report-standardHourly').textContent = formatMoney(standardHourly) + '/hr';
+
+        const reportDetails = $('report-details');
+        if (reportDetails) {
+          reportDetails.innerHTML = '';
+          const rows = [
+            ['Monthly Pay', formatMoney(monthly)],
+            ['Weekly Pay', formatMoney(weekly)],
+            ['Daily Pay (5-day)', formatMoney(daily)],
+            ['Base Annual', formatMoney(annualBase)],
+            ['Overtime Annual', formatMoney(otAnnual)],
+            ['Hours per Week', String(hoursPerWeek)],
+            ['Weeks per Year', String(weeksPerYear)],
+            ['Total Hours/Year', actualHours.toLocaleString()],
+          ];
+          if (employmentType === 'w2') {
+            rows.push(['Est. Benefits Value', '+' + formatMoney(benefitsValue)]);
+          } else {
+            rows.push(['Est. SE Tax (15.3%)', '-' + formatMoney(seTax)]);
+          }
+          rows.forEach(function(row) {
+            const div = document.createElement('div');
+            div.className = 'flex justify-between py-1 border-b border-bae-border-light';
+            const span1 = document.createElement('span');
+            span1.className = 'text-bae-muted';
+            span1.textContent = row[0];
+            const span2 = document.createElement('span');
+            span2.className = 'font-semibold text-bae-ink';
+            span2.textContent = row[1];
+            div.appendChild(span1);
+            div.appendChild(span2);
+            reportDetails.appendChild(div);
+          });
+        }
+
+        updateURL();
+      }
+
+      function drawChart(hourly, hoursPerWeek, weeksPerYear, otHours, otMultiplier) {
+        const canvas = $('earnings-chart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+
+        const w = rect.width;
+        const h = rect.height;
+        const padding = { top: 10, right: 10, bottom: 28, left: 56 };
+        const chartW = w - padding.left - padding.right;
+        const chartH = h - padding.top - padding.bottom;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const data = [];
+        for (let week = 1; week <= weeksPerYear; week++) {
+          const base = hourly * hoursPerWeek * week;
+          const ot = hourly * otMultiplier * otHours * week;
+          data.push({ week: week, base: base, total: base + ot });
+        }
+
+        if (data.length === 0) return;
+        const maxVal = Math.max.apply(null, data.map(function(d) { return d.total; }));
+        const safeMax = maxVal > 0 ? maxVal : 1;
+
+        // Grid lines
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        const gridLines = 5;
+        for (let i = 0; i <= gridLines; i++) {
+          const y = padding.top + chartH - (i / gridLines) * chartH;
+          ctx.beginPath();
+          ctx.moveTo(padding.left, y);
+          ctx.lineTo(padding.left + chartW, y);
+          ctx.stroke();
+
+          ctx.fillStyle = '#9ca3af';
+          ctx.font = '10px Inter, sans-serif';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          const labelVal = safeMax * (i / gridLines);
+          ctx.fillText(formatMoney(labelVal), padding.left - 6, y);
+        }
+
+        // X labels
+        const xStep = data.length > 1 ? chartW / (data.length - 1) : chartW;
+        const labelInterval = data.length > 20 ? Math.ceil(data.length / 10) : 1;
+        data.forEach(function(d, i) {
+          if (i % labelInterval !== 0 && i !== data.length - 1) return;
+          const x = padding.left + i * xStep;
+          ctx.fillStyle = '#9ca3af';
+          ctx.font = '10px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          ctx.fillText('W' + d.week, x, padding.top + chartH + 6);
+        });
+
+        // Area under total
+        ctx.fillStyle = 'rgba(99, 102, 241, 0.12)';
+        ctx.beginPath();
+        ctx.moveTo(padding.left, padding.top + chartH);
+        data.forEach(function(d, i) {
+          const x = padding.left + i * xStep;
+          const y = padding.top + chartH - (d.total / safeMax) * chartH;
+          ctx.lineTo(x, y);
+        });
+        ctx.lineTo(padding.left + (data.length - 1) * xStep, padding.top + chartH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Base line (gray dashed)
+        ctx.strokeStyle = '#9ca3af';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        data.forEach(function(d, i) {
+          const x = padding.left + i * xStep;
+          const y = padding.top + chartH - (d.base / safeMax) * chartH;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Total line (primary)
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        data.forEach(function(d, i) {
+          const x = padding.left + i * xStep;
+          const y = padding.top + chartH - (d.total / safeMax) * chartH;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Update report chart image (for PDF)
+        const reportImg = $('report-chart-img');
+        if (canvas && reportImg) {
+          try {
+            reportImg.src = canvas.toDataURL('image/png');
+            reportImg.style.display = 'block';
+          } catch(e) {
+            reportImg.style.display = 'none';
+          }
+        }
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          url.search = '';
+          const baseValue = parseFloat(primaryInput.value) || 0;
+          const hoursPerWeek = parseFloat(hoursPerWeekInput.value) || 40;
+          const weeksPerYear = parseFloat(weeksPerYearInput.value) || 52;
+          const otHours = parseFloat(otHoursInput.value) || 0;
+          const otMultiplier = parseFloat(otMultiplierSelect.value) || 1.5;
+
+          if (inputMode !== 'hourly') url.searchParams.set('mode', inputMode);
+          if (baseValue !== 0 && baseValue !== 32) url.searchParams.set('v', String(baseValue));
+          if (hoursPerWeek !== 40) url.searchParams.set('h', String(hoursPerWeek));
+          if (weeksPerYear !== 52) url.searchParams.set('w', String(weeksPerYear));
+          if (otHours !== 0) url.searchParams.set('ot', String(otHours));
+          if (otMultiplier !== 1.5) url.searchParams.set('otr', String(otMultiplier));
+          if (employmentType !== 'w2') url.searchParams.set('type', employmentType);
+
+          window.history.replaceState({}, '', url);
+        } catch(e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+          const mode = url.searchParams.get('mode');
+          const v = url.searchParams.get('v');
+          const h = url.searchParams.get('h');
+          const w = url.searchParams.get('w');
+          const ot = url.searchParams.get('ot');
+          const otr = url.searchParams.get('otr');
+          const type = url.searchParams.get('type');
+
+          if (mode && ['hourly','salary','monthly','weekly'].indexOf(mode) !== -1) {
+            setInputMode(mode);
+          }
+          if (v !== null) primaryInput.value = v;
+          if (h !== null) {
+            hoursPerWeekSlider.value = h;
+            hoursPerWeekInput.value = h;
+          }
+          if (w !== null) {
+            weeksPerYearSlider.value = w;
+            weeksPerYearInput.value = w;
+          }
+          if (ot !== null) otHoursInput.value = ot;
+          if (otr !== null) otMultiplierSelect.value = otr;
+          if (type && ['w2','1099'].indexOf(type) !== -1) {
+            setEmploymentType(type);
+          }
+        } catch(e) {}
+      }
+
+      function setInputMode(mode) {
+        inputMode = mode;
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+          if (btn.dataset.mode === mode) {
+            btn.classList.add('active', 'bg-bae-primary', 'text-white', 'border-bae-primary');
+            btn.classList.remove('bg-white', 'text-bae-ink', 'border-bae-border');
+          } else {
+            btn.classList.remove('active', 'bg-bae-primary', 'text-white', 'border-bae-primary');
+            btn.classList.add('bg-white', 'text-bae-ink', 'border-bae-border');
+          }
+        });
+        var labels = { hourly: 'Hourly Rate', salary: 'Yearly Salary', monthly: 'Monthly Pay', weekly: 'Weekly Pay' };
+        var labelEl = $('primary-label');
+        if (labelEl) labelEl.textContent = labels[mode] || 'Hourly Rate';
+      }
+
+      function setEmploymentType(type) {
+        employmentType = type;
+        document.querySelectorAll('.type-btn').forEach(function(btn) {
+          if (btn.dataset.type === type) {
+            btn.classList.add('active', 'bg-bae-primary', 'text-white', 'border-bae-primary');
+            btn.classList.remove('bg-white', 'text-bae-ink', 'border-bae-border');
+          } else {
+            btn.classList.remove('active', 'bg-bae-primary', 'text-white', 'border-bae-primary');
+            btn.classList.add('bg-white', 'text-bae-ink', 'border-bae-border');
+          }
+        });
+        var note = $('employment-note');
+        if (note) {
+          if (type === 'w2') {
+            note.textContent = 'W-2 employees split payroll taxes with their employer and typically receive health insurance and retirement matching.';
+          } else {
+            note.textContent = '1099 contractors pay the full 15.3% self-employment tax and must cover their own health insurance, retirement, and equipment.';
+          }
+        }
+      }
+
+      // Events
+      primaryInput.addEventListener('input', calculate);
+
+      hoursPerWeekSlider.addEventListener('input', function() {
+        hoursPerWeekInput.value = hoursPerWeekSlider.value;
+        calculate();
+      });
+      hoursPerWeekInput.addEventListener('input', function() {
+        hoursPerWeekSlider.value = hoursPerWeekInput.value;
+        calculate();
+      });
+
+      weeksPerYearSlider.addEventListener('input', function() {
+        weeksPerYearInput.value = weeksPerYearSlider.value;
+        calculate();
+      });
+      weeksPerYearInput.addEventListener('input', function() {
+        weeksPerYearSlider.value = weeksPerYearInput.value;
+        calculate();
+      });
+
+      otHoursInput.addEventListener('input', calculate);
+      otMultiplierSelect.addEventListener('change', calculate);
+
+      document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { setInputMode(btn.dataset.mode); });
+      });
+
+      document.querySelectorAll('.type-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { setEmploymentType(btn.dataset.type); });
+      });
+
+      document.querySelectorAll('.week-preset').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var weeks = btn.dataset.weeks;
+          weeksPerYearSlider.value = weeks;
+          weeksPerYearInput.value = weeks;
+          calculate();
+        });
+      });
+
+      // Share
+      $('share-btn').addEventListener('click', function() {
+        var btn = $('share-btn');
+        var original = btn.textContent;
+        navigator.clipboard.writeText(window.location.href).then(function() {
+          btn.textContent = 'Link copied!';
+          setTimeout(function() { btn.textContent = original; }, 2000);
+        }).catch(function() {
+          btn.textContent = 'Copy failed';
+          setTimeout(function() { btn.textContent = original; }, 2000);
+        });
+      });
+
+      // PDF
+      $('pdf-btn').addEventListener('click', async function() {
+        if (typeof html2pdf === 'undefined') return;
+        var btn = $('pdf-btn');
+        var originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        var wrapper = document.createElement('div');
+        wrapper.style.width = '190mm';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.style.margin = '0';
+        wrapper.style.padding = '0';
+
+        var report = $('print-report').cloneNode(true);
+        report.removeAttribute('id');
+        report.classList.remove('hidden');
+        wrapper.appendChild(report);
+        document.body.appendChild(wrapper);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'salary-converter-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(wrapper).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (wrapper.parentNode) document.body.removeChild(wrapper);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // Reset
+      $('reset-btn').addEventListener('click', function() {
+        primaryInput.value = 0;
+        hoursPerWeekSlider.value = 40;
+        hoursPerWeekInput.value = 40;
+        weeksPerYearSlider.value = 52;
+        weeksPerYearInput.value = 52;
+        otHoursInput.value = 0;
+        otMultiplierSelect.value = 1.5;
+        setInputMode('hourly');
+        setEmploymentType('w2');
+        window.history.replaceState({}, '', window.location.pathname);
+        calculate();
+      });
+
+      // Resize
+      var resizeTimeout;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(calculate, 150);
+      });
+
+      // Init
+      setInputMode('hourly');
+      setEmploymentType('w2');
+      readURL();
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+  </style>
+</BaseLayout>

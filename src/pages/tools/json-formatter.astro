@@ -1,0 +1,234 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub JSON Formatter?',
+    a: 'The Best Answer Hub JSON Formatter is a free browser-based tool that beautifies, minifies, and validates JSON data instantly. It takes raw, compressed, or malformed JSON and adds proper indentation and line breaks so you can inspect nested objects, arrays, and key-value pairs easily. It also validates your JSON and flags syntax errors with precise messages. Everything runs locally in your browser. No data is uploaded to any server.',
+  },
+  {
+    q: 'Is the JSON Formatter free and safe to use?',
+    a: 'Yes, the Best Answer Hub JSON Formatter is completely free with no usage limits and no signup required. It is safe because all formatting and validation happen locally inside your browser using native JavaScript <code>JSON.parse</code> and <code>JSON.stringify</code> methods. Your JSON data is never sent to a server, stored in a database, or logged anywhere. Disconnect from the internet after loading the page and the Best Answer Hub JSON Formatter will still work perfectly.',
+  },
+  {
+    q: 'What does the JSON Formatter do?',
+    a: 'The Best Answer Hub JSON Formatter performs three core functions. First, it beautifies JSON by adding consistent 2-space indentation and line breaks to make nested structures readable. Second, it minifies JSON by removing all unnecessary whitespace to create a single compact line ideal for APIs and production deployments. Third, it validates JSON by parsing it with the native <code>JSON.parse</code> engine and displaying clear error messages when syntax is invalid.',
+  },
+  {
+    q: 'What is the difference between formatting and minifying JSON?',
+    a: 'Formatting (also called beautifying or prettifying) expands JSON into a human-readable structure with indentation and line breaks: a minified string like <code>{"user":{"name":"Alice","age":30}}</code> becomes a multi-line tree you can visually scan. Minifying does the opposite: it removes all whitespace, tabs, and newlines to produce the smallest possible valid JSON string. The Best Answer Hub JSON Formatter handles both operations with a single click, making it easy to switch between readable and production-ready output.',
+  },
+  {
+    q: 'How do I validate JSON with this tool?',
+    a: 'Paste your JSON into the input area and click Format. If the JSON is valid, the Best Answer Hub JSON Formatter instantly displays the beautified output. If the JSON contains syntax errors (such as trailing commas, missing quotes, or unclosed brackets), the tool highlights the error in red and shows a descriptive message from the JavaScript parser, such as "Unexpected token } in JSON at position 42." Fix the issue and reformat.',
+  },
+  {
+    q: 'Can I use the JSON Formatter offline?',
+    a: 'Yes. After you load the page once, the Best Answer Hub JSON Formatter works without an internet connection. It is built entirely with vanilla JavaScript and uses only browser-native APIs. No external library downloads, no CDN dependencies, and no server-side validation. This makes it ideal for working on sensitive projects in restricted or air-gapped environments where outbound network access is not permitted.',
+  },
+  {
+    q: 'What is JSON used for in web development?',
+    a: 'JSON (JavaScript Object Notation) is the standard data format for exchanging information between web servers, APIs, and applications. It is used in REST API responses, configuration files like <code>package.json</code>, NoSQL databases such as MongoDB, <code>localStorage</code> and <code>sessionStorage</code> in browsers, and data exports from tools like Postman and Swagger. Its lightweight structure and universal language support make it the backbone of modern web communication. The Best Answer Hub JSON Formatter helps developers inspect and debug these payloads in seconds.',
+  },
+  {
+    q: 'Why does my JSON show a syntax error?',
+    a: 'Common JSON syntax errors include trailing commas after the last item in an array or object (not allowed in strict JSON), using single quotes instead of double quotes for strings, unescaped special characters like newlines inside strings, missing closing braces or brackets, and using <code>undefined</code>, <code>NaN</code>, or comments, none of which are valid in JSON. The Best Answer Hub JSON Formatter catches these instantly and tells you exactly what the parser found and where.',
+  },
+  {
+    q: 'Does the formatter support large JSON files?',
+    a: 'Yes, the Best Answer Hub JSON Formatter can handle JSON objects and arrays up to several megabytes, limited only by your browser\'s memory and the JavaScript engine\'s string length limits. For very large files over 10 MB, performance depends on your device. The tool processes everything synchronously in the main thread, so extremely large files may cause a brief UI pause. For files under 1 MB, formatting is effectively instant on any modern laptop or phone.',
+  },
+  {
+    q: 'Is my JSON data sent to a server?',
+    a: 'No. Your JSON data never leaves your browser when using the Best Answer Hub JSON Formatter. The tool uses only client-side JavaScript to parse and stringify your input. There are no network requests, no analytics pings containing your data, and no cloud processing. You can verify this by opening the Network tab in your browser\'s Developer Tools and confirming zero outgoing requests when you format or validate JSON.',
+  },
+  {
+    q: 'What are common JSON syntax errors and how do I fix them?',
+    a: 'The most common error is a trailing comma after the last property, which JavaScript objects tolerate but strict JSON does not. Simply remove the comma. Another is unquoted keys: JSON requires double quotes around every key and string value. Unescaped control characters like tabs or newlines inside strings must be written as <code>\t</code> and <code>\n</code>. JSON does not support comments; remove <code>//</code> or <code>/* */</code> blocks before formatting. The Best Answer Hub JSON Formatter flags every one of these with a precise error position.',
+  },
+  {
+    q: 'Can I convert JSON to XML or CSV with this tool?',
+    a: 'The Best Answer Hub JSON Formatter focuses exclusively on formatting, minifying, and validating JSON. For converting JSON to XML or CSV, use dedicated converters or write a short Python script using the <code>xml.etree</code> or <code>csv</code> modules. For now, you can use the <a href="/tools/base64-encoder/">Base64 Encoder</a> to encode your JSON string for safe transmission, or explore the <a href="/developer-toolbox/">Developer Toolbox</a> for other data utilities including CSV and YAML converters.',
+  },
+  {
+    q: 'What is JSON Schema and does this tool support it?',
+    a: 'JSON Schema is a vocabulary that lets you annotate and validate the structure of JSON documents, for example, specifying that a <code>price</code> field must be a positive number or that an <code>email</code> field must match a regex pattern. The Best Answer Hub JSON Formatter checks syntactic validity using native <code>JSON.parse</code> but does not validate against JSON Schema definitions. For schema validation, consider tools like Ajv, jsonschema.net, or Postman\'s built-in validator.',
+  },
+  {
+    q: 'How does this JSON Formatter compare to VS Code or IDE formatters?',
+    a: 'VS Code and IDEs like JetBrains WebStorm offer excellent JSON formatting, but they require installing software, opening a project, and sometimes configuring extensions. The Best Answer Hub JSON Formatter works instantly in any browser with zero setup, perfect for quick debugging on a colleague\'s machine, formatting API responses from <code>curl</code>, or working on machines where installing software is not an option. The output uses standard 2-space indentation identical to Prettier defaults.',
+  },
+  {
+    q: 'Why do large numbers lose precision in JSON, and how do I fix it?',
+    a: 'Large numbers lose precision in JSON because JavaScript parses all JSON numbers as IEEE 754 double-precision floats, which can only represent integers exactly up to <code>Number.MAX_SAFE_INTEGER</code> (2<sup>53</sup> − 1 = 9,007,199,254,740,991). Any integer beyond that limit (such as Twitter/X Snowflake IDs or Discord guild IDs, which are 64-bit integers) is silently rounded during <code>JSON.parse()</code>, corrupting the ID with no error thrown. Twitter\'s v1 API famously returned both <code>id</code> (number) and <code>id_str</code> (string) to work around this. The fix: treat large IDs as strings in your JSON. For programmatic parsing, the <code>json-bigint</code> npm package preserves precision by mapping oversized numbers to JavaScript\'s native <code>BigInt</code> type.',
+  },
+];
+
+const steps = [
+  { title: 'Paste your JSON', description: 'Copy and paste raw, minified, or malformed JSON into the input area. The tool accepts any valid or invalid JSON string.' },
+  { title: 'Format or minify', description: 'Click "Format" to beautify with proper indentation and line breaks, or "Minify" to compress into a single line for APIs.' },
+  { title: 'Copy the result', description: 'Use the copy button to grab the cleaned JSON and paste it into your editor, API client, documentation, or terminal.' },
+];
+
+const seo = {
+  title: 'Free JSON Formatter & Validator — Beautify & Minify (2026)',
+  description: 'Free online JSON formatter and validator. Beautify, minify, and validate JSON instantly in your browser. No signup, no data sent to servers.',
+  url: '/tools/json-formatter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'JSON Formatter', url: '/tools/json-formatter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="JSON Formatter:"
+    accentText="Beautify, minify & validate"
+    description="Format raw JSON into readable, indented code. Minify for production APIs. Validate syntax and catch errors instantly. All processing happens in your browser."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- JSON Formatter Interface -->
+  <section class="py-6 md:py-8" aria-label="JSON formatter">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">JSON Formatter & Validator</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Input (paste JSON here)</label>
+            <textarea id="json-input" class="w-full h-64 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder='{"name": "example", "active": true}' spellcheck="false"></textarea>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button type="button" id="json-format" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Format</button>
+              <button type="button" id="json-minify" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Minify</button>
+              <button type="button" id="json-copy" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy Output</button>
+              <button type="button" id="json-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+            </div>
+            <p id="json-error" class="text-xs text-red-500 mt-2 hidden"></p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Formatted Output</label>
+            <pre id="json-output" class="w-full h-64 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono overflow-auto whitespace-pre-wrap"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">When developers reach for this tool</h2>
+      <p class="text-sm text-bae-muted mb-8">From debugging API responses to cleaning up config files, here are the four situations where the Best Answer Hub JSON Formatter saves the most time.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">API Debugging</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Debugging REST API responses</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Spot missing fields &amp; data types instantly</p>
+          <p class="text-sm text-bae-muted">Paste the raw response from <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">curl</code>, Postman, or Insomnia and instantly see the full nested structure. Spot missing fields, null values, and unexpected data types before they reach your code.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Config Validation</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Validating config files</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Catches trailing commas &amp; unquoted keys</p>
+          <p class="text-sm text-bae-muted">Validate <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">package.json</code>, <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">tsconfig.json</code>, or <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">.eslintrc</code> before committing. Catches trailing commas and unquoted keys that break build tools like Webpack and tsc.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">API Requests</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Preparing API request bodies</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Smaller payload on the wire</p>
+          <p class="text-sm text-bae-muted">Format and minify the JSON payload before sending it to a REST endpoint. Minified output is smaller on the wire and easier to paste into AWS API Gateway, Stripe webhooks, or Twilio request builders.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Data Migration</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Reviewing data migrations</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Compare schemas side-by-side</p>
+          <p class="text-sm text-bae-muted">Beautify exported MongoDB documents or Elasticsearch index mappings to review structure before a migration. Readable indentation makes it easy to compare schemas side-by-side in a code review or PR comment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, and <a href="/tools/timestamp-converter/" class="text-bae-primary hover:underline">Timestamp</a>. All free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+
+      function showError(el, msg) {
+        if (!msg) { el.classList.add('hidden'); el.textContent = ''; return; }
+        el.textContent = msg;
+        el.classList.remove('hidden');
+      }
+
+      const jsonInput = document.getElementById('json-input');
+      const jsonOutput = document.getElementById('json-output');
+      const jsonError = document.getElementById('json-error');
+
+      function formatJson(minify) {
+        const raw = jsonInput.value.trim();
+        if (!raw) { jsonOutput.textContent = ''; showError(jsonError, ''); return; }
+        try {
+          const obj = JSON.parse(raw);
+          const space = minify ? 0 : 2;
+          jsonOutput.textContent = JSON.stringify(obj, null, space);
+          showError(jsonError, '');
+        } catch (e) {
+          jsonOutput.textContent = '';
+          showError(jsonError, 'Invalid JSON: ' + e.message);
+        }
+      }
+
+      document.getElementById('json-format').addEventListener('click', () => formatJson(false));
+      document.getElementById('json-minify').addEventListener('click', () => formatJson(true));
+      document.getElementById('json-copy').addEventListener('click', () => copyText(jsonOutput.textContent));
+      document.getElementById('json-clear').addEventListener('click', () => { jsonInput.value = ''; jsonOutput.textContent = ''; showError(jsonError, ''); });
+    })();
+  </script>
+</BaseLayout>

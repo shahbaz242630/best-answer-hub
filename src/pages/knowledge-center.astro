@@ -1,0 +1,291 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolHero from '../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../components/tools/ToolRelatedCTA.astro';
+
+const today = '2026-08-16T00:00:00+00:00';
+
+const assessments = [
+  {
+    href: '/knowledge-center/smb-ai-readiness/',
+    badge: 'B2B Assessment',
+    title: 'Small & Medium Business AI Readiness Score',
+    description: 'An objective audit for small and medium businesses (SMBs) on AI readiness across 5 pillars: data, infrastructure, process, skills, and governance. Free score + optional paid roadmap report.',
+    meta: 'SMB • 5 pillars • 30 questions • ~15 min • Score + radar',
+    icon: '🤖',
+    live: true,
+  },
+  {
+    href: '/knowledge-center/ai-knowledge-test/',
+    badge: 'AI Skills',
+    title: 'AI Knowledge Test',
+    description: 'Test your AI literacy across 5 domains and get placed at Beginner, Intermediate, or Advanced. Covers foundations, everyday use, how generative AI works, critical evaluation, and ethics. Free score, radar, and study tips, with no signup.',
+    meta: 'Individual • 5 domains • 50 questions • ~20 min • Level + radar',
+    icon: '🎓',
+    live: true,
+  },
+  {
+    href: '/knowledge-center/pm-competency/',
+    badge: 'Competency Assessment',
+    title: 'Professional Competency Assessment',
+    description: 'Benchmark your product and project management skills against a real career ladder. Covers discovery, strategy, execution, stakeholder management, data, and leadership.',
+    meta: 'PM track • 30–40 questions • ~8 min • Level + gaps',
+    icon: '📊',
+    live: false,
+  },
+  {
+    href: '/knowledge-center/vibe-coder/',
+    badge: 'Builder Assessment',
+    title: 'Vibe Coder Readiness Check',
+    description: 'For people building apps with AI coding agents. Scores nine dimensions, from product definition and agent control through to data security, cost and compliance, and names the two weakest areas holding your launch back. Free score, radar and three fixes you can finish today.',
+    meta: 'Builders • 9 dimensions • 45 questions • ~12-15 min • Score + radar',
+    icon: '🛠️',
+    live: true,
+  },
+  {
+    href: '/knowledge-center/career-strengths/',
+    badge: 'Career Assessment',
+    title: 'Career Path & Strengths Map',
+    description: 'Discover your top strengths, work-style profile, and matched roles, including modern remote and AI-augmented positions. Original framework, no signup required.',
+    meta: 'Strengths + roles • 53 questions • ~16-18 min • Archetype + radar',
+    icon: '🧭',
+    live: true,
+  },
+  {
+    href: '/knowledge-center/eq-assessment/',
+    badge: 'Leadership',
+    title: 'Emotional Intelligence (EQ) Score',
+    description: 'Measure emotional intelligence across self-awareness, self-regulation, empathy, social skills, and motivation. Get actionable techniques to improve EQ, a skill 90% of top performers score high in.',
+    meta: '5 domains • ~35 questions • ~7 min • Development plan',
+    icon: '🧠',
+    live: false,
+  },
+  {
+    href: '/knowledge-center/sales-readiness/',
+    badge: 'Revenue',
+    title: 'Sales Readiness & Competency Score',
+    description: 'Benchmark your sales skills against industry standards: prospecting, discovery, negotiation, closing, account management, and pipeline discipline. Individual reps and sales leaders alike.',
+    meta: '6 competencies • ~30 questions • ~7 min • Benchmark vs peers',
+    icon: '🎯',
+    live: false,
+  },
+  {
+    href: '/knowledge-center/skills-gap/',
+    badge: 'Career',
+    title: 'Skills Gap & Transition Mapper',
+    description: 'Map your current skills against any target role to see exact gaps. Ideal for career changers and upskillers. Covers technical, soft, and industry-specific competencies with a prioritized learning roadmap.',
+    meta: 'Role-specific • Gap analysis • Learning roadmap • ~8 min',
+    icon: '🔧',
+    live: false,
+  },
+  {
+    href: '/knowledge-center/team-health/',
+    badge: 'Culture',
+    title: 'Team Health & Psychological Safety Score',
+    description: 'Assess team dynamics, psychological safety, communication clarity, and decision-making quality. Designed for team leads who need quantified diagnostics without enterprise pricing or HR bureaucracy.',
+    meta: '4 dimensions • ~25 questions • ~5 min • Team action plan',
+    icon: '🛡️',
+    live: false,
+  },
+  {
+    href: '/knowledge-center/founder-readiness/',
+    badge: 'Startup',
+    title: 'Founder Readiness Score',
+    description: 'Evaluate whether your timing, finances, mindset, market validation, and operational foundation support starting a business. Get an honest diagnostic before quitting your job or raising capital.',
+    meta: '5 readiness factors • ~30 questions • ~7 min • Go/no-go clarity',
+    icon: '🚀',
+    live: false,
+  },
+  {
+    href: '/knowledge-center/innovation-maturity/',
+    badge: 'R&D',
+    title: 'Innovation Maturity Quick Scan',
+    description: 'Measure how your team or company performs on ideation, experimentation, risk tolerance, resource allocation, and speed-to-market. Designed for product leaders and R&D managers who need quarterly benchmarks.',
+    meta: '5 innovation pillars • ~25 questions • ~5 min • Quarterly tracker',
+    icon: '💡',
+    live: false,
+  },
+  {
+    href: '/knowledge-center/leadership-competency/',
+    badge: 'Leadership',
+    title: 'Leadership Competency Score',
+    description: 'Benchmark your leadership skills across strategic thinking, people development, decision-making under pressure, communication impact, and change management. For managers preparing for director or VP-level roles.',
+    meta: '5 competencies • ~35 questions • ~7 min • Promotion readiness',
+    icon: '👑',
+    live: false,
+  },
+  {
+    href: '/knowledge-center/cybersecurity-readiness/',
+    badge: 'Security',
+    title: 'Cybersecurity Readiness Score',
+    description: 'Audit your business or team against essential security practices: access control, data protection, incident response, employee awareness, and compliance posture. No security background required.',
+    meta: '5 security domains • ~25 questions • ~5 min • Risk score + fixes',
+    icon: '🔒',
+    live: false,
+  },
+];
+
+const steps = [
+  { title: 'Pick an assessment', description: 'Choose from AI readiness, AI knowledge testing, professional competency, or career strengths. Each assessment takes 10–15 minutes and requires no account.' },
+  { title: 'Answer the questions', description: 'Progress through a focused diagnostic question set with a visible progress bar. Change your answers anytime before you finish.' },
+  { title: 'Get your free score', description: 'See your instant result: overall score, dimension radar, weakest areas, and quick wins. All computed in your browser.' },
+];
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Knowledge Center?',
+    a: 'The Best Answer Hub Knowledge Center is a free collection of browser-based diagnostic assessments designed for professionals, small and medium business owners, and career changers. It includes the <a href="/knowledge-center/smb-ai-readiness/">Small & Medium Business AI & Digital Readiness Score</a>, the <a href="/knowledge-center/ai-knowledge-test/">AI Knowledge Test</a>, and more assessments arriving soon, including a Professional Competency Assessment and a Career Path & Strengths Map. Every assessment runs entirely in the browser with no signup required.',
+  },
+  {
+    q: 'Is the Best Answer Hub Knowledge Center free to use?',
+    a: 'Yes. Every assessment in the Best Answer Hub Knowledge Center is completely free with no usage limits and no email capture required to see your score. The free result includes an overall score, a dimension radar chart, and actionable quick wins. An optional paid PDF report is available for users who want a detailed roadmap, benchmark context, and templates.',
+  },
+  {
+    q: 'Is my assessment data stored or sent to a server?',
+    a: 'No. All answers and scores are computed entirely inside your browser using client-side JavaScript. Nothing is uploaded, logged, or transmitted to any server. You can verify this by disconnecting from the internet after loading the page. The assessment will continue to work perfectly because all processing happens locally on your device.',
+  },
+  {
+    q: 'How is the Best Answer Hub Knowledge Center different from MBTI and CliftonStrengths?',
+    a: 'MBTI and CliftonStrengths measure personality using frameworks with documented retest reliability issues. Studies show 40-50% of people get a different MBTI result on retake. The Best Answer Hub Knowledge Center focuses on diagnostic readiness and competency benchmarking against real career ladders and business pillars, not personality types. Results are instantly actionable with specific next steps, not generic descriptors.',
+  },
+  {
+    q: 'What is the difference between the free score and the paid PDF report?',
+    a: 'The free score gives you an overall rating, a visual radar chart of your strengths and gaps, and 2-3 immediate quick wins. The paid PDF report expands this into a 20-30 page actionable plan with pillar-by-pillar analysis, benchmark comparisons, a prioritized 90-day roadmap, recommended tools, and usable templates. The free result is genuinely useful; the PDF turns the diagnosis into a treatment plan.',
+  },
+  {
+    q: 'How do I know if my business is ready for AI?',
+    a: 'The <a href="/knowledge-center/smb-ai-readiness/">Best Answer Hub Small & Medium Business AI & Digital Readiness Score</a> audits your company across 5 pillars: Data Readiness, Tech Infrastructure, Process Maturity, Team Skills, and Governance & Risk. You answer 30 questions and receive a 0-100 score with a breakdown showing exactly which pillars are strongest and which need attention before AI adoption.',
+  },
+  {
+    q: 'How long does each assessment take?',
+    a: 'The Best Answer Hub Small & Medium Business AI & Digital Readiness Score takes approximately 15 minutes (30 questions). The Professional Competency Assessment takes about 10 minutes (30-40 questions). The Career Path & Strengths Map takes roughly 12 minutes (approximately 40 questions). All assessments save your progress in-session, so a browser refresh does not lose your answers.',
+  },
+  {
+    q: 'Can I retake an assessment to track progress over time?',
+    a: 'Yes. Because there are no accounts, simply revisit the assessment page and start again. Many users retake assessments quarterly to measure improvement, especially after completing the recommended actions from a previous report. Your answers are never stored long-term, so each session is a fresh diagnostic.',
+  },
+  {
+    q: 'How do I benchmark my product management skills against senior professionals?',
+    a: 'The Best Answer Hub Professional Competency Assessment (coming soon) maps your skills against a real PM career ladder: Associate, Mid, Senior, Lead, and Director. It covers 6 dimensions (Discovery & Research, Strategy & Vision, Execution & Delivery, Stakeholder & Communication, Data & Analytics, and Leadership & Influence), showing exactly which dimensions separate you from the next level.',
+  },
+  {
+    q: 'What career is right for me if I want to work remotely or in an AI-augmented role?',
+    a: 'The Best Answer Hub Career Path & Strengths Map (coming soon) uses an original framework to match your strengths and work-style profile to modern roles, including remote positions, gig economy opportunities, and AI-augmented jobs that did not exist five years ago. The free result shows your top 5 strengths and 3 sample matched roles.',
+  },
+  {
+    q: 'Do I need to create an account or provide an email to take an assessment?',
+    a: 'No account, email address, or signup of any kind is required to take any assessment in the Best Answer Hub Knowledge Center. Open the page, answer the questions, and see your score immediately. There are no email gates, no paywalls blocking the free result, and no marketing opt-ins. Buyer emails are handled by the payment processor only if you choose to purchase a PDF report.',
+  },
+  {
+    q: 'Which assessment should I take first?',
+    a: 'If you run a small business or lead operations, start with the <a href="/knowledge-center/smb-ai-readiness/">Small & Medium Business AI & Digital Readiness Score</a>. If you want to check your personal AI literacy, start with the <a href="/knowledge-center/ai-knowledge-test/">AI Knowledge Test</a>. The Professional Competency Assessment and the Career Path & Strengths Map are coming soon for promotion readiness and career-change planning.',
+  },
+  {
+    q: 'Are the assessments scientifically valid?',
+    a: 'The Best Answer Hub Knowledge Center assessments are built on structured diagnostic frameworks rather than pseudoscientific personality typing. The Small & Medium Business AI Readiness Score uses 5 evergreen business pillars derived from industry readiness models. The PM Competency Assessment maps to real career ladder requirements used by leading tech companies. The Career Strengths Map is an original framework that does not reproduce proprietary instruments like MBTI, CliftonStrengths, DISC, or Holland Codes.',
+  },
+  {
+    q: 'Can I use the Best Answer Hub Knowledge Center assessments for my team or company?',
+    a: 'Yes. Because every assessment runs client-side with no server processing, team members can take assessments on their own devices without any IT approval or data security concerns. For team-wide rollouts, each person completes the assessment individually and receives their own score. Team-wide benchmarking and aggregate reporting features are planned for a future release.',
+  },
+  {
+    q: 'Which browsers and devices are supported?',
+    a: 'All modern browsers are fully supported: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, and Opera 76+. The Best Answer Hub Knowledge Center assessments work on both desktop and mobile browsers with responsive layouts. Internet Explorer is not supported. All scoring and radar chart rendering happens locally using standard Web APIs.',
+  },
+];
+
+const seo = {
+  title: 'Knowledge Center — Free Assessments & Scorecards (2026)',
+  description: 'Free diagnostic assessments for small and medium business AI readiness, professional skills, and career strengths. Instant score, no signup, no data stored.',
+  url: '/knowledge-center/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Knowledge Center', url: '/knowledge-center/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Assessments · No Signup Required"
+    title="Knowledge Center:"
+    accentText="Diagnose, score, and plan"
+    description="Free diagnostic assessments for small and medium businesses (SMBs), professionals, and career changers. Get an instant score on AI readiness, competency, and career fit, with no account needed and no data stored."
+  />
+
+  <!-- Assessment Cards -->
+  <section class="py-6 md:py-8" aria-label="Knowledge Center assessments">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="assessment-tools-grid">
+        {assessments.map((item) => (
+          item.live ? (
+            <a href={item.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{item.badge}</span>
+                <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{item.icon}</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink mb-2">{item.title}</h2>
+              <p class="text-sm text-bae-muted line-clamp-3">{item.description}</p>
+              <p class="text-xs text-bae-muted mt-3 font-medium">{item.meta}</p>
+            </a>
+          ) : (
+            <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{item.badge}</span>
+                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink/70 mb-2">{item.title}</h2>
+              <p class="text-sm text-bae-muted/70 line-clamp-3">{item.description}</p>
+              <p class="text-xs text-bae-muted/60 mt-3 font-medium">{item.meta}</p>
+            </div>
+          )
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people assess with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people assess with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from business owners, product managers, career changers, and team leaders.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Small & Medium Business Owners</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Audit AI readiness without a €10,000 consultant</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">5-pillar score in ~15 minutes</p>
+          <p class="text-sm text-bae-muted">Run the Best Answer Hub Small & Medium Business AI & Digital Readiness Score to see exactly where your company stands on data, infrastructure, process, skills, and governance. The score reveals which pillars are blocking AI adoption and which quick wins can be implemented this week. Use the paid PDF report for a prioritized 90-day roadmap with starter templates.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Mid-Career Professionals</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Benchmark skills against the next promotion level</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">PM ladder: Associate → Director</p>
+          <p class="text-sm text-bae-muted">The Best Answer Hub Professional Competency Assessment compares your skills against 6 dimensions used by real tech companies to evaluate PMs. See exactly what separates you from Senior, Lead, or Director level: not vague feedback, but specific competency gaps with recommended development projects.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Career Changers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Map transferable skills to modern remote and AI roles</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Original framework, not MBTI</p>
+          <p class="text-sm text-bae-muted">The Best Answer Hub Career Path & Strengths Map matches your work-style profile to roles that fit, including remote, gig economy, and AI-augmented positions the incumbent tests ignore. Get 3 sample matched roles in the free result, then expand to 20+ ranked matches and a concrete action plan in the paid report.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Team Leaders & Founders</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Run team diagnostics without enterprise contracts</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">No signup • No per-seat pricing</p>
+          <p class="text-sm text-bae-muted">Because every assessment runs entirely in the browser with no server processing, team members can complete diagnostics on their own devices with zero IT overhead or data security concerns. Each person gets an individual score and actionable gaps, with no enterprise sales calls and no minimum seat counts.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+</BaseLayout>

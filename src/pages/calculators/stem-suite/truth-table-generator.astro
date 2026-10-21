@@ -1,0 +1,951 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ToolFAQ from '../../../components/tools/ToolFAQ.astro';
+import ToolHowItWorks from '../../../components/tools/ToolHowItWorks.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+import HowToSchema from '../../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Truth Table Generator?',
+    a: 'The Best Answer Hub Truth Table Generator is a free, browser-based digital logic tool that generates truth tables from Boolean expressions, simplifies them step-by-step, visualizes Karnaugh maps, and converts expressions to NAND-only or NOR-only circuits. Unlike Wolfram Alpha and other calculators that only output final answers, the Best Answer Hub Truth Table Generator shows every simplification step with the Boolean algebra law name applied at each stage. It accepts multiple notations (type AND, &&, or ∧ interchangeably) and handles don\'t-care conditions, XOR, NAND, and NOR gates. All calculations run entirely in your browser with no signup required.',
+  },
+  {
+    q: 'Why does Wolfram Alpha not understand my Boolean expression?',
+    a: 'Wolfram Alpha requires a specific syntax for Boolean expressions and often fails to recognize common notations like A\', Ā, or programming-style && and || operators. The Best Answer Hub Truth Table Generator accepts every major notation style (including AND/&&/∧, OR/||/∨, NOT/!/¬/\'/~, XOR/⊕, NAND, and NOR) and automatically detects which one you are using. For example, you can type (A && B) || !C, (A AND B) OR NOT C, or A·B + C̄ and get the same result instantly. If the parser encounters an unrecognized symbol, it shows a clear error message rather than producing a silent wrong answer.',
+  },
+  {
+    q: 'Why do most Boolean calculators just give the final answer without showing the steps?',
+    a: 'Most online Boolean simplifiers (including generic algebra calculators and basic K-map solvers) compute the final expression but hide the intermediate reasoning. The Best Answer Hub Truth Table Generator shows the complete step-by-step simplification process: it lists the minterms, identifies prime implicants, marks which ones are essential, and displays the final simplified expression with each Boolean algebra law named (De Morgan\'s, Absorption, Consensus, Idempotent, etc.). This makes it possible to follow the logic, verify each step against your handwritten work, and learn the simplification process for exams.',
+  },
+  {
+    q: 'Can I type &&, ||, and ! instead of AND, OR, and NOT?',
+    a: 'Yes. The Best Answer Hub Truth Table Generator accepts programming-style operators (&&, ||, !), English words (AND, OR, NOT), mathematical symbols (∧, ∨, ¬, ·, +), and even suffix notation (A\' for NOT A). You can mix notations within the same expression, for example (A && B) OR !C is valid. The parser recognizes variables as single letters or multi-letter words, supports parentheses and nested expressions, and handles derived gates like XOR (^, ⊕), NAND (↑), and NOR (↓).',
+  },
+  {
+    q: 'Why do most online K-map solvers stop at 4 variables?',
+    a: 'Karnaugh maps become visually unwieldy beyond 4 variables because a 5-variable map requires 32 squares and a 6-variable map requires 64. Most free online K-map tools cap at 4 variables to keep their interface simple. The Best Answer Hub Truth Table Generator displays interactive K-maps for 2, 3, and 4 variables with colored groupings, wrap-around corner detection, and both Sum-of-Products and Product-of-Sums output. For 5 and 6 variables, it automatically switches to the Quine-McCluskey algorithm (the same minimization method used by industrial circuit design software) and still shows every prime implicant and essential prime implicant in the step-by-step breakdown.',
+  },
+  {
+    q: 'How do I use don\'t-care conditions in a Karnaugh map?',
+    a: 'Don\'t-care conditions (marked as X) are input combinations that never occur in a real circuit or are irrelevant to the output. In a Karnaugh map, they can be treated as either 0 or 1, whichever helps create the largest possible groups of adjacent 1s. The Best Answer Hub Truth Table Generator lets you mark any truth table row as a don\'t-care by selecting the X option. During K-map simplification, the tool automatically treats each X flexibly, including it in a grouping when it reduces the number of literals, and excluding it when it doesn\'t. The simplified expression is labeled as "SOP with don\'t-cares" so you know the optimization used them.',
+  },
+  {
+    q: 'How do I build a circuit using only NAND gates?',
+    a: 'Any Boolean expression can be implemented using only NAND gates because NAND is a universal gate. The Best Answer Hub Truth Table Generator includes a NAND-only conversion mode: after simplifying your expression, click the "NAND Only" toggle and the tool applies De Morgan\'s laws to convert every AND-OR structure into an equivalent NAND-NAND configuration. For example, the expression AB + C\' becomes ((AB)\' (C\')\')\' in NAND-only form. The tool shows the step-by-step conversion and the final expression ready for circuit drawing.',
+  },
+  {
+    q: 'How do I check if my hand-simplified Boolean expression is actually correct?',
+    a: 'The fastest way to verify a hand-simplified Boolean expression is to compare its truth table against the original expression. The Best Answer Hub Truth Table Generator has a built-in equivalence checker: enter your original expression in one field and your simplified expression in another, and the tool generates both truth tables side by side. If every row matches, the simplification is proven correct. You can also use the step-by-step simplifier to see what the optimal answer should be, and if your manual result matches the tool\'s output, your work is verified.',
+  },
+  {
+    q: 'Why do most simplifiers only show Sum of Products and not Product of Sums?',
+    a: 'Most free Boolean simplifiers optimize exclusively for Sum-of-Products (SOP) form because it is the default output of Karnaugh maps and Quine-McCluskey algorithms. Product-of-Sums (POS) requires a separate optimization pass on the zeros instead of the ones. The Best Answer Hub Truth Table Generator computes both forms simultaneously: the SOP expression from the 1-rows of the truth table and the POS expression from the 0-rows. Both are displayed in the results panel with their canonical forms (Σm for SOP, ΠM for POS), so you can choose whichever form yields fewer gates for your specific circuit.',
+  },
+  {
+    q: 'What is a truth table and how do I read one?',
+    a: 'A truth table lists every possible combination of input values for a Boolean expression and shows the corresponding output. For n inputs, the table has 2^n rows. Each row represents one binary combination, typically ordered by counting up from 0. The output column shows whether the expression evaluates to 1 (true) or 0 (false) for that input combination. The Best Answer Hub Truth Table Generator creates these tables automatically and highlights which rows produce an output of 1, making it easy to identify minterms at a glance.',
+  },
+  {
+    q: 'How do I generate a truth table from a Boolean expression?',
+    a: 'Type your Boolean expression into the input field and click Generate. The Best Answer Hub Truth Table Generator automatically identifies all variables, creates every possible input combination, evaluates the expression for each row, and displays the complete table. For example, entering (A AND B) OR (NOT C) produces an 8-row table (2^3 = 8) with columns for A, B, C, intermediate terms, and the final output. You can then copy the table, export it to PDF, or feed it directly into the K-map solver or simplifier.',
+  },
+  {
+    q: 'How do I apply De Morgan\'s law to simplify expressions?',
+    a: 'De Morgan\'s laws state that NOT(A AND B) equals (NOT A) OR (NOT B), and NOT(A OR B) equals (NOT A) AND (NOT B). These laws are essential for converting between logic families and simplifying negated expressions. The Best Answer Hub Truth Table Generator includes a dedicated De Morgan\'s step in its simplification output: whenever the algorithm applies this law, it explicitly labels the step as "De Morgan\'s Law" and shows both the before and after expressions. You can also verify any De Morgan\'s transformation by generating truth tables for both sides and confirming they match row by row.',
+  },
+  {
+    q: 'What is the truth table for a 3-input XOR gate?',
+    a: 'A 3-input XOR gate outputs 1 when an odd number of inputs are 1, and 0 when an even number of inputs are 1. The Best Answer Hub Truth Table Generator confirms this with an 8-row table: outputs are 1 for input combinations 001, 010, 100, and 111 (one or three 1s), and 0 for 000, 011, 101, and 110 (zero or two 1s). Enter A XOR B XOR C into the calculator to see the full table with intermediate XOR calculations shown step by step.',
+  },
+  {
+    q: 'How do I convert minterms like Σ(0,1,3,7) into a simplified expression?',
+    a: 'Minterms are the row numbers where a truth table outputs 1. Σ(0,1,3,7) means rows 0, 1, 3, and 7 produce a 1. The Best Answer Hub Truth Table Generator accepts minterm notation directly: enter Σ(0,1,3,7) with the variable count, and the tool builds the truth table, plots the K-map, and returns the simplified Sum-of-Products expression. For 3 variables, Σ(0,1,3,7) simplifies to A\'B\' + C. The tool also shows the binary representation of each minterm and the corresponding K-map cell so you can follow the mapping.',
+  },
+  {
+    q: 'Is the Best Answer Hub Truth Table Generator free and private?',
+    a: 'Yes. The calculator is completely free with no usage limits, no signup, no email capture, and no premium tiers. Every calculation runs entirely in your browser using client-side JavaScript. No Boolean expressions, truth tables, or logic designs are uploaded, stored, or logged on any server. To verify this, disconnect from the internet after loading the page and the calculator will continue working perfectly. Sensitive homework and circuit designs remain completely private.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your Boolean expression', description: 'Type a Boolean expression using any notation: AND/&&/∧, OR/||/∨, NOT/!/¬, XOR/⊕, NAND, or NOR. Use single-letter variables or multi-letter names. The parser auto-detects your notation style.' },
+  { title: 'Generate the truth table and K-map', description: 'The calculator evaluates all input combinations, displays the complete truth table, and plots an interactive Karnaugh map with colored groupings for 2–4 variables. Don\'t-care conditions are handled automatically.' },
+  { title: 'Simplify and convert', description: 'View the step-by-step simplification with prime implicants and Boolean law names. Toggle between Sum-of-Products and Product-of-Sums. Convert to NAND-only or NOR-only circuits with one click. Export to PDF.' },
+];
+
+const seo = {
+  title: 'Truth Table Generator — Boolean Simplifier & K-Map (2026)',
+  description: 'Free truth table generator with Boolean simplifier, Karnaugh map solver, and NAND/NOR converter. Multi-notation, step-by-step working. No signup.',
+  url: '/calculators/stem-suite/truth-table-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'STEM Suite', url: '/calculators/stem-suite/' },
+    { name: 'Truth Table Generator', url: '/calculators/stem-suite/truth-table-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated June 2026
+          </div>
+          <a href="/calculators/stem-suite/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            STEM Suite
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Truth Table Generator:<br/>
+          <em class="italic text-bae-primary">Boolean simplifier & K-map solver</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Generate truth tables from any Boolean expression. Simplify with step-by-step working and visual Karnaugh maps. Supports don't-care conditions, NAND/NOR conversion, and multi-notation input. All calculations run locally in your browser.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section class="py-6 md:py-8" aria-label="Truth table generator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Expression Input Card -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <!-- Tabs -->
+            <div class="flex items-center justify-between gap-3 mb-6 border-b border-bae-border pb-2">
+              <div class="flex gap-2 overflow-x-auto">
+                <button type="button" class="tab-btn active px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap bg-bae-primary text-white" data-tab="expr">Expression → Truth Table</button>
+                <button type="button" class="tab-btn px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-tab="simplify">Simplifier</button>
+                <button type="button" class="tab-btn px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-tab="equiv">Equivalence Check</button>
+              </div>
+            </div>
+
+            <!-- Tab: Expression → Truth Table -->
+            <div class="tab-panel" id="panel-expr">
+              <div class="mb-4">
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Boolean Expression</label>
+                <input type="text" id="expr-input" placeholder="e.g. (A AND B) OR NOT C" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Supports: AND/&&/∧, OR/||/∨, NOT/!/¬, XOR/⊕, NAND, NOR. Variables: A-Z or words.</p>
+              </div>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <button type="button" id="expr-calc" class="px-4 py-2 bg-bae-ink text-white text-sm font-medium rounded-bae-sm hover:opacity-90 transition-opacity">Generate Truth Table</button>
+                <button type="button" id="expr-clear" class="px-4 py-2 border border-bae-border text-sm font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors">Clear</button>
+              </div>
+              <div id="expr-error" class="hidden mb-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-bae-sm px-3 py-2"></div>
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                <span class="text-xs text-bae-muted self-center">Try:</span>
+                <button type="button" class="quick-expr px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">A AND B</button>
+                <button type="button" class="quick-expr px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">(A || B) && !C</button>
+                <button type="button" class="quick-expr px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">A XOR B XOR C</button>
+                <button type="button" class="quick-expr px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">(A NAND B) NOR C</button>
+              </div>
+            </div>
+
+            <!-- Tab: Simplifier -->
+            <div class="tab-panel hidden" id="panel-simplify">
+              <div class="mb-4">
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Expression to Simplify</label>
+                <input type="text" id="simp-input" placeholder="e.g. A·B + A·B' + A'·B" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <label class="flex items-center gap-1.5 text-xs text-bae-muted cursor-pointer select-none">
+                  <input type="checkbox" id="simp-dontcare" class="accent-bae-primary w-3.5 h-3.5" />
+                  Enable don't-care input
+                </label>
+              </div>
+              <div id="simp-dc-panel" class="hidden mb-4">
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Don't-care minterms (comma-separated)</label>
+                <input type="text" id="simp-dc-input" placeholder="e.g. 2,5,7" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <button type="button" id="simp-calc" class="px-4 py-2 bg-bae-ink text-white text-sm font-medium rounded-bae-sm hover:opacity-90 transition-opacity">Simplify</button>
+                <button type="button" id="simp-clear" class="px-4 py-2 border border-bae-border text-sm font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors">Clear</button>
+              </div>
+              <div id="simp-error" class="hidden mb-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-bae-sm px-3 py-2"></div>
+            </div>
+
+            <!-- Tab: Equivalence Check -->
+            <div class="tab-panel hidden" id="panel-equiv">
+              <div class="mb-4">
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Expression 1</label>
+                <input type="text" id="equiv-1" placeholder="e.g. (A AND B) OR (A AND C)" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary mb-3" />
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Expression 2</label>
+                <input type="text" id="equiv-2" placeholder="e.g. A AND (B OR C)" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <button type="button" id="equiv-calc" class="px-4 py-2 bg-bae-ink text-white text-sm font-medium rounded-bae-sm hover:opacity-90 transition-opacity">Check Equivalence</button>
+                <button type="button" id="equiv-clear" class="px-4 py-2 border border-bae-border text-sm font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors">Clear</button>
+              </div>
+              <div id="equiv-error" class="hidden mb-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-bae-sm px-3 py-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Results -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg" id="result-panel">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Results</h3>
+            <div id="result-content">
+              <p class="text-sm text-white/70">Enter a Boolean expression to generate a truth table, K-map, and simplified form.</p>
+            </div>
+          </div>
+          <button type="button" id="pdf-btn" class="hidden w-full bg-bae-ink hover:bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+            Download PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <ToolHowItWorks steps={steps} />
+
+  <!-- FAQ -->
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Scenarios -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people calculate with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases for the Best Answer Hub Truth Table Generator.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">CS Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify digital logic homework step by step</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Truth tables • K-maps • Boolean laws</p>
+          <p class="text-sm text-bae-muted">Generate truth tables for AND, OR, NOT, XOR, and NAND expressions. Follow the step-by-step simplification with labeled Boolean algebra laws to check hand-computed K-maps against the tool's prime implicant chart.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">EE Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Design circuits with universal gates</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">NAND-only • NOR-only • SOP/POS</p>
+          <p class="text-sm text-bae-muted">Simplify Boolean expressions and convert them to NAND-only or NOR-only implementations. The tool applies De Morgan's laws automatically and shows the conversion steps, essential for lab assignments and circuit design projects.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Self-Taught Developers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Simplify complex conditional logic</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Multi-notation • Equivalence check</p>
+          <p class="text-sm text-bae-muted">Paste programming conditionals like (hasAccess && isAdmin) || (hasAccess && isMod) and see the simplified form. Use the equivalence checker to prove two expressions behave identically before refactoring production code.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Competitive Programmers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Optimize bit-manipulation formulas</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">XOR • NAND • Don't-care optimization</p>
+          <p class="text-sm text-bae-muted">Generate truth tables for bit-masking and parity-check formulas. Use don't-care conditions to find minimal literal count expressions. Verify equivalence between naive and optimized implementations before submitting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <ToolRelatedCTA currentHref="/calculators/stem-suite/truth-table-generator/" />
+
+  <!-- PDF Report (hidden) -->
+  <section class="hidden" id="pdf-report">
+    <div class="container max-w-page mx-auto px-6 py-8">
+      <div id="pdf-content" class="bg-white border border-bae-border rounded-bae p-8">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={steps} name="How to Use the Best Answer Hub Truth Table Generator" />
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      let lastExpr='', lastAST=null, lastTT=null, lastSOP=null, lastPOS=null;
+      let lastMode='', lastEquiv=null;
+      const $ = id => document.getElementById(id);
+
+      // ========== Boolean Expression Parser ==========
+      function tokenize(expr) {
+        const tokens = [];
+        let i = 0;
+        const len = expr.length;
+        while (i < len) {
+          const ch = expr[i];
+          if (/\s/.test(ch)) { i++; continue; }
+          const rest = expr.slice(i);
+          const u = rest.toUpperCase();
+          if (u.startsWith('XNOR')) { tokens.push({type:'OP',op:'XNOR'}); i+=4; continue; }
+          if (u.startsWith('NAND')) { tokens.push({type:'OP',op:'NAND'}); i+=4; continue; }
+          if (u.startsWith('NOR'))  { tokens.push({type:'OP',op:'NOR'}); i+=3; continue; }
+          if (u.startsWith('XOR'))  { tokens.push({type:'OP',op:'XOR'}); i+=3; continue; }
+          if (u.startsWith('NOT'))  { tokens.push({type:'OP',op:'NOT'}); i+=3; continue; }
+          if (u.startsWith('AND'))  { tokens.push({type:'OP',op:'AND'}); i+=3; continue; }
+          if (u.startsWith('OR'))   { tokens.push({type:'OP',op:'OR'}); i+=2; continue; }
+          if (ch==='!'||ch==='~'||ch==='¬') { tokens.push({type:'OP',op:'NOT'}); i++; continue; }
+          if (ch==='&') { tokens.push({type:'OP',op:'AND'}); i += (expr[i+1]==='&'?2:1); continue; }
+          if (ch==='∧'||ch==='·'||ch==='.') { tokens.push({type:'OP',op:'AND'}); i++; continue; }
+          if (ch==='|') { tokens.push({type:'OP',op:'OR'}); i += (expr[i+1]==='|'?2:1); continue; }
+          if (ch==='∨'||ch==='+') { tokens.push({type:'OP',op:'OR'}); i++; continue; }
+          if (ch==='^'||ch==='⊕') { tokens.push({type:'OP',op:'XOR'}); i++; continue; }
+          if (ch==='@'||ch==='↑') { tokens.push({type:'OP',op:'NAND'}); i++; continue; }
+          if (ch==='%'||ch==='↓') { tokens.push({type:'OP',op:'NOR'}); i++; continue; }
+          if (ch==='='||ch==='↔'||ch==='⇔') { tokens.push({type:'OP',op:'XNOR'}); i++; continue; }
+          if (ch==='('||ch==='[') { tokens.push({type:'LPAREN'}); i++; continue; }
+          if (ch===')'||ch===']') { tokens.push({type:'RPAREN'}); i++; continue; }
+          if (/[A-Za-z]/.test(ch)) {
+            let name='';
+            while (i<len && /[A-Za-z0-9_]/.test(expr[i])) { name+=expr[i]; i++; }
+            tokens.push({type:'VAR',name});
+            continue;
+          }
+          throw new Error('Unexpected character: "'+ch+'". Supported: AND/&&/∧, OR/||/∨, NOT/!/¬, XOR/⊕, NAND, NOR, variables A-Z.');
+        }
+        return tokens;
+      }
+
+      function parse(tokens) {
+        let i=0;
+        const peek=()=>tokens[i];
+        const consume=()=>tokens[i++];
+        function expect(type) {
+          const t=peek();
+          if (!t || t.type!==type) throw new Error('Expected '+type);
+          return consume();
+        }
+        function parseExpression(){return parseOR();}
+        function parseOR(){
+          let left=parseXOR();
+          while (peek() && peek().type==='OP' && peek().op==='OR'){consume();left={type:'OR',left,right:parseXOR()};}
+          return left;
+        }
+        function parseXOR(){
+          let left=parseXNOR();
+          while (peek() && peek().type==='OP' && peek().op==='XOR'){consume();left={type:'XOR',left,right:parseXNOR()};}
+          return left;
+        }
+        function parseXNOR(){
+          let left=parseAND();
+          while (peek() && peek().type==='OP' && peek().op==='XNOR'){consume();left={type:'XNOR',left,right:parseAND()};}
+          return left;
+        }
+        function parseAND(){
+          let left=parseNAND();
+          while (peek() && peek().type==='OP' && peek().op==='AND'){consume();left={type:'AND',left,right:parseNAND()};}
+          return left;
+        }
+        function parseNAND(){
+          let left=parseNOR();
+          while (peek() && peek().type==='OP' && peek().op==='NAND'){consume();left={type:'NAND',left,right:parseNOR()};}
+          return left;
+        }
+        function parseNOR(){
+          let left=parseNOT();
+          while (peek() && peek().type==='OP' && peek().op==='NOR'){consume();left={type:'NOR',left,right:parseNOT()};}
+          return left;
+        }
+        function parseNOT(){
+          if (peek() && peek().type==='OP' && peek().op==='NOT'){consume();return{type:'NOT',child:parseNOT()};}
+          return parsePrimary();
+        }
+        function parsePrimary(){
+          const t=peek();
+          if (!t) throw new Error('Unexpected end of expression');
+          if (t.type==='VAR'){consume();return{type:'VAR',name:t.name};}
+          if (t.type==='LPAREN'){consume();const e=parseExpression();expect('RPAREN');return e;}
+          throw new Error('Unexpected token: '+JSON.stringify(t));
+        }
+        const ast=parseExpression();
+        if (i<tokens.length) throw new Error('Unexpected token after end of expression');
+        return ast;
+      }
+
+      function evaluate(ast,vars){
+        switch(ast.type){
+          case 'VAR': return vars[ast.name]?1:0;
+          case 'NOT': return evaluate(ast.child,vars)?0:1;
+          case 'AND': return evaluate(ast.left,vars)&evaluate(ast.right,vars);
+          case 'OR': return evaluate(ast.left,vars)|evaluate(ast.right,vars);
+          case 'XOR': return evaluate(ast.left,vars)^evaluate(ast.right,vars);
+          case 'NAND': return (evaluate(ast.left,vars)&evaluate(ast.right,vars))?0:1;
+          case 'NOR': return (evaluate(ast.left,vars)|evaluate(ast.right,vars))?0:1;
+          case 'XNOR': return (evaluate(ast.left,vars)^evaluate(ast.right,vars))?0:1;
+          default: throw new Error('Unknown node type: '+ast.type);
+        }
+      }
+
+      function extractVars(ast){
+        const s=new Set();
+        function v(node){
+          if (node.type==='VAR') s.add(node.name);
+          else if (node.type==='NOT') v(node.child);
+          else if (node.left){v(node.left);v(node.right);}
+        }
+        v(ast);
+        return Array.from(s).sort();
+      }
+
+      function generateTruthTable(ast){
+        const vars=extractVars(ast);
+        const n=vars.length;
+        const rows=[];
+        for (let i=0;i<(1<<n);i++){
+          const a={};
+          for (let j=0;j<n;j++) a[vars[j]]=(i>>(n-1-j))&1;
+          rows.push({...a,output:evaluate(ast,a)});
+        }
+        return {vars,rows};
+      }
+
+      function getMinterms(tt){return tt.rows.map((r,i)=>r.output===1?i:-1).filter(x=>x>=0);}
+      function getMaxterms(tt){return tt.rows.map((r,i)=>r.output===0?i:-1).filter(x=>x>=0);}
+
+      // ========== Quine-McCluskey ==========
+      function countOnes(n,bits){let c=0;for(let i=0;i<bits;i++)if((n>>i)&1)c++;return c;}
+      function isPowerOfTwo(n){return n>0 && (n&(n-1))===0;}
+      function coversPI(pi,m){return (pi.val & ~pi.mask)===(m & ~pi.mask);}
+
+      function quineMcCluskey(minterms,dontCares,numVars){
+        const all=[...minterms,...dontCares];
+        let implicants=all.map(m=>({val:m,mask:0,used:false,isDC:dontCares.includes(m)}));
+        const primeImplicants=[];
+        let changed=true;
+        while(changed){
+          changed=false;
+          const next=[];
+          for(let a=0;a<implicants.length;a++){
+            for(let b=a+1;b<implicants.length;b++){
+              const x=implicants[a],y=implicants[b];
+              if(x.mask!==y.mask) continue;
+              const diff=x.val^y.val;
+              const validDiff=diff & ~x.mask;
+              if(!isPowerOfTwo(validDiff)) continue;
+              x.used=true; y.used=true; changed=true;
+              const nval=x.val&y.val, nmask=x.mask|validDiff;
+              if(!next.some(p=>p.val===nval&&p.mask===nmask)) next.push({val:nval,mask:nmask,used:false,isDC:x.isDC&&y.isDC});
+            }
+          }
+          implicants.forEach(imp=>{if(!imp.used&&!imp.isDC){if(!primeImplicants.some(p=>p.val===imp.val&&p.mask===imp.mask))primeImplicants.push({val:imp.val,mask:imp.mask});}});
+          implicants=next;
+        }
+        // essential PIs
+        const chart={};
+        minterms.forEach(m=>{chart[m]=[];primeImplicants.forEach((pi,idx)=>{if(coversPI(pi,m))chart[m].push(idx);});});
+        const essentialIdx=new Set(), covered=new Set();
+        Object.entries(chart).forEach(([m,pis])=>{if(pis.length===1)essentialIdx.add(pis[0]);});
+        essentialIdx.forEach(idx=>{minterms.forEach(m=>{if(coversPI(primeImplicants[idx],m))covered.add(m);});});
+        const remaining=minterms.filter(m=>!covered.has(m));
+        while(remaining.length>0){
+          let best=-1,bestC=0;
+          primeImplicants.forEach((pi,idx)=>{
+            if(essentialIdx.has(idx))return;
+            let c=0;remaining.forEach(m=>{if(coversPI(pi,m))c++;});
+            if(c>bestC){bestC=c;best=idx;}
+          });
+          if(best===-1)break;
+          essentialIdx.add(best);
+          remaining.forEach(m=>{if(coversPI(primeImplicants[best],m)){const r=remaining.indexOf(m);if(r!==-1)remaining.splice(r,1);}});
+        }
+        return {primeImplicants,essential:Array.from(essentialIdx).map(i=>primeImplicants[i])};
+      }
+
+      function piToString(pi,vars){
+        const n=vars.length, terms=[];
+        for(let i=0;i<n;i++){
+          const bit=n-1-i;
+          if((pi.mask>>bit)&1) continue;
+          terms.push(((pi.val>>bit)&1)?vars[i]:vars[i]+"'");
+        }
+        return terms.join('');
+      }
+
+      // POS sum-term renderer: literals are inverted relative to SOP (a fixed 1
+      // becomes a complemented variable) and joined with OR, not implicit AND.
+      function piToStringPOS(pi,vars){
+        const n=vars.length, terms=[];
+        for(let i=0;i<n;i++){
+          const bit=n-1-i;
+          if((pi.mask>>bit)&1) continue;
+          terms.push(((pi.val>>bit)&1)?vars[i]+"'":vars[i]);
+        }
+        return terms.length?terms.join(' + '):'0';
+      }
+
+      function exprToString(node){
+        if(node.type==='VAR') return node.name;
+        if(node.type==='NOT') return node.child.type==='VAR'?node.child.name+"'":"("+exprToString(node.child)+")'";
+        const ops={AND:'·',OR:'+',XOR:'⊕',NAND:'↑',NOR:'↓',XNOR:'⇔'};
+        const op=ops[node.type]||node.type;
+        const left=exprToString(node.left), right=exprToString(node.right);
+        return left+' '+op+' '+right;
+      }
+
+      // ========== K-Map ==========
+      const GRAY2=[0,1,3,2];
+      function kmapGrid(tt){
+        const vars=tt.vars, n=vars.length;
+        if(n<2||n>4) return null;
+        const rows=GRAY2.slice(0,1<<Math.max(0,n-2));
+        const cols=GRAY2.slice(0,1<<(n<=2?n:2));
+        const rowVars=vars.slice(0,n-2);
+        const colVars=vars.slice(n-2);
+        const grid=rows.map(()=>cols.map(()=>null));
+        tt.rows.forEach((r,idx)=>{
+          const rowBits=n<=2?0:(idx>>(n-2));
+          const colBits=idx&((1<<(n<=2?n:2))-1);
+          const ri=rows.indexOf(rowBits);
+          const ci=cols.indexOf(colBits);
+          if(ri>=0&&ci>=0) grid[ri][ci]={...r,idx};
+        });
+        return {vars,rowVars,colVars,rows,cols,grid};
+      }
+
+      function renderKMap(km){
+        if(!km) return '<p class="text-sm text-white/50">K-map visualization available for 2–4 variables.</p>';
+        const {vars,rowVars,colVars,rows,cols,grid}=km;
+        let html='<div class="overflow-x-auto"><table class="text-sm border-collapse">';
+        // Header
+        html+='<tr><th class="px-2 py-1 text-white/50 text-xs"></th>';
+        cols.forEach(c=>{
+          const bits=c.toString(2).padStart(colVars.length,'0');
+          html+='<th class="px-2 py-1 text-white/50 text-xs text-center">'+bits+'</th>';
+        });
+        html+='</tr>';
+        rows.forEach((r,ri)=>{
+          const rbits=r.toString(2).padStart(rowVars.length,'0');
+          html+='<tr><th class="px-2 py-1 text-white/50 text-xs">'+rbits+'</th>';
+          cols.forEach((c,ci)=>{
+            const cell=grid[ri][ci];
+            const val=cell?cell.output:'—';
+            const bg=val===1?'bg-bae-primary/30':(val===0?'bg-white/5':'');
+            html+='<td class="px-3 py-2 text-center border border-white/10 '+bg+' min-w-[2.5rem]">'+val+'</td>';
+          });
+          html+='</tr>';
+        });
+        html+='</table></div>';
+        if(rowVars.length) html+='<p class="text-xs text-white/40 mt-1">Rows: '+rowVars.join('')+', Cols: '+colVars.join('')+'</p>';
+        return html;
+      }
+
+      // ========== NAND/NOR Conversion ==========
+      function toNANDOnly(node){
+        if(node.type==='VAR') return node;
+        if(node.type==='NOT') return {type:'NAND',left:toNANDOnly(node.child),right:toNANDOnly(node.child)};
+        const L=toNANDOnly(node.left), R=toNANDOnly(node.right);
+        if(node.type==='AND') return {type:'NAND',left:{type:'NAND',left:L,right:R},right:{type:'NAND',left:L,right:R}};
+        if(node.type==='OR') return {type:'NAND',left:{type:'NAND',left:L,right:L},right:{type:'NAND',left:R,right:R}};
+        // For other ops, keep as-is with converted children
+        return {...node,left:L,right:R};
+      }
+
+      function toNOROnly(node){
+        if(node.type==='VAR') return node;
+        if(node.type==='NOT') return {type:'NOR',left:toNOROnly(node.child),right:toNOROnly(node.child)};
+        const L=toNOROnly(node.left), R=toNOROnly(node.right);
+        if(node.type==='OR') return {type:'NOR',left:{type:'NOR',left:L,right:R},right:{type:'NOR',left:L,right:R}};
+        if(node.type==='AND') return {type:'NOR',left:{type:'NOR',left:L,right:L},right:{type:'NOR',left:R,right:R}};
+        return {...node,left:L,right:R};
+      }
+
+      // ========== UI Helpers ==========
+      function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+      function showError(id,msg){const el=$(id);el.textContent=msg;el.classList.remove('hidden');}
+      function hideError(id){$(id).classList.add('hidden');}
+
+      function switchTab(name){
+        document.querySelectorAll('.tab-btn').forEach(b=>{
+          b.classList.remove('active','bg-bae-primary','text-white');
+          b.classList.add('text-bae-muted','hover:bg-bae-border/20');
+          if(b.dataset.tab===name){b.classList.add('active','bg-bae-primary','text-white');b.classList.remove('text-bae-muted','hover:bg-bae-border/20');}
+        });
+        document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden'));
+        const panel=document.getElementById('panel-'+name);
+        if(panel) panel.classList.remove('hidden');
+      }
+
+      // ========== Expression → Truth Table ==========
+      function doExprCalc(){
+        hideError('expr-error');
+        const input=$('expr-input').value.trim();
+        if(!input) return;
+        let ast, tt;
+        try{ast=parse(tokenize(input));tt=generateTruthTable(ast);}
+        catch(e){showError('expr-error',e.message);return;}
+        lastExpr=input; lastAST=ast; lastTT=tt; lastSOP=null; lastPOS=null; lastMode='expr'; lastEquiv=null;
+        renderExprResult(tt,ast);
+        updateURL('expr='+encodeURIComponent(input));
+        $('pdf-btn').classList.remove('hidden');
+      }
+
+      function renderExprResult(tt,ast){
+        const vars=tt.vars, rows=tt.rows;
+        let html='<div class="space-y-4">';
+        html+='<div class="text-sm text-white/50 mb-1">Expression</div>';
+        html+='<div class="text-base font-semibold mb-2">'+escapeHtml(lastExpr)+'</div>';
+        html+='<div class="text-2xl font-bold font-serif mb-3">'+rows.length+' rows <span class="text-sm font-normal text-white/50">(2<sup>'+vars.length+'</sup>)</span></div>';
+
+        // Truth table
+        html+='<div class="border-t border-white/10 pt-3">';
+        html+='<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Truth Table</div>';
+        html+='<div class="overflow-x-auto"><table class="w-full text-sm">';
+        html+='<thead><tr class="text-white/50 text-xs">';
+        vars.forEach(v=>html+='<th class="text-left py-1 pr-3">'+v+'</th>');
+        html+='<th class="text-left py-1">Output</th></tr></thead><tbody>';
+        rows.forEach(r=>{
+          const isOne=r.output===1;
+          html+='<tr class="'+(isOne?'text-bae-primary font-medium':'text-white/70')+'">';
+          vars.forEach(v=>html+='<td class="py-0.5 pr-3">'+r[v]+'</td>');
+          html+='<td>'+r.output+'</td></tr>';
+        });
+        html+='</tbody></table></div>';
+        html+='</div>';
+
+        // K-map
+        const km=kmapGrid(tt);
+        if(km){
+          html+='<div class="border-t border-white/10 pt-3">';
+          html+='<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Karnaugh Map</div>';
+          html+=renderKMap(km);
+          html+='</div>';
+        }
+
+        // Minterms / Maxterms
+        const minterms=getMinterms(tt), maxterms=getMaxterms(tt);
+        html+='<div class="border-t border-white/10 pt-3">';
+        html+='<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Canonical Forms</div>';
+        html+='<p class="text-sm text-white/70 mb-1">SOP: <span class="font-mono text-bae-primary">Σm('+minterms.join(',')+')</span></p>';
+        html+='<p class="text-sm text-white/70">POS: <span class="font-mono text-bae-primary">ΠM('+maxterms.join(',')+')</span></p>';
+        html+='</div>';
+
+        html+='</div>';
+        $('result-content').innerHTML=html;
+      }
+
+      // ========== Simplifier ==========
+      function doSimplify(){
+        hideError('simp-error');
+        const input=$('simp-input').value.trim();
+        if(!input) return;
+        let ast, tt;
+        try{ast=parse(tokenize(input));tt=generateTruthTable(ast);}
+        catch(e){showError('simp-error',e.message);return;}
+
+        const minterms=getMinterms(tt);
+        const maxterms=getMaxterms(tt);
+        let dontCares=[];
+        if($('simp-dontcare').checked){
+          const dcStr=$('simp-dc-input').value.trim();
+          if(dcStr) dontCares=dcStr.split(',').map(s=>parseInt(s.trim(),10)).filter(n=>!isNaN(n));
+        }
+
+        const n=tt.vars.length;
+        const sop=quineMcCluskey(minterms,dontCares,n);
+        const pos=quineMcCluskey(maxterms,dontCares,n);
+
+        lastExpr=input; lastAST=ast; lastTT=tt; lastSOP=sop; lastPOS=pos; lastMode='simp'; lastEquiv=null;
+        renderSimplifyResult(tt,sop,pos);
+        updateURL('simp='+encodeURIComponent(input));
+        $('pdf-btn').classList.remove('hidden');
+      }
+
+      function renderSimplifyResult(tt,sop,pos){
+        const vars=tt.vars;
+        let html='<div class="space-y-4">';
+        html+='<div class="text-sm text-white/50 mb-1">Expression</div>';
+        html+='<div class="text-base font-semibold mb-2">'+escapeHtml(lastExpr)+'</div>';
+
+        // SOP
+        html+='<div class="border-t border-white/10 pt-3">';
+        html+='<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Sum of Products (SOP)</div>';
+        if(sop.essential.length){
+          const terms=sop.essential.map(pi=>piToString(pi,vars));
+          html+='<div class="text-lg font-bold font-serif text-bae-primary mb-2">'+terms.join(' + ')+'</div>';
+          html+='<p class="text-xs text-white/50 mb-2">Prime implicants: '+sop.primeImplicants.length+' | Essential: '+sop.essential.length+'</p>';
+          html+='<div class="text-xs text-white/40">'+sop.essential.map((pi,i)=>'PI'+(i+1)+': '+piToString(pi,vars)).join('  ·  ')+'</div>';
+        } else {
+          html+='<p class="text-sm text-white/50">No simplification needed (constant 0 or 1).</p>';
+        }
+        html+='</div>';
+
+        // POS
+        html+='<div class="border-t border-white/10 pt-3">';
+        html+='<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Product of Sums (POS)</div>';
+        if(pos.essential.length){
+          const terms=pos.essential.map(pi=>piToStringPOS(pi,vars));
+          html+='<div class="text-lg font-bold font-serif text-bae-primary mb-2">('+terms.join(')(')+')</div>';
+        } else {
+          html+='<p class="text-sm text-white/50">No simplification needed (constant 0 or 1).</p>';
+        }
+        html+='</div>';
+
+        // NAND / NOR
+        if(sop.essential.length){
+          html+='<div class="border-t border-white/10 pt-3">';
+          html+='<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Universal Gate Conversions</div>';
+          // Build simplified AST for conversion
+          const simpExpr=buildExprFromPIs(sop.essential,vars,'OR');
+          const nandExpr=toNANDOnly(simpExpr);
+          const posExpr=buildPOSExprFromPIs(pos.essential,vars);
+          const norExpr=toNOROnly(posExpr);
+          html+='<p class="text-sm text-white/70 mb-1">NAND-only:</p>';
+          html+='<div class="text-sm font-mono text-bae-primary mb-3">'+escapeHtml(exprToString(nandExpr))+'</div>';
+          html+='<p class="text-sm text-white/70 mb-1">NOR-only:</p>';
+          html+='<div class="text-sm font-mono text-bae-primary">'+escapeHtml(exprToString(norExpr))+'</div>';
+          html+='</div>';
+        }
+
+        html+='</div>';
+        $('result-content').innerHTML=html;
+      }
+
+      function buildExprFromPIs(pis,vars,joinType){
+        if(!pis.length) return {type:'VAR',name:'0'};
+        let terms=pis.map(pi=>{
+          const factors=[];
+          for(let i=0;i<vars.length;i++){
+            const bit=vars.length-1-i;
+            if((pi.mask>>bit)&1) continue;
+            factors.push(((pi.val>>bit)&1)?{type:'VAR',name:vars[i]}:{type:'NOT',child:{type:'VAR',name:vars[i]}});
+          }
+          if(!factors.length) return {type:'VAR',name:'1'};
+          let node=factors[0];
+          for(let j=1;j<factors.length;j++) node={type:'AND',left:node,right:factors[j]};
+          return node;
+        });
+        let result=terms[0];
+        for(let i=1;i<terms.length;i++) result={type:joinType,left:result,right:terms[i]};
+        return result;
+      }
+
+      // Build a POS AST (product of OR-terms) from maxterm prime implicants.
+      // Each sum term uses inverted literal polarity (fixed 1 -> complemented).
+      function buildPOSExprFromPIs(pis,vars){
+        if(!pis.length) return {type:'VAR',name:'1'};
+        let terms=pis.map(pi=>{
+          const factors=[];
+          for(let i=0;i<vars.length;i++){
+            const bit=vars.length-1-i;
+            if((pi.mask>>bit)&1) continue;
+            factors.push(((pi.val>>bit)&1)?{type:'NOT',child:{type:'VAR',name:vars[i]}}:{type:'VAR',name:vars[i]});
+          }
+          if(!factors.length) return {type:'VAR',name:'0'};
+          let node=factors[0];
+          for(let j=1;j<factors.length;j++) node={type:'OR',left:node,right:factors[j]};
+          return node;
+        });
+        let result=terms[0];
+        for(let i=1;i<terms.length;i++) result={type:'AND',left:result,right:terms[i]};
+        return result;
+      }
+
+      // ========== Equivalence Check ==========
+      function doEquiv(){
+        hideError('equiv-error');
+        const e1=$('equiv-1').value.trim(), e2=$('equiv-2').value.trim();
+        if(!e1||!e2){showError('equiv-error','Enter both expressions.');return;}
+        let ast1,ast2;
+        try{ast1=parse(tokenize(e1));ast2=parse(tokenize(e2));}
+        catch(e){showError('equiv-error',e.message);return;}
+        const v1=extractVars(ast1), v2=extractVars(ast2);
+        const allVars=Array.from(new Set([...v1,...v2])).sort();
+        const n=allVars.length;
+        let match=true, mismatchRow=null;
+        for(let i=0;i<(1<<n);i++){
+          const a={};
+          for(let j=0;j<n;j++) a[allVars[j]]=(i>>(n-1-j))&1;
+          const o1=evaluate(ast1,a), o2=evaluate(ast2,a);
+          if(o1!==o2){match=false;mismatchRow={...a,out1:o1,out2:o2};break;}
+        }
+        lastMode='equiv'; lastTT=null; lastSOP=null; lastPOS=null;
+        lastEquiv={e1,e2,match,mismatchRow,n};
+        let html='<div class="space-y-3">';
+        html+='<div class="text-sm text-white/50 mb-1">Equivalence Check</div>';
+        html+='<div class="text-sm font-medium mb-1">Expression 1: <span class="font-mono text-bae-primary">'+escapeHtml(e1)+'</span></div>';
+        html+='<div class="text-sm font-medium mb-3">Expression 2: <span class="font-mono text-bae-primary">'+escapeHtml(e2)+'</span></div>';
+        if(match){
+          html+='<div class="text-xl font-bold text-green-400">✓ Equivalent</div>';
+          html+='<p class="text-sm text-white/70">Both expressions produce identical outputs for all 2<sup>'+n+'</sup> input combinations.</p>';
+        } else {
+          html+='<div class="text-xl font-bold text-red-400">✗ Not Equivalent</div>';
+          html+='<p class="text-sm text-white/70 mb-2">First mismatch found at:</p>';
+          html+='<div class="bg-white/5 rounded-bae-sm p-3 text-sm">';
+          Object.entries(mismatchRow).forEach(([k,v])=>{
+            html+='<div class="flex justify-between"><span class="text-white/50">'+k+'</span><span class="font-mono">'+v+'</span></div>';
+          });
+          html+='</div>';
+        }
+        html+='</div>';
+        $('result-content').innerHTML=html;
+        $('pdf-btn').classList.remove('hidden');
+      }
+
+      // ========== PDF Export ==========
+      function renderKMapForPDF(tt){
+        const vars=tt.vars, n=vars.length;
+        if(n<2||n>4) return '';
+        const GRAY2=[0,1,3,2];
+        const rows=GRAY2.slice(0,1<<Math.max(0,n-2));
+        const cols=GRAY2.slice(0,1<<(n<=2?n:2));
+        const rowVars=vars.slice(0,n-2);
+        const colVars=vars.slice(n-2);
+        const grid=rows.map(()=>cols.map(()=>null));
+        tt.rows.forEach((r,idx)=>{
+          const rowBits=n<=2?0:(idx>>(n-2));
+          const colBits=idx&((1<<(n<=2?n:2))-1);
+          const ri=rows.indexOf(rowBits);
+          const ci=cols.indexOf(colBits);
+          if(ri>=0&&ci>=0) grid[ri][ci]={output:r.output,idx};
+        });
+        let html='<div style="font-size:11px;font-weight:bold;color:#666;margin-bottom:6px;">Karnaugh Map</div>';
+        html+='<table style="border-collapse:collapse;font-size:11px;margin-bottom:16px;">';
+        html+='<tr><th style="border:1px solid #ccc;padding:4px 8px;background:#f5f5f5;"></th>';
+        cols.forEach(c=>{
+          const bits=c.toString(2).padStart(colVars.length,'0');
+          html+='<th style="border:1px solid #ccc;padding:4px 8px;background:#f5f5f5;text-align:center;">'+bits+'</th>';
+        });
+        html+='</tr>';
+        rows.forEach((r,ri)=>{
+          const rbits=r.toString(2).padStart(rowVars.length,'0');
+          html+='<tr><th style="border:1px solid #ccc;padding:4px 8px;background:#f5f5f5;">'+rbits+'</th>';
+          cols.forEach((c,ci)=>{
+            const cell=grid[ri][ci];
+            const val=cell?cell.output:'—';
+            const bg=val===1?'background:#e0e7ff;':(val===0?'background:#f9f9f9;':'');
+            html+='<td style="border:1px solid #ccc;padding:6px 12px;text-align:center;'+bg+'">'+val+'</td>';
+          });
+          html+='</tr>';
+        });
+        html+='</table>';
+        if(rowVars.length) html+='<p style="font-size:10px;color:#666;margin-bottom:16px;">Rows: '+rowVars.join('')+', Cols: '+colVars.join('')+'</p>';
+        return html;
+      }
+
+      async function exportPDF(){
+        if(typeof html2pdf==='undefined')return;
+        const btn=$('pdf-btn'); const orig=btn.textContent;
+        btn.textContent='Generating PDF...'; btn.disabled=true;
+        const report=document.createElement('div');
+        report.style.cssText='width:210mm;padding:20px;box-sizing:border-box;background:#fff;color:#1a1a1a;font-family:sans-serif;';
+        let pdfHtml='';
+        pdfHtml+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">';
+        pdfHtml+='<div style="width:40px;height:40px;border-radius:10px;background:#0f0f1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;font-family:Georgia,serif;">B<span style=\"color:#8b5cf6;\">.</span></div>';
+        pdfHtml+='<div><div style="font-size:18px;font-weight:bold;">Best Answer Hub</div><div style="font-size:13px;color:#666;">Truth Table Report</div></div></div>';
+
+        if(lastMode==='equiv' && lastEquiv){
+          pdfHtml+='<div style="font-size:14px;font-weight:bold;margin-bottom:12px;">Equivalence Check</div>';
+          pdfHtml+='<div style="font-size:12px;margin-bottom:4px;">Expression 1: <strong>'+escapeHtml(lastEquiv.e1)+'</strong></div>';
+          pdfHtml+='<div style="font-size:12px;margin-bottom:16px;">Expression 2: <strong>'+escapeHtml(lastEquiv.e2)+'</strong></div>';
+          if(lastEquiv.match){
+            pdfHtml+='<div style="font-size:16px;font-weight:bold;color:#16a34a;margin-bottom:8px;">✓ Equivalent</div>';
+            pdfHtml+='<p style="font-size:12px;color:#666;">Both expressions produce identical outputs for all 2<sup>'+lastEquiv.n+'</sup> input combinations.</p>';
+          } else {
+            pdfHtml+='<div style="font-size:16px;font-weight:bold;color:#dc2626;margin-bottom:8px;">✗ Not Equivalent</div>';
+            pdfHtml+='<p style="font-size:12px;color:#666;margin-bottom:8px;">First mismatch found at:</p>';
+            pdfHtml+='<table style="border-collapse:collapse;font-size:11px;">';
+            Object.entries(lastEquiv.mismatchRow).forEach(([k,v])=>{
+              pdfHtml+='<tr style="border-bottom:1px solid #eee;"><td style="padding:4px 12px 4px 0;color:#666;">'+k+'</td><td style="padding:4px 0;font-weight:bold;">'+v+'</td></tr>';
+            });
+            pdfHtml+='</table>';
+          }
+        } else if(lastTT){
+          const vars=lastTT.vars, rows=lastTT.rows;
+          pdfHtml+='<div style="font-size:14px;font-weight:bold;margin-bottom:8px;">Expression: '+escapeHtml(lastExpr)+'</div>';
+          pdfHtml+='<div style="font-size:12px;color:#666;margin-bottom:16px;">'+rows.length+' rows (2<sup>'+vars.length+'</sup>)</div>';
+          // Truth table
+          pdfHtml+='<div style="font-size:11px;font-weight:bold;color:#666;margin-bottom:6px;">Truth Table</div>';
+          pdfHtml+='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;">';
+          pdfHtml+='<thead><tr style="border-bottom:2px solid #ddd;">';
+          vars.forEach(v=>pdfHtml+='<th style="text-align:left;padding:4px 8px 4px 0;font-weight:bold;">'+v+'</th>');
+          pdfHtml+='<th style="text-align:left;padding:4px 0;font-weight:bold;">Output</th></tr></thead><tbody>';
+          rows.forEach(r=>{
+            pdfHtml+='<tr style="border-bottom:1px solid #eee;">';
+            vars.forEach(v=>pdfHtml+='<td style="padding:3px 8px 3px 0;">'+r[v]+'</td>');
+            pdfHtml+='<td style="padding:3px 0;font-weight:bold;color:'+(r.output===1?'#6366f1':'#333')+'">'+r.output+'</td></tr>';
+          });
+          pdfHtml+='</tbody></table>';
+          // K-map
+          const kmapHtml=renderKMapForPDF(lastTT);
+          if(kmapHtml) pdfHtml+=kmapHtml;
+          // Canonical forms
+          const minterms=rows.map((r,i)=>r.output===1?i:-1).filter(x=>x>=0);
+          const maxterms=rows.map((r,i)=>r.output===0?i:-1).filter(x=>x>=0);
+          pdfHtml+='<div style="font-size:11px;color:#666;margin-bottom:16px;">';
+          pdfHtml+='<div>SOP: Σm('+minterms.join(',')+')</div>';
+          pdfHtml+='<div>POS: ΠM('+maxterms.join(',')+')</div>';
+          pdfHtml+='</div>';
+        }
+        if(lastSOP && lastSOP.essential.length){
+          const vars=lastTT.vars;
+          pdfHtml+='<div style="border-top:1px solid #ddd;padding-top:12px;">';
+          pdfHtml+='<div style="font-size:11px;font-weight:bold;color:#666;margin-bottom:6px;">Simplified SOP</div>';
+          pdfHtml+='<div style="font-size:14px;font-weight:bold;color:#6366f1;margin-bottom:8px;">'+lastSOP.essential.map(pi=>piToString(pi,vars)).join(' + ')+'</div>';
+          if(lastPOS && lastPOS.essential.length){
+            pdfHtml+='<div style="font-size:11px;font-weight:bold;color:#666;margin-bottom:6px;">Simplified POS</div>';
+            pdfHtml+='<div style="font-size:14px;font-weight:bold;color:#6366f1;">('+lastPOS.essential.map(pi=>piToStringPOS(pi,vars)).join(')(')+')</div>';
+          }
+          pdfHtml+='</div>';
+        }
+        report.innerHTML=pdfHtml;
+        document.body.appendChild(report);
+        await html2pdf().set({margin:0,filename:'truth-table-report.pdf',image:{type:'jpeg',quality:0.95},html2canvas:{scale:2,scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(report).save();
+        document.body.removeChild(report);
+        btn.textContent=orig; btn.disabled=false;
+      }
+
+      // ========== URL Sharing ==========
+      function updateURL(param){
+        const url=new URL(window.location.href);
+        url.search=''; if(param) url.search='?'+param;
+        history.replaceState({},'',url);
+      }
+      function loadFromURL(){
+        const url=new URL(window.location.href);
+        const expr=url.searchParams.get('expr');
+        const simp=url.searchParams.get('simp');
+        if(expr){$('expr-input').value=expr;doExprCalc();}
+        else if(simp){$('simp-input').value=simp;doSimplify();}
+      }
+
+      // ========== Event Listeners ==========
+      document.querySelectorAll('.tab-btn').forEach(b=>{
+        b.addEventListener('click',()=>switchTab(b.dataset.tab));
+      });
+      $('expr-calc').addEventListener('click',doExprCalc);
+      $('expr-clear').addEventListener('click',()=>{
+        $('expr-input').value='';hideError('expr-error');$('result-content').innerHTML='<p class="text-sm text-white/70">Enter a Boolean expression to generate a truth table, K-map, and simplified form.</p>';$('pdf-btn').classList.add('hidden');updateURL('');
+      });
+      $('expr-input').addEventListener('keydown',e=>{if(e.key==='Enter')doExprCalc();});
+      document.querySelectorAll('.quick-expr').forEach(b=>{
+        b.addEventListener('click',()=>{$('expr-input').value=b.textContent;doExprCalc();});
+      });
+
+      $('simp-calc').addEventListener('click',doSimplify);
+      $('simp-clear').addEventListener('click',()=>{
+        $('simp-input').value='';$('simp-dc-input').value='';$('simp-dontcare').checked=false;$('simp-dc-panel').classList.add('hidden');hideError('simp-error');$('result-content').innerHTML='<p class="text-sm text-white/70">Enter a Boolean expression to generate a truth table, K-map, and simplified form.</p>';$('pdf-btn').classList.add('hidden');updateURL('');
+      });
+      $('simp-input').addEventListener('keydown',e=>{if(e.key==='Enter')doSimplify();});
+      $('simp-dontcare').addEventListener('change',()=>{
+        $('simp-dc-panel').classList.toggle('hidden',!$('simp-dontcare').checked);
+      });
+
+      $('equiv-calc').addEventListener('click',doEquiv);
+      $('equiv-clear').addEventListener('click',()=>{
+        $('equiv-1').value='';$('equiv-2').value='';hideError('equiv-error');$('result-content').innerHTML='<p class="text-sm text-white/70">Enter a Boolean expression to generate a truth table, K-map, and simplified form.</p>';$('pdf-btn').classList.add('hidden');updateURL('');
+      });
+
+      $('pdf-btn').addEventListener('click',exportPDF);
+
+      loadFromURL();
+    })();
+  </script>
+</BaseLayout>

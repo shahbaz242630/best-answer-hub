@@ -1,0 +1,823 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Favicon Generator?',
+    a: 'The Best Answer Hub Favicon Generator is a free browser-based tool that creates multi-resolution favicons from an image, text, or emoji. You can generate a classic <code>.ico</code> file, individual PNGs in a ZIP, or a modern SVG favicon. It also shows live previews at different sizes and in both light and dark browser tabs. Everything runs entirely in your browser. No image is ever uploaded to a server.',
+  },
+  {
+    q: 'Is the Favicon Generator free to use?',
+    a: 'Yes, the Best Answer Hub Favicon Generator is completely free with no usage limits, no signup, and no watermarks. You can generate as many favicons as you want for personal or commercial projects. Unlike Canva or Adobe Express, there are no subscription fees or credit limits. Every file is generated instantly in your browser using the Canvas API.',
+  },
+  {
+    q: 'How do I use the Favicon Generator?',
+    a: 'Choose one of three input modes: upload an image, type 1–2 characters of text, or pick an emoji. Adjust colors, fonts, or cropping as needed. The live preview updates instantly so you can see how your favicon looks at 16×16, 32×32, and as an Apple touch icon. When you are happy with the result, click Download to get your <code>.ico</code>, PNG ZIP, or SVG file. Copy the HTML snippet and paste it into the <code>&lt;head&gt;</code> section of your website.',
+  },
+  {
+    q: 'What is a favicon and why does my website need one?',
+    a: 'A favicon is the small icon that appears in browser tabs, bookmarks, and search results next to your page title. It helps users identify your site visually when multiple tabs are open. Without a favicon, browsers show a generic blank-page icon, which makes your site look unfinished. A well-designed favicon also improves brand recognition and click-through rates in bookmark lists and browser history.',
+  },
+  {
+    q: 'What sizes does the Best Answer Hub Favicon Generator produce?',
+    a: 'The Best Answer Hub Favicon Generator produces eight standard sizes: 16×16, 32×32, 48×48, 64×64, 128×128, 192×192, 256×256, and 512×512 pixels. The 16×16 size is used in browser tabs and old Internet Explorer versions. The 32×32 size is the modern standard for browser tabs. The 180×180 size is used for Apple touch icons on iOS devices. The 192×192 and 512×512 sizes are recommended for Progressive Web App manifests.',
+  },
+  {
+    q: 'What is the difference between ICO, PNG, and SVG favicons?',
+    a: '<code>.ico</code> is the legacy format that contains multiple resolutions in one file. It works in all browsers including old versions of Internet Explorer. PNG favicons offer better transparency and smaller file sizes for modern browsers. SVG favicons are infinitely scalable, usually under 1 KB, and look sharp at any resolution. Chrome 80+, Firefox 41+, and Safari 17+ all support SVG favicons. For maximum compatibility, provide an ICO fallback and an SVG primary.',
+  },
+  {
+    q: 'Can I generate a favicon from text or emoji?',
+    a: 'Yes. Text mode lets you type 1–2 characters, choose a font, and set background and text colors. This is perfect for creating a simple initial-based favicon like "A" or "BA" in your brand colors. Emoji mode lets you pick any emoji from a curated grid. An emoji favicon is a fun, lightweight option for side projects, developer tools, and personal blogs. Both modes output PNG, ICO, and true SVG favicons.',
+  },
+  {
+    q: 'How do I add the favicon to my website?',
+    a: 'Upload the downloaded files to the root directory of your website. Then copy the HTML snippet from the Best Answer Hub Favicon Generator and paste it inside the <code>&lt;head&gt;</code> section of every page. The snippet includes <code>&lt;link&gt;</code> tags for ICO, PNG, and SVG formats, plus the Apple touch icon meta tag. If you are using a static site generator like Astro, Hugo, or Jekyll, place the files in the public or static folder.',
+  },
+  {
+    q: 'What is an SVG favicon and why should I use one?',
+    a: 'An SVG favicon is a Scalable Vector Graphic used as a browser tab icon. Because it is vector-based, it stays perfectly crisp at 16×16 on a laptop or 512×512 on a high-DPI phone. SVG favicons are typically 200–800 bytes, dramatically smaller than multi-resolution ICO files. Chrome, Firefox, Edge, and Safari all support SVG favicons as of 2026. This tool generates a true SVG file, not a PNG wrapped in an SVG container.',
+  },
+  {
+    q: 'Will my favicon work on all browsers and devices?',
+    a: 'Yes, if you use the complete HTML snippet the Best Answer Hub Favicon Generator provides. The snippet includes a fallback chain: modern browsers load the SVG favicon first, Chrome and Firefox load the 32×32 PNG, Safari loads the Apple touch icon, and legacy browsers fall back to the <code>.ico</code> file. This covers every major browser released since 2015, including Chrome, Firefox, Safari, Edge, Opera, Samsung Internet, and mobile Safari on iOS.',
+  },
+  {
+    q: 'Can I use the Best Answer Hub Favicon Generator on a GitHub Pages site?',
+    a: 'Absolutely. Commit the favicon files to the root of your repository and add the HTML snippet to your layout or index file. GitHub Pages serves static files exactly as they are. If you are using a Jekyll theme, place the files in the root directory or an <code>assets/</code> folder and update the <code>href</code> paths in the snippet accordingly. Many developers use emoji favicons for GitHub Pages demo sites because they are fast and zero-maintenance.',
+  },
+  {
+    q: 'Is my image uploaded to a server?',
+    a: 'No. Your image never leaves your browser. The Best Answer Hub Favicon Generator uses the HTML5 Canvas API and FileReader API to process images entirely on your device. There are no network requests when you generate, preview, or download your favicon. You can verify this by opening the Network tab in your browser\'s Developer Tools. You will see zero outgoing requests after the initial page load.',
+  },
+  {
+    q: 'What image format should I upload?',
+    a: 'PNG, JPEG, WebP, and SVG uploads are all supported. For best results, upload a high-resolution square image or logo (at least 512×512 pixels). The Best Answer Hub Favicon Generator automatically center-crops non-square images to a square aspect ratio. PNG is ideal if your logo has transparency. JPEG works well for photographic images. Avoid uploading images larger than 20 MB because processing happens in your browser memory.',
+  },
+  {
+    q: 'What are the best favicon practices in 2026?',
+    a: 'Use an SVG favicon as the primary format for modern browsers, with an ICO fallback for legacy support. Keep the ICO file under 100 KB by including only essential sizes (16, 32, 48). Provide a 180×180 Apple touch icon for iOS bookmarks. Place favicon files in the site root for automatic detection. Test your favicon in both light and dark browser themes, since a dark logo can disappear on a dark tab. The Best Answer Hub Favicon Generator\'s live dark-mode preview makes that easy.',
+  },
+  {
+    q: 'Why won\'t my new favicon show up after I changed it, and how do I fix favicon caching?',
+    a: 'Browsers cache favicons much more aggressively than regular web assets, so a new favicon can take hours to appear even after you have replaced the file on your server. The fastest fix is a hard refresh: Ctrl+Shift+R on Windows or Cmd+Shift+R on Mac. If that does not work, append a cache-busting version parameter to your favicon link tag, for example, <code>&lt;link rel="icon" href="/favicon.ico?v=2"&gt;</code>. Renaming the file entirely (from favicon.ico to favicon-v2.ico) also forces every browser to treat it as a new asset. Note that bookmarks maintain their own separate favicon cache and may take longer to update regardless of what you do on the server side. In Chrome, the URL <code>chrome://favicon-internals</code> shows the current favicon cache for debugging.',
+  },
+];
+
+const steps = [
+  { title: 'Choose your input', description: 'Upload an image, type 1–2 text characters, or pick an emoji. Adjust colors, fonts, or zoom to match your brand.' },
+  { title: 'Preview live', description: 'See how your favicon looks at 16×16, 32×32, and Apple touch icon sizes. Switch between light and dark tab previews.' },
+  { title: 'Download and install', description: 'Get your .ico, PNG ZIP, or SVG file. Copy the HTML snippet and paste it into the <head> of your website.' },
+];
+
+const seo = {
+  title: 'Free Favicon Generator — ICO, PNG & SVG (2026)',
+  description: 'Generate favicons from images, text, or emoji. Download .ico, PNG multi-resolution pack, or SVG. Preview in light and dark tabs. No upload, no signup.',
+  url: '/tools/favicon-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Favicon Generator', url: '/tools/favicon-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Favicon Generator:"
+    accentText="ICO, PNG & SVG in one click"
+    description="Create multi-resolution favicons from an image, text, or emoji. Preview how they look in light and dark browser tabs. Download .ico, PNG pack, or modern SVG. No upload, no signup."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <!-- Favicon Generator Interface -->
+  <section class="py-6 md:py-8" aria-label="Favicon generator">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-6xl mx-auto space-y-6">
+
+        <!-- Top row: Controls (left) + Previews (right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <!-- Left: Input Controls -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 h-fit">
+            <h2 class="text-sm font-bold text-bae-ink mb-4">Design Your Favicon</h2>
+
+            <!-- Mode tabs -->
+            <div class="flex items-center gap-2 mb-5">
+              <button type="button" id="fg-tab-image" class="flex-1 text-xs font-semibold px-3 py-2 rounded-bae-sm border transition-colors bg-bae-primary text-white border-bae-primary">Image</button>
+              <button type="button" id="fg-tab-text" class="flex-1 text-xs font-semibold px-3 py-2 rounded-bae-sm border transition-colors bg-bae-bg text-bae-ink border-bae-border hover:border-bae-primary">Text</button>
+              <button type="button" id="fg-tab-emoji" class="flex-1 text-xs font-semibold px-3 py-2 rounded-bae-sm border transition-colors bg-bae-bg text-bae-ink border-bae-border hover:border-bae-primary">Emoji</button>
+            </div>
+
+            <!-- Image mode -->
+            <div id="fg-panel-image" class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Upload Image</label>
+                <div class="flex gap-2">
+                  <label class="flex-1 bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2.5 rounded-bae-sm hover:border-bae-primary transition-colors cursor-pointer text-center">
+                    Choose file
+                    <input type="file" id="fg-image-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="hidden" />
+                  </label>
+                  <button type="button" id="fg-image-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+                </div>
+                <p class="text-[11px] text-bae-muted mt-1.5">PNG, JPEG, WebP, or SVG. Max 20 MB. Non-square images are center-cropped.</p>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Zoom / Scale <span class="text-bae-muted/60">(<span id="fg-zoom-val">100</span>%)</span></label>
+                <input type="range" id="fg-zoom" min="50" max="200" value="100" class="w-full accent-bae-primary" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Position</label>
+                <div class="grid grid-cols-3 gap-1.5 w-max">
+                  <button type="button" data-pos="tl" class="fg-pos-btn w-7 h-7 rounded-bae-sm border border-bae-border bg-bae-bg hover:border-bae-primary"></button>
+                  <button type="button" data-pos="tc" class="fg-pos-btn w-7 h-7 rounded-bae-sm border border-bae-border bg-bae-bg hover:border-bae-primary"></button>
+                  <button type="button" data-pos="tr" class="fg-pos-btn w-7 h-7 rounded-bae-sm border border-bae-border bg-bae-bg hover:border-bae-primary"></button>
+                  <button type="button" data-pos="ml" class="fg-pos-btn w-7 h-7 rounded-bae-sm border border-bae-border bg-bae-bg hover:border-bae-primary"></button>
+                  <button type="button" data-pos="mc" class="fg-pos-btn w-7 h-7 rounded-bae-sm border border-bae-primary bg-bae-primary-soft"></button>
+                  <button type="button" data-pos="mr" class="fg-pos-btn w-7 h-7 rounded-bae-sm border border-bae-border bg-bae-bg hover:border-bae-primary"></button>
+                  <button type="button" data-pos="bl" class="fg-pos-btn w-7 h-7 rounded-bae-sm border border-bae-border bg-bae-bg hover:border-bae-primary"></button>
+                  <button type="button" data-pos="bc" class="fg-pos-btn w-7 h-7 rounded-bae-sm border border-bae-border bg-bae-bg hover:border-bae-primary"></button>
+                  <button type="button" data-pos="br" class="fg-pos-btn w-7 h-7 rounded-bae-sm border border-bae-border bg-bae-bg hover:border-bae-primary"></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Text mode -->
+            <div id="fg-panel-text" class="space-y-4 hidden">
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Text <span class="text-bae-muted/60">(1–2 chars recommended)</span></label>
+                <input type="text" id="fg-text-input" maxlength="3" placeholder="A" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Font</label>
+                <select id="fg-text-font" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary">
+                  <option value="Arial, sans-serif">Arial</option>
+                  <option value="Georgia, serif">Georgia</option>
+                  <option value="Impact, sans-serif">Impact</option>
+                  <option value="'Courier New', monospace">Courier New</option>
+                  <option value="'Times New Roman', serif">Times New Roman</option>
+                  <option value="Verdana, sans-serif">Verdana</option>
+                  <option value="Helvetica, sans-serif">Helvetica</option>
+                  <option value="Tahoma, sans-serif">Tahoma</option>
+                  <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                  <option value="'Segoe UI', sans-serif">Segoe UI</option>
+                </select>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-bae-muted mb-1.5">Background</label>
+                  <div class="flex items-center gap-2">
+                    <input type="color" id="fg-text-bg" value="#6366f1" class="w-10 h-9 rounded-bae-sm border border-bae-border bg-transparent cursor-pointer" />
+                    <input type="text" id="fg-text-bg-hex" value="#6366f1" maxlength="7" class="flex-1 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs text-bae-ink font-mono focus:outline-none focus:border-bae-primary" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-bae-muted mb-1.5">Text Color</label>
+                  <div class="flex items-center gap-2">
+                    <input type="color" id="fg-text-color" value="#ffffff" class="w-10 h-9 rounded-bae-sm border border-bae-border bg-transparent cursor-pointer" />
+                    <input type="text" id="fg-text-color-hex" value="#ffffff" maxlength="7" class="flex-1 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs text-bae-ink font-mono focus:outline-none focus:border-bae-primary" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Shape</label>
+                <div class="flex gap-2">
+                  <button type="button" data-shape="square" class="fg-shape-btn flex-1 text-xs font-semibold px-3 py-2 rounded-bae-sm border transition-colors bg-bae-primary text-white border-bae-primary">Square</button>
+                  <button type="button" data-shape="rounded" class="fg-shape-btn flex-1 text-xs font-semibold px-3 py-2 rounded-bae-sm border transition-colors bg-bae-bg text-bae-ink border-bae-border hover:border-bae-primary">Rounded</button>
+                  <button type="button" data-shape="circle" class="fg-shape-btn flex-1 text-xs font-semibold px-3 py-2 rounded-bae-sm border transition-colors bg-bae-bg text-bae-ink border-bae-border hover:border-bae-primary">Circle</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Emoji mode -->
+            <div id="fg-panel-emoji" class="space-y-4 hidden">
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Selected Emoji</label>
+                <input type="text" id="fg-emoji-input" maxlength="2" placeholder="🔥" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-2xl text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Quick Pick</label>
+                <div class="grid grid-cols-8 gap-1.5" id="fg-emoji-grid">
+                  {['🔥','⭐','🚀','💡','🎯','🛡','⚡','🔒','🌐','📦','🎨','🔧','💻','📱','🎮','🎵','❤','💚','💙','💜','🧡','💛','🖤','🤍','😀','😎','🤓','🥳','🤠','👻','👽','🤖','🐱','🐶','🦊','🐼','🐨','🦁','🐯','🦄','🌸','🌺','🌻','🍀','🍎','🍊','🍋','🍇','☀','🌙','⭐','☁','❄','⚡','🔥','💧','🌍','🌎','🌏','🪐','🍔','🍕','🍣','🍩'].map((emoji) => (
+                    <button type="button" class="fg-emoji-btn w-8 h-8 text-lg flex items-center justify-center rounded-bae-sm border border-bae-border bg-bae-bg hover:border-bae-primary hover:bg-bae-primary-soft transition-colors">{emoji}</button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Background</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="fg-emoji-bg" value="#ffffff" class="w-10 h-9 rounded-bae-sm border border-bae-border bg-transparent cursor-pointer" />
+                  <input type="text" id="fg-emoji-bg-hex" value="#ffffff" maxlength="7" class="flex-1 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs text-bae-ink font-mono focus:outline-none focus:border-bae-primary" />
+                  <label class="flex items-center gap-1.5 text-xs text-bae-muted cursor-pointer select-none">
+                    <input type="checkbox" id="fg-emoji-transparent" class="accent-bae-primary" />
+                    Transparent
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Live Previews -->
+          <div class="space-y-6">
+            <!-- Size Previews -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+              <h2 class="text-sm font-bold text-bae-ink mb-4">Live Preview</h2>
+              <div class="flex items-center gap-6 flex-wrap">
+                <div class="text-center">
+                  <p class="text-[11px] text-bae-muted mb-1.5">16×16</p>
+                  <canvas id="fg-prev-16" width="16" height="16" class="w-8 h-8 border border-bae-border rounded-bae-sm bg-bae-bg"></canvas>
+                </div>
+                <div class="text-center">
+                  <p class="text-[11px] text-bae-muted mb-1.5">32×32</p>
+                  <canvas id="fg-prev-32" width="32" height="32" class="w-12 h-12 border border-bae-border rounded-bae-sm bg-bae-bg"></canvas>
+                </div>
+                <div class="text-center">
+                  <p class="text-[11px] text-bae-muted mb-1.5">Apple 180×180</p>
+                  <canvas id="fg-prev-180" width="180" height="180" class="w-20 h-20 border border-bae-border rounded-bae-sm bg-bae-bg"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Browser Tab Previews -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+              <h2 class="text-sm font-bold text-bae-ink mb-4">Browser Tab Preview</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Light tab -->
+                <div>
+                  <p class="text-[11px] text-bae-muted mb-1.5">Light Theme</p>
+                  <div class="bg-white border border-bae-border rounded-t-bae-sm px-3 py-2 flex items-center gap-2">
+                    <canvas id="fg-tab-light" width="32" height="32" class="w-4 h-4"></canvas>
+                    <span class="text-xs text-bae-ink truncate">Best Answer Hub</span>
+                  </div>
+                  <div class="h-1 bg-bae-primary rounded-b-bae-sm"></div>
+                </div>
+                <!-- Dark tab -->
+                <div>
+                  <p class="text-[11px] text-bae-muted mb-1.5">Dark Theme</p>
+                  <div class="bg-[#202124] border border-bae-border rounded-t-bae-sm px-3 py-2 flex items-center gap-2">
+                    <canvas id="fg-tab-dark" width="32" height="32" class="w-4 h-4"></canvas>
+                    <span class="text-xs text-gray-200 truncate">Best Answer Hub</span>
+                  </div>
+                  <div class="h-1 bg-bae-primary rounded-b-bae-sm"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output Section -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <h2 class="text-sm font-bold text-bae-ink">Download & Install</h2>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" id="fg-dl-ico" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Download .ico</button>
+              <button type="button" id="fg-dl-png" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Download PNG ZIP</button>
+              <button type="button" id="fg-dl-svg" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Download SVG</button>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-medium text-bae-muted">HTML Snippet</label>
+              <button type="button" id="fg-copy-html" class="text-xs font-semibold text-bae-primary hover:underline">Copy HTML</button>
+            </div>
+            <pre id="fg-html-snippet" class="w-full h-40 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono overflow-auto whitespace-pre-wrap"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Who uses this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">INDIE LAUNCH</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Indie Developer: launching a side project</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">16px • 1 minute</div>
+          <p class="text-sm text-bae-muted leading-relaxed">I ship fast and the last thing I want to do is open Figma for a 16px icon. The Best Answer Hub Favicon Generator lets me type two letters, pick my brand color, and download a complete ICO and SVG in under a minute.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">CLIENT HANDOFF</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Freelance Web Developer: client handoff</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">ICO + SVG + HTML</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Clients always forget to brief a favicon. I upload their logo, generate the full pack, and drop the HTML snippet straight into their <head>. The dark mode preview means I never ship a favicon that disappears on dark tabs.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">DIY WEBSITE</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Small Business Owner: DIY website</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">WordPress-ready</div>
+          <p class="text-sm text-bae-muted leading-relaxed">I built my site on WordPress and the native favicon tool only takes a square image. I used the Best Answer Hub Favicon Generator to crop my logo, generate the correct sizes, and get the HTML snippet. No designer needed.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">PWA SETUP</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Developer: PWA setup</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">192px + 512px PNG</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Building a Progressive Web App requires 192×192 and 512×512 PNGs for the manifest, plus an apple-touch-icon. The Best Answer Hub Favicon Generator outputs all the sizes I need in one download so I can cross the favicon checklist off in one go.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more design & web tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/screenshot-beautifier/" class="text-bae-primary hover:underline">Screenshot Beautifier</a>, <a href="/tools/color-palette-generator/" class="text-bae-primary hover:underline">Color Palette Generator</a>, <a href="/tools/image-compressor/" class="text-bae-primary hover:underline">Image Compressor</a>, <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code Generator</a>, <a href="/tools/meta-tag-generator/" class="text-bae-primary hover:underline">Meta Tag Generator</a>, and <a href="/tools/seo-score-checker/" class="text-bae-primary hover:underline">SEO Score Checker</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      // --- State ---
+      let mode = 'image'; // image | text | emoji
+      let imageSource = null; // Image object
+      let imageFileName = 'favicon';
+      let zoom = 100;
+      let position = 'mc';
+      let textSettings = { text: 'A', font: 'Arial, sans-serif', bg: '#6366f1', color: '#ffffff', shape: 'square' };
+      let emojiSettings = { emoji: '🔥', bg: '#ffffff', transparent: false };
+      const sizes = [16, 32, 48, 64, 128, 192, 256, 512];
+      const previewSizes = [16, 32, 180];
+
+      // --- Elements ---
+      const tabs = {
+        image: document.getElementById('fg-tab-image'),
+        text: document.getElementById('fg-tab-text'),
+        emoji: document.getElementById('fg-tab-emoji'),
+      };
+      const panels = {
+        image: document.getElementById('fg-panel-image'),
+        text: document.getElementById('fg-panel-text'),
+        emoji: document.getElementById('fg-panel-emoji'),
+      };
+      const canvases = {};
+      previewSizes.forEach(s => canvases[s] = document.getElementById('fg-prev-' + s));
+      canvases.tabLight = document.getElementById('fg-tab-light');
+      canvases.tabDark = document.getElementById('fg-tab-dark');
+
+      // --- Utilities ---
+      function escapeHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      function setTab(newMode) {
+        mode = newMode;
+        Object.keys(tabs).forEach(k => {
+          const active = k === newMode;
+          tabs[k].classList.toggle('bg-bae-primary', active);
+          tabs[k].classList.toggle('text-white', active);
+          tabs[k].classList.toggle('border-bae-primary', active);
+          tabs[k].classList.toggle('bg-bae-bg', !active);
+          tabs[k].classList.toggle('text-bae-ink', !active);
+          tabs[k].classList.toggle('border-bae-border', !active);
+          panels[k].classList.toggle('hidden', !active);
+        });
+        renderAll();
+      }
+
+      Object.keys(tabs).forEach(k => {
+        tabs[k].addEventListener('click', () => setTab(k));
+      });
+
+      // Image mode handlers
+      document.getElementById('fg-image-file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.size > 20 * 1024 * 1024) {
+          alert('Image must be under 20 MB');
+          e.target.value = '';
+          return;
+        }
+        imageFileName = file.name.replace(/\.[^/.]+$/, '') || 'favicon';
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const img = new Image();
+          img.onload = function() {
+            imageSource = img;
+            renderAll();
+          };
+          img.onerror = function() {
+            alert('Failed to load image. Please try a different file.');
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById('fg-image-clear').addEventListener('click', function() {
+        document.getElementById('fg-image-file').value = '';
+        imageSource = null;
+        renderAll();
+      });
+
+      document.getElementById('fg-zoom').addEventListener('input', function(e) {
+        zoom = parseInt(e.target.value, 10);
+        document.getElementById('fg-zoom-val').textContent = zoom;
+        renderAll();
+      });
+
+      document.querySelectorAll('.fg-pos-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          position = this.dataset.pos;
+          document.querySelectorAll('.fg-pos-btn').forEach(b => {
+            b.classList.remove('border-bae-primary', 'bg-bae-primary-soft');
+            b.classList.add('border-bae-border', 'bg-bae-bg');
+          });
+          this.classList.remove('border-bae-border', 'bg-bae-bg');
+          this.classList.add('border-bae-primary', 'bg-bae-primary-soft');
+          renderAll();
+        });
+      });
+
+      // Text mode handlers
+      document.getElementById('fg-text-input').addEventListener('input', function(e) {
+        textSettings.text = e.target.value;
+        renderAll();
+      });
+      document.getElementById('fg-text-font').addEventListener('change', function(e) {
+        textSettings.font = e.target.value;
+        renderAll();
+      });
+      document.getElementById('fg-text-bg').addEventListener('input', function(e) {
+        textSettings.bg = e.target.value;
+        document.getElementById('fg-text-bg-hex').value = e.target.value;
+        renderAll();
+      });
+      document.getElementById('fg-text-bg-hex').addEventListener('input', function(e) {
+        if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+          textSettings.bg = e.target.value;
+          document.getElementById('fg-text-bg').value = e.target.value;
+          renderAll();
+        }
+      });
+      document.getElementById('fg-text-color').addEventListener('input', function(e) {
+        textSettings.color = e.target.value;
+        document.getElementById('fg-text-color-hex').value = e.target.value;
+        renderAll();
+      });
+      document.getElementById('fg-text-color-hex').addEventListener('input', function(e) {
+        if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+          textSettings.color = e.target.value;
+          document.getElementById('fg-text-color').value = e.target.value;
+          renderAll();
+        }
+      });
+      document.querySelectorAll('.fg-shape-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          textSettings.shape = this.dataset.shape;
+          document.querySelectorAll('.fg-shape-btn').forEach(b => {
+            b.classList.remove('bg-bae-primary', 'text-white', 'border-bae-primary');
+            b.classList.add('bg-bae-bg', 'text-bae-ink', 'border-bae-border');
+          });
+          this.classList.remove('bg-bae-bg', 'text-bae-ink', 'border-bae-border');
+          this.classList.add('bg-bae-primary', 'text-white', 'border-bae-primary');
+          renderAll();
+        });
+      });
+
+      // Emoji mode handlers
+      document.getElementById('fg-emoji-input').addEventListener('input', function(e) {
+        emojiSettings.emoji = e.target.value;
+        renderAll();
+      });
+      document.querySelectorAll('.fg-emoji-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          emojiSettings.emoji = this.textContent;
+          document.getElementById('fg-emoji-input').value = this.textContent;
+          renderAll();
+        });
+      });
+      document.getElementById('fg-emoji-bg').addEventListener('input', function(e) {
+        emojiSettings.bg = e.target.value;
+        document.getElementById('fg-emoji-bg-hex').value = e.target.value;
+        emojiSettings.transparent = false;
+        document.getElementById('fg-emoji-transparent').checked = false;
+        renderAll();
+      });
+      document.getElementById('fg-emoji-bg-hex').addEventListener('input', function(e) {
+        if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+          emojiSettings.bg = e.target.value;
+          document.getElementById('fg-emoji-bg').value = e.target.value;
+          emojiSettings.transparent = false;
+          document.getElementById('fg-emoji-transparent').checked = false;
+          renderAll();
+        }
+      });
+      document.getElementById('fg-emoji-transparent').addEventListener('change', function(e) {
+        emojiSettings.transparent = e.target.checked;
+        renderAll();
+      });
+
+      // --- Rendering ---
+      function drawToCanvas(canvas, size) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, size, size);
+
+        if (mode === 'image' && imageSource) {
+          drawImageMode(ctx, size);
+        } else if (mode === 'text') {
+          drawTextMode(ctx, size);
+        } else if (mode === 'emoji') {
+          drawEmojiMode(ctx, size);
+        } else {
+          // Empty state
+          ctx.fillStyle = '#f3f4f6';
+          ctx.fillRect(0, 0, size, size);
+          ctx.fillStyle = '#9ca3af';
+          ctx.font = (size * 0.4) + 'px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('?', size / 2, size / 2);
+        }
+      }
+
+      function drawImageMode(ctx, size) {
+        const img = imageSource;
+        const s = zoom / 100;
+        const imgAspect = img.width / img.height;
+        const canvasAspect = 1;
+
+        let srcW, srcH, srcX, srcY;
+        if (imgAspect > canvasAspect) {
+          srcH = img.height;
+          srcW = img.height * canvasAspect;
+        } else {
+          srcW = img.width;
+          srcH = img.width / canvasAspect;
+        }
+
+        // Apply zoom
+        const cx = img.width / 2;
+        const cy = img.height / 2;
+        srcW = srcW / s;
+        srcH = srcH / s;
+
+        // Position
+        const posMap = { tl: [-0.5, -0.5], tc: [0, -0.5], tr: [0.5, -0.5], ml: [-0.5, 0], mc: [0, 0], mr: [0.5, 0], bl: [-0.5, 0.5], bc: [0, 0.5], br: [0.5, 0.5] };
+        const [px, py] = posMap[position] || [0, 0];
+        const maxOffsetX = Math.max(0, (img.width - srcW) / 2);
+        const maxOffsetY = Math.max(0, (img.height - srcH) / 2);
+        srcX = cx + px * maxOffsetX * 2 - srcW / 2;
+        srcY = cy + py * maxOffsetY * 2 - srcH / 2;
+
+        // Clamp
+        srcX = Math.max(0, Math.min(srcX, img.width - srcW));
+        srcY = Math.max(0, Math.min(srcY, img.height - srcH));
+        srcW = Math.min(srcW, img.width - srcX);
+        srcH = Math.min(srcH, img.height - srcY);
+
+        ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, size, size);
+      }
+
+      function drawTextMode(ctx, size) {
+        const { text, font, bg, color, shape } = textSettings;
+        const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+
+        ctx.save();
+        if (shape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.clip();
+        } else if (shape === 'rounded') {
+          const r = size * 0.2;
+          ctx.beginPath();
+          ctx.moveTo(r, 0);
+          ctx.lineTo(size - r, 0);
+          ctx.quadraticCurveTo(size, 0, size, r);
+          ctx.lineTo(size, size - r);
+          ctx.quadraticCurveTo(size, size, size - r, size);
+          ctx.lineTo(r, size);
+          ctx.quadraticCurveTo(0, size, 0, size - r);
+          ctx.lineTo(0, r);
+          ctx.quadraticCurveTo(0, 0, r, 0);
+          ctx.closePath();
+          ctx.clip();
+        }
+
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, size, size);
+        ctx.restore();
+
+        if (!text) return;
+        const fontSize = size * (text.length > 1 ? 0.45 : 0.6);
+        ctx.font = 'bold ' + fontSize + 'px ' + font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = color;
+        ctx.fillText(text, size / 2, size / 2 + size * 0.02);
+      }
+
+      function drawEmojiMode(ctx, size) {
+        const { emoji, bg, transparent } = emojiSettings;
+        if (!transparent) {
+          ctx.fillStyle = bg;
+          ctx.fillRect(0, 0, size, size);
+        }
+        if (!emoji) return;
+        const fontSize = size * 0.65;
+        ctx.font = fontSize + 'px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(emoji, size / 2, size / 2 + size * 0.02);
+      }
+
+      function renderAll() {
+        previewSizes.forEach(s => drawToCanvas(canvases[s], s));
+        drawToCanvas(canvases.tabLight, 32);
+        drawToCanvas(canvases.tabDark, 32);
+        updateSnippet();
+      }
+
+      function updateSnippet() {
+        const name = escapeHtml(imageFileName);
+        const lines = [];
+        lines.push('<!-- Primary favicon -->');
+        lines.push('<link rel="icon" type="image/svg+xml" href="/' + name + '.svg">');
+        lines.push('<link rel="icon" type="image/png" sizes="32x32" href="/' + name + '-32x32.png">');
+        lines.push('<link rel="icon" type="image/png" sizes="16x16" href="/' + name + '-16x16.png">');
+        lines.push('<link rel="shortcut icon" href="/' + name + '.ico">');
+        lines.push('');
+        lines.push('<!-- Apple Touch Icon -->');
+        lines.push('<link rel="apple-touch-icon" sizes="180x180" href="/' + name + '-180x180.png">');
+        lines.push('');
+        lines.push('<!-- Android / PWA -->');
+        lines.push('<link rel="icon" type="image/png" sizes="192x192" href="/' + name + '-192x192.png">');
+        lines.push('<link rel="icon" type="image/png" sizes="512x512" href="/' + name + '-512x512.png">');
+        document.getElementById('fg-html-snippet').textContent = lines.join('\n');
+      }
+
+      // --- ICO Assembler ---
+      async function canvasToPngBlob(canvas) {
+        return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      }
+
+      async function buildIcoBlob() {
+        const pngBlobs = [];
+        const pngSizes = [];
+        for (const s of [16, 32, 48]) {
+          const c = document.createElement('canvas');
+          c.width = s; c.height = s;
+          drawToCanvas(c, s);
+          const blob = await canvasToPngBlob(c);
+          pngBlobs.push(blob);
+          pngSizes.push(s);
+        }
+        const count = pngBlobs.length;
+        const headerSize = 6 + count * 16;
+        const parts = [];
+
+        const dir = new DataView(new ArrayBuffer(6));
+        dir.setUint16(0, 0, true);
+        dir.setUint16(2, 1, true);
+        dir.setUint16(4, count, true);
+        parts.push(new Uint8Array(dir.buffer));
+
+        let offset = headerSize;
+        const entries = [];
+        for (let i = 0; i < count; i++) {
+          const size = pngBlobs[i].size;
+          const w = pngSizes[i];
+          const entry = new DataView(new ArrayBuffer(16));
+          entry.setUint8(0, w > 255 ? 0 : w);
+          entry.setUint8(1, w > 255 ? 0 : w);
+          entry.setUint8(2, 0);
+          entry.setUint8(3, 0);
+          entry.setUint16(4, 1, true);
+          entry.setUint16(6, 32, true);
+          entry.setUint32(8, size, true);
+          entry.setUint32(12, offset, true);
+          entries.push(new Uint8Array(entry.buffer));
+          offset += size;
+        }
+        parts.push(...entries);
+
+        for (let i = 0; i < count; i++) {
+          const buf = await pngBlobs[i].arrayBuffer();
+          parts.push(new Uint8Array(buf));
+        }
+
+        const totalLen = parts.reduce((a, b) => a + b.length, 0);
+        const out = new Uint8Array(totalLen);
+        let pos = 0;
+        for (const p of parts) {
+          out.set(p, pos);
+          pos += p.length;
+        }
+        return new Blob([out], { type: 'image/x-icon' });
+      }
+
+      // --- Download handlers ---
+      function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      document.getElementById('fg-dl-ico').addEventListener('click', async function() {
+        const blob = await buildIcoBlob();
+        downloadBlob(blob, imageFileName + '.ico');
+      });
+
+      document.getElementById('fg-dl-png').addEventListener('click', async function() {
+        let JSZip = window.JSZip;
+        if (!JSZip) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = '/jszip.min.js';
+            s.onload = () => { JSZip = window.JSZip; resolve(); };
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+        const zip = new JSZip();
+        for (const s of sizes) {
+          const c = document.createElement('canvas');
+          c.width = s; c.height = s;
+          drawToCanvas(c, s);
+          const blob = await canvasToPngBlob(c);
+          zip.file(imageFileName + '-' + s + 'x' + s + '.png', blob);
+        }
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        downloadBlob(zipBlob, imageFileName + '-favicons.zip');
+      });
+
+      document.getElementById('fg-dl-svg').addEventListener('click', function() {
+        let svg = '';
+        if (mode === 'text') {
+          const { text, font, bg, color, shape } = textSettings;
+          const bgAttr = shape === 'circle' ? '' : 'fill="' + bg + '"';
+          let shapeEl = '';
+          if (shape === 'circle') {
+            shapeEl = '<circle cx="16" cy="16" r="16" fill="' + bg + '"/>';
+          } else if (shape === 'rounded') {
+            shapeEl = '<rect width="32" height="32" rx="6" fill="' + bg + '"/>';
+          } else {
+            shapeEl = '<rect width="32" height="32" fill="' + bg + '"/>';
+          }
+          svg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">' + shapeEl + '<text x="16" y="18" font-family="' + font.replace(/"/g, "'") + '" font-size="' + (text.length > 1 ? '14' : '18') + '" font-weight="bold" fill="' + color + '" text-anchor="middle">' + escapeHtml(text) + '</text></svg>';
+        } else if (mode === 'emoji') {
+          const { emoji, bg, transparent } = emojiSettings;
+          const bgEl = transparent ? '' : '<rect width="32" height="32" fill="' + bg + '"/>';
+          svg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">' + bgEl + '<text x="16" y="18" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji" font-size="20" text-anchor="middle">' + escapeHtml(emoji) + '</text></svg>';
+        } else {
+          alert('SVG download is available for Text and Emoji modes. For images, use the PNG ZIP download.');
+          return;
+        }
+        const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+        downloadBlob(blob, imageFileName + '.svg');
+      });
+
+      document.getElementById('fg-copy-html').addEventListener('click', function() {
+        const text = document.getElementById('fg-html-snippet').textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      });
+
+      // Initial render
+      renderAll();
+    })();
+  </script>
+</BaseLayout>

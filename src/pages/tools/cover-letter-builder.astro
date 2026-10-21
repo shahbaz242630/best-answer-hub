@@ -1,0 +1,785 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-07-11T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Cover Letter Builder?',
+    a: 'The Best Answer Hub Cover Letter Builder is a free, browser-based tool that creates professional cover letters in PDF and Microsoft Word format. No account, no subscription, and no watermarks. Enter your contact details, recipient information, and letter body through a guided form, watch the live preview update as you type, then download in one click. Everything runs entirely in your browser: no data is stored on any server.',
+  },
+  {
+    q: 'Do hiring managers actually read cover letters, or do they skip straight to the resume?',
+    a: 'Many do read them, including at companies that don\'t require one, and a strong letter often tips the decision between two otherwise equally qualified candidates. The idea that cover letters are always ignored is a myth. A well-written, specific letter can measurably improve your odds of landing an interview call.',
+  },
+  {
+    q: 'How long should a cover letter be in 2025?',
+    a: 'The consensus from hiring managers: 250–400 words across three to four paragraphs. Entry-level candidates should aim for 250–300 words; senior candidates can go up to 400. Under 200 words reads as low-effort; over 500 feels unfocused. Recruiters skim fast and often decide from the first line or two whether to keep reading, so your opening sentence carries most of the weight.',
+  },
+  {
+    q: 'What\'s the best opening line for a cover letter that isn\'t "I am writing to apply for"?',
+    a: 'Lead with a specific achievement or a direct value proposition: signal value in sentence one, not your name or the job title. Example: "Six years managing logistics for a 50-person team taught me one thing: broken workflows cost more than bad hires." Specificity in the opening is the single highest-ROI change most cover letters can make.',
+  },
+  {
+    q: 'Can employers tell if I used ChatGPT to write my cover letter?',
+    a: 'Usually not from detection software, which is unreliable, but many can tell from generic tone and reject cover letters that read as templated. The real risk is a bland, formulaic voice, not detection tools. Giveaway phrases include "delve," "realm," "pivotal," and "I am excited to bring my passion for." Use AI to generate a first draft, then rewrite every sentence in your own voice with real, specific details.',
+  },
+  {
+    q: 'What are the biggest cover letter mistakes that get you rejected immediately?',
+    a: 'The three highest-rejection triggers: addressing the letter to the wrong company (easy to spot, instantly disqualifying), copying resume bullet points verbatim instead of contextualising them, and using phrases that signal a copy-paste template: "motivated self-starter," "team player," "hard worker." A fourth: writing a cover letter about yourself rather than about what you will deliver for this employer.',
+  },
+  {
+    q: 'Should I still write a cover letter if the job posting says it\'s optional?',
+    a: 'Yes. Many hiring managers still read cover letters even when they are optional, and submitting one signals effort that sets you apart in competitive roles. The main exception is high-volume retail or warehouse hiring that is purely resume-driven. When in doubt, write it: the upside of standing out outweighs the few minutes it takes.',
+  },
+  {
+    q: 'What should a cover letter include that isn\'t already on my resume?',
+    a: 'Context, motivation, and voice are the three things a resume cannot convey. Your cover letter should explain why this specific role at this specific company, connect a key achievement to the employer\'s actual problem, and let your personality come through. If your letter is just a prose version of your resume bullet points, hiring managers notice immediately and it counts against you.',
+  },
+  {
+    q: 'Do cover letters go through ATS systems, and do I need to include keywords?',
+    a: 'Often, yes. Many employers\' applicant tracking systems scan cover letters for keywords alongside resumes, so it is safest to assume yours will be parsed. Mirror exact phrases from the job posting in your cover letter, not synonyms. Include both the acronym and the full form (e.g., "Search Engine Optimisation (SEO)"). Weave keywords naturally into achievement sentences. Keyword stuffing boosts your ATS score but kills human readability once the letter is seen. Use the <a href="/tools/job-keyword-matcher/">Best Answer Hub Job Keyword Matcher</a> to identify which keywords from a job description are missing from your cover letter before you submit.',
+  },
+  {
+    q: 'How do I write a cover letter when I have no work experience at all?',
+    a: 'Draw on academic projects, volunteering, extracurricular leadership, and coursework. Never open with "I know I don\'t have much experience." Instead, name a transferable skill and show it in action, even if the context is a university project or a personal initiative. A strong cover letter is where candidates with limited experience gain the most, because it lets you put transferable skills in context that a resume alone cannot, so this is where effort pays the highest return.',
+  },
+  {
+    q: 'How do I explain a career change in a cover letter without sounding unqualified?',
+    a: 'Open with what you bring, not why you\'re leaving. Frame transferable skills (leadership, delivery, communication) as deliberate assets, not consolation prizes. Address the pivot directly and cite courses, certifications, or side projects that show you prepared intentionally. The goal is to make the career change read as a considered move toward this employer, not a retreat from your last one.',
+  },
+  {
+    q: 'How do I write a cover letter when I have an employment gap?',
+    a: 'Name the gap briefly and neutrally: one clause, not a paragraph. Then redirect immediately to what you did during the gap that is relevant (freelance work, caregiving, upskilling) or simply move straight to your qualifications. Hiding or over-explaining a gap triggers more suspicion than a calm, direct acknowledgement. Hiring managers expect gaps; defensive language makes them curious.',
+  },
+  {
+    q: 'How do I address a cover letter when the job posting doesn\'t list the hiring manager\'s name?',
+    a: '"Dear Hiring Manager" is the universally accepted default and the safest choice. If you can find the hiring manager\'s name through LinkedIn or the company website, use it. Specificity signals research. Avoid "To Whom It May Concern" (dated and impersonal) and never use "Dear Sir/Madam" in 2025. If the role lists a department head, addressing the letter to that person\'s title is also appropriate.',
+  },
+  {
+    q: 'How do I personalise a cover letter without spending hours on each application?',
+    a: 'Use a master template with fixed sections for your skills and tone, and a 3-paragraph "swap zone": one company-specific sentence, one role-specific achievement, and one closing reason. Research the company for 10 minutes maximum: their About page, a recent news item, and the job description is enough. The Best Answer Hub Cover Letter Builder lets you download a Word version for fast per-application edits without starting from scratch.',
+  },
+  {
+    q: 'How do I follow up on a job application after submitting my cover letter?',
+    a: 'Wait one to two full business weeks before following up. Anything sooner reads as impatient. Send a single brief email of three to four sentences: restate your interest, reference the specific role title, and ask whether any further information would be helpful. Never follow up more than twice for the same application. Email is strongly preferred over phone for most professional roles.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your details', description: 'Fill in your contact information, the recipient\'s details, date, subject, and choose your salutation and closing.' },
+  { title: 'Write your letter', description: 'Compose three body paragraphs: why you want the role, why you are qualified, and a confident call to action.' },
+  { title: 'Download PDF or Word', description: 'Review the live preview, then click Download PDF for emails or Download Word for edits. Both files are generated instantly.' },
+];
+
+const seo = {
+  title: 'Free Cover Letter Builder — PDF & Word Download (2026)',
+  description: 'Build professional cover letters for free. Live preview, PDF and Word export, no signup, no watermarks. Your data never leaves your browser.',
+  url: '/tools/cover-letter-builder/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Cover Letter Builder', url: '/tools/cover-letter-builder/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Stored on Servers"
+    title="Cover Letter Builder:"
+    accentText="Professional PDF & Word letters"
+    description="Write a tailored cover letter with live preview. Export to PDF or Word instantly. Clean, recruiter-friendly format. No signup, no watermarks, no paywalls."
+    backLink="/career-toolkit/"
+    backLabel="← Career Toolkit"
+  />
+
+  <section class="py-6 md:py-8" aria-label="Cover letter builder">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="md:hidden flex gap-2 mb-4">
+        <button type="button" id="tab-edit" class="flex-1 py-2 text-sm font-semibold rounded-bae-sm bg-bae-primary text-white">Edit</button>
+        <button type="button" id="tab-preview" class="flex-1 py-2 text-sm font-semibold rounded-bae-sm bg-bae-card border border-bae-border text-bae-muted">Preview</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Form -->
+        <div id="panel-edit" class="space-y-5">
+          <!-- Your Info -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-4 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold">1</span>
+              Your Information
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input type="text" id="cl-name" spellcheck="true" placeholder="Your Full Name" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <input type="text" id="cl-title" spellcheck="true" placeholder="Your Title (optional)" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <input type="email" id="cl-email" placeholder="Email" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <input type="text" id="cl-phone" placeholder="Phone (optional)" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <textarea id="cl-address" rows="2" spellcheck="true" placeholder="Your Address&#10;City, ZIP" class="cl-input sm:col-span-2 w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+              <input type="text" id="cl-linkedin" spellcheck="true" placeholder="LinkedIn (optional)" class="cl-input sm:col-span-2 w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            </div>
+          </div>
+
+          <!-- Recipient Info -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-4 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold">2</span>
+              Recipient Information
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input type="text" id="cl-recipient-name" spellcheck="true" placeholder="Recipient Name (e.g. Jane Smith)" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <input type="text" id="cl-recipient-title" spellcheck="true" placeholder="Recipient Title (e.g. Hiring Manager)" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <input type="text" id="cl-company" spellcheck="true" placeholder="Company Name" class="cl-input sm:col-span-2 w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <textarea id="cl-company-address" rows="2" spellcheck="true" placeholder="Company Address&#10;City, ZIP" class="cl-input sm:col-span-2 w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+            </div>
+          </div>
+
+          <!-- Letter Details -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-4 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold">3</span>
+              Letter Details
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input type="date" id="cl-date" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <input type="text" id="cl-subject" spellcheck="true" placeholder="Subject / Re: Position Title" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Salutation</label>
+                <select id="cl-salutation" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary">
+                  <option value="Dear Hiring Manager,">Dear Hiring Manager,</option>
+                  <option value="Dear [Name],">Dear [Name],</option>
+                  <option value="To Whom It May Concern,">To Whom It May Concern,</option>
+                  <option value="Dear Recruitment Team,">Dear Recruitment Team,</option>
+                  <option value="Dear [Department] Team,">Dear [Department] Team,</option>
+                  <option value="custom">— Custom —</option>
+                </select>
+                <input type="text" id="cl-salutation-custom" spellcheck="true" placeholder="Type custom salutation..." class="cl-input w-full mt-2 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary hidden" />
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Closing</label>
+                <select id="cl-closing" class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary">
+                  <option value="Sincerely,">Sincerely,</option>
+                  <option value="Best regards,">Best regards,</option>
+                  <option value="Kind regards,">Kind regards,</option>
+                  <option value="Yours truly,">Yours truly,</option>
+                  <option value="Respectfully,">Respectfully,</option>
+                  <option value="custom">— Custom —</option>
+                </select>
+                <input type="text" id="cl-closing-custom" spellcheck="true" placeholder="Type custom closing..." class="cl-input w-full mt-2 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary hidden" />
+              </div>
+              <input type="text" id="cl-signature" spellcheck="true" placeholder="Signature Name" class="cl-input sm:col-span-2 w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            </div>
+          </div>
+
+          <!-- Body Paragraphs -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h2 class="text-sm font-bold text-bae-ink mb-4 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold">4</span>
+              Body Paragraphs
+            </h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Opening: State the position and your interest</label>
+                <textarea id="cl-body-1" rows="4" spellcheck="true" placeholder="I am writing to express my interest in the [Position] role at [Company]..." class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Middle: Highlight relevant experience and skills</label>
+                <textarea id="cl-body-2" rows="5" spellcheck="true" placeholder="With [X] years of experience in [Field], I have developed strong skills in..." class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Closing: Call to action and availability</label>
+                <textarea id="cl-body-3" rows="4" spellcheck="true" placeholder="I would welcome the opportunity to discuss how my background aligns with..." class="cl-input w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-wrap gap-3">
+            <button type="button" id="download-pdf" class="flex-1 min-w-[140px] bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+              Download PDF
+            </button>
+            <button type="button" id="download-docx" class="flex-1 min-w-[140px] bg-bae-ink text-white font-semibold text-sm py-3 rounded-bae-sm hover:bg-bae-primary transition-colors">
+              Download Word
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <button type="button" id="export-json" class="text-xs font-medium text-bae-primary hover:text-bae-accent transition-colors">Export JSON</button>
+            <button type="button" id="import-json-btn" class="text-xs font-medium text-bae-primary hover:text-bae-accent transition-colors">Import JSON</button>
+            <input type="file" id="import-json-file" class="hidden" accept="application/json" />
+            <button type="button" id="reset-data" class="text-xs font-medium text-red-500 hover:text-red-600 transition-colors ml-auto">Reset All</button>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div id="panel-preview" class="lg:sticky lg:top-24 h-fit md:block hidden">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-bae-ink">Preview</h3>
+              <span class="text-[11px] text-bae-muted bg-bae-bg px-2 py-0.5 rounded-full border border-bae-border">A4</span>
+            </div>
+            <div class="bg-white rounded-bae-sm shadow-bae-sm overflow-hidden">
+              <div id="letter-preview" class="text-[13px] leading-relaxed text-gray-800" style="font-family: Arial, Helvetica, sans-serif;">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What People Write -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What people write with it</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Marketing grad, 0 years experience, first professional role</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Entry-level application</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Interview secured in week two</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Led with a university campaign project and quantified the result. Used the Word export to tweak the company-specific paragraph for three different roles: same base letter, three tailored versions in under 20 minutes.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">10 years teaching → corporate L&D manager</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Full industry pivot</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">No "why are you changing?" at interview</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Opened with transferable skills (curriculum design, group facilitation, outcome measurement) before mentioning the transition. The letter pre-empted the obvious question so the interview focused on capability instead.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">18-month employment gap, returning to finance</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Back in the workforce</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Gap addressed, not avoided</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Named the gap in one neutral clause, then immediately pivoted to a professional development course completed during the period. No account or email needed. Built in the browser, downloaded as PDF, applied the same day.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">15 years corporate finance → Series A startup CFO</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Senior pivot to startup world</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Tone matched the company culture</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Dropped the formal register entirely after reading the company's About page. Conversational, specific, and focused on what the business needed at Series A, not a list of corporate achievements. Got a response within 48 hours.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by industry, role level, and application strategy.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more career tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/resume-builder/" class="text-bae-primary hover:underline">Resume Builder</a>, <a href="/career-toolkit/" class="text-bae-primary hover:underline">Career Toolkit</a>, <a href="/tools/invoice-generator/" class="text-bae-primary hover:underline">Invoice Generator</a>, and <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code Generator</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/html2pdf.bundle.min.js" is:inline></script>
+  <script src="/docx.iife.js" is:inline></script>
+
+  <script is:inline>
+    (function() {
+      'use strict';
+
+      const STORAGE_KEY = 'cover-letter-builder-data-v1';
+
+      function defaultData() {
+        return {
+          yourInfo: { name: '', title: '', email: '', phone: '', address: '', linkedin: '' },
+          recipient: { name: '', title: '', company: '', address: '' },
+          date: new Date().toISOString().split('T')[0],
+          subject: '',
+          salutation: 'Dear Hiring Manager,',
+          salutationCustom: '',
+          closing: 'Sincerely,',
+          closingCustom: '',
+          signature: '',
+          body: ['', '', ''],
+        };
+      }
+
+      function loadData() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch (e) {}
+        return defaultData();
+      }
+
+      function saveData(data) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {}
+      }
+
+      let data = loadData();
+
+      const els = {
+        preview: document.getElementById('letter-preview'),
+        tabEdit: document.getElementById('tab-edit'),
+        tabPreview: document.getElementById('tab-preview'),
+        panelEdit: document.getElementById('panel-edit'),
+        panelPreview: document.getElementById('panel-preview'),
+      };
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function getVal(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+      }
+
+      function setVal(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.value = value || '';
+      }
+
+      function debounce(fn, ms) {
+        let t;
+        return function(...args) {
+          clearTimeout(t);
+          t = setTimeout(() => fn.apply(this, args), ms);
+        };
+      }
+
+      function getSalutation() {
+        if (data.salutation === 'custom') return data.salutationCustom;
+        if (data.salutation === 'Dear [Name],') {
+          return data.recipient.name ? 'Dear ' + data.recipient.name + ',' : 'Dear Hiring Manager,';
+        }
+        if (data.salutation === 'Dear [Department] Team,') {
+          return 'Dear Team,';
+        }
+        return data.salutation;
+      }
+
+      function getClosing() {
+        return data.closing === 'custom' ? data.closingCustom : data.closing;
+      }
+
+      function formatDate(iso) {
+        if (!iso) return '';
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+        if (!m) return iso;
+        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const year = +m[1], month = +m[2], day = +m[3];
+        if (month < 1 || month > 12 || day < 1 || day > 31) return iso;
+        return months[month - 1] + ' ' + day + ', ' + year;
+      }
+
+      function renderPreview() {
+        if (!els.preview) return;
+        const y = data.yourInfo;
+        const r = data.recipient;
+        const sal = getSalutation();
+        const close = getClosing();
+
+        let html = '<div id="letter-pdf-content" style="padding: 48px 56px; max-width: 210mm; margin: 0 auto; color: #1f2937; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.7;">';
+        html += '<style>p, li, div, h1, h2, h3, h4, h5, h6, ul { page-break-inside: avoid; }</style>';
+
+        // Your info top-right
+        html += '<div style="text-align: right; margin-bottom: 24px;">';
+        const yourDisplayName = [y.title, y.name].filter(Boolean).join(' ');
+        if (yourDisplayName) html += '<p style="font-weight: 700; font-size: 15px; margin: 0 0 2px 0; color: #111827;">' + escapeHtml(yourDisplayName) + '</p>';
+        if (y.email) html += '<p style="margin: 0; color: #4b5563;">' + escapeHtml(y.email) + '</p>';
+        if (y.phone) html += '<p style="margin: 0; color: #4b5563;">' + escapeHtml(y.phone) + '</p>';
+        if (y.address) html += '<p style="margin: 0; color: #4b5563; white-space: pre-wrap;">' + escapeHtml(y.address) + '</p>';
+        if (y.linkedin) html += '<p style="margin: 0; color: #6366f1;">' + escapeHtml(y.linkedin) + '</p>';
+        html += '</div>';
+
+        // Date
+        if (data.date) {
+          html += '<p style="margin: 0 0 16px 0; color: #374151;">' + escapeHtml(formatDate(data.date)) + '</p>';
+        }
+
+        // Recipient
+        html += '<div style="margin-bottom: 16px;">';
+        const recipientDisplayName = [r.title, r.name].filter(Boolean).join(' ');
+        if (recipientDisplayName) html += '<p style="margin: 0; color: #374151;">' + escapeHtml(recipientDisplayName) + '</p>';
+        if (r.company) html += '<p style="margin: 0; color: #374151;">' + escapeHtml(r.company) + '</p>';
+        if (r.address) html += '<p style="margin: 0; color: #374151; white-space: pre-wrap;">' + escapeHtml(r.address) + '</p>';
+        html += '</div>';
+
+        // Subject
+        if (data.subject) {
+          html += '<p style="margin: 0 0 16px 0; font-weight: 600; color: #111827;">' + escapeHtml(data.subject) + '</p>';
+        }
+
+        // Salutation
+        if (sal) {
+          html += '<p style="margin: 0 0 12px 0; color: #374151;">' + escapeHtml(sal) + '</p>';
+        }
+
+        // Body
+        data.body.forEach((para, idx) => {
+          if (para.trim()) {
+            html += '<p style="margin: 0 0 12px 0; color: #374151;">' + escapeHtml(para.trim()).replace(/\n/g, '<br>') + '</p>';
+          }
+        });
+
+        // Closing
+        if (close) {
+          html += '<p style="margin: 16px 0 4px 0; color: #374151;">' + escapeHtml(close) + '</p>';
+        }
+        if (data.signature) {
+          html += '<p style="margin: 16px 0 0 0; font-weight: 600; color: #111827;">' + escapeHtml(data.signature) + '</p>';
+        }
+
+        html += '</div>';
+        els.preview.innerHTML = html;
+      }
+
+      function collectData() {
+        data.yourInfo.name = getVal('cl-name');
+        data.yourInfo.title = getVal('cl-title');
+        data.yourInfo.email = getVal('cl-email');
+        data.yourInfo.phone = getVal('cl-phone');
+        data.yourInfo.address = getVal('cl-address');
+        data.yourInfo.linkedin = getVal('cl-linkedin');
+
+        data.recipient.name = getVal('cl-recipient-name');
+        data.recipient.title = getVal('cl-recipient-title');
+        data.recipient.company = getVal('cl-company');
+        data.recipient.address = getVal('cl-company-address');
+
+        data.date = getVal('cl-date');
+        data.subject = getVal('cl-subject');
+        data.salutation = getVal('cl-salutation');
+        data.salutationCustom = getVal('cl-salutation-custom');
+        data.closing = getVal('cl-closing');
+        data.closingCustom = getVal('cl-closing-custom');
+        data.signature = getVal('cl-signature');
+        data.body[0] = getVal('cl-body-1');
+        data.body[1] = getVal('cl-body-2');
+        data.body[2] = getVal('cl-body-3');
+      }
+
+      const inputIds = [
+        'cl-name','cl-title','cl-email','cl-phone','cl-address','cl-linkedin',
+        'cl-recipient-name','cl-recipient-title','cl-company','cl-company-address',
+        'cl-date','cl-subject','cl-salutation','cl-salutation-custom','cl-closing','cl-closing-custom','cl-signature',
+        'cl-body-1','cl-body-2','cl-body-3'
+      ];
+
+      inputIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', debounce(() => {
+          collectData();
+          renderPreview();
+          saveData(data);
+        }, 200));
+      });
+
+      // Salutation / Closing custom toggle
+      document.getElementById('cl-salutation')?.addEventListener('change', (e) => {
+        const custom = document.getElementById('cl-salutation-custom');
+        if (custom) custom.classList.toggle('hidden', e.target.value !== 'custom');
+        collectData(); renderPreview(); saveData(data);
+      });
+      document.getElementById('cl-closing')?.addEventListener('change', (e) => {
+        const custom = document.getElementById('cl-closing-custom');
+        if (custom) custom.classList.toggle('hidden', e.target.value !== 'custom');
+        collectData(); renderPreview(); saveData(data);
+      });
+
+      // Reset
+      document.getElementById('reset-data')?.addEventListener('click', () => {
+        if (confirm('Are you sure? This will clear all cover letter data.')) {
+          data = defaultData();
+          localStorage.removeItem(STORAGE_KEY);
+          inputIds.forEach(id => setVal(id, ''));
+          document.getElementById('cl-salutation-custom')?.classList.add('hidden');
+          document.getElementById('cl-closing-custom')?.classList.add('hidden');
+          renderPreview();
+        }
+      });
+
+      // JSON Export / Import
+      document.getElementById('export-json')?.addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'cover-letter-data.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      document.getElementById('import-json-btn')?.addEventListener('click', () => {
+        document.getElementById('import-json-file')?.click();
+      });
+
+      const MAX_JSON_SIZE = 1 * 1024 * 1024;
+      function sanitizeCoverLetterJson(raw) {
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+        const out = {};
+        const allowedTop = ['yourInfo','recipient','date','subject','salutation','salutationCustom','closing','closingCustom','signature','body'];
+        const yourInfoKeys = ['name','title','email','phone','address','linkedin'];
+        const recipientKeys = ['name','title','company','address'];
+        for (const key of allowedTop) {
+          if (!Object.prototype.hasOwnProperty.call(raw, key)) continue;
+          if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+          const val = raw[key];
+          if (key === 'yourInfo' && val && typeof val === 'object' && !Array.isArray(val)) {
+            out.yourInfo = {};
+            for (const pk of yourInfoKeys) {
+              if (Object.prototype.hasOwnProperty.call(val, pk) && typeof val[pk] === 'string') {
+                out.yourInfo[pk] = val[pk].slice(0, 500);
+              }
+            }
+          } else if (key === 'recipient' && val && typeof val === 'object' && !Array.isArray(val)) {
+            out.recipient = {};
+            for (const pk of recipientKeys) {
+              if (Object.prototype.hasOwnProperty.call(val, pk) && typeof val[pk] === 'string') {
+                out.recipient[pk] = val[pk].slice(0, 500);
+              }
+            }
+          } else if (key === 'body' && Array.isArray(val)) {
+            out.body = val.filter(b => typeof b === 'string').map(b => b.slice(0, 5000)).slice(0, 10);
+          } else if (['date','subject','salutation','salutationCustom','closing','closingCustom','signature'].includes(key) && typeof val === 'string') {
+            out[key] = val.slice(0, 2000);
+          }
+        }
+        return out;
+      }
+
+      document.getElementById('import-json-file')?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.type !== 'application/json' && !file.name.toLowerCase().endsWith('.json')) {
+          alert('Please upload a JSON file.');
+          e.target.value = '';
+          return;
+        }
+        if (file.size > MAX_JSON_SIZE) {
+          alert('JSON file too large. Maximum size is 1 MB.');
+          e.target.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const imported = JSON.parse(ev.target.result);
+            const clean = sanitizeCoverLetterJson(imported);
+            if (!clean) { alert('Invalid JSON file.'); return; }
+            data = Object.assign(defaultData(), clean);
+            setVal('cl-name', data.yourInfo.name);
+            setVal('cl-title', data.yourInfo.title);
+            setVal('cl-email', data.yourInfo.email);
+            setVal('cl-phone', data.yourInfo.phone);
+            setVal('cl-address', data.yourInfo.address);
+            setVal('cl-linkedin', data.yourInfo.linkedin);
+            setVal('cl-recipient-name', data.recipient.name);
+            setVal('cl-recipient-title', data.recipient.title);
+            setVal('cl-company', data.recipient.company);
+            setVal('cl-company-address', data.recipient.address);
+            setVal('cl-date', data.date);
+            setVal('cl-subject', data.subject);
+            setVal('cl-salutation', data.salutation);
+            setVal('cl-salutation-custom', data.salutationCustom || '');
+            document.getElementById('cl-salutation-custom')?.classList.toggle('hidden', data.salutation !== 'custom');
+            setVal('cl-closing', data.closing);
+            setVal('cl-closing-custom', data.closingCustom || '');
+            document.getElementById('cl-closing-custom')?.classList.toggle('hidden', data.closing !== 'custom');
+            setVal('cl-signature', data.signature);
+            setVal('cl-body-1', data.body[0] || '');
+            setVal('cl-body-2', data.body[1] || '');
+            setVal('cl-body-3', data.body[2] || '');
+            renderPreview();
+            saveData(data);
+          } catch (err) {
+            alert('Invalid JSON file.');
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+      });
+
+      // Mobile tabs
+      els.tabEdit?.addEventListener('click', () => {
+        els.panelEdit.classList.remove('hidden');
+        els.panelPreview.classList.add('hidden');
+        els.panelPreview.classList.remove('md:block');
+        els.tabEdit.classList.add('bg-bae-primary', 'text-white');
+        els.tabEdit.classList.remove('bg-bae-card', 'text-bae-muted');
+        els.tabPreview.classList.remove('bg-bae-primary', 'text-white');
+        els.tabPreview.classList.add('bg-bae-card', 'text-bae-muted');
+      });
+      els.tabPreview?.addEventListener('click', () => {
+        els.panelEdit.classList.add('hidden');
+        els.panelPreview.classList.remove('hidden');
+        els.panelPreview.classList.add('md:block');
+        els.tabPreview.classList.add('bg-bae-primary', 'text-white');
+        els.tabPreview.classList.remove('bg-bae-card', 'text-bae-muted');
+        els.tabEdit.classList.remove('bg-bae-primary', 'text-white');
+        els.tabEdit.classList.add('bg-bae-card', 'text-bae-muted');
+        renderPreview();
+      });
+
+      // PDF Export
+      document.getElementById('download-pdf')?.addEventListener('click', async () => {
+        const btn = document.getElementById('download-pdf');
+        const content = document.getElementById('letter-pdf-content');
+        if (!content) { alert('Nothing to export. Please fill in your letter first.'); return; }
+
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const clone = content.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        const opt = {
+          margin: [8, 0, 8, 0],
+          filename: 'cover-letter.pdf',
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul' }
+        };
+
+        try {
+          await html2pdf().set(opt).from(clone).save();
+        } catch (err) {
+          console.error(err);
+          alert('PDF generation failed. Please try again.');
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = 'Download PDF';
+          btn.disabled = false;
+        }
+      });
+
+      // DOCX Export
+      document.getElementById('download-docx')?.addEventListener('click', async () => {
+        const btn = document.getElementById('download-docx');
+        if (typeof docx === 'undefined') { alert('Word export library not loaded. Please check your connection and refresh.'); return; }
+
+        btn.textContent = 'Generating Word...';
+        btn.disabled = true;
+
+        try {
+          const y = data.yourInfo;
+          const r = data.recipient;
+          const sal = getSalutation();
+          const close = getClosing();
+          const children = [];
+
+          function addText(text, opts = {}) {
+            children.push(new docx.Paragraph(Object.assign({ children: [new docx.TextRun(Object.assign({ text: text || '' }, opts))] }, opts.paragraph || {})));
+          }
+
+          // Your info (right aligned)
+          const yourDocxName = [y.title, y.name].filter(Boolean).join(' ');
+          if (yourDocxName) children.push(new docx.Paragraph({ text: yourDocxName, alignment: docx.AlignmentType.END, spacing: { after: 0 } }));
+          if (y.email) children.push(new docx.Paragraph({ text: y.email, alignment: docx.AlignmentType.END, spacing: { after: 0 } }));
+          if (y.phone) children.push(new docx.Paragraph({ text: y.phone, alignment: docx.AlignmentType.END, spacing: { after: 0 } }));
+          if (y.address) children.push(new docx.Paragraph({ text: y.address, alignment: docx.AlignmentType.END, spacing: { after: 0 } }));
+          if (y.linkedin) children.push(new docx.Paragraph({ text: y.linkedin, alignment: docx.AlignmentType.END, spacing: { after: 120 } }));
+          else if (yourDocxName || y.email || y.phone || y.address) children.push(new docx.Paragraph({ spacing: { after: 120 } }));
+
+          // Date
+          if (data.date) children.push(new docx.Paragraph({ text: formatDate(data.date), spacing: { after: 80 } }));
+
+          // Recipient
+          const recipientDocxName = [r.title, r.name].filter(Boolean).join(' ');
+          if (recipientDocxName) children.push(new docx.Paragraph({ text: recipientDocxName, spacing: { after: 0 } }));
+          if (r.company) children.push(new docx.Paragraph({ text: r.company, spacing: { after: 0 } }));
+          if (r.address) children.push(new docx.Paragraph({ text: r.address, spacing: { after: 80 } }));
+          else if (recipientDocxName || r.company) children.push(new docx.Paragraph({ spacing: { after: 80 } }));
+
+          // Subject
+          if (data.subject) children.push(new docx.Paragraph({ text: data.subject, spacing: { after: 80 }, children: [new docx.TextRun({ text: data.subject, bold: true })] }));
+
+          // Salutation
+          if (sal) children.push(new docx.Paragraph({ text: sal, spacing: { after: 60 } }));
+
+          // Body
+          data.body.forEach(para => {
+            if (para.trim()) {
+              children.push(new docx.Paragraph({ text: para.trim(), spacing: { after: 60 } }));
+            }
+          });
+
+          // Closing
+          if (close) children.push(new docx.Paragraph({ text: close, spacing: { after: 20 } }));
+          if (data.signature) children.push(new docx.Paragraph({ text: data.signature, spacing: { after: 20 }, children: [new docx.TextRun({ text: data.signature, bold: true })] }));
+
+          const doc = new docx.Document({
+            sections: [{
+              properties: { page: { margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } },
+              children: children,
+            }]
+          });
+
+          const blob = await docx.Packer.toBlob(doc);
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'cover-letter.docx';
+          a.click();
+          URL.revokeObjectURL(url);
+        } catch (err) {
+          console.error(err);
+          alert('Word export failed. Please try again.');
+        } finally {
+          btn.textContent = 'Download Word';
+          btn.disabled = false;
+        }
+      });
+
+      // Init
+      function init() {
+        setVal('cl-name', data.yourInfo.name);
+        setVal('cl-title', data.yourInfo.title);
+        setVal('cl-email', data.yourInfo.email);
+        setVal('cl-phone', data.yourInfo.phone);
+        setVal('cl-address', data.yourInfo.address);
+        setVal('cl-linkedin', data.yourInfo.linkedin);
+        setVal('cl-recipient-name', data.recipient.name);
+        setVal('cl-recipient-title', data.recipient.title);
+        setVal('cl-company', data.recipient.company);
+        setVal('cl-company-address', data.recipient.address);
+        setVal('cl-date', data.date);
+        setVal('cl-subject', data.subject);
+        setVal('cl-salutation', data.salutation);
+        setVal('cl-salutation-custom', data.salutationCustom || '');
+        document.getElementById('cl-salutation-custom')?.classList.toggle('hidden', data.salutation !== 'custom');
+        setVal('cl-closing', data.closing);
+        setVal('cl-closing-custom', data.closingCustom || '');
+        document.getElementById('cl-closing-custom')?.classList.toggle('hidden', data.closing !== 'custom');
+        setVal('cl-signature', data.signature);
+        setVal('cl-body-1', data.body[0] || '');
+        setVal('cl-body-2', data.body[1] || '');
+        setVal('cl-body-3', data.body[2] || '');
+        renderPreview();
+      }
+
+      init();
+    })();
+  </script>
+</BaseLayout>

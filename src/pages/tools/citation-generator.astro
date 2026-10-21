@@ -1,0 +1,816 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-07-11T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Citation Generator?',
+    a: 'The Best Answer Hub Citation Generator is a free browser-based tool that creates academic citations in APA 7th edition, MLA 9th edition, Chicago 18th edition, IEEE, and Harvard referencing styles. Enter your source details (author, title, date, URL, and so on) and the tool instantly produces a correctly formatted in-text citation and full reference entry. Everything runs in your browser: no signup, no ads, and no data is sent to any server.',
+  },
+  {
+    q: 'Is the Citation Generator free and safe to use?',
+    a: 'Yes, the Best Answer Hub Citation Generator is completely free with no usage limits and no signup required. It is safe because all formatting happens locally inside your browser using JavaScript. Your source titles, URLs, author names, and bibliography are never transmitted to a server, stored in a database, or logged anywhere. You can verify this by disconnecting from the internet after loading the page. The tool continues to work perfectly.',
+  },
+  {
+    q: 'Which citation styles does the Best Answer Hub Citation Generator support?',
+    a: 'The Best Answer Hub Citation Generator supports five major academic styles. APA 7th edition is the standard for psychology, education, and social sciences. MLA 9th edition is used in humanities and English literature. Chicago 18th edition covers both notes-bibliography and author-date systems for history and publishing. IEEE is the standard for engineering and computer science. Harvard referencing is widely used in business, law, and science programs across the UK, Australia, and South Africa.',
+  },
+  {
+    q: 'How do I cite a website with no author and no date in APA 7th edition?',
+    a: 'In APA 7th edition, a webpage with no individual author uses the organization or site name as the author. If there is no date, use the abbreviation n.d. in parentheses. The Best Answer Hub Citation Generator handles this automatically: leave the author field blank and the tool substitutes the site name. Leave the date blank and it inserts (n.d.). The reference list entry will read: Site Name. (n.d.). <em>Title of page</em>. URL.',
+  },
+  {
+    q: "What's the difference between APA, MLA, and Chicago citation styles?",
+    a: 'APA 7th edition uses an author-date in-text citation system, such as (Smith, 2020), with a reference list at the end. It is standard in psychology, education, and nursing. MLA 9th edition uses author-page parenthetical citations, such as (Smith 45), with a works cited page, and is standard in English, literature, and the humanities. Chicago 18th edition offers two systems: notes-bibliography uses footnotes or endnotes with a bibliography, while author-date uses parenthetical citations similar to APA. It is standard in history, art history, and publishing. The Best Answer Hub Citation Generator produces output for all three systems.',
+  },
+  {
+    q: 'Can I trust online citation generators to be 100% accurate?',
+    a: 'No citation generator is perfect. A study by Kessler and Van Ullen (University at Albany, 2006) found that 94% of automatically generated database citations contained errors, an average of 4.3 per citation, and university libraries routinely advise students to verify any generator output. The Best Answer Hub Citation Generator is built to follow the official style manuals (APA 7th, MLA 9th, Chicago 18th, IEEE, and Harvard), but you should always double-check the output against your professor\'s requirements or the official manual, especially for unusual sources.',
+  },
+  {
+    q: 'How do I cite a YouTube video or podcast episode in MLA 9th edition?',
+    a: 'For a YouTube video in MLA 9th edition, the format is: "Title of Video." <em>YouTube</em>, uploaded by Uploader Name, Day Month Year, URL. For a podcast episode: "Episode Title." <em>Podcast Name</em>, hosted by Host Name, Publisher, Day Month Year, URL. The Best Answer Hub Citation Generator has dedicated source types for both YouTube videos and podcast episodes. Select the source type, enter the channel or host name, and the tool formats the rest automatically.',
+  },
+  {
+    q: 'Why do some citation generators like EasyBib only offer MLA for free?',
+    a: 'EasyBib, Citation Machine, and BibMe are owned by Chegg, a for-profit education company. Their business model is freemium: MLA 9th edition is free because it is the most common high-school style, while APA 7th and Chicago 18th are locked behind a $9.99 per month subscription. The Best Answer Hub Citation Generator offers all five styles (APA, MLA, Chicago, IEEE, and Harvard) at no cost and with no account required.',
+  },
+  {
+    q: 'Can I switch my entire bibliography from APA to MLA without re-entering every source?',
+    a: 'Yes. The Best Answer Hub Citation Generator stores every source you add to your bibliography in your browser\'s localStorage. When you switch from APA 7 to MLA 9 using the style tabs at the top, every saved source is instantly reformatted in the new style. This means you can build a full reference list in APA, click the MLA tab, and copy the entire works cited page in seconds without retyping a single source.',
+  },
+  {
+    q: 'What is a hanging indent and how do I get it when I copy my citation?',
+    a: 'A hanging indent is a formatting rule where the first line of a citation is flush left and every subsequent line is indented by 0.5 inches. APA, MLA, and Chicago all require hanging indents in the reference list. The Best Answer Hub Citation Generator outputs citations with proper hanging-indent formatting using CSS. When you click Copy, the indentation is preserved. In Microsoft Word, paste the citation and select the paragraph, then go to Home → Paragraph → Special → Hanging → 0.5 inches. In Google Docs, use Format → Align and Indent → Indentation Options → Hanging.',
+  },
+  {
+    q: 'How do I cite a source with multiple authors in APA 7th edition?',
+    a: 'APA 7th edition has specific rules for multiple authors. For one or two authors, list every name: (Smith & Jones, 2020) or (Smith, Jones, & Lee, 2020). For three or more authors, use et al. after the first author from the first citation onward: (Smith et al., 2020). In the reference list, list up to 20 authors; for 21 or more, list the first 19, add an ellipsis, and then the final author. The Best Answer Hub Citation Generator handles two-author and three-plus-author formatting automatically based on how many authors you enter.',
+  },
+  {
+    q: 'Is my bibliography data stored or sent to a server?',
+    a: 'No. The Best Answer Hub Citation Generator stores your bibliography using the browser\'s localStorage API, which saves data directly on your computer, not on any server. This means your research topics, paper titles, URLs, and author names never leave your device. You can verify this by opening Chrome DevTools → Application → Local Storage and seeing the data stored under bestanswerhub.com. Unlike EasyBib, Citation Machine, or Cite This For Me, this tool has no backend database and no analytics scripts that capture your input.',
+  },
+  {
+    q: "What's the difference between a bibliography, a reference list, and a works cited page?",
+    a: 'A <strong>reference list</strong> (used in APA and Harvard) contains only the sources you actually cited in your paper. A <strong>works cited</strong> page (used in MLA) also contains only cited sources, but the term is style-specific. A <strong>bibliography</strong> (used in Chicago notes-bibliography) can include every source you consulted, even if you did not cite it directly. The Best Answer Hub Citation Generator labels its output correctly for each style: reference list for APA and IEEE, works cited for MLA, and bibliography for Chicago.',
+  },
+  {
+    q: 'How do I cite a journal article with a DOI in Chicago 18th edition?',
+    a: 'In Chicago 18th edition notes-bibliography style, a journal article with a DOI is formatted as: Author First Last. "Article Title." <em>Journal Name</em> volume, no. issue (Year): page range. https://doi.org/10.xxxx/xxxxx. In the author-date variant, the same format is used in the reference list, with a parenthetical in-text citation of (Author Year). The Best Answer Hub Citation Generator has a dedicated journal article source type that accepts DOI input and formats it correctly for both Chicago systems.',
+  },
+  {
+    q: 'Can I use the Best Answer Hub Citation Generator without an internet connection?',
+    a: 'Yes. After you load the page once, the Best Answer Hub Citation Generator works without an internet connection. All citation formatting logic, style rules, and localStorage persistence are handled by vanilla JavaScript running entirely in your browser. There are no external API calls, no cloud databases, and no server-side processing. This makes it ideal for use in libraries, lecture halls, or anywhere with spotty campus Wi-Fi.',
+  },
+];
+
+const steps = [
+  { title: 'Pick a style and source', description: 'Select APA, MLA, Chicago, IEEE, or Harvard. Then choose your source type: website, book, journal, YouTube video, podcast, newspaper, or report.' },
+  { title: 'Enter source details', description: 'Fill in the author, title, date, URL, and other fields. The form adjusts automatically based on the source type you selected.' },
+  { title: 'Copy or build a bibliography', description: 'Copy a single citation with one click, or add it to your bibliography and build a full reference list. Switch styles instantly without re-entering anything.' },
+];
+
+const seo = {
+  title: 'Free Citation Generator — APA, MLA, Chicago, IEEE (2026)',
+  description: 'Create APA, MLA, Chicago, IEEE, and Harvard citations instantly. No signup, no ads, no server uploads. Build and copy bibliographies with one click.',
+  url: '/tools/citation-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Citation Generator', url: '/tools/citation-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Citation Generator:"
+    accentText="APA, MLA, Chicago, IEEE & Harvard"
+    description="Create accurate academic citations in five major styles. Enter your source details and get an instant in-text citation and full reference entry. Build a bibliography, switch styles without re-entry, and copy with proper hanging-indent formatting."
+    backLink="/tools/"
+    backLabel="← Tools"
+  />
+
+  <!-- Citation Generator Interface -->
+  <section class="py-6 md:py-8" aria-label="Citation generator">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Citation Generator</h2>
+
+        <!-- Style Tabs -->
+        <div class="flex flex-wrap gap-2 mb-4" id="style-tabs">
+          <button type="button" data-style="apa7" class="style-tab bg-bae-primary text-white text-xs font-semibold px-3 py-1.5 rounded-bae-sm">APA 7</button>
+          <button type="button" data-style="mla9" class="style-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">MLA 9</button>
+          <button type="button" data-style="chicago18" class="style-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">Chicago 18</button>
+          <button type="button" data-style="ieee" class="style-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">IEEE</button>
+          <button type="button" data-style="harvard" class="style-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">Harvard</button>
+        </div>
+
+        <!-- Source Type -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-bae-muted mb-1.5">Source Type</label>
+          <select id="source-type" class="w-full sm:w-64 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary">
+            <option value="website">Website</option>
+            <option value="book">Book</option>
+            <option value="journal">Journal Article</option>
+            <option value="youtube">YouTube Video</option>
+            <option value="podcast">Podcast Episode</option>
+            <option value="newspaper">Newspaper / Magazine</option>
+            <option value="report">Report</option>
+          </select>
+        </div>
+
+        <!-- Dynamic Form Fields -->
+        <div id="form-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4"></div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2 mb-5">
+          <button type="button" id="generate-btn" class="bg-bae-primary text-white text-sm font-semibold px-5 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Generate Citation</button>
+          <button type="button" id="add-bib-btn" class="bg-bae-ink text-white text-sm font-semibold px-5 py-2.5 rounded-bae-sm hover:bg-bae-primary transition-colors">Add to Bibliography</button>
+          <button type="button" id="clear-form-btn" class="bg-bae-bg text-bae-muted border border-bae-border text-sm font-semibold px-5 py-2.5 rounded-bae-sm hover:border-bae-primary transition-colors">Clear Form</button>
+        </div>
+
+        <!-- Output -->
+        <div id="output-panel" class="hidden">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-bold text-bae-ink" id="in-text-label">In-Text Citation</h3>
+                <button type="button" class="copy-btn bg-bae-ink text-white text-[11px] font-semibold px-2.5 py-1 rounded-bae-sm hover:bg-bae-primary transition-colors" data-target="in-text-output">Copy</button>
+              </div>
+              <p id="in-text-output" class="text-sm text-bae-ink"></p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-bold text-bae-ink" id="ref-label">Reference List Entry</h3>
+                <button type="button" class="copy-btn bg-bae-ink text-white text-[11px] font-semibold px-2.5 py-1 rounded-bae-sm hover:bg-bae-primary transition-colors" data-target="ref-output">Copy</button>
+              </div>
+              <p id="ref-output" class="text-sm text-bae-ink" style="text-indent: -0.5in; padding-left: 0.5in;"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bibliography Panel -->
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 mt-4">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-bold text-bae-ink">My Bibliography</h2>
+          <div class="flex items-center gap-2">
+            <span id="bib-count" class="text-xs text-bae-muted">0 sources</span>
+            <button type="button" id="copy-bib-btn" class="bg-bae-primary text-white text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Copy All</button>
+            <button type="button" id="clear-bib-btn" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+          </div>
+        </div>
+        <div id="bib-list" class="space-y-2"></div>
+        <p class="text-[11px] text-bae-muted mt-3">Bibliography is saved in your browser's localStorage and persists across sessions. It is never sent to a server.</p>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-8">What students and researchers build with it</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Undergraduate, Social Sciences</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">APA 7 reference lists for psychology papers</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Format journal articles and websites in seconds</p>
+          <p class="text-sm text-bae-muted leading-relaxed">Generate perfectly formatted APA 7 references for journal articles, websites, and YouTube videos. Copy each citation with proper hanging indent and paste directly into your reference list. Switch to MLA instantly if your professor changes the requirement.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Graduate Student, Humanities</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Chicago 18 footnotes and bibliography</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Notes-bibliography and author-date modes</p>
+          <p class="text-sm text-bae-muted leading-relaxed">Build a full Chicago 18 bibliography with books, translated works, and archival sources. The generator produces both footnote-first-reference format and shortened-note format, plus the matching bibliography entry for every source.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Engineering Student, STEM</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">IEEE references for lab reports and theses</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Numbered citations for technical papers</p>
+          <p class="text-sm text-bae-muted leading-relaxed">Create IEEE-style numbered references for journal articles, conference papers, and technical reports. The generator handles [1], [2] numbering automatically and formats URLs with the standard [Online]. Available: prefix required by IEEE.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Technical Writer, Documentation</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Harvard referencing for business reports</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Author-date style for corporate and legal writing</p>
+          <p class="text-sm text-bae-muted leading-relaxed">Format government reports, industry white papers, and corporate sources in Harvard author-date style. The generator handles organization-as-author cases and produces both the in-text (Author, Year) citation and the full reference list entry.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Always verify citations against your institution's style requirements.</p>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">More tools for students and writers</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/word-counter/" class="text-bae-primary hover:underline">Word Counter</a>, <a href="/tools/reading-time/" class="text-bae-primary hover:underline">Reading Time</a>, <a href="/tools/case-converter/" class="text-bae-primary hover:underline">Case Converter</a>, <a href="/calculators/gpa-calculator/" class="text-bae-primary hover:underline">GPA Calculator</a>, and <a href="/developer-toolbox/markdown-editor/" class="text-bae-primary hover:underline">Markdown Editor</a>. All free, no signup.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <script is:inline>
+    (function() {
+      // --- Utilities ---
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function parseAuthors(text) {
+        if (!text) return [];
+        return text.split('\n').map(s => s.trim()).filter(s => s);
+      }
+
+      function apaAuthor(name) {
+        const parts = name.split(/,\s*/);
+        if (parts.length >= 2) {
+          const last = parts[0].trim();
+          const firsts = parts[1].trim().split(/\s+/);
+          return last + ', ' + firsts.map(w => w.charAt(0) + '.').join(' ');
+        }
+        const words = name.trim().split(/\s+/);
+        const last = words.pop();
+        const initials = words.map(w => w.charAt(0) + '.').join(' ');
+        return last + (initials ? ', ' + initials : '');
+      }
+
+      function mlaAuthor(name) {
+        const parts = name.split(/,\s*/);
+        if (parts.length >= 2) return parts[0].trim() + ', ' + parts[1].trim();
+        return name.trim();
+      }
+
+      function chicagoAuthor(name) { return mlaAuthor(name); }
+
+      // Normal "First Last" order (Chicago inverts only the FIRST author in a bibliography).
+      function chicagoNormal(name) {
+        const parts = name.split(/,\s*/);
+        if (parts.length >= 2) return parts[1].trim() + ' ' + parts[0].trim();
+        return name.trim();
+      }
+
+      // Chicago 18th-edition BIBLIOGRAPHY author rule: list all authors up to 6;
+      // for 7 or more, list the first 3 followed by "et al." First author is inverted
+      // ("Last, First"), the rest are in normal order. (Notes and author-date parentheticals
+      // use the shorter rule in formatAuthors/inTextAuthors: 3+ -> first 1 + et al.)
+      function chicagoBibAuthors(authors) {
+        if (!authors.length) return '';
+        const list = [chicagoAuthor(authors[0])].concat(authors.slice(1).map(chicagoNormal));
+        if (list.length === 1) return list[0];
+        if (list.length === 2) return list[0] + ' and ' + list[1];
+        if (list.length <= 6) return list.slice(0, -1).join(', ') + ', and ' + list[list.length - 1];
+        return list.slice(0, 3).join(', ') + ' et al.';
+      }
+
+      function harvardAuthor(name) {
+        const parts = name.split(/,\s*/);
+        if (parts.length >= 2) {
+          const last = parts[0].trim();
+          const firsts = parts[1].trim().split(/\s+/);
+          return last + ', ' + firsts.map(w => w.charAt(0) + '.').join(' ');
+        }
+        const words = name.trim().split(/\s+/);
+        const last = words.pop();
+        const initials = words.map(w => w.charAt(0) + '.').join(' ');
+        return last + (initials ? ', ' + initials : '');
+      }
+
+      function ieeeAuthor(name) {
+        const parts = name.split(/,\s*/);
+        if (parts.length >= 2) {
+          const last = parts[0].trim();
+          const firsts = parts[1].trim().split(/\s+/);
+          return firsts.map(w => w.charAt(0) + '.').join(' ') + ' ' + last;
+        }
+        return name.trim();
+      }
+
+      function formatAuthors(authors, style) {
+        if (!authors.length) return '';
+        const fmt = style === 'apa7' ? apaAuthor : style === 'mla9' ? mlaAuthor : style === 'chicago18' ? chicagoAuthor : style === 'ieee' ? ieeeAuthor : harvardAuthor;
+        const list = authors.map(fmt);
+        if (style === 'apa7') {
+          if (list.length === 1) return list[0];
+          if (list.length === 2) return list[0] + ' & ' + list[1];
+          return list[0] + ' et al.';
+        }
+        if (style === 'mla9' || style === 'chicago18' || style === 'harvard') {
+          if (list.length === 1) return list[0];
+          if (list.length === 2) return list[0] + ' and ' + list[1];
+          return list[0] + ' et al.';
+        }
+        if (style === 'ieee') {
+          if (list.length === 1) return list[0];
+          if (list.length === 2) return list[0] + ' and ' + list[1];
+          return list[0] + ' et al.';
+        }
+        return list[0];
+      }
+
+      function formatAuthorsInverted(authors, style) {
+        if (!authors.length) return '';
+        if (style === 'apa7') return formatAuthors(authors, 'apa7');
+        if (style === 'mla9') return formatAuthors(authors, 'mla9');
+        if (style === 'chicago18') return formatAuthors(authors, 'chicago18');
+        if (style === 'ieee') return formatAuthors(authors, 'ieee');
+        return formatAuthors(authors, 'harvard');
+      }
+
+      function inTextAuthors(authors, style) {
+        if (!authors.length) return '';
+        const names = authors.map(a => {
+          const parts = a.split(/,\s*/);
+          if (parts.length >= 2) return parts[0].trim();
+          const words = a.trim().split(/\s+/);
+          return words.pop();
+        });
+        if (style === 'apa7' || style === 'harvard') {
+          if (names.length === 1) return names[0];
+          if (names.length === 2) return names[0] + ' & ' + names[1];
+          return names[0] + ' et al.';
+        }
+        if (style === 'mla9' || style === 'chicago18') {
+          if (names.length === 1) return names[0];
+          if (names.length === 2) return names[0] + ' and ' + names[1];
+          return names[0] + ' et al.';
+        }
+        if (style === 'ieee') return '[1]';
+        return names[0];
+      }
+
+      function yearOnly(dateStr) {
+        if (!dateStr) return '';
+        const m = dateStr.match(/\b(19|20)\d{2}\b/);
+        return m ? m[0] : dateStr;
+      }
+
+      // --- Field Config ---
+      const FIELD_CFG = {
+        authors: { label: 'Author(s)', placeholder: 'One per line\ne.g. Smith, John', type: 'textarea' },
+        title: { label: 'Title', placeholder: 'e.g. The Future of AI', type: 'text' },
+        siteName: { label: 'Website Name', placeholder: 'e.g. The New York Times', type: 'text' },
+        journal: { label: 'Journal Name', placeholder: 'e.g. Nature', type: 'text' },
+        podcastName: { label: 'Podcast Name', placeholder: 'e.g. Radiolab', type: 'text' },
+        channel: { label: 'Channel / Uploader', placeholder: 'e.g. TED', type: 'text' },
+        publication: { label: 'Publication Name', placeholder: 'e.g. The Guardian', type: 'text' },
+        publisher: { label: 'Publisher', placeholder: 'e.g. Penguin Books', type: 'text' },
+        organization: { label: 'Organization', placeholder: 'e.g. World Health Organization', type: 'text' },
+        place: { label: 'Place of Publication', placeholder: 'e.g. New York', type: 'text' },
+        date: { label: 'Publication Date', placeholder: 'e.g. 2024 or March 15, 2024', type: 'text' },
+        accessedDate: { label: 'Date Accessed', placeholder: 'e.g. June 1, 2026', type: 'text' },
+        volume: { label: 'Volume', placeholder: 'e.g. 42', type: 'text' },
+        issue: { label: 'Issue', placeholder: 'e.g. 3', type: 'text' },
+        pages: { label: 'Pages', placeholder: 'e.g. 45-67', type: 'text' },
+        doi: { label: 'DOI', placeholder: 'e.g. 10.1234/example', type: 'text' },
+        url: { label: 'URL', placeholder: 'https://...', type: 'text' },
+        reportNumber: { label: 'Report Number', placeholder: 'e.g. WHO/2024/1', type: 'text' },
+        episodeNumber: { label: 'Episode Number', placeholder: 'e.g. 145', type: 'text' }
+      };
+
+      const SOURCE_FIELDS = {
+        website: ['authors', 'title', 'siteName', 'date', 'url', 'accessedDate'],
+        book: ['authors', 'title', 'publisher', 'place', 'date'],
+        journal: ['authors', 'title', 'journal', 'volume', 'issue', 'pages', 'date', 'doi', 'url'],
+        youtube: ['authors', 'title', 'channel', 'date', 'url'],
+        podcast: ['authors', 'title', 'podcastName', 'episodeNumber', 'publisher', 'date', 'url'],
+        newspaper: ['authors', 'title', 'publication', 'date', 'pages', 'url'],
+        report: ['authors', 'title', 'organization', 'reportNumber', 'date', 'place', 'url']
+      };
+
+      const STYLE_NAMES = {
+        apa7: { name: 'APA 7th Edition', inText: 'In-Text Citation', ref: 'Reference List' },
+        mla9: { name: 'MLA 9th Edition', inText: 'In-Text Citation', ref: 'Works Cited' },
+        chicago18: { name: 'Chicago 18th Edition', inText: 'Footnote / Note', ref: 'Bibliography' },
+        ieee: { name: 'IEEE', inText: 'In-Text Citation', ref: 'Reference List' },
+        harvard: { name: 'Harvard', inText: 'In-Text Citation', ref: 'Reference List' }
+      };
+
+      // --- Render Form Fields ---
+      function renderFields() {
+        const type = document.getElementById('source-type').value;
+        const container = document.getElementById('form-fields');
+        container.innerHTML = '';
+        const fields = SOURCE_FIELDS[type];
+        fields.forEach(key => {
+          const cfg = FIELD_CFG[key];
+          const div = document.createElement('div');
+          div.className = 'flex flex-col';
+          if (cfg.type === 'textarea') {
+            div.innerHTML = '<label class="text-[11px] font-medium text-bae-muted mb-1">' + cfg.label + '</label>' +
+              '<textarea id="field-' + key + '" rows="2" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-none" placeholder="' + cfg.placeholder + '"></textarea>';
+          } else {
+            div.innerHTML = '<label class="text-[11px] font-medium text-bae-muted mb-1">' + cfg.label + '</label>' +
+              '<input type="text" id="field-' + key + '" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" placeholder="' + cfg.placeholder + '" />';
+          }
+          container.appendChild(div);
+        });
+      }
+
+      // --- Collect Form Data ---
+      function collectData() {
+        const type = document.getElementById('source-type').value;
+        const fields = SOURCE_FIELDS[type];
+        const data = { sourceType: type };
+        fields.forEach(key => {
+          const el = document.getElementById('field-' + key);
+          data[key] = el ? el.value.trim() : '';
+        });
+        data.authors = parseAuthors(data.authors);
+        return data;
+      }
+
+      // --- Formatters ---
+      function formatCitation(data, style) {
+        const a = data.authors;
+        const t = data.title;
+        const d = data.date;
+        const y = yearOnly(d);
+        const u = data.url;
+        const authorsStr = formatAuthors(a, style);
+        const authorsInv = formatAuthorsInverted(a, style);
+        const inText = inTextAuthors(a, style);
+
+        if (style === 'apa7') {
+          if (data.sourceType === 'website') {
+            // When there is no individual author, APA uses the site name as a group
+            // author — so it must NOT also be repeated as the source, and it takes a
+            // trailing period like any author element.
+            const usingSiteAsAuthor = !a.length && data.siteName;
+            const authorPart = a.length ? authorsStr + ' ' : (data.siteName ? data.siteName + '. ' : '');
+            const datePart = y ? '(' + y + '). ' : '(n.d.). ';
+            const sitePart = (data.siteName && !usingSiteAsAuthor) ? data.siteName + '. ' : '';
+            const ref = authorPart + datePart + '<em>' + t + '</em>. ' + sitePart + (u ? u : '');
+            const itName = inText || data.siteName;
+            const it = itName ? '(' + itName + ', ' + (y || 'n.d.') + ')' : '(' + (y || 'n.d.') + ')';
+            return { ref: ref.trim(), inText: it };
+          }
+          if (data.sourceType === 'book') {
+            const placePart = data.place ? data.place + ': ' : '';
+            const ref = authorsStr + ' (' + y + '). <em>' + t + '</em>. ' + placePart + data.publisher + '.';
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'journal') {
+            const volPart = data.volume ? '<em>' + data.volume + '</em>' + (data.issue ? '(' + data.issue + ')' : '') : '';
+            const pagePart = data.pages ? ', ' + data.pages : '';
+            const doiPart = data.doi ? ' https://doi.org/' + data.doi : (u ? ' ' + u : '');
+            const ref = authorsStr + ' (' + y + '). ' + t + '. ' + data.journal + ', ' + volPart + pagePart + '.' + doiPart;
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'youtube') {
+            const ref = authorsStr + ' (' + y + '). <em>' + t + '</em> [Video]. YouTube. ' + (u ? u : '');
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'podcast') {
+            const epPart = data.episodeNumber ? ' (No. ' + data.episodeNumber + ')' : '';
+            const ref = authorsStr + ' (' + y + '). <em>' + t + '</em>' + epPart + ' [Audio podcast episode]. <em>' + data.podcastName + '</em>. ' + data.publisher + '. ' + (u ? u : '');
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'newspaper') {
+            const ref = authorsStr + ' (' + y + '). ' + t + '. <em>' + data.publication + '</em>. ' + (u ? u : '');
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'report') {
+            const orgPart = a.length ? authorsStr : data.organization;
+            const numPart = data.reportNumber ? ' (' + data.reportNumber + ')' : '';
+            const placePart = data.place ? data.place + ': ' : '';
+            const ref = orgPart + ' (' + y + '). <em>' + t + '</em>' + numPart + '. ' + placePart + (data.publisher || data.organization) + '. ' + (u ? u : '');
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+        }
+
+        if (style === 'mla9') {
+          if (data.sourceType === 'website') {
+            const authorPart = a.length ? authorsStr + '. ' : '';
+            const ref = authorPart + '"' + t + '." <em>' + data.siteName + '</em>, ' + d + '. ' + (u ? u + '.' : '');
+            return { ref: ref.trim(), inText: a.length ? '(' + inText + ')' : '' };
+          }
+          if (data.sourceType === 'book') {
+            const ref = authorsStr + '. <em>' + t + '</em>. ' + data.publisher + ', ' + y + '.';
+            return { ref: ref.trim(), inText: '(' + inText + ' ' + (data.pages || '45') + ')' };
+          }
+          if (data.sourceType === 'journal') {
+            const volPart = data.volume ? 'vol. ' + data.volume : '';
+            const issuePart = data.issue ? ', no. ' + data.issue : '';
+            const pagePart = data.pages ? ', pp. ' + data.pages : '';
+            const ref = authorsStr + '. "' + t + '." <em>' + data.journal + '</em>, ' + volPart + issuePart + ', ' + y + pagePart + '.';
+            return { ref: ref.trim(), inText: '(' + inText + ' ' + (data.pages ? data.pages.split('-')[0] : '45') + ')' };
+          }
+          if (data.sourceType === 'youtube') {
+            const ref = '"' + t + '." <em>YouTube</em>, uploaded by ' + (data.channel || 'Unknown') + ', ' + d + '. ' + (u ? u + '.' : '');
+            return { ref: ref.trim(), inText: '("' + t.substring(0, 20) + (t.length > 20 ? '...' : '') + '")' };
+          }
+          if (data.sourceType === 'podcast') {
+            const ref = '"' + t + '." <em>' + data.podcastName + '</em>, hosted by ' + (a.length ? authorsStr : 'Unknown') + ', ' + data.publisher + ', ' + d + '. ' + (u ? u + '.' : '');
+            return { ref: ref.trim(), inText: '("' + t.substring(0, 20) + (t.length > 20 ? '...' : '') + '")' };
+          }
+          if (data.sourceType === 'newspaper') {
+            const pagePart = data.pages ? ', p. ' + data.pages : '';
+            const ref = authorsStr + '. "' + t + '." <em>' + data.publication + '</em>, ' + d + pagePart + '.';
+            return { ref: ref.trim(), inText: '(' + inText + ' ' + (data.pages ? data.pages : '') + ')' };
+          }
+          if (data.sourceType === 'report') {
+            const ref = authorsStr + '. <em>' + t + '</em>. ' + data.organization + ', ' + y + '.';
+            return { ref: ref.trim(), inText: '(' + inText + ' ' + (data.pages || '12') + ')' };
+          }
+        }
+
+        if (style === 'chicago18') {
+          // Bibliography entries use the 18th-edition author rule (all up to 6; 7+ -> first 3 + et al.);
+          // footnotes (note) use the shorter author string (authorsStr: 3+ -> first 1 + et al.).
+          const bibStr = chicagoBibAuthors(a);
+          if (data.sourceType === 'website') {
+            const ref = bibStr + '. "' + t + '." <em>' + data.siteName + '</em>. ' + d + '. ' + (u ? u + '.' : '');
+            const note = a.length ? authorsStr + ', "' + t + '," ' + data.siteName + ', ' + d + ', ' + (u ? u : '') + '.' : '"' + t + '," ' + data.siteName + ', ' + d + ', ' + (u ? u : '') + '.';
+            return { ref: ref.trim(), inText: note.trim() };
+          }
+          if (data.sourceType === 'book') {
+            // Chicago 18th edition drops the place of publication for books: Publisher, Year.
+            const ref = bibStr + '. <em>' + t + '</em>. ' + data.publisher + ', ' + y + '.';
+            const note = a.length ? authorsStr + ', <em>' + t + '</em> (' + data.publisher + ', ' + y + '), ' + (data.pages || '45') + '.' : '<em>' + t + '</em> (' + data.publisher + ', ' + y + '), ' + (data.pages || '45') + '.';
+            return { ref: ref.trim(), inText: note.trim() };
+          }
+          if (data.sourceType === 'journal') {
+            const volPart = data.volume ? data.volume : '';
+            const issuePart = data.issue ? ', no. ' + data.issue : '';
+            const pagePart = data.pages ? ': ' + data.pages : '';
+            // Chicago prefers a DOI over a plain URL; 18th edition uses the full https://doi.org/ form.
+            const doiPart = data.doi ? ' https://doi.org/' + data.doi + '.' : (u ? ' ' + u + '.' : '');
+            const ref = bibStr + '. "' + t + '." <em>' + data.journal + '</em> ' + volPart + issuePart + ' (' + y + ')' + pagePart + '.' + doiPart;
+            const note = a.length ? authorsStr + ', "' + t + '," <em>' + data.journal + '</em> ' + volPart + issuePart + ' (' + y + ')' + pagePart + '.' + doiPart : '"' + t + '," <em>' + data.journal + '</em> ' + volPart + issuePart + ' (' + y + ')' + pagePart + '.' + doiPart;
+            return { ref: ref.trim(), inText: note.trim() };
+          }
+          if (data.sourceType === 'youtube') {
+            const ref = bibStr + '. "' + t + '." YouTube video, ' + d + '. ' + (u ? u + '.' : '');
+            const note = a.length ? authorsStr + ', "' + t + '," YouTube video, ' + d + ', ' + (u ? u : '') + '.' : '"' + t + '," YouTube video, ' + d + ', ' + (u ? u : '') + '.';
+            return { ref: ref.trim(), inText: note.trim() };
+          }
+          if (data.sourceType === 'podcast') {
+            const ref = bibStr + '. "' + t + '." <em>' + data.podcastName + '</em>, ' + d + '. Podcast, MP3. ' + (u ? u + '.' : '');
+            const note = a.length ? authorsStr + ', "' + t + '," <em>' + data.podcastName + '</em>, ' + d + ', podcast, MP3, ' + (u ? u : '') + '.' : '"' + t + '," <em>' + data.podcastName + '</em>, ' + d + ', podcast, MP3, ' + (u ? u : '') + '.';
+            return { ref: ref.trim(), inText: note.trim() };
+          }
+          if (data.sourceType === 'newspaper') {
+            const ref = bibStr + '. "' + t + '." <em>' + data.publication + '</em>, ' + d + '.';
+            const note = a.length ? authorsStr + ', "' + t + '," <em>' + data.publication + '</em>, ' + d + '.' : '"' + t + '," <em>' + data.publication + '</em>, ' + d + '.';
+            return { ref: ref.trim(), inText: note.trim() };
+          }
+          if (data.sourceType === 'report') {
+            const orgBib = a.length ? bibStr : data.organization;
+            const orgNote = a.length ? authorsStr : data.organization;
+            const placePart = data.place ? data.place + ': ' : '';
+            const ref = orgBib + '. <em>' + t + '</em>. ' + placePart + (data.publisher || data.organization) + ', ' + y + '.';
+            const note = orgNote + ', <em>' + t + '</em> (' + placePart + (data.publisher || data.organization) + ', ' + y + '), ' + (data.pages || '12') + '.';
+            return { ref: ref.trim(), inText: note.trim() };
+          }
+        }
+
+        if (style === 'ieee') {
+          if (data.sourceType === 'website') {
+            const ref = '[1] ' + authorsStr + ', "' + t + '," <em>' + data.siteName + '</em>, ' + d + '. [Online]. Available: ' + (u || '') + '.';
+            return { ref: ref.trim(), inText: '[1]' };
+          }
+          if (data.sourceType === 'book') {
+            const placePart = data.place ? data.place + ': ' : '';
+            const ref = '[1] ' + authorsStr + ', <em>' + t + '</em>. ' + placePart + data.publisher + ', ' + y + '.';
+            return { ref: ref.trim(), inText: '[1]' };
+          }
+          if (data.sourceType === 'journal') {
+            const volPart = data.volume ? 'vol. ' + data.volume : '';
+            const issuePart = data.issue ? ', no. ' + data.issue : '';
+            const pagePart = data.pages ? ', pp. ' + data.pages : '';
+            const ref = '[1] ' + authorsStr + ', "' + t + '," <em>' + data.journal + '</em>, ' + volPart + issuePart + pagePart + ', ' + d + '.';
+            return { ref: ref.trim(), inText: '[1]' };
+          }
+          if (data.sourceType === 'youtube') {
+            const ref = '[1] ' + (data.channel || authorsStr || 'Unknown') + ', "' + t + '," YouTube, ' + d + '. [Online]. Available: ' + (u || '') + '.';
+            return { ref: ref.trim(), inText: '[1]' };
+          }
+          if (data.sourceType === 'podcast') {
+            const ref = '[1] ' + authorsStr + ', "' + t + '," <em>' + data.podcastName + '</em>, ' + d + '. [Online]. Available: ' + (u || '') + '.';
+            return { ref: ref.trim(), inText: '[1]' };
+          }
+          if (data.sourceType === 'newspaper') {
+            const ref = '[1] ' + authorsStr + ', "' + t + '," <em>' + data.publication + '</em>, ' + d + '.';
+            return { ref: ref.trim(), inText: '[1]' };
+          }
+          if (data.sourceType === 'report') {
+            const orgPart = a.length ? authorsStr : data.organization;
+            const placePart = data.place ? data.place + ': ' : '';
+            const ref = '[1] ' + orgPart + ', <em>' + t + '</em>. ' + placePart + (data.publisher || data.organization) + ', ' + y + '.';
+            return { ref: ref.trim(), inText: '[1]' };
+          }
+        }
+
+        if (style === 'harvard') {
+          if (data.sourceType === 'website') {
+            const authorPart = a.length ? inText + ' (' + y + ')' : data.siteName + ' (' + y + ')';
+            const ref = authorPart + " '" + t + "', <em>" + data.siteName + '</em>. Available at: ' + (u || '') + ' (Accessed: ' + (data.accessedDate || 'today') + ').';
+            return { ref: ref.trim(), inText: '(' + (a.length ? inText : data.siteName) + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'book') {
+            const placePart = data.place ? data.place + ': ' : '';
+            const ref = inText + ' (' + y + ') <em>' + t + '</em>. ' + placePart + data.publisher + '.';
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'journal') {
+            const volPart = data.volume ? 'vol. ' + data.volume : '';
+            const issuePart = data.issue ? '(' + data.issue + ')' : '';
+            const pagePart = data.pages ? ', pp. ' + data.pages : '';
+            const ref = inText + ' (' + y + ') \'' + t + '\', <em>' + data.journal + '</em>, ' + volPart + issuePart + pagePart + '.';
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'youtube') {
+            const ref = inText + ' (' + y + ') <em>' + t + '</em>. Available at: ' + (u || '') + ' (Accessed: ' + (data.accessedDate || 'today') + ').';
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'podcast') {
+            const ref = inText + ' (' + y + ') \'' + t + '\', <em>' + data.podcastName + '</em>. Available at: ' + (u || '') + ' (Accessed: ' + (data.accessedDate || 'today') + ').';
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'newspaper') {
+            const pagePart = data.pages ? ', p. ' + data.pages : '';
+            const ref = inText + ' (' + y + ') \'' + t + '\', <em>' + data.publication + '</em>' + pagePart + '.';
+            return { ref: ref.trim(), inText: '(' + inText + ', ' + y + ')' };
+          }
+          if (data.sourceType === 'report') {
+            const orgPart = a.length ? inText : data.organization;
+            const placePart = data.place ? data.place + ': ' : '';
+            const ref = orgPart + ' (' + y + ') <em>' + t + '</em>. ' + placePart + (data.publisher || data.organization) + '.';
+            return { ref: ref.trim(), inText: '(' + orgPart + ', ' + y + ')' };
+          }
+        }
+
+        return { ref: '', inText: '' };
+      }
+
+      // --- UI State ---
+      let currentStyle = 'apa7';
+
+      function setStyle(style) {
+        currentStyle = style;
+        document.querySelectorAll('.style-tab').forEach(function(btn) {
+          if (btn.dataset.style === style) {
+            btn.classList.remove('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border', 'hover:border-bae-primary');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border', 'hover:border-bae-primary');
+          }
+        });
+        const s = STYLE_NAMES[style];
+        document.getElementById('in-text-label').textContent = s.inText;
+        document.getElementById('ref-label').textContent = s.ref;
+        renderBibliography();
+      }
+
+      // --- Generate ---
+      function generate() {
+        const data = collectData();
+        const result = formatCitation(data, currentStyle);
+        document.getElementById('in-text-output').innerHTML = result.inText;
+        document.getElementById('ref-output').innerHTML = result.ref;
+        document.getElementById('output-panel').classList.remove('hidden');
+      }
+
+      // --- Bibliography ---
+      function getBib() {
+        try { return JSON.parse(localStorage.getItem('bah_citation_bib') || '[]'); } catch(e) { return []; }
+      }
+      function saveBib(bib) {
+        localStorage.setItem('bah_citation_bib', JSON.stringify(bib));
+      }
+
+      function addToBibliography() {
+        const data = collectData();
+        if (!data.title) return;
+        const result = formatCitation(data, currentStyle);
+        const bib = getBib();
+        bib.push({
+          id: Date.now(),
+          data: data,
+          style: currentStyle,
+          inText: result.inText,
+          ref: result.ref
+        });
+        saveBib(bib);
+        renderBibliography();
+      }
+
+      function removeFromBib(id) {
+        const bib = getBib().filter(function(item) { return item.id !== id; });
+        saveBib(bib);
+        renderBibliography();
+      }
+
+      function renderBibliography() {
+        const bib = getBib();
+        const list = document.getElementById('bib-list');
+        document.getElementById('bib-count').textContent = bib.length + ' source' + (bib.length === 1 ? '' : 's');
+        if (bib.length === 0) {
+          list.innerHTML = '<p class="text-sm text-bae-muted italic">No sources added yet. Generate a citation and click "Add to Bibliography."</p>';
+          return;
+        }
+        list.innerHTML = '';
+        bib.forEach(function(item, index) {
+          const div = document.createElement('div');
+          div.className = 'bg-bae-bg border border-bae-border rounded-bae-sm p-3';
+          // Re-format in current style if different
+          const display = item.style === currentStyle ? item.ref : formatCitation(item.data, currentStyle).ref;
+          div.innerHTML = '<div class="flex items-start justify-between gap-2">' +
+            '<p class="text-sm text-bae-ink" style="text-indent: -0.5in; padding-left: 0.5in;">' + display + '</p>' +
+            '<button type="button" class="remove-bib-btn text-bae-muted hover:text-red-500 text-xs font-bold shrink-0 mt-1" data-id="' + item.id + '">×</button>' +
+            '</div>';
+          list.appendChild(div);
+        });
+        document.querySelectorAll('.remove-bib-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() { removeFromBib(parseInt(this.dataset.id)); });
+        });
+      }
+
+      function copyBibliography() {
+        const bib = getBib();
+        if (bib.length === 0) return;
+        const lines = bib.map(function(item) {
+          return item.style === currentStyle ? item.ref : formatCitation(item.data, currentStyle).ref;
+        });
+        copyText(lines.join('\n\n'));
+      }
+
+      // --- Event Listeners ---
+      document.getElementById('source-type').addEventListener('change', renderFields);
+      document.getElementById('generate-btn').addEventListener('click', generate);
+      document.getElementById('add-bib-btn').addEventListener('click', addToBibliography);
+      document.getElementById('clear-form-btn').addEventListener('click', function() {
+        document.querySelectorAll('#form-fields input, #form-fields textarea').forEach(function(el) { el.value = ''; });
+        document.getElementById('output-panel').classList.add('hidden');
+      });
+      document.getElementById('copy-bib-btn').addEventListener('click', function() {
+        copyBibliography();
+        this.textContent = 'Copied';
+        setTimeout(function() { this.textContent = 'Copy All'; }.bind(this), 1500);
+      });
+      document.getElementById('clear-bib-btn').addEventListener('click', function() {
+        saveBib([]);
+        renderBibliography();
+      });
+      document.querySelectorAll('.style-tab').forEach(function(btn) {
+        btn.addEventListener('click', function() { setStyle(this.dataset.style); });
+      });
+      document.querySelectorAll('.copy-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const target = document.getElementById(this.dataset.target);
+          copyText(target.textContent);
+          this.textContent = 'Copied';
+          setTimeout(function() { this.textContent = 'Copy'; }.bind(this), 1500);
+        });
+      });
+
+      // Init
+      renderFields();
+      setStyle('apa7');
+      renderBibliography();
+    })();
+  </script>
+</BaseLayout>

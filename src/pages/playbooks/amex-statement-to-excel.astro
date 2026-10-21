@@ -1,0 +1,366 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-14T00:00:00+00:00';
+
+const faqs = [
+    { q: 'What is the Best Answer Hub Amex Statement to Excel tool?', a: 'The Best Answer Hub Amex Statement to Excel tool is a free, browser-based converter that reads an American Express statement PDF and outputs each transaction as a clean row of date, description, and amount for Excel or CSV. It reconciles the rows against the total printed on the statement, reads any text-based Amex statement, and processes several statements in a batch. Nothing is uploaded and no account is needed.' },
+    { q: 'Amex already exports to Excel, so why would I need this?', a: 'Amex has a strong export, and the Best Answer Hub converter is for its edges. Amex reaches six billing statements for the Quicken, QuickBooks, or CSV download and two years for the view-and-export, with older statements delivered as archived PDFs on request. When you need older than two years, more statements at once, or a PDF that has no export button, converting the statement on your device fills the gap.' },
+    { q: 'How far back can I export my Amex transactions?', a: 'Amex lets you view and export your previous two years of transactions as PDF, Excel, or CSV, and lets you download your past six billing statements to Quicken, QuickBooks, or CSV. Anything older is an archived statement Amex makes available within 24 hours of a request. The Best Answer Hub tool turns those PDFs, from any year, into one reconciled spreadsheet.' },
+    { q: 'Is it safe to upload an Amex statement to an online converter?', a: 'It is safest not to upload it at all. An Amex statement holds your account number, billing address, and full transaction history, which is exactly the kind of data the FTC says to hold as little of as possible. Smallpdf and iLovePDF process files on their servers and keep them for one to two hours. The Best Answer Hub tool parses the statement in your browser, so it never reaches a server.' },
+    { q: 'How does the tool read the rows out of an Amex PDF?', a: 'The Best Answer Hub converter reads the text the statement already contains and rebuilds the table the PDF format leaves out. A PDF stores characters at coordinates with no real rows attached, so the tool groups those characters into lines, finds the date, description, and amount in each, and joins wrapped merchant names into one row. It works on text PDFs downloaded from your Amex account.' },
+    { q: 'How do I know the exported Amex data is accurate?', a: 'The Best Answer Hub tool adds up every row it extracted and checks that sum against the total your Amex statement prints. If the new charges reconcile to the printed total, that is arithmetic proof no row was dropped, split, or misread. Amex also prints year-to-date fee and interest totals as a second check. If the numbers do not reconcile, it is a flag to look again.' },
+    { q: 'Does it handle charges from additional card members?', a: 'Yes. Amex groups new charges by card member, listing each additional card member\'s charges under their name. The Best Answer Hub tool reads those into rows just like the primary member\'s, so once the statement is a spreadsheet you can filter or tag by person. That makes separating business and personal spending across a family or team account much simpler.' },
+    { q: 'Which Amex cards does it work with?', a: 'The Best Answer Hub converter handles any text-based American Express statement, including Platinum, Gold, and Business cards, as long as the PDF contains real text rather than a scanned image. Statements downloaded directly from your Amex account are text PDFs the tool can read and reconcile. A photographed or scanned statement would need optical character recognition first.' },
+    { q: 'Is the Amex Year-End Summary enough for bookkeeping?', a: 'The Year-End Summary shows your spending by month and category for the previous calendar year, which is a helpful overview. It is a summary, though, not the line-by-line transactions you can re-sort and total yourself. When you need the underlying rows, for a schedule, a dispute, or a category split it does not show, you convert the statements with the Best Answer Hub tool.' },
+    { q: 'Can I use the Amex export for my taxes?', a: 'Yes. IRS Publication 463 accepts a statement showing the vendor name, date, and amount as documentary evidence, and you generally need that proof for any expense of 75 dollars or more. Each row the Best Answer Hub converter exports carries exactly that. Keep in mind a statement proves payment but not business purpose, so pair each business line with a receipt or invoice.' },
+    { q: 'How long should I keep Amex statements for taxes?', a: 'The IRS says to keep records that support your return generally for three years, and longer in specific cases such as six years if you underreport income by more than 25 percent. Because Amex only keeps two years exportable online, converting older statements to a dated spreadsheet with the Best Answer Hub tool is a simple way to hold several years of history in a file you control.' },
+    { q: 'Will it export to both Excel and CSV?', a: 'Yes. The Best Answer Hub converter exports to Excel (XLSX) for a ready-to-use spreadsheet and to CSV for importing into accounting software, Google Sheets, or any tool that reads the standard comma-separated format. Both exports carry the same reconciled rows of date, description, and amount, with consistent columns so the file imports cleanly.' },
+    { q: 'Can I convert several Amex statements at once?', a: 'Yes. The Best Answer Hub Amex Statement to Excel tool supports batch processing, so you can load a run of monthly statements and export them together, which is useful for a full tax year or the older statements Amex delivers on request. Each statement is still parsed locally and reconciled to its own printed total, so nothing is uploaded during the batch.' },
+    { q: 'Is Best Answer Hub affiliated with American Express?', a: 'No. Best Answer Hub is an independent tool maker and is not affiliated with, endorsed by, or sponsored by American Express. The names American Express and Amex are used only to describe the statements this tool reads. The tool works with statements from many issuers and is not an Amex product or service.' },
+    { q: 'Is the Credit Card Statement to Excel tool free?', a: 'Yes. It is completely free with no usage limits, no watermarks, and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so the tool carries no ads and never asks you to upgrade to finish a conversion or to remove a watermark from your export.' },
+  ];
+
+const seo = {
+  title: 'Amex Statement to Excel, Reconciled',
+  description: 'Convert an American Express statement PDF to Excel or CSV in your browser, nothing uploaded. Amex exports 6 statements and 2 years; convert the rest.',
+  url: '/playbooks/amex-statement-to-excel/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Amex Statement to Excel', url: '/playbooks/amex-statement-to-excel/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Finance</span>
+        <div class="cav">Amex exports 6 statements. Your PDFs go back further.</div>
+        <h1>Amex Statement to <em>Excel</em></h1>
+        <p class="dek">A plain guide to turning an American Express statement PDF into clean Excel or CSV: how far Amex's own download reaches, the difference between the 6-statement software export and the 2-year view, why the exported rows must reconcile to the statement's printed total, and why sending a statement to a free converter means uploading it. The Best Answer Hub Credit Card Statement to Excel tool parses every row in your browser, so the file is never uploaded.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Privacy-first</span><span>No signup</span></div>
+        <p class="notaffil">Best Answer Hub is an independent tool maker and is not affiliated with, endorsed by, or sponsored by American Express Company. "American Express" and "Amex" are trademarks of their owner, used here only to describe the statements this tool reads.</p>
+        <div class="bandstrip">
+          <div class="seg b1">Convert<small>Excel or CSV</small></div>
+          <div class="seg b2">Private<small>never uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">6</div><div class="l">billing statements Amex exports to software</div><div class="src">Amex, Quicken/QuickBooks/CSV</div></div>
+      <div class="stat"><div class="n">2 years</div><div class="l">of Amex transactions you can export online</div><div class="src">Amex, older by request</div></div>
+      <div class="stat"><div class="n">$75</div><div class="l">expense size that needs written proof</div><div class="src">IRS Publication 463</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">files uploaded to a server</div><div class="src">parsed on your device</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#export">Amex exports to Excel, so why?</a>
+        <a href="#safe">Is it safe to upload?</a>
+        <a href="#how">How it reads the PDF</a>
+        <a href="#accurate">How you know it is right</a>
+        <a href="#history">The 6-statement and 2-year limits</a>
+        <a href="#structure">What is on an Amex statement</a>
+        <a href="#tax">At tax time</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub Credit Card Statement to Excel tool turns an American Express statement PDF into clean, columned Excel or CSV, and it reconciles every extracted row against the statement's own printed total, so you can see the export is complete before you use it.</strong> It runs entirely in your browser, which means a document holding your account number and your whole month of spending is never uploaded. Amex has a strong export of its own, so this guide is honest about where it reaches, where it stops, and when converting the statement PDF is the better path.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Amex Statement to Excel tool?</h2>
+        <p>The Best Answer Hub <a href="/tools/credit-card-statement-to-excel/">Credit Card Statement to Excel</a> tool is a single-page converter that reads an American Express statement PDF and outputs each transaction as a clean row of date, description, and amount, ready to open in Excel, Google Sheets, or Numbers, or to export as CSV. It reconciles the rows it finds against the totals printed on the statement, reads any text-based Amex statement whether it came from a Platinum, Gold, or Business card, and can process several statements in one batch. It runs on your device, so the file is never transmitted and nothing is stored. It needs no account, adds no watermark, and shows no ads. The tool sits in the Best Answer Hub <a href="/finance-toolkit/">Finance Toolkit</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The fair question</div>
+        <h2 id="export">Amex already exports to Excel, so why convert the PDF?</h2>
+        <p>This is the honest starting point, because American Express has one of the better self-service exports of any issuer, and the tool earns its place only at the edges Amex's export does not reach. Amex lets you "download your recent activity and past six billing statements to Quicken, QuickBooks or as a CSV file," and separately lets you view "your previous two years of transactions" and "download as a PDF, Excel or CSV file" (<a href="https://www.americanexpress.com/us/customer-service/faq.download-export-transactions-software.html" target="_blank" rel="noopener noreferrer">American Express</a>). That is genuinely good. The gaps are specific: the software export reaches only six billing statements, the full view and export reach only two years, and anything older is an archived PDF Amex delivers on request. Add the statements someone has emailed you, an accountant's copy, or a closed account, and you are holding a PDF with no export button behind it. That is where converting the PDF, on your own device, does the job.</p>
+        <div class="callout sage"><div class="h">The short version</div><p>Use Amex's own download for recent months and a live software feed. Reach for this tool when you need older than two years, more than six statements at once, or a PDF that never had an export button, and you would rather not upload it.</p></div>
+
+        <div class="cav">The part that matters</div>
+        <h2 id="safe">Is it safe to upload an Amex statement to a converter?</h2>
+        <p>A credit card statement is one of the most sensitive documents you own, so the safest option is not to upload it at all. A single Amex statement carries your name, your billing address, your account number, and a complete record of where you shopped all month. That kind of account data is exactly what the FTC tells businesses to hold as little of as possible, in its blunt phrasing: <a href="https://www.ftc.gov/business-guidance/resources/start-security-guide-business" target="_blank" rel="noopener noreferrer">"No one can steal what you don't have."</a> Most online converters, though, do the opposite: they send the file to their servers to process it. Smallpdf states that files are <a href="https://smallpdf.com/privacy" target="_blank" rel="noopener noreferrer">"permanently removed from our servers after one hour of processing,"</a> and iLovePDF says uploads are <a href="https://www.ilovepdf.com/help/security" target="_blank" rel="noopener noreferrer">"automatically and permanently deleted within two hours."</a> Both windows are short, but both still mean your statement left your device.</p>
+        <blockquote>The safest way to handle a statement is to never send it anywhere. <span class="accent">If the rows are parsed in your browser, there is nothing to upload, store, or leak.</span></blockquote>
+        <p>There is a second risk beyond retention. In March 2025 the FBI warned that criminals <a href="https://www.fbi.gov/contact-us/field-offices/denver/news/fbi-denver-warns-of-online-file-converter-scam" target="_blank" rel="noopener noreferrer">"use free online document converter tools to load malware onto victims' computers, leading to incidents such as ransomware."</a> The wider stakes are set by the breach numbers: the average data breach reached 4.44 million dollars globally and a record 10.22 million dollars in the United States in 2025, with the financial sector averaging 5.56 million dollars (<a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">IBM</a>), while third-party involvement in breaches doubled to 30 percent (<a href="https://www.verizon.com/about/news/2025-data-breach-investigations-report" target="_blank" rel="noopener noreferrer">Verizon DBIR</a>). The Best Answer Hub tool parses the statement locally with your browser's File API, which is designed to <a href="https://developer.mozilla.org/en-US/docs/Web/API/File_API" target="_blank" rel="noopener noreferrer">"access files when the user makes them available"</a> on their own machine, so the file never reaches a server.</p>
+        <div class="callout sage"><div class="h">How to check any online tool in ten seconds</div><p>Open your browser developer tools, switch to the Network tab, then run the conversion. If the file truly stays on your device, you will see no upload leave your machine. Do this once with the Best Answer Hub tool and you can confirm the statement never leaves your computer.</p></div>
+
+        <div class="cav">The how-to</div>
+        <h2 id="how">How does it read the rows out of an Amex PDF?</h2>
+        <p>It reads the text the statement already contains, then rebuilds the table that the PDF format throws away. A PDF is a page-drawing format, not a data format: as the PDF Association, the body that stewards the ISO 32000 standard, puts it, software reading a PDF is "relying on its own interpretation of the page layout, fonts and other characteristics," and any structure it finds "will always represent the software's interpretation instead of the author's intention" (<a href="https://pdfa.org/resource/tagged-pdf-q-a/" target="_blank" rel="noopener noreferrer">PDF Association</a>). In other words, an Amex statement looks like a neat table to you, but underneath it is a scatter of characters placed at coordinates with no rows attached. The tool groups those characters back into lines, finds the date, description, and amount in each, and joins wrapped multi-line merchant names into one row. It works when the statement is a real text PDF, the kind you download from your Amex account. A scanned or photographed statement is only an image with no text to read, so it needs optical character recognition first.</p>
+        <div class="callout peach"><div class="h">Text PDF versus a scan</div><p>If you can highlight the text in your Amex statement with a cursor, it is a text PDF and the tool can read it directly. If highlighting selects nothing, the page is an image, usually from a scan or a phone photo, and the numbers are pixels rather than characters. Download the statement straight from your Amex account to get the text version.</p></div>
+
+        <div class="cav">The honest test</div>
+        <h2 id="accurate">How do you know the exported data is correct?</h2>
+        <p>Because the tool adds up the rows it found and checks that sum against the total your statement already prints. This is the honest way to know an extraction worked, and it follows directly from how PDFs store data: since there is no real table underneath, any parser has to guess where each row begins and ends, and a guess can drop a line, split one charge into two, or misread an amount. An Amex statement that reconciles, where the extracted new charges sum to the printed total, is arithmetic proof that nothing was lost. Amex prints year-to-date totals for fees and interest as well, giving you an extra independent check. A statement that does not reconcile is a flag to look again. That check is the difference between a spreadsheet you can file taxes from and one you have to re-audit by hand.</p>
+        <blockquote>A converter that cannot show its rows add up is asking for your trust. <span class="accent">Reconciliation replaces trust with arithmetic.</span></blockquote>
+        <figure class="chart">
+          <figcaption class="chart-title">The reconciliation check, in one picture</figcaption>
+          <svg viewBox="0 0 620 250" role="img" aria-label="Diagram: the tool sums every extracted transaction row and compares that sum to the total printed on the Amex statement; when they match, the export is reconciled.">
+            <rect x="24" y="20" width="250" height="150" rx="12" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="40" y="44" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#847B6B">ROWS THE TOOL EXTRACTED</text>
+            <text x="40" y="70" font-family="ui-monospace, monospace" font-size="13" fill="#33302A">Grocery Mart</text><text x="258" y="70" text-anchor="end" font-family="ui-monospace, monospace" font-size="13" fill="#33302A">42.10</text>
+            <text x="40" y="92" font-family="ui-monospace, monospace" font-size="13" fill="#33302A">Airline Ticket</text><text x="258" y="92" text-anchor="end" font-family="ui-monospace, monospace" font-size="13" fill="#33302A">318.40</text>
+            <text x="40" y="114" font-family="ui-monospace, monospace" font-size="13" fill="#33302A">Streaming Plus</text><text x="258" y="114" text-anchor="end" font-family="ui-monospace, monospace" font-size="13" fill="#33302A">9.99</text>
+            <text x="40" y="136" font-family="Karla, sans-serif" font-size="12" font-style="italic" fill="#a89c87">+ 38 more rows</text>
+            <line x1="40" y1="146" x2="258" y2="146" stroke="#E8DECE" stroke-width="1.5"/>
+            <text x="40" y="162" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">Sum</text><text x="258" y="162" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">4,912.30</text>
+            <text x="310" y="86" text-anchor="middle" font-family="Caveat, cursive" font-size="20" font-weight="700" fill="#6F8A6A">must equal</text>
+            <path d="M291 96 L331 96" stroke="#6F8A6A" stroke-width="2.5" marker-end="url(#ar)"/>
+            <path d="M331 108 L291 108" stroke="#6F8A6A" stroke-width="2.5" marker-end="url(#ar)"/>
+            <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6F8A6A"/></marker></defs>
+            <rect x="346" y="20" width="250" height="150" rx="12" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="362" y="44" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#847B6B">PRINTED ON YOUR STATEMENT</text>
+            <text x="362" y="96" font-family="Karla, sans-serif" font-size="14" fill="#4f4940">Total new charges</text>
+            <text x="580" y="96" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-size="22" font-weight="800" fill="#33302A">4,912.30</text>
+            <text x="362" y="132" font-family="Karla, sans-serif" font-size="12" fill="#a89c87">the number the tool checks against</text>
+            <rect x="24" y="196" width="572" height="38" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="310" y="220" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#5a7355">Reconciled: every row is accounted for</text>
+          </svg>
+          <p class="chart-src">Illustrative figures. The tool sums the transactions it extracts and compares that total to the statement's own printed total; a match means no row was dropped or misread.</p>
+        </figure>
+
+        <div class="cav">The locked drawer</div>
+        <h2 id="history">Where do Amex's 6-statement and 2-year limits leave you?</h2>
+        <p>They leave a real gap the moment your history runs past two years, and this is the honest core of the page. Amex says "your previous two years of transactions can be viewed electronically" with sorting, filtering, and download to PDF, Excel or CSV, and that older statements are archived and made "accessible online within 24 hours of your request" (<a href="https://www.americanexpress.com/us/customer-service/faq.transaction-billing-statements-history.html" target="_blank" rel="noopener noreferrer">American Express</a>). So an older tax year or a multi-year review means requesting archived PDFs and then turning them into a spreadsheet yourself. Amex also provides a free Year-End Summary that shows spending "by month and spend category" for the previous calendar year, which is a useful overview but a summary, not the line-by-line rows you can re-sort and total (<a href="https://www.americanexpress.com/us/customer-service/faq.year-end-summary-statement.html" target="_blank" rel="noopener noreferrer">American Express</a>). When you need the transactions themselves, from any year, you convert the statements.</p>
+        <div class="callout peach"><div class="h">Two windows, not one</div><p>Keep the two limits straight: six billing statements export to Quicken, QuickBooks, or CSV; two years are viewable and exportable as PDF, Excel, or CSV; older than that is a PDF you request. A converter that reads the PDF is what bridges all three back into one spreadsheet.</p></div>
+
+        <div class="cav">Know the page</div>
+        <h2 id="structure">What is on an Amex statement, and what comes across?</h2>
+        <p>An American Express statement is organized into clear blocks, and one of them is genuinely Amex-specific. Amex's own guide lists the account summary with previous balance, payments and credits, new charges, fees, interest and new balance; the payment information; a rewards balance where it applies; the transaction detail; and a fees-and-interest section with year-to-date totals (<a href="https://www.americanexpress.com/en-us/credit-cards/credit-intel/credit-card-statement/" target="_blank" rel="noopener noreferrer">American Express</a>). On family and business accounts, Amex groups the new charges by card member, listing each additional card member's charges under their name, which is exactly the kind of detail a converter needs to read into rows so you can tell whose charge is whose. The tool pulls the transaction detail into date, description, and amount and reconciles the sum to the printed total; the summary and interest sections stay on the statement as the source of truth.</p>
+        <table>
+          <thead><tr><th>Section on your Amex statement</th><th>What the tool does with it</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Transaction detail</td><td>Pulled into clean rows of date, description, and amount</td></tr>
+            <tr><td class="band">New charges by card member</td><td>Read in per member so you can tell whose charge is whose</td></tr>
+            <tr><td class="band">Account summary</td><td>Used as the printed total the export reconciles against</td></tr>
+            <tr><td class="band">Fees and interest, year to date</td><td>Kept as statement-level detail and an extra check</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">A small Amex detail worth knowing</div><p>An American Express card number is 15 digits, not the 16 you see on Visa or Mastercard, and Amex identifies a card by its last five digits rather than the usual last four. It does not change how the tool reads a statement, but it is a reminder that the document holds identifying account data, one more reason to keep the file on your own device.</p></div>
+
+        <div class="cav">The payoff</div>
+        <h2 id="tax">What is Amex statement data worth at tax time?</h2>
+        <p>For anyone with business expenses, and Amex has a large business-card base, a clean spreadsheet of card charges is exactly what the IRS asks for. IRS Publication 463 states that "you must have documentary evidence" for expenses, and that acceptable proof is <a href="https://www.irs.gov/publications/p463" target="_blank" rel="noopener noreferrer">"a canceled check, credit card receipt, or written statement showing the name of the vendor, the date, and the amount."</a> You generally need that evidence for every expense of 75 dollars or more, and for all lodging. One caution worth stating plainly: a statement proves that you paid, but "proof of payment of an amount, by itself, does not establish you are entitled to a tax deduction," so you still pair the line with a receipt or invoice showing the business purpose (<a href="https://www.irs.gov/publications/p583" target="_blank" rel="noopener noreferrer">IRS Publication 583</a>). The IRS also recommends keeping records generally for <a href="https://www.irs.gov/businesses/small-businesses-self-employed/how-long-should-i-keep-records" target="_blank" rel="noopener noreferrer">three years</a>. A reconciled export gives you the vendor, date, and amount triple, one row per charge, ready to sort into Schedule C categories.</p>
+        <table>
+          <thead><tr><th>What you keep</th><th>Why it matters</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Vendor, date, amount</td><td>The three fields IRS Pub 463 names as documentary evidence, one per row</td></tr>
+            <tr><td class="band">A matching receipt</td><td>Proves the business purpose the statement alone does not (Pub 583)</td></tr>
+            <tr><td class="band">Three years of records</td><td>The general retention period the IRS asks for, longer in specific cases</td></tr>
+            <tr><td class="band">Charges split by card member</td><td>Business and personal spending separated for a cleaner Schedule C</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">While you are reviewing, watch for errors too</div><p>A sorted export makes unauthorized or duplicate charges easy to spot. If you find one, you have a deadline: both the CFPB and the FTC say you must send a written billing-error notice within 60 days after the statement with the error was sent (<a href="https://www.consumerfinance.gov/consumer-tools/credit-cards/how-to-fix-mistakes-in-your-credit-card-bill/" target="_blank" rel="noopener noreferrer">CFPB</a>). A spreadsheet history makes that far easier to catch in time.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Convert it now</span>
+          <h3>Open the Credit Card Statement to Excel tool</h3>
+          <p>Free, no signup, and parsed entirely in your browser. Drop in an Amex statement PDF, watch the rows reconcile to the printed total, and export to Excel or CSV without uploading a thing.</p>
+          <a class="btn" href="/tools/credit-card-statement-to-excel/">Convert your statement</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about converting an Amex statement</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/credit-card-statement-to-excel/">Credit Card Statement to Excel, Every Row Checked</a></b> The full guide behind the tool, across every issuer.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/bank-statement-to-excel/">Convert a Bank Statement to Excel, Nothing Uploaded</a></b> The same private workflow for your checking and savings history.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-finance-tools/">Free Finance Tools, Nothing Uploaded</a></b> The Finance Toolkit guide, from converters to calculators, all on your device.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>American Express, <a href="https://www.americanexpress.com/us/customer-service/faq.download-export-transactions-software.html" target="_blank" rel="noopener noreferrer">Download Transactions &amp; Statements</a> (download recent activity and past six billing statements to Quicken, QuickBooks, or CSV).</li>
+          <li>American Express, <a href="https://www.americanexpress.com/us/customer-service/faq.transaction-billing-statements-history.html" target="_blank" rel="noopener noreferrer">View Transaction History and Billing Statements</a> (previous two years viewable and downloadable as PDF, Excel, or CSV; older statements archived and accessible within 24 hours of request).</li>
+          <li>American Express, <a href="https://www.americanexpress.com/us/customer-service/faq.year-end-summary-statement.html" target="_blank" rel="noopener noreferrer">Year-End Summary</a> (spending by month and category for the previous calendar year).</li>
+          <li>American Express, <a href="https://www.americanexpress.com/en-us/credit-cards/credit-intel/credit-card-statement/" target="_blank" rel="noopener noreferrer">How to Read Your Credit Card Statement</a> (statement sections).</li>
+          <li>FTC, <a href="https://www.ftc.gov/business-guidance/resources/start-security-guide-business" target="_blank" rel="noopener noreferrer">Start with Security</a> (no one can steal what you do not have).</li>
+          <li>FBI Denver Field Office, <a href="https://www.fbi.gov/contact-us/field-offices/denver/news/fbi-denver-warns-of-online-file-converter-scam" target="_blank" rel="noopener noreferrer">Warning on online file-converter scams</a> (March 2025; converter tools used to load malware).</li>
+          <li>Smallpdf, <a href="https://smallpdf.com/privacy" target="_blank" rel="noopener noreferrer">Privacy</a> (files removed one hour after processing); iLovePDF, <a href="https://www.ilovepdf.com/help/security" target="_blank" rel="noopener noreferrer">Security</a> (uploads deleted within two hours).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/API/File_API" target="_blank" rel="noopener noreferrer">File API</a> (a web app accesses files the user makes available on their own device).</li>
+          <li>PDF Association, <a href="https://pdfa.org/resource/tagged-pdf-q-a/" target="_blank" rel="noopener noreferrer">Tagged PDF Q &amp; A</a> (software reading a PDF interprets layout rather than reading a real table).</li>
+          <li>IRS, <a href="https://www.irs.gov/publications/p463" target="_blank" rel="noopener noreferrer">Publication 463</a> (documentary evidence: vendor name, date, amount; $75 threshold) and <a href="https://www.irs.gov/publications/p583" target="_blank" rel="noopener noreferrer">Publication 583</a> (proof of payment alone does not establish a deduction).</li>
+          <li>IRS, <a href="https://www.irs.gov/businesses/small-businesses-self-employed/how-long-should-i-keep-records" target="_blank" rel="noopener noreferrer">How long should I keep records</a> (generally three years).</li>
+          <li>CFPB, <a href="https://www.consumerfinance.gov/consumer-tools/credit-cards/how-to-fix-mistakes-in-your-credit-card-bill/" target="_blank" rel="noopener noreferrer">How to fix mistakes in your credit card bill</a> (60-day dispute window).</li>
+          <li>IBM, <a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">Cost of a Data Breach 2025</a> (global 4.44 million, US 10.22 million, financial 5.56 million dollars); Verizon, <a href="https://www.verizon.com/about/news/2025-data-breach-investigations-report" target="_blank" rel="noopener noreferrer">2025 DBIR</a> (third-party involvement doubled to 30 percent).</li>
+        </ul>
+        <p style="margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:.85rem;color:var(--muted)">Jump into the tools: <a href="/tools/credit-card-statement-to-excel/">Credit Card Statement to Excel</a>, <a href="/tools/bank-statement-to-excel/">Bank Statement to Excel</a>, <a href="/finance-toolkit/">Finance Toolkit</a>, and <a href="/tools/">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .notaffil{margin-top:14px;font-size:.76rem;color:var(--muted);max-width:44em;font-weight:600}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:24px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

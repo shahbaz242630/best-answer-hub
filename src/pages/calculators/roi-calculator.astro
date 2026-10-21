@@ -1,0 +1,901 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-30T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub ROI Calculator?',
+    a: 'The Best Answer Hub ROI Calculator is a free, privacy-first browser tool that calculates your true return on investment, including hidden costs, break-even timeline, and annualized returns. Enter your initial investment, monthly returns, and any setup, training, or maintenance costs to see exactly when you break even. You can even compare two investments side by side. Everything runs instantly in your browser. No signup, no server, no data collection.',
+  },
+  {
+    q: 'How do I actually calculate ROI for my business, what\'s the simplest formula?',
+    a: 'The simplest ROI formula is (Net Profit / Total Investment) × 100. If you spent $10,000 on a marketing campaign and earned $25,000 back, your net profit is $15,000 and your ROI is 150%. Most online calculators stop there, but the real number should include hidden costs like setup, training, and your own time, which is why the Best Answer Hub ROI Calculator adds those fields automatically. Use the tool above to plug in your exact numbers and see the full picture.',
+  },
+  {
+    q: 'What is a good ROI for a small business?',
+    a: 'Most business advisors say small businesses should aim for 15% to 30% annual ROI because owners take on more risk than large corporations. Large public companies might accept 10% or less on low-risk infrastructure, but as a small business owner you typically need higher returns to justify the effort and capital tied up. Marketing campaigns often target 5:1 (400%) ROI, while equipment purchases are usually evaluated at 15% or higher. Use the Best Answer Hub ROI Calculator to benchmark your specific investment against these ranges.',
+  },
+  {
+    q: 'Why is my Google Ads ROAS 4:1 but my overall marketing ROI is basically zero?',
+    a: 'ROAS only divides revenue by ad spend, while true ROI subtracts ALL costs: cost of goods sold, shipping, payment fees, agency retainers, creative production, and software subscriptions. If your product has a 60% margin, a 4:1 ROAS means $4 in revenue for every $1 in ad spend, but after COGS you keep only about $2.40 in gross profit, and once you subtract the $1 ad spend plus shipping, fees, and labor, you are often at breakeven or worse. That is why platform dashboards look great while your bank account stays flat. The Best Answer Hub ROI Calculator has a hidden-costs section so you can input every line item and see your real ROI.',
+  },
+  {
+    q: 'What hidden costs do people forget when calculating ROI?',
+    a: 'The most forgotten costs are implementation and setup fees, employee training hours, ongoing maintenance, integration work with your existing stack, and the value of your own time. For marketing campaigns, teams often forget agency retainers, creative production, landing-page software, and returns or chargebacks. For SaaS purchases, data migration and the productivity dip during onboarding can add 25% to 30% to the sticker price. The Best Answer Hub ROI Calculator includes expandable hidden-cost fields for every major category so nothing gets left out.',
+  },
+  {
+    q: 'What is the difference between ROI and annualized ROI?',
+    a: 'Simple ROI tells you the total return over the entire investment period, while annualized ROI breaks that down to a yearly rate so you can fairly compare investments with different time horizons. A 100% ROI over 2 years is roughly 41% annualized, which is very different from 100% ROI over 6 months. If you are choosing between a 12-month marketing campaign and a 36-month equipment purchase, annualized ROI is the only way to compare them apples-to-apples. The Best Answer Hub ROI Calculator shows both numbers automatically whenever you enter a time period.',
+  },
+  {
+    q: 'How long until I break even on a new investment?',
+    a: 'Break-even happens when your cumulative returns equal your total investment, and you can calculate it by dividing your total investment by your monthly net return. If you invested $24,000 total and generate $3,000 per month, you break even in 8 months. Most SaaS tools break even in 3 to 6 months if they directly impact revenue, and 6 to 18 months if they are internal automation tools. The Best Answer Hub ROI Calculator displays your break-even timeline prominently in the results panel so you can answer your CFO immediately.',
+  },
+  {
+    q: 'How do I calculate ROI for buying a SaaS tool when the benefits are hard to measure?',
+    a: 'Map the tool to three types of returns: direct revenue gains (deals closed faster), cost avoidance (headcount you did not have to hire), and productivity gains (hours saved multiplied by hourly rate). If a $1,200 per month CRM helps you close one extra $5,000 deal per quarter, your ROI is positive even before counting time savings. Add 25% to 30% to the subscription price for realistic hidden costs like setup, migration, and training. Use the Best Answer Hub ROI Calculator to model all three return types and see your true payback period.',
+  },
+  {
+    q: 'Is a 5:1 ROI actually good for marketing, or are people just making that up?',
+    a: 'A 5:1 ROI (meaning $5 in revenue for every $1 spent) is widely considered the minimum benchmark for a healthy marketing campaign, and 10:1 is excellent. Anything below 2:1 is generally unprofitable once you factor in overhead, cost of goods sold, and payment processing fees. Those numbers come from industry studies by the CMO Council and Nielsen, not marketing blogs. Use the Best Answer Hub ROI Calculator to input your full cost stack and see whether your campaign actually hits those benchmarks.',
+  },
+  {
+    q: 'Should I use ROI or ROAS when reporting to my boss?',
+    a: 'Use ROAS for day-to-day campaign tweaks and channel comparisons because it tells you if the ad platform itself is working. Use ROI for monthly or quarterly business reviews because it tells you if the business is actually making money after all costs. ROAS ignores cost of goods sold, shipping, payment fees, and overhead, which is why a 5:1 ROAS can still mean negative ROI on thin-margin products. The Best Answer Hub ROI Calculator outputs both metrics with a plain-English explanation of the gap between them.',
+  },
+  {
+    q: 'What is a good ROI for buying new equipment?',
+    a: "For equipment and capital expenditures, 15% or higher annual ROI is considered excellent, 10% to 15% is good, and 5% to 10% is acceptable for low-risk support equipment. Always ask vendors to show their math, because manufacturer-provided ROI calculators often exclude maintenance, downtime, operator training, and energy costs. A $50,000 machine that generates $7,500 per month might look like it pays back in 7 months, but after maintenance and installation the real break-even is usually closer to 9 months. The Best Answer Hub ROI Calculator's hidden-costs fields capture every line item so you see the real number.",
+  },
+  {
+    q: 'Can I just track ROAS and ignore ROI if I\'m running an ecommerce store?',
+    a: 'Only if you want to scale yourself into bankruptcy. ROAS ignores your cost of goods sold, shipping, payment processor fees, returns, and warehouse labor, which on many ecommerce products eat 60% to 80% of revenue. Many ecommerce brands have celebrated a 5:1 ROAS while their true ROI was negative because their gross margins were too thin. You need both metrics: ROAS to optimize ad platforms daily, and ROI to make sure your business is actually profitable. Use the Best Answer Hub ROI Calculator to model your full cost stack.',
+  },
+  {
+    q: 'How do I compare two investments side by side, like hiring versus advertising?',
+    a: 'Enable Compare Mode in the Best Answer Hub ROI Calculator and enter the full cost and return profile for each option. For example, a $75,000 salesperson with benefits and tools might cost $95,000 in year one and contribute $10,000 per month in revenue, while the same budget in Facebook Ads might return $8,500 per month but with lower overhead. The Best Answer Hub ROI Calculator shows both investments on the same bar chart with total ROI, annualized ROI, and break-even months so you can see which option pays back faster and delivers more profit over time.',
+  },
+  {
+    q: 'Is negative ROI always bad, or can it make sense in the first year of a campaign?',
+    a: 'Negative ROI in year one is normal for channels like SEO, content marketing, and SaaS implementation where benefits compound over time. Most paid campaigns should show directionally positive results within 30 to 60 days, but organic strategies often need 6 to 12 months to turn positive. If a paid campaign is still negative after 90 days with proper optimization, cut it. If organic content is trending up in traffic and leads, give it the full 12-month runway. Use the Best Answer Hub ROI Calculator to model multi-year timelines and see when your investment turns positive.',
+  },
+  {
+    q: 'What is the difference between ROI and IRR, and when do I need each?',
+    a: 'Use ROI for simple one-time investments where the timing of cash flows does not matter much. Use IRR (Internal Rate of Return) when cash flows happen at different times or when comparing investments with different time horizons, because IRR accounts for the time value of money. For most small business decisions under $100,000, ROI plus annualized ROI is enough. If you are evaluating multi-year projects with uneven cash flows or comparing real estate to stock investments, IRR becomes valuable. The Best Answer Hub ROI Calculator shows annualized ROI by default, which handles most business cases without the complexity of IRR.',
+  },
+];
+
+const seo = {
+  title: 'Free ROI Calculator — Break-Even & Annualized (2026)',
+  description: 'Calculate true return on investment for any project. Hidden costs, break-even timeline, annualized ROI, and side-by-side comparison. Free, no signup.',
+  url: '/calculators/roi-calculator/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-24T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Finance Toolkit', url: '/finance-toolkit/' },
+    { name: 'ROI Calculator', url: '/calculators/roi-calculator/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated May 2026
+          </div>
+          <a href="/finance-toolkit/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Finance Toolkit
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          ROI Calculator:<br/>
+          <em class="italic text-bae-primary">True returns, hidden costs included</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Calculate your real return on investment, not just a simple percentage. Factor in setup, training, maintenance, and time costs. See break-even timeline, annualized returns, and compare two investments side by side.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="ROI calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Investment A -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Investment A</h2>
+            <div class="space-y-5">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Initial Investment</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-initialA">$10,000</span>
+                </div>
+                <input type="range" id="initialA-slider" min="0" max="500000" step="1000" value="10000" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="initialA" min="0" value="10000" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Monthly Net Return</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-monthlyA">$1,000</span>
+                </div>
+                <input type="range" id="monthlyA-slider" min="0" max="50000" step="100" value="1000" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="monthlyA" min="0" value="1000" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Investment Period (months)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-periodA">12 months</span>
+                </div>
+                <input type="range" id="periodA-slider" min="1" max="60" step="1" value="12" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="periodA" min="1" max="120" value="12" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Hidden Costs A -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted">Hidden Costs (A)</h2>
+              <button type="button" id="toggle-hidden-a" class="text-xs font-semibold text-bae-primary hover:underline bg-transparent border-0 cursor-pointer px-0 py-0">Hide</button>
+            </div>
+            <div id="hidden-a-panel" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Setup / Implementation</label>
+                <input type="number" id="setupA" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Training</label>
+                <input type="number" id="trainingA" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Monthly Maintenance</label>
+                <input type="number" id="maintA" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Time Invested (hours)</label>
+                <input type="number" id="hoursA" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Hourly Rate ($)</label>
+                <input type="number" id="rateA" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Compare Toggle -->
+          <div class="bg-bae-primary-soft border border-bae-primary/20 rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <label class="inline-flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" id="compare-toggle" class="w-5 h-5 rounded border-bae-border text-bae-primary focus:ring-bae-primary" />
+              <div>
+                <span class="text-sm font-semibold text-bae-ink block">Compare two investments</span>
+                <span class="text-xs text-bae-muted">Enable side-by-side comparison with a second investment</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Investment B (hidden by default) -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm hidden" id="investment-b-card">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Investment B</h2>
+            <div class="space-y-5">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Initial Investment</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-initialB">$10,000</span>
+                </div>
+                <input type="range" id="initialB-slider" min="0" max="500000" step="1000" value="10000" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="initialB" min="0" value="10000" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Monthly Net Return</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-monthlyB">$1,000</span>
+                </div>
+                <input type="range" id="monthlyB-slider" min="0" max="50000" step="100" value="1000" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="monthlyB" min="0" value="1000" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Investment Period (months)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-periodB">12 months</span>
+                </div>
+                <input type="range" id="periodB-slider" min="1" max="60" step="1" value="12" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="periodB" min="1" max="120" value="12" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Hidden Costs B (hidden by default) -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm hidden" id="hidden-b-card">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted">Hidden Costs (B)</h2>
+              <button type="button" id="toggle-hidden-b" class="text-xs font-semibold text-bae-primary hover:underline bg-transparent border-0 cursor-pointer px-0 py-0">Hide</button>
+            </div>
+            <div id="hidden-b-panel" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Setup / Implementation</label>
+                <input type="number" id="setupB" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Training</label>
+                <input type="number" id="trainingB" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Monthly Maintenance</label>
+                <input type="number" id="maintB" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Time Invested (hours)</label>
+                <input type="number" id="hoursB" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Hourly Rate ($)</label>
+                <input type="number" id="rateB" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Reset -->
+          <div class="flex justify-end -mt-1 mb-1">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset calculator
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <!-- Main Results -->
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Your ROI Results</h3>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Total Investment</div>
+                <div class="text-lg font-semibold" id="res-totalInvA">$10,000</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Total Return</div>
+                <div class="text-lg font-semibold" id="res-totalRetA">$12,000</div>
+              </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-4 mb-4">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Net Profit</div>
+              <div class="text-2xl font-bold font-serif text-bae-primary" id="res-netProfitA">$2,000</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">ROI</div>
+                <div class="text-xl font-bold font-serif" id="res-roiA">20.0%</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Annualized ROI</div>
+                <div class="text-xl font-bold font-serif" id="res-annualA">20.0%</div>
+              </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-4 mt-4">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Break-Even</div>
+              <div class="text-xl font-bold font-serif" id="res-breakEvenA">10 months</div>
+            </div>
+
+            <button type="button" id="pdf-btn" class="w-full mt-4 bg-bae-primary hover:bg-bae-accent text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+              Download PDF Report
+            </button>
+          </div>
+
+          <!-- Comparison Panel -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm hidden" id="comparison-panel">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Investment Comparison</h3>
+            <div class="space-y-4" id="comparison-content">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Report Summary (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Report Summary</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">ROI Analysis Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Investment</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-totalInv">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Return</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-totalRet">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Net Profit</p>
+              <p class="text-3xl font-bold text-bae-primary" id="report-netProfit">—</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">ROI</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-roi">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Annualized ROI</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-annual">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Break-Even</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-breakEven">—</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" id="report-details">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>Estimates are based on the inputs provided and standard financial formulas. Actual returns may vary based on market conditions, execution quality, and factors not captured in this model. Always consult a qualified financial advisor before making major investment decisions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Enter your investment', text: 'Input your initial investment, expected monthly returns, and time period. Expand the hidden costs section to add setup, training, maintenance, and the value of your time, the costs most calculators ignore.' },
+    { name: 'See true ROI instantly', text: 'Get your total ROI, annualized ROI, and break-even timeline, not just a simple percentage. Annualized returns let you fairly compare a 6-month campaign against a 3-year equipment purchase.' },
+    { name: 'Compare and decide', text: 'Enable Compare Mode to evaluate two investments side by side. See which option breaks even faster, delivers higher annualized returns, and generates more net profit over time. Download a PDF report to share.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter your investment</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Input your initial investment, expected monthly returns, and time period. Expand the hidden costs section to add setup, training, maintenance, and the value of your time, the costs most calculators ignore.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">See true ROI instantly</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Get your total ROI, annualized ROI, and break-even timeline, not just a simple percentage. Annualized returns let you fairly compare a 6-month campaign against a 3-year equipment purchase.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Compare and decide</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Enable Compare Mode to evaluate two investments side by side. See which option breaks even faster, delivers higher annualized returns, and generates more net profit over time. Download a PDF report to share.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/compound-interest/" class="text-bae-primary hover:underline">Compound Interest Calculator</a>, <a href="/calculators/mortgage-calculator/" class="text-bae-primary hover:underline">Mortgage Calculator</a>, and the <a href="/finance-toolkit/" class="text-bae-primary hover:underline">Finance Toolkit</a>.</p>
+        </div>
+        <a href="/finance-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse the Finance Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What People Pay -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What people pay</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Digital marketing campaign, 12 months</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Ads + creative + agency fees</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ 425% ROI</div>
+          <p class="text-sm text-bae-muted leading-relaxed">$8,000 total investment including hidden costs. $3,500/month net return. Break-even in 2.3 months. Annualized ROI matches total since period is 12 months.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">SaaS productivity tool, 18 months</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">CRM + setup + training</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ 110% ROI</div>
+          <p class="text-sm text-bae-muted leading-relaxed">$24,000 total investment. $2,800/month in labor savings and faster deal closure. Break-even in 8.6 months. Annualized ROI is roughly 64%.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Manufacturing equipment, 36 months</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Machine + install + maintenance</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ 315% ROI</div>
+          <p class="text-sm text-bae-muted leading-relaxed">$65,000 total investment. $7,500/month revenue increase. Break-even in 8.7 months. Annualized ROI is roughly 61% due to the longer time horizon.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">New sales hire, 12 months</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Salary + benefits + recruiting</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ 26% ROI</div>
+          <p class="text-sm text-bae-muted leading-relaxed">$95,000 total fully-loaded cost. $10,000/month contribution to pipeline. Break-even in 9.5 months. Lower ROI but predictable and scalable.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are modeled estimates based on typical business patterns as of May 2026. Your actual returns will vary by industry, execution, and market conditions.</p>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      function formatMoney(n) {
+        const abs = Math.abs(n);
+        if (abs >= 1000) return '$' + Math.round(n).toLocaleString();
+        if (abs >= 1) return '$' + n.toFixed(2);
+        return '$' + n.toFixed(2);
+      }
+
+      function formatPct(n) {
+        if (!isFinite(n)) return '—';
+        return n.toFixed(1) + '%';
+      }
+
+      function formatMonths(n) {
+        if (!isFinite(n)) return 'Never';
+        if (n <= 0) return '0 months';
+        if (n < 1) return '< 1 month';
+        const rounded = Math.round(n * 10) / 10;
+        return rounded.toLocaleString() + ' month' + (rounded === 1 ? '' : 's');
+      }
+
+      function calcInvestment(prefix) {
+        const val = (id) => parseFloat($(id + prefix)?.value) || 0;
+        const initial = val('initial');
+        const monthly = val('monthly');
+        const period = val('period');
+        const setup = val('setup');
+        const training = val('training');
+        const maint = val('maint');
+        const hours = val('hours');
+        const rate = val('rate');
+
+        const timeCost = hours * rate;
+        const totalMaint = maint * period;
+        const totalInvestment = initial + setup + training + totalMaint + timeCost;
+        const totalReturn = monthly * period;
+        const netProfit = totalReturn - totalInvestment;
+        const roi = totalInvestment > 0 ? (netProfit / totalInvestment) * 100 : 0;
+
+        let annualized = 0;
+        if (totalInvestment > 0 && period > 0 && roi >= -100) {
+          annualized = (Math.pow(1 + roi / 100, 12 / period) - 1) * 100;
+        }
+
+        const breakEven = monthly > 0 ? totalInvestment / monthly : Infinity;
+
+        return { initial, monthly, period, setup, training, maint, hours, rate, timeCost, totalMaint, totalInvestment, totalReturn, netProfit, roi, annualized, breakEven };
+      }
+
+      function calculate() {
+        const a = calcInvestment('A');
+        const compareOn = $('compare-toggle').checked;
+        const b = compareOn ? calcInvestment('B') : null;
+
+        // Update main results
+        $('res-totalInvA').textContent = formatMoney(a.totalInvestment);
+        $('res-totalRetA').textContent = formatMoney(a.totalReturn);
+        $('res-netProfitA').textContent = formatMoney(a.netProfit);
+        $('res-roiA').textContent = formatPct(a.roi);
+        $('res-annualA').textContent = formatPct(a.annualized);
+        $('res-breakEvenA').textContent = formatMonths(a.breakEven);
+
+        // Update report
+        $('report-totalInv').textContent = formatMoney(a.totalInvestment);
+        $('report-totalRet').textContent = formatMoney(a.totalReturn);
+        $('report-netProfit').textContent = formatMoney(a.netProfit);
+        $('report-roi').textContent = formatPct(a.roi);
+        $('report-annual').textContent = formatPct(a.annualized);
+        $('report-breakEven').textContent = formatMonths(a.breakEven);
+
+        const reportDetails = $('report-details');
+        reportDetails.innerHTML = '';
+        const rows = [
+          ['Initial Investment', formatMoney(a.initial)],
+          ['Setup / Implementation', formatMoney(a.setup)],
+          ['Training', formatMoney(a.training)],
+          ['Maintenance (' + a.period + ' mo)', formatMoney(a.totalMaint)],
+          ['Time Cost (' + a.hours + ' hrs × ' + formatMoney(a.rate) + ')', formatMoney(a.timeCost)],
+          ['Monthly Net Return', formatMoney(a.monthly)],
+          ['Investment Period', a.period + ' months'],
+        ];
+        if (compareOn && b) {
+          rows.push(['—', '']);
+          rows.push(['Investment B: Initial', formatMoney(b.initial)]);
+          rows.push(['Investment B: Total Inv', formatMoney(b.totalInvestment)]);
+          rows.push(['Investment B: Net Profit', formatMoney(b.netProfit)]);
+          rows.push(['Investment B: ROI', formatPct(b.roi)]);
+        }
+        rows.forEach(([label, value]) => {
+          if (label === '—') {
+            const div = document.createElement('div');
+            div.className = 'col-span-2 border-t border-bae-border my-1';
+            reportDetails.appendChild(div);
+            return;
+          }
+          const div = document.createElement('div');
+          const span1 = document.createElement('span');
+          span1.className = 'text-bae-muted';
+          span1.textContent = label + ': ';
+          const span2 = document.createElement('span');
+          span2.className = 'font-medium text-bae-ink';
+          span2.textContent = value;
+          div.appendChild(span1);
+          div.appendChild(span2);
+          reportDetails.appendChild(div);
+        });
+
+        // Comparison
+        const compPanel = $('comparison-panel');
+        const compContent = $('comparison-content');
+        if (compareOn && b) {
+          compPanel.classList.remove('hidden');
+          compContent.innerHTML = '';
+
+          const metrics = [
+            { label: 'Total Investment', a: a.totalInvestment, b: b.totalInvestment, prefix: '$', suffix: '', lowerIsBetter: false },
+            { label: 'Net Profit', a: a.netProfit, b: b.netProfit, prefix: '$', suffix: '', lowerIsBetter: false },
+            { label: 'ROI', a: a.roi, b: b.roi, prefix: '', suffix: '%', lowerIsBetter: false },
+            { label: 'Annualized ROI', a: a.annualized, b: b.annualized, prefix: '', suffix: '%', lowerIsBetter: false },
+            { label: 'Break-Even', a: a.breakEven, b: b.breakEven, prefix: '', suffix: ' mo', lowerIsBetter: true },
+          ];
+
+          metrics.forEach(m => {
+            const max = Math.max(Math.abs(m.a), Math.abs(m.b), 0.01);
+            const winner = m.lowerIsBetter ? (m.a < m.b ? 'A' : 'B') : (m.a > m.b ? 'A' : 'B');
+            const pctA = Math.min(100, (Math.abs(m.a) / max) * 100);
+            const pctB = Math.min(100, (Math.abs(m.b) / max) * 100);
+
+            let valA, valB;
+            if (m.suffix === ' mo') {
+              valA = formatMonths(m.a);
+              valB = formatMonths(m.b);
+            } else {
+              valA = m.prefix + (Math.abs(m.a) >= 1000 ? Math.round(m.a).toLocaleString() : m.a.toFixed(m.suffix === '%' ? 1 : 0)) + m.suffix;
+              valB = m.prefix + (Math.abs(m.b) >= 1000 ? Math.round(m.b).toLocaleString() : m.b.toFixed(m.suffix === '%' ? 1 : 0)) + m.suffix;
+            }
+
+            const wrap = document.createElement('div');
+            wrap.innerHTML =
+              '<div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">' + m.label + '</div>' +
+              '<div class="space-y-2">' +
+                '<div class="flex items-center gap-3">' +
+                  '<div class="w-8 text-xs font-medium ' + (winner === 'A' ? 'text-bae-primary' : 'text-bae-muted') + '">A</div>' +
+                  '<div class="flex-1 h-2.5 bg-bae-bg rounded-full overflow-hidden"><div class="h-full rounded-full ' + (winner === 'A' ? 'bg-bae-primary' : 'bg-bae-border') + '" style="width:' + pctA + '%"></div></div>' +
+                  '<div class="w-20 text-right text-sm font-semibold ' + (winner === 'A' ? 'text-bae-ink' : 'text-bae-muted') + '">' + valA + '</div>' +
+                '</div>' +
+                '<div class="flex items-center gap-3">' +
+                  '<div class="w-8 text-xs font-medium ' + (winner === 'B' ? 'text-bae-primary' : 'text-bae-muted') + '">B</div>' +
+                  '<div class="flex-1 h-2.5 bg-bae-bg rounded-full overflow-hidden"><div class="h-full rounded-full ' + (winner === 'B' ? 'bg-bae-primary' : 'bg-bae-border') + '" style="width:' + pctB + '%"></div></div>' +
+                  '<div class="w-20 text-right text-sm font-semibold ' + (winner === 'B' ? 'text-bae-ink' : 'text-bae-muted') + '">' + valB + '</div>' +
+                '</div>' +
+              '</div>';
+            compContent.appendChild(wrap);
+          });
+        } else {
+          compPanel.classList.add('hidden');
+        }
+
+        updateURL();
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          const params = new URLSearchParams();
+
+          const ia = parseFloat($('initialA').value) || 0;
+          const ma = parseFloat($('monthlyA').value) || 0;
+          const pa = parseInt($('periodA').value) || 12;
+          const sa = parseFloat($('setupA').value) || 0;
+          const ta = parseFloat($('trainingA').value) || 0;
+          const ma_maint = parseFloat($('maintA').value) || 0;
+          const ha = parseFloat($('hoursA').value) || 0;
+          const ra = parseFloat($('rateA').value) || 0;
+
+          if (ia !== 10000) params.set('ia', ia);
+          if (ma !== 1000) params.set('ma', ma);
+          if (pa !== 12) params.set('pa', pa);
+          if (sa !== 0) params.set('sa', sa);
+          if (ta !== 0) params.set('ta', ta);
+          if (ma_maint !== 0) params.set('ma_maint', ma_maint);
+          if (ha !== 0) params.set('ha', ha);
+          if (ra !== 0) params.set('ra', ra);
+
+          const compareOn = $('compare-toggle').checked;
+          if (compareOn) {
+            params.set('compare', '1');
+            const ib = parseFloat($('initialB').value) || 0;
+            const mb = parseFloat($('monthlyB').value) || 0;
+            const pb = parseInt($('periodB').value) || 12;
+            const sb = parseFloat($('setupB').value) || 0;
+            const tb = parseFloat($('trainingB').value) || 0;
+            const mb_maint = parseFloat($('maintB').value) || 0;
+            const hb = parseFloat($('hoursB').value) || 0;
+            const rb = parseFloat($('rateB').value) || 0;
+
+            if (ib !== 10000) params.set('ib', ib);
+            if (mb !== 1000) params.set('mb', mb);
+            if (pb !== 12) params.set('pb', pb);
+            if (sb !== 0) params.set('sb', sb);
+            if (tb !== 0) params.set('tb', tb);
+            if (mb_maint !== 0) params.set('mb_maint', mb_maint);
+            if (hb !== 0) params.set('hb', hb);
+            if (rb !== 0) params.set('rb', rb);
+          }
+
+          url.search = params.toString();
+          window.history.replaceState({}, '', url);
+        } catch (e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+          const setVal = (id, val, displayId, prefix, suffix) => {
+            if (val === null) return;
+            const el = $(id);
+            if (!el) return;
+            el.value = val;
+            const slider = $(id + '-slider');
+            if (slider) slider.value = val;
+            if (displayId) {
+              const display = $(displayId);
+              if (display) {
+                const n = parseFloat(val);
+                if (!isNaN(n)) {
+                  display.textContent = (prefix || '') + n.toLocaleString() + (suffix || '');
+                }
+              }
+            }
+          };
+
+          setVal('initialA', url.searchParams.get('ia'), 'display-initialA', '$');
+          setVal('monthlyA', url.searchParams.get('ma'), 'display-monthlyA', '$');
+          setVal('periodA', url.searchParams.get('pa'), 'display-periodA', '', ' months');
+
+          const sa = url.searchParams.get('sa'); if (sa !== null) $('setupA').value = sa;
+          const ta = url.searchParams.get('ta'); if (ta !== null) $('trainingA').value = ta;
+          const ma_maint = url.searchParams.get('ma_maint'); if (ma_maint !== null) $('maintA').value = ma_maint;
+          const ha = url.searchParams.get('ha'); if (ha !== null) $('hoursA').value = ha;
+          const ra = url.searchParams.get('ra'); if (ra !== null) $('rateA').value = ra;
+
+          const compareOn = url.searchParams.get('compare') === '1';
+          $('compare-toggle').checked = compareOn;
+          if (compareOn) {
+            $('investment-b-card').classList.remove('hidden');
+            $('hidden-b-card').classList.remove('hidden');
+          }
+
+          setVal('initialB', url.searchParams.get('ib'), 'display-initialB', '$');
+          setVal('monthlyB', url.searchParams.get('mb'), 'display-monthlyB', '$');
+          setVal('periodB', url.searchParams.get('pb'), 'display-periodB', '', ' months');
+
+          const sb = url.searchParams.get('sb'); if (sb !== null) $('setupB').value = sb;
+          const tb = url.searchParams.get('tb'); if (tb !== null) $('trainingB').value = tb;
+          const mb_maint = url.searchParams.get('mb_maint'); if (mb_maint !== null) $('maintB').value = mb_maint;
+          const hb = url.searchParams.get('hb'); if (hb !== null) $('hoursB').value = hb;
+          const rb = url.searchParams.get('rb'); if (rb !== null) $('rateB').value = rb;
+        } catch (e) {}
+      }
+
+      function syncInputAndSlider(inputId, displayId, prefix, suffix) {
+        const input = $(inputId);
+        const slider = $(inputId + '-slider');
+        const display = $(displayId);
+        if (!input || !slider || !display) return;
+        input.addEventListener('input', () => {
+          slider.value = input.value;
+          let val = parseFloat(input.value);
+          if (isNaN(val)) val = 0;
+          display.textContent = (prefix || '') + val.toLocaleString() + (suffix || '');
+          calculate();
+        });
+        slider.addEventListener('input', () => {
+          input.value = slider.value;
+          let val = parseFloat(slider.value);
+          if (isNaN(val)) val = 0;
+          display.textContent = (prefix || '') + val.toLocaleString() + (suffix || '');
+          calculate();
+        });
+      }
+
+      syncInputAndSlider('initialA', 'display-initialA', '$');
+      syncInputAndSlider('monthlyA', 'display-monthlyA', '$');
+      syncInputAndSlider('periodA', 'display-periodA', '', ' months');
+      syncInputAndSlider('initialB', 'display-initialB', '$');
+      syncInputAndSlider('monthlyB', 'display-monthlyB', '$');
+      syncInputAndSlider('periodB', 'display-periodB', '', ' months');
+
+      ['setupA', 'trainingA', 'maintA', 'hoursA', 'rateA'].forEach(id => {
+        $(id)?.addEventListener('input', calculate);
+      });
+      ['setupB', 'trainingB', 'maintB', 'hoursB', 'rateB'].forEach(id => {
+        $(id)?.addEventListener('input', calculate);
+      });
+
+      // Compare toggle
+      $('compare-toggle').addEventListener('change', (e) => {
+        if (e.target.checked) {
+          $('investment-b-card').classList.remove('hidden');
+          $('hidden-b-card').classList.remove('hidden');
+        } else {
+          $('investment-b-card').classList.add('hidden');
+          $('hidden-b-card').classList.add('hidden');
+          $('comparison-panel').classList.add('hidden');
+        }
+        calculate();
+      });
+
+      // Hidden costs toggles
+      function setupHiddenToggle(btnId, panelId) {
+        const btn = $(btnId);
+        const panel = $(panelId);
+        if (!btn || !panel) return;
+        btn.addEventListener('click', () => {
+          if (panel.classList.contains('hidden')) {
+            panel.classList.remove('hidden');
+            btn.textContent = 'Hide';
+          } else {
+            panel.classList.add('hidden');
+            btn.textContent = 'Show';
+          }
+        });
+      }
+      setupHiddenToggle('toggle-hidden-a', 'hidden-a-panel');
+      setupHiddenToggle('toggle-hidden-b', 'hidden-b-panel');
+
+      // Reset
+      $('clear-btn').addEventListener('click', () => {
+        // A
+        $('initialA').value = 0; $('initialA-slider').value = 0; $('display-initialA').textContent = '$0';
+        $('monthlyA').value = 0; $('monthlyA-slider').value = 0; $('display-monthlyA').textContent = '$0';
+        $('periodA').value = 1; $('periodA-slider').value = 1; $('display-periodA').textContent = '1 month';
+        $('setupA').value = 0; $('trainingA').value = 0; $('maintA').value = 0; $('hoursA').value = 0; $('rateA').value = 0;
+
+        // B
+        $('initialB').value = 0; $('initialB-slider').value = 0; $('display-initialB').textContent = '$0';
+        $('monthlyB').value = 0; $('monthlyB-slider').value = 0; $('display-monthlyB').textContent = '$0';
+        $('periodB').value = 1; $('periodB-slider').value = 1; $('display-periodB').textContent = '1 month';
+        $('setupB').value = 0; $('trainingB').value = 0; $('maintB').value = 0; $('hoursB').value = 0; $('rateB').value = 0;
+
+        // Compare
+        $('compare-toggle').checked = false;
+        $('investment-b-card').classList.add('hidden');
+        $('hidden-b-card').classList.add('hidden');
+        $('comparison-panel').classList.add('hidden');
+
+        // Hidden panels
+        $('hidden-a-panel').classList.remove('hidden');
+        $('toggle-hidden-a').textContent = 'Hide';
+        $('hidden-b-panel').classList.remove('hidden');
+        $('toggle-hidden-b').textContent = 'Hide';
+
+        window.history.replaceState({}, '', window.location.pathname);
+        calculate();
+      });
+
+      // PDF
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const element = $('print-report');
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'roi-analysis-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // Init
+      readURL();
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+  </style>
+</BaseLayout>

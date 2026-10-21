@@ -1,0 +1,375 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Molecular Weight Calculator?', a: 'The Best Answer Hub Molecular Weight Calculator is a free, browser-based chemistry tool that computes the molar mass of any chemical formula. Enter a formula like H2O or CuSO4&middot;5H2O and it shows a per-element breakdown, percent composition, and a grams-to-moles converter, using current IUPAC atomic weights, with nothing uploaded.' },
+  { q: 'How do you calculate molar mass?', a: 'Add up the standard atomic weight of every atom in the formula, each multiplied by how many times it appears. Water is 2 times 1.008 plus 15.999, which is 18.015 g/mol. The Best Answer Hub Molecular Weight Calculator parses the formula and does this sum instantly, showing the contribution of each element.' },
+  { q: 'What is the molar mass of water?', a: '18.015 grams per mole. It is two hydrogen atoms at 1.008 each plus one oxygen at 15.999, which sums to 18.015. The Best Answer Hub Molecular Weight Calculator returns this with the per-element breakdown, so you can see exactly where the number comes from rather than just trusting it.' },
+  { q: 'What is the difference between molar mass and molecular weight?', a: 'In practice they are the same number and used interchangeably. Molecular weight is technically a dimensionless ratio, while molar mass carries units of grams per mole, but the value is identical. The Best Answer Hub Molecular Weight Calculator returns g/mol, the unit used in stoichiometry and solution preparation.' },
+  { q: 'How do I calculate molar mass with parentheses?', a: 'Apply the number after the parenthesis to every atom inside it. In Ca(OH)2, the 2 doubles both the oxygen and the hydrogen, giving 1 Ca, 2 O, and 2 H, which sums to 74.09 g/mol. The Best Answer Hub Molecular Weight Calculator handles this parsing automatically so nothing is miscounted.' },
+  { q: 'How do I handle waters of hydration?', a: 'A hydrate is written with a center dot, and you add the full water molecules to the total. In CuSO4&middot;5H2O, that is five extra water molecules on top of the copper sulfate. The Best Answer Hub Molecular Weight Calculator reads the center dot and includes the hydration water, which is a common source of error by hand.' },
+  { q: 'Where do the atomic weights come from?', a: 'From IUPAC, specifically its Commission on Isotopic Abundances and Atomic Weights, which sets the standard atomic weights from the natural isotopic composition of the elements and revises them periodically. The Best Answer Hub Molecular Weight Calculator uses current IUPAC values, so its totals match a modern textbook.' },
+  { q: 'Why is carbon 12.011 and not exactly 12?', a: 'Because the standard atomic weight is an average over the natural mix of carbon isotopes, mostly carbon-12 with some carbon-13, which pulls the value slightly above 12. Only pure carbon-12 is exactly 12. The Best Answer Hub Molecular Weight Calculator uses the IUPAC average, 12.011, which is what chemistry calculations expect.' },
+  { q: 'What is a mole?', a: 'A mole is a fixed count of particles, exactly 6.02214076 times ten to the 23rd since the 2019 SI redefinition. Molar mass links that count to a mass in grams, so one mole of a substance weighs its molar mass in grams. The Best Answer Hub Molecular Weight Calculator uses this to convert grams to moles.' },
+  { q: 'How do I convert grams to moles?', a: 'Divide the mass in grams by the molar mass in grams per mole. For example, 36.03 grams of water divided by 18.015 g/mol is 2 moles. The Best Answer Hub Molecular Weight Calculator has a built-in grams-to-moles converter, so once it computes the molar mass you can convert a measured mass in one step.' },
+  { q: 'What is the difference between average and monoisotopic mass?', a: 'Average mass, which is the molar mass, uses the natural mix of isotopes. Monoisotopic mass uses only the single most abundant isotope of each atom and is used in mass spectrometry. The Best Answer Hub Molecular Weight Calculator returns the average molar mass, which is what stoichiometry and lab work need.' },
+  { q: 'Can it show percent composition?', a: 'Yes. The Best Answer Hub Molecular Weight Calculator shows the percent by mass of each element in the formula alongside the molar mass. This is useful for checking purity, understanding a compound, and coursework questions that ask for the mass percent of a given element.' },
+  { q: 'Can I enter a compound by name?', a: 'You can enter a chemical formula directly, and the Best Answer Hub Molecular Weight Calculator also accepts common names for many compounds. Entering the formula is the most reliable way, since it removes any ambiguity about which substance you mean, and the tool then parses and sums it exactly.' },
+  { q: 'Is my data uploaded to a server?', a: 'No. The Best Answer Hub Molecular Weight Calculator runs entirely in your browser, so the formulas you enter never leave your device. The calculation is a lookup of atomic weights plus arithmetic, which needs no server, and there is no signup, consistent with how every Best Answer Hub tool is built.' },
+  { q: 'Is the Molecular Weight Calculator free?', a: 'Yes. The Best Answer Hub Molecular Weight Calculator is completely free with no usage limits, no watermarks, and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so it carries no ads and never gates a result behind an upgrade.' },
+];
+
+const seo = {
+  title: 'How to Calculate the Molar Mass of Any Formula',
+  description: 'How molar mass is calculated: sum the IUPAC atomic weights of every atom, including parentheses and hydration water. A worked H2O example and the common traps.',
+  url: '/playbooks/molecular-weight-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Molecular Weight Calculator', url: '/playbooks/molecular-weight-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Chemistry</span>
+        <div class="cav">Add up the atoms</div>
+        <h1>How to Calculate the Molar Mass of <em>Any Formula</em></h1>
+        <p class="dek">Molar mass is just the sum of the atomic weights of every atom in a formula, in grams per mole. The arithmetic is easy; the part that trips people up is reading the formula correctly, counting inside parentheses and remembering the water in a hydrate. Here is how the calculation works, where the atomic weights come from, and the traps to avoid.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Chemistry</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Parse<small>subscripts, parentheses</small></div>
+          <div class="seg b2">Sum<small>atomic weights</small></div>
+          <div class="seg b3">Exact<small>IUPAC data</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">18.015</div><div class="l">g/mol, the molar mass of water</div><div class="src">IUPAC / CIAAW</div></div>
+      <div class="stat"><div class="n">6.022&times;10<sup>23</sup></div><div class="l">entities in one mole (Avogadro number)</div><div class="src">NIST</div></div>
+      <div class="stat"><div class="n">2024</div><div class="l">the current IUPAC standard atomic weights</div><div class="src">CIAAW</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">computed in your browser, nothing uploaded</div><div class="src">no upload</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#how">How it is calculated</a>
+        <a href="#parsing">Reading the formula</a>
+        <a href="#weights">Where the weights come from</a>
+        <a href="#uses">Grams, moles, molarity</a>
+        <a href="#mono">Average vs monoisotopic</a>
+        <a href="#different">Why this tool</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The molar mass of a compound is the sum of the standard atomic weights of every atom in its formula, each multiplied by how many times it appears, expressed in grams per mole.</strong> For water, that is two hydrogens at 1.008 plus one oxygen at 15.999, which is 18.015 g/mol. The Best Answer Hub <a href="/calculators/stem-suite/molecular-weight-calculator/">Molecular Weight Calculator</a> parses the formula, adds up the atoms using current IUPAC atomic weights, and shows the breakdown, all in your browser.</p>
+
+        <p>This guide covers how molar mass is calculated, how a formula with parentheses and waters of hydration is read, where the atomic weights come from, how molar mass converts grams to moles, and how it differs from the monoisotopic mass used in mass spectrometry. The tool sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> STEM suite, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Molecular Weight Calculator?</h2>
+        <p>The Best Answer Hub Molecular Weight Calculator is a free, browser-based chemistry tool that computes the molar mass of any chemical formula instantly. Enter a formula like H2O, Ca(NO3)2, or CuSO4&middot;5H2O and it shows a step-by-step element breakdown with percent composition, plus a built-in grams-to-moles converter. Every calculation runs in your browser using standard IUPAC atomic weights, with no signup and nothing uploaded.</p>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">1</span><div><b>Parses real formulas.</b> Subscripts, parentheses like Ca(NO3)2, and hydrates like CuSO4&middot;5H2O are all read correctly.</div></li>
+            <li><span class="dot">2</span><div><b>Shows the work.</b> A per-element breakdown and percent composition, not just a single number.</div></li>
+            <li><span class="dot">3</span><div><b>Grams to moles built in.</b> Convert a measured mass into an amount of substance in one step.</div></li>
+          </ul>
+        </div>
+
+        <div class="cav">The method</div>
+        <h2 id="how">How is molar mass calculated?</h2>
+        <p>You add up the atomic weight of every atom in the formula. IUPAC defines molar mass as mass divided by amount of substance, and in practice you compute it as the sum of each element's standard atomic weight times the number of atoms of that element (<a href="https://goldbook.iupac.org/terms/view/12214" target="_blank" rel="noopener noreferrer">IUPAC Gold Book</a>). Water is the simplest case, and a compound with parentheses like calcium hydroxide shows why counting carefully matters.</p>
+        <div class="codebox">
+          <div class="dt">Water, worked out</div>
+          <div class="codelines">H2O
+  = 2 x H(1.008) + 1 x O(15.999)
+  = 2.016 + 15.999
+  = 18.015 g/mol</div>
+          <p class="codenote">Atomic weights from IUPAC / CIAAW abridged standard values. Source: IUPAC Gold Book; CIAAW.</p>
+        </div>
+        <table>
+          <thead><tr><th>Ca(OH)2</th><th>Atomic weight</th><th>Count</th><th>Subtotal</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Calcium (Ca)</td><td>40.078</td><td>1</td><td>40.078</td></tr>
+            <tr><td class="band">Oxygen (O)</td><td>15.999</td><td>2</td><td>31.998</td></tr>
+            <tr><td class="band">Hydrogen (H)</td><td>1.008</td><td>2</td><td>2.016</td></tr>
+            <tr><td class="band">Total</td><td></td><td></td><td>74.09 g/mol</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The tricky bit</div>
+        <h2 id="parsing">Reading the formula: subscripts, parentheses, and hydrates</h2>
+        <p>The arithmetic is easy; parsing the formula is where mistakes happen. A subscript counts the atoms of the element before it, a multiplier after a parenthesis applies to everything inside, and a center dot joins a hydrate with its own multiplier. IUPAC notes that enclosing marks like parentheses are used "to avoid ambiguity," and that addition compounds such as hydrates are written as separate constituents "separated by centre dots" (<a href="https://old.iupac.org/publications/books/principles/principles_of_nomenclature.pdf" target="_blank" rel="noopener noreferrer">IUPAC, Principles of Chemical Nomenclature</a>).</p>
+        <table>
+          <thead><tr><th>Notation</th><th>Example</th><th>How to read it</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Subscript</td><td>H2O</td><td>2 hydrogen, 1 oxygen</td></tr>
+            <tr><td class="band">Parentheses</td><td>Ca(OH)2</td><td>The 2 applies to O and H: 1 Ca, 2 O, 2 H</td></tr>
+            <tr><td class="band">Hydrate (center dot)</td><td>CuSO4&middot;5H2O</td><td>Add five whole water molecules</td></tr>
+          </tbody>
+        </table>
+        <figure class="chart">
+          <figcaption class="chart-title">How a formula with parentheses is parsed</figcaption>
+          <svg viewBox="0 0 600 160" role="img" aria-label="The formula Ca(OH)2 is parsed into 1 calcium, 2 oxygen, and 2 hydrogen, which sum to 74.09 grams per mole.">
+            <rect x="18" y="52" width="130" height="56" rx="10" fill="#C6603F"/>
+            <text x="83" y="80" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="20" font-weight="800" fill="#fff">Ca(OH)2</text>
+            <text x="83" y="98" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#f3ddd2">the formula</text>
+            <path d="M152 80 L188 80" stroke="#C6603F" stroke-width="2.5"/><path d="M182 74 l8 6 -8 6" fill="none" stroke="#C6603F" stroke-width="2.5"/>
+            <rect x="194" y="52" width="210" height="56" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="299" y="78" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="16" font-weight="800" fill="#8a4429">1 Ca &middot; 2 O &middot; 2 H</text>
+            <text x="299" y="96" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">the 2 applies inside the parentheses</text>
+            <path d="M408 80 L444 80" stroke="#C6603F" stroke-width="2.5"/><path d="M438 74 l8 6 -8 6" fill="none" stroke="#C6603F" stroke-width="2.5"/>
+            <rect x="450" y="52" width="132" height="56" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="516" y="80" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="18" font-weight="800" fill="#33302A">74.09</text>
+            <text x="516" y="98" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#5a7355">g/mol</text>
+          </svg>
+          <p class="chart-src">A parser must apply the multiplier after a parenthesis to every atom inside it. Miscounting here is the most common molar-mass error.</p>
+        </figure>
+        <p>Forgetting that the 2 in Ca(OH)2 doubles both the oxygen and the hydrogen, or dropping the five waters in a hydrate, is the classic slip. The Best Answer Hub Molecular Weight Calculator parses these correctly, so you get 74.09 g/mol for calcium hydroxide without hand-counting.</p>
+
+        <div class="cav">The data</div>
+        <h2 id="weights">Where do the atomic weights come from?</h2>
+        <p>From IUPAC, which publishes the standard atomic weights that every molar-mass calculation depends on. The Commission on Isotopic Abundances and Atomic Weights (CIAAW) sets these values from the natural isotopic composition of the elements and revises them periodically, with the current table dated 2024 (<a href="https://www.ciaaw.org/atomic-weights.htm" target="_blank" rel="noopener noreferrer">CIAAW</a>). Because a molar mass is only a lookup of these weights plus arithmetic, a browser tool is exactly as accurate as a server one, as long as it uses current values.</p>
+        <table>
+          <thead><tr><th>Element</th><th>Standard atomic weight</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Hydrogen (H)</td><td>1.008</td></tr>
+            <tr><td class="band">Carbon (C)</td><td>12.011</td></tr>
+            <tr><td class="band">Nitrogen (N)</td><td>14.007</td></tr>
+            <tr><td class="band">Oxygen (O)</td><td>15.999</td></tr>
+          </tbody>
+        </table>
+        <p>These are the abridged conventional values; IUPAC lists some elements as an interval because their isotopic mix varies in nature, but the abridged figures are what most calculations use. The Best Answer Hub Molecular Weight Calculator uses current IUPAC atomic weights so the totals match a textbook.</p>
+
+        <div class="cav">The point of it</div>
+        <h2 id="uses">Molar mass in practice: grams, moles, and molarity</h2>
+        <p>Molar mass is the bridge between a mass you can weigh and an amount of substance you can react. It is the conversion factor between grams and moles, so you divide a mass in grams by the molar mass to get moles, and multiply to go back (<a href="https://chem.libretexts.org/Bookshelves/Introductory_Chemistry/Chemistry_for_Changing_Times_(Hill_and_McCreary)/05:_Chemical_Accounting/5.04:_Molar_Mass-_Mole-to-Mass_and_Mass-to-Mole_Conversions" target="_blank" rel="noopener noreferrer">Chemistry LibreTexts</a>). One mole is a fixed count of particles, exactly 6.02214076 times ten to the 23rd since the 2019 SI redefinition (<a href="https://www.nist.gov/pml/owm/si-units-amount-substance" target="_blank" rel="noopener noreferrer">NIST</a>).</p>
+        <p>That single conversion sits under most of quantitative chemistry: measuring out a reactant for a reaction, preparing a solution to a target molarity, and working through stoichiometry. The Best Answer Hub Molecular Weight Calculator includes a grams-to-moles converter alongside the molar mass, so the number is ready to use, not just to read.</p>
+
+        <div class="cav">A common mix-up</div>
+        <h2 id="mono">Average vs monoisotopic mass: which one is this?</h2>
+        <p>Molar mass and molecular weight are the average mass, computed from standard atomic weights that reflect the natural mix of isotopes. That is different from the monoisotopic mass used in mass spectrometry, which uses only the single most abundant isotope of each atom, because a mass spectrometer measures individual molecules rather than a statistical average. The two can differ enough to matter: the monoisotopic masses of nitrogen gas and ethylene are 28.006 and 28.032 daltons, which the average mass alone cannot separate.</p>
+        <div class="callout sage"><div class="h">Which number you want</div><p>For weighing out reagents, preparing solutions, and coursework, you want the average molar mass in g/mol, which is what the Best Answer Hub Molecular Weight Calculator returns. Monoisotopic mass is a mass-spectrometry quantity, useful only when identifying individual molecules by their exact isotope masses.</p></div>
+
+        <div class="cav">Why this one</div>
+        <h2 id="different">How is Best Answer Hub different from other calculators?</h2>
+        <p>The difference is that it actually parses the formula and shows the work. Some tools only look up known compounds; the Best Answer Hub Molecular Weight Calculator reads an arbitrary formula, including parentheses and hydrates, breaks down each element with its percent composition, and converts grams to moles. It uses current IUPAC atomic weights and runs entirely in your browser.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical tool</th></tr></thead>
+          <tbody>
+            <tr><td>Parses parentheses and hydrates</td><td class="band">Yes</td><td>Varies</td></tr>
+            <tr><td>Per-element and percent breakdown</td><td class="band">Yes</td><td>Sometimes</td></tr>
+            <tr><td>Grams-to-moles converter</td><td class="band">Built in</td><td>Often separate</td></tr>
+            <tr><td>Signup or lookup-only</td><td class="band">None, parses any formula</td><td>Some are lookup-only</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cta">
+          <span class="kicker">Add up the atoms instantly</span>
+          <h3>Try the free Molecular Weight Calculator</h3>
+          <p>Enter any formula, including parentheses and hydrates, and get the molar mass, percent composition, and grams-to-moles. No signup, in your browser.</p>
+          <a class="btn" href="/calculators/stem-suite/molecular-weight-calculator/">Open the Molecular Weight Calculator</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Frequently asked questions about molar mass</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/number-base-converter/">Binary, Hex, and Octal: How Base Conversion Works</a></b> The other STEM-suite tool, for developers.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/unit-currency-converter/">Unit Conversions Are Exact. Currency Is Not.</a></b> Another accuracy explainer, for everyday units.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, Nothing Uploaded</a></b> The Calculators hub guide, every tool client-side.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/ai-knowledge-test/">The Free AI Knowledge Test</a></b> A no-signup check of how well you really understand AI.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>IUPAC, <a href="https://goldbook.iupac.org/terms/view/12214" target="_blank" rel="noopener noreferrer">Gold Book, molar mass</a>, 2025 (mass divided by amount of substance).</li>
+          <li>CIAAW / IUPAC, <a href="https://www.ciaaw.org/atomic-weights.htm" target="_blank" rel="noopener noreferrer">Standard Atomic Weights</a>, 2021 (rev. 2024) (the atomic-weight source).</li>
+          <li>IUPAC, <a href="https://old.iupac.org/publications/books/principles/principles_of_nomenclature.pdf" target="_blank" rel="noopener noreferrer">Principles of Chemical Nomenclature</a> (subscripts, parentheses, center dots).</li>
+          <li>NIST, <a href="https://www.nist.gov/pml/owm/si-units-amount-substance" target="_blank" rel="noopener noreferrer">SI Units, Amount of Substance</a> (the mole; Avogadro number, exact since 2019).</li>
+          <li>Chemistry LibreTexts, <a href="https://chem.libretexts.org/Bookshelves/Introductory_Chemistry/Chemistry_for_Changing_Times_(Hill_and_McCreary)/05:_Chemical_Accounting/5.04:_Molar_Mass-_Mole-to-Mass_and_Mass-to-Mole_Conversions" target="_blank" rel="noopener noreferrer">Molar Mass conversions</a> (grams-to-moles use).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">More free calculators: <a href="/calculators/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Calculators hub</a>, <a href="/calculators/stem-suite/number-base-converter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Number Base Converter</a>, <a href="/calculators/unit-currency-converter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Unit and Currency Converter</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all free tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.7rem;color:var(--clay);line-height:1}
+  .pb .stat .n sup{font-size:.6em}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

@@ -1,0 +1,65 @@
+---
+interface FAQ {
+  q: string;
+  a: string;
+}
+
+interface Props {
+  faqs: FAQ[];
+}
+
+const { faqs } = Astro.props;
+---
+
+<section class="py-14 relative z-[1]" aria-labelledby="faq-title">
+  <div class="container max-w-page mx-auto px-6">
+    <h2 id="faq-title" class="font-serif text-2xl md:text-[1.6rem] font-bold tracking-tight mb-8 text-bae-ink text-center">Frequently asked questions</h2>
+    <div class="max-w-2xl mx-auto flex flex-col gap-2.5">
+      {faqs.map((faq, i) => (
+        <div class:list={['faq-item bg-bae-card border border-bae-border rounded-bae-sm px-5 py-4 cursor-pointer transition-colors hover:border-[#d5d3df]', { open: i === 0 }]} role="button" tabindex="0" aria-expanded={i === 0 ? 'true' : 'false'} data-faq>
+          <h3 class="text-sm font-semibold flex justify-between items-center text-bae-ink">
+            {faq.q}
+            <span class="text-bae-muted text-xs transition-transform duration-200 faq-icon" aria-hidden="true">▼</span>
+          </h3>
+          <div class:list={['text-sm text-bae-muted mt-2.5 leading-relaxed faq-answer transition-all duration-200', { 'is-open': i === 0 }]} set:html={faq.a} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+  .faq-answer.is-open {
+    max-height: 2000px;
+    opacity: 1;
+  }
+</style>
+
+<script>
+  document.querySelectorAll('[data-faq]').forEach(item => {
+    function toggle() {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('[data-faq]').forEach(i => {
+        i.classList.remove('open');
+        i.setAttribute('aria-expanded', 'false');
+        i.querySelector('.faq-icon')?.classList.remove('rotate-180');
+        i.querySelector('.faq-answer')?.classList.remove('is-open');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        item.setAttribute('aria-expanded', 'true');
+        item.querySelector('.faq-icon')?.classList.add('rotate-180');
+        item.querySelector('.faq-answer')?.classList.add('is-open');
+      }
+    }
+    item.addEventListener('click', toggle);
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
+</script>

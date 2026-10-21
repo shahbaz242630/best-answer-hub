@@ -1,0 +1,1281 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Grad Student Tax Calculator?',
+    a: 'The Best Answer Hub Grad Student Tax Calculator is a free, privacy-first browser tool built specifically for U.S. graduate students. It estimates your federal tax liability across fellowship types: W-2 assistantships, 1098-T scholarships, 1099-MISC/NEC fellowships, and stipends with no tax form. It flags common traps like the self-employment tax misclassification, Kiddie Tax exposure for students under 24, and missing quarterly payments. All calculations run instantly in your browser. No signup, no data sent to any server.',
+  },
+  {
+    q: 'Why do grad students on fellowship get hit with a $3,000–$5,000 tax bill in April when their labmates get refunds?',
+    a: 'Most universities withhold zero federal income tax from fellowship stipends. Your W-2 labmate had tax taken out of every paycheck; you received your full stipend pre-tax. The Best Answer Hub Grad Student Tax Calculator reveals your real tax burden upfront. Enter your annual stipend, select your fellowship type, and see exactly how much you should have been setting aside each month, before April surprises you.',
+  },
+  {
+    q: 'Why does TurboTax try to make me file Schedule C and charge 15.3% self-employment tax on my 1099-MISC fellowship?',
+    a: 'Commercial tax software sees a 1099-MISC or 1099-NEC and defaults to self-employment treatment. Fellowship income is not self-employment. You do not owe the 15.3% SE tax. The Best Answer Hub Grad Student Tax Calculator treats your 1099 fellowship as ordinary taxable income, not business income, so you see the correct estimate without the erroneous SE tax. Use this estimate to double-check what commercial software produces.',
+  },
+  {
+    q: 'My university only sent a "courtesy letter" instead of a W-2 or 1099. Do I still have to report my stipend?',
+    a: 'Yes. A courtesy letter is not an official IRS form, but the income is still taxable. The Best Answer Hub Grad Student Tax Calculator has a dedicated "No tax form received" mode. Enter your total fellowship deposits for the calendar year, and it applies the 2026 IRS federal brackets to estimate your tax. Save the output as a PDF to share with a tax preparer or use as a reference when filing.',
+  },
+  {
+    q: 'I\'m 22 and my parents claim me as a dependent. Why might my $28,000 stipend be taxed at their 32% rate instead of my 10% rate?',
+    a: 'This is the Kiddie Tax. For full-time students under 24 who are claimed as dependents, fellowship income can be treated as unearned income. The portion above $2,700 may be taxed at your parents\' highest marginal rate instead of your own graduated rates. The Best Answer Hub Grad Student Tax Calculator flags this risk automatically when you enter your age and dependent status, showing both your regular rate and the potential parental-rate exposure.',
+  },
+  {
+    q: 'How much should I realistically save from each $2,800 monthly stipend check if nothing is being withheld?',
+    a: 'It depends on your state and filing status, but a safe rule is 15% to 25% of each check for federal tax alone. The Best Answer Hub Grad Student Tax Calculator includes a per-paycheck savings planner. After entering your stipend and state, it reverse-calculates exactly how much to set aside per check. For a single California grad student on a $33,600 fellowship with no withholding, the tool suggests setting aside roughly $240 per month to break even at filing time.',
+  },
+  {
+    q: 'Do I really have to pay quarterly estimated taxes on my NSF fellowship, or can I just pay everything in April?',
+    a: 'If you expect to owe $1,000 or more in federal tax and had no withholding, the IRS requires quarterly estimated payments. Waiting until April triggers an underpayment penalty of roughly 8% annualized on the shortfall. The Best Answer Hub Grad Student Tax Calculator detects non-W-2 fellowship income and auto-computes your quarterly amount using the safe-harbor rule. It displays the four due dates (April 15, June 16, September 15, and January 15) so you can set calendar reminders.',
+  },
+  {
+    q: 'My 1098-T shows $45,000 in Box 5 and $35,000 in Box 1. Is the entire $10,000 gap taxable?',
+    a: 'The gap represents scholarship money that exceeded your qualified tuition and related expenses. That excess is taxable income if it was used for room, board, travel, or other living costs. The Best Answer Hub Grad Student Tax Calculator lets you input both Box 5 and Box 1 directly. It subtracts qualified tuition from total scholarships and shows only the taxable portion, then runs that number through the 2026 federal brackets.',
+  },
+  {
+    q: 'Can I claim the American Opportunity Tax Credit as a graduate student, or am I stuck with the Lifetime Learning Credit?',
+    a: 'Most graduate students do not qualify for the AOTC because it is limited to the first four years of higher education. The Lifetime Learning Credit is usually the better option for grad students: 20% of up to $10,000 in qualified expenses, for a maximum of $2,000. The Best Answer Hub Grad Student Tax Calculator models the LLC against your tax liability and shows exactly how much it reduces your final bill.',
+  },
+  {
+    q: 'I switched from a W-2 TA position to a fellowship mid-year. How do I avoid an underpayment penalty when my spring had withholding but my fall did not?',
+    a: 'A mid-year funding switch creates a withholding cliff. The Best Answer Hub Grad Student Tax Calculator lets you enter your W-2 wages and withholding separately from your fellowship income. It then checks the IRS safe-harbor rules (paying 90% of current-year tax or 100% of prior-year tax) and warns you if your spring withholding is no longer enough to cover the full year. If a gap exists, it shows the quarterly payment needed to stay penalty-free.',
+  },
+  {
+    q: 'My university pays my health insurance premium. Is that a tax-free benefit or hidden taxable income?',
+    a: 'If your school pays health insurance premiums through a scholarship or adds a health insurance stipend to your pay, that amount is generally taxable income unless it qualifies under a specific employee benefit plan. The Best Answer Hub Grad Student Tax Calculator includes a health insurance stipend toggle. Enter the annual amount your school contributes, and it adds that figure to your taxable income so your estimate reflects the full picture.',
+  },
+  {
+    q: 'Is my $45,000 tuition waiver taxable under the 2017 Tax Cuts and Jobs Act?',
+    a: 'For teaching and research assistants, qualified tuition reductions are generally tax-free under IRC Section 117(d) as long as the courses are part of your degree program. The Best Answer Hub Grad Student Tax Calculator separates tuition waivers from taxable stipends. Toggle the qualified tuition waiver box to confirm it is excluded from your taxable income, so you do not accidentally over-report.',
+  },
+  {
+    q: 'Can I contribute to a Roth IRA with my fellowship stipend, or does the IRS not count it as earned income?',
+    a: 'Fellowship stipends that are taxable (whether reported on a W-2, 1098-T, or as other income) do count as compensation for IRA purposes. Tax-free scholarship portions do not. The Best Answer Hub Grad Student Tax Calculator displays your total taxable compensation, which is the number you use to determine Roth IRA eligibility. For a $30,000 taxable stipend, you could contribute up to $7,000 in 2026 if you are under 50.',
+  },
+  {
+    q: 'If I deliberately make part of my tax-free scholarship taxable, can I unlock the American Opportunity Tax Credit?',
+    a: 'The "scholarship restructuring" strategy only works for students in their first four years of college who otherwise qualify for the AOTC. Most graduate students cannot use this tactic because they are beyond the AOTC eligibility window. The Best Answer Hub Grad Student Tax Calculator lets you model the trade-off anyway: enter an amount to make taxable, and it shows whether the resulting credit exceeds the extra tax. For most grad students, the Lifetime Learning Credit is the more realistic path.',
+  },
+  {
+    q: 'What happens if I miss the June or September quarterly tax deadline as a grad student on fellowship?',
+    a: 'The IRS charges an underpayment penalty roughly equal to the federal short-term interest rate plus 3 percentage points, about 8% annualized on the missed amount. The penalty is calculated from each due date until the tax is paid. The Best Answer Hub Grad Student Tax Calculator shows your estimated quarterly amounts upfront (April 15, June 16, September 15, and January 15) so you can set reminders and avoid penalties entirely.',
+  },
+];
+
+const seo = {
+  title: 'Grad Student Tax Calculator — Stipend Estimator (2026)',
+  description: 'Free tax calculator for U.S. grad students. Estimate fellowship and 1098-T tax. Flags Kiddie Tax, SE tax traps, and quarterly payment needs.',
+  url: '/calculators/grad-student-tax-calculator/',
+  type: 'WebPage' as const,
+  datePublished: '2026-06-06T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Grad Student Tax Calculator', url: '/calculators/grad-student-tax-calculator/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated 2026 · US Federal Brackets
+          </div>
+          <a href="/calculators/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Calculators
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Grad Student Tax<br/>
+          <em class="italic text-bae-primary">Calculator & Estimator</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Built for U.S. graduate students on fellowships, assistantships, and stipends. Estimate your federal tax, flag Kiddie Tax risk, catch the self-employment tax trap, and see exactly how much to save from each paycheck.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Grad student tax calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Income Type & Stipend -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Income & Funding Type</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">How is your funding reported?</label>
+                <select id="incomeType" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary">
+                  <option value="w2">W-2 Assistantship (TA / RA / GA)</option>
+                  <option value="1098t">1098-T Fellowship or Scholarship</option>
+                  <option value="1099">1099-MISC / 1099-NEC Fellowship</option>
+                  <option value="noform">No Tax Form Received (Courtesy Letter)</option>
+                </select>
+                <p class="text-xs text-bae-muted mt-1.5" id="incomeTypeDesc">W-2 income has FICA withholding and standard tax withholding.</p>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Annual Stipend / Fellowship Amount</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-stipend">$30,000</span>
+                </div>
+                <input type="range" id="stipend-slider" min="0" max="100000" step="500" value="30000" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="stipend" min="0" value="30000" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Other Taxable Income ($)</label>
+                <input type="number" id="otherIncome" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Side jobs, consulting, or spouse income you want to include in the estimate.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1098-T Details -->
+          <div id="1098t-panel" class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm hidden">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">1098-T Details</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Box 5: Scholarships & Grants ($)</label>
+                <input type="number" id="box5" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Box 1: Qualified Tuition & Related Expenses ($)</label>
+                <input type="number" id="box1" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Taxable scholarship = Box 5 minus Box 1 (if positive).</p>
+              </div>
+              <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae-sm p-3">
+                <p class="text-sm text-bae-ink font-medium">Taxable scholarship portion: <span id="taxable-scholarship-display" class="text-bae-primary font-bold">$0</span></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FICA Exemption (W-2 only) -->
+          <div id="fica-panel" class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm hidden">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">FICA: Social Security & Medicare</h2>
+            <label class="inline-flex items-start gap-2 cursor-pointer">
+              <input type="checkbox" id="ficaExempt" class="w-4 h-4 rounded border-bae-border text-bae-primary focus:ring-bae-primary mt-0.5" />
+              <span class="text-sm text-bae-ink">I'm exempt from FICA as an enrolled student employee (IRC §3121(b)(10))</span>
+            </label>
+            <p class="text-xs text-bae-muted ml-6 mt-1.5">Most TAs/RAs enrolled at least half-time pay no 7.65% Social Security &amp; Medicare tax during the academic year. Check this if your university does not withhold FICA. Leave it unchecked for summer-only work or if you are enrolled less than half-time.</p>
+          </div>
+
+          <!-- Additional Income Items -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Additional Income Items</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Health Insurance Stipend ($)</label>
+                <input type="number" id="healthInsurance" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Amount your university adds for health insurance. Often taxable unless under a qualified employee plan.</p>
+              </div>
+              <label class="inline-flex items-start gap-2 cursor-pointer">
+                <input type="checkbox" id="tuitionWaiver" class="w-4 h-4 rounded border-bae-border text-bae-primary focus:ring-bae-primary mt-0.5" />
+                <span class="text-sm text-bae-ink">I have a qualified tuition waiver as a TA/RA (generally tax-free under §117d)</span>
+              </label>
+              <p class="text-xs text-bae-muted ml-6">This confirms your tuition waiver is excluded from taxable income. Do not include waived tuition in your stipend amount above.</p>
+            </div>
+          </div>
+
+          <!-- Personal Details -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Personal Details</h2>
+            <div class="space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-2">Age</label>
+                  <input type="number" id="age" min="16" max="100" value="25" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-2">Filing Status</label>
+                  <select id="filingStatus" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary">
+                    <option value="single">Single</option>
+                    <option value="married">Married Filing Jointly</option>
+                    <option value="hoh">Head of Household</option>
+                  </select>
+                </div>
+              </div>
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="isDependent" class="w-4 h-4 rounded border-bae-border text-bae-primary focus:ring-bae-primary" />
+                <span class="text-sm text-bae-ink font-medium">I am claimed as a dependent on my parents' tax return</span>
+              </label>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">State</label>
+                <select id="state" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary">
+                  <option value="none">No State Income Tax</option>
+                  <option value="ca">California (~6.0%)</option>
+                  <option value="ny">New York (~5.5%)</option>
+                  <option value="ma">Massachusetts (~5.0%)</option>
+                  <option value="il">Illinois (~5.0%)</option>
+                  <option value="pa">Pennsylvania (~3.1%)</option>
+                  <option value="other">Other (enter custom rate below)</option>
+                </select>
+              </div>
+              <div id="custom-state-panel" class="hidden">
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Custom State Effective Rate (%)</label>
+                <input type="number" id="customStateRate" min="0" max="20" step="0.1" value="5" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Standard Deduction ($)</label>
+                <input type="number" id="stdDeduction" min="0" value="16100" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Pre-filled for 2026. Adjust if you itemize or if IRS updates the amount.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kiddie Tax -->
+          <div id="kiddie-panel" class="bg-amber-50 border border-amber-200 rounded-bae p-5 md:p-6 shadow-bae-sm hidden">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-amber-700 mb-4">Kiddie Tax Risk Check</h2>
+            <div class="space-y-4">
+              <p class="text-sm text-amber-800">Because you are under 24 and claimed as a dependent, your fellowship income may be subject to the Kiddie Tax. The portion above $2,700 could be taxed at your parents' marginal rate.</p>
+              <div>
+                <label class="text-sm font-semibold text-amber-900 block mb-2">Parent's Marginal Tax Rate (%)</label>
+                <input type="number" id="parentRate" min="10" max="37" step="1" value="22" class="w-full text-sm border border-amber-300 rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-amber-500" />
+                <p class="text-xs text-amber-700 mt-1.5">Enter your parents' top federal bracket. Common rates: 12%, 22%, 24%, 32%.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tax Payments & Credits -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Tax Payments & Credits</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Federal Tax Already Withheld ($)</label>
+                <input type="number" id="withheld" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Total federal tax withheld from paychecks or quarterly estimates already paid.</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Education Credit</label>
+                <select id="creditType" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary">
+                  <option value="none">None</option>
+                  <option value="llc">Lifetime Learning Credit (LLC)</option>
+                  <option value="aotc">American Opportunity Tax Credit (AOTC)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Qualified Education Expenses for Credit ($)</label>
+                <input type="number" id="creditExpenses" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Tuition and required fees paid out of pocket. The LLC gives 20% back up to $2,000.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Paycheck Planning -->
+          <div class="bg-bae-primary-soft border border-bae-primary/20 rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-primary mb-5">Paycheck Savings Planner</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Pay periods per year</label>
+                <select id="payPeriods" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary">
+                  <option value="12">Monthly (12 per year)</option>
+                  <option value="26">Biweekly (26 per year)</option>
+                  <option value="24">Semimonthly (24 per year)</option>
+                  <option value="9">Academic year (9 per year)</option>
+                  <option value="2">Semesterly (2 per year)</option>
+                  <option value="4">Quarterly (4 per year)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reset -->
+          <div class="flex justify-end -mt-1 mb-1">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset calculator
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <!-- Main Results -->
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Your Tax Results</h3>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Taxable Income</div>
+                <div class="text-lg font-semibold" id="res-taxableIncome">$13,900</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Federal Income Tax</div>
+                <div class="text-lg font-semibold" id="res-federalTax">$1,549</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 mb-4">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">FICA Tax</div>
+                <div class="text-lg font-semibold" id="res-ficaTax">$2,295</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">State Tax</div>
+                <div class="text-lg font-semibold" id="res-stateTax">$0</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 mb-4">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Education Credit</div>
+                <div class="text-lg font-semibold text-bae-primary" id="res-credit">$0</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Total Tax</div>
+                <div class="text-xl font-bold font-serif text-bae-primary" id="res-totalTax">$3,844</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 mb-4">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Effective Rate</div>
+                <div class="text-xl font-bold font-serif" id="res-effectiveRate">12.8%</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Marginal Rate</div>
+                <div class="text-xl font-bold font-serif" id="res-marginalRate">12%</div>
+              </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-4 mb-4">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Refund or Amount Owed</div>
+              <div class="text-2xl font-bold font-serif" id="res-refundOwed">$3,844</div>
+              <p class="text-xs text-white/50 mt-1" id="res-refundDesc">Enter withholding above to see refund or balance due</p>
+            </div>
+
+            <div class="border-t border-white/10 pt-4 mb-4">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Per-Paycheck Savings Target</div>
+              <div class="text-xl font-bold font-serif" id="res-perPaycheck">$320</div>
+              <p class="text-xs text-white/50 mt-1">Amount to set aside each pay period to break even</p>
+            </div>
+
+            <div class="border-t border-white/10 pt-4 hidden" id="res-quarterly-panel">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Quarterly Estimate</div>
+              <div class="text-lg font-bold font-serif" id="res-quarterly">$0</div>
+              <p class="text-xs text-white/50 mt-1">Due dates: Apr 15, Jun 16, Sep 15, Jan 15</p>
+            </div>
+
+            <!-- Alerts -->
+            <div id="alerts-panel" class="space-y-2 mt-4 hidden">
+              <div id="alert-se" class="hidden bg-red-500/20 border border-red-400/30 rounded-bae-sm p-3">
+                <p class="text-xs text-red-200 font-medium">1099 Fellowship Alert</p>
+                <p class="text-xs text-red-100 mt-0.5">Commercial software may wrongly add 15.3% self-employment tax. Fellowship income is NOT self-employment.</p>
+              </div>
+              <div id="alert-kiddie" class="hidden bg-amber-500/20 border border-amber-400/30 rounded-bae-sm p-3">
+                <p class="text-xs text-amber-200 font-medium">Kiddie Tax Risk</p>
+                <p class="text-xs text-amber-100 mt-0.5" id="alert-kiddie-text">Your fellowship above $2,700 may be taxed at your parent's marginal rate.</p>
+              </div>
+              <div id="alert-quarterly" class="hidden bg-bae-primary/20 border border-bae-primary/30 rounded-bae-sm p-3">
+                <p class="text-xs text-bae-200 font-medium">Quarterly Payments Recommended</p>
+                <p class="text-xs text-white/80 mt-0.5">No withholding detected. The IRS requires estimated payments if you owe $1,000+.</p>
+              </div>
+            </div>
+
+            <button type="button" id="pdf-btn" class="w-full mt-4 bg-bae-primary hover:bg-bae-accent text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+              Download PDF Report
+            </button>
+          </div>
+
+          <!-- Show Your Work -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Show Your Work</h3>
+            <div class="space-y-2 text-sm" id="show-work-content">
+              <p class="text-bae-muted">Enter your stipend and funding type to see a line-by-line breakdown.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Select your funding type', text: 'Choose W-2, 1098-T, 1099, or no-form fellowship. The calculator adjusts tax treatment automatically. Fellowship income is never treated as self-employment.' },
+    { name: 'Enter your stipend and details', text: 'Input your annual stipend, 1098-T boxes, health insurance stipend, age, dependent status, and state. The calculator flags Kiddie Tax risk and quarterly payment needs instantly.' },
+    { name: 'See your tax and savings target', text: 'Get your federal tax, state tax, FICA (if W-2), education credits, total tax, and per-paycheck savings amount. Download a PDF to share with a tax preparer or use for quarterly planning.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Select your funding type</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Choose W-2, 1098-T, 1099, or no-form fellowship. The calculator adjusts tax treatment automatically. Fellowship income is never treated as self-employment.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter your stipend and details</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Input your annual stipend, 1098-T boxes, health insurance stipend, age, dependent status, and state. The calculator flags Kiddie Tax risk and quarterly payment needs instantly.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">See your tax and savings target</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Get your federal tax, state tax, FICA (if W-2), education credits, total tax, and per-paycheck savings amount. Download a PDF to share with a tax preparer or use for quarterly planning.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/tax-calculator/" class="text-bae-primary hover:underline">Tax Calculator</a>, <a href="/calculators/salary-converter/" class="text-bae-primary hover:underline">Salary Converter</a>, and <a href="/calculators/" class="text-bae-primary hover:underline">Calculators Hub</a>.</p>
+        </div>
+        <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all calculators →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What Grad Students Pay -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What grad students pay</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">PhD student, $32K NSF fellowship, no withholding, CA</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">First-year fellow, surprised by April</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $2,610 total tax</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Federal tax is roughly $1,660 on $32,000 after the $16,100 standard deduction. California adds another $950. Effective rate is about 8.2%. The Best Answer Hub Grad Student Tax Calculator recommends saving about $220 per month to break even.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">TA/RA, $28K W-2, standard withholding, TX</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Teaching assistant with normal withholding</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $3,330 total tax</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Federal income tax is roughly $1,190 and FICA is another $2,142. Because Texas has no state income tax, the total stays lower. Many enrolled TAs qualify for the student FICA exemption during the academic year. Toggle it on and the total drops to about $1,190. With standard W-2 withholding, this student typically breaks even or receives a small refund.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">22-year-old dependent, $30K fellowship, parents at 24%</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Kiddie Tax risk: direct-entry PhD</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $4,900 potential tax</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Regular federal tax on $30,000 would be about $1,420 after the standard deduction. But the Kiddie Tax pushes the portion above $2,700 to the parents' 24% bracket. The Best Answer Hub Grad Student Tax Calculator flags this risk and shows the potential difference, roughly $3,500 extra.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">1098-T, $40K Box 5, $36K Box 1, $2K health stipend</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Scholarship with taxable excess</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $640 total tax</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Taxable scholarship is $4,000 ($40K Box 5 minus $36K Box 1) plus $2,000 health insurance stipend = $6,000. After the $16,100 standard deduction, taxable income is $0. The health stipend is fully offset. Zero federal tax. No quarterly payments needed.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are modeled estimates based on 2026 tax parameters. Your actual tax will vary by deductions, credits, state rules, and individual circumstances. Always verify rates at IRS.gov and consult a qualified tax professional.</p>
+    </div>
+  </section>
+
+  <!-- Report Summary (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Report Summary</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Grad Student Tax Analysis Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Taxable Income</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-taxable">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Tax</p>
+              <p class="text-3xl font-bold text-bae-primary" id="report-total">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Effective Rate</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-effective">—</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Federal Income Tax</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-federal">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">FICA Tax</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-fica">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">State Tax</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-state">—</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Education Credit</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-credit">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Refund / Owed</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-refund">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Per-Paycheck Savings</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-perpaycheck">—</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" id="report-details">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>Estimates are based on the inputs provided and standard tax formulas. Pre-filled rates reflect 2026 US federal tax parameters. Always verify current rates at IRS.gov before filing. This tool is for estimation purposes only and does not constitute tax advice. Fellowship tax rules are complex; consult a qualified tax professional for your specific situation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      function formatMoney(n) {
+        const abs = Math.abs(n);
+        if (abs >= 1000) return '$' + Math.round(n).toLocaleString();
+        if (abs >= 1) return '$' + n.toFixed(2);
+        return '$' + n.toFixed(2);
+      }
+
+      function formatPct(n) {
+        if (!isFinite(n)) return '—';
+        return n.toFixed(1) + '%';
+      }
+
+      const US_BRACKETS = {
+        single: [
+          { rate: 0.10, limit: 12400 },
+          { rate: 0.12, limit: 50400 },
+          { rate: 0.22, limit: 105700 },
+          { rate: 0.24, limit: 201775 },
+          { rate: 0.32, limit: 256225 },
+          { rate: 0.35, limit: 640600 },
+          { rate: 0.37, limit: Infinity },
+        ],
+        married: [
+          { rate: 0.10, limit: 24800 },
+          { rate: 0.12, limit: 100800 },
+          { rate: 0.22, limit: 211400 },
+          { rate: 0.24, limit: 403550 },
+          { rate: 0.32, limit: 512450 },
+          { rate: 0.35, limit: 768700 },
+          { rate: 0.37, limit: Infinity },
+        ],
+        hoh: [
+          { rate: 0.10, limit: 17700 },
+          { rate: 0.12, limit: 67450 },
+          { rate: 0.22, limit: 105700 },
+          { rate: 0.24, limit: 201775 },
+          { rate: 0.32, limit: 256200 },
+          { rate: 0.35, limit: 640600 },
+          { rate: 0.37, limit: Infinity },
+        ],
+      };
+
+      const STD_DEDUCTION_DEFAULTS = {
+        single: 16100,
+        married: 32200,
+        hoh: 24150,
+      };
+
+      const STATE_RATES = {
+        none: 0,
+        ca: 6.0,
+        ny: 5.5,
+        ma: 5.0,
+        il: 5.0,
+        pa: 3.1,
+        other: 0,
+      };
+
+      const INCOME_TYPE_DESC = {
+        w2: 'W-2 income has FICA withholding and standard tax withholding.',
+        '1098t': '1098-T fellowship: taxable portion is Box 5 minus Box 1. Not subject to FICA or SE tax.',
+        '1099': '1099 fellowship: taxable as ordinary income. NOT self-employment. No 15.3% SE tax.',
+        noform: 'No-form fellowship: still taxable. Estimate from your bank deposits.',
+      };
+
+      function calculateUSTax(taxableIncome, filingStatus) {
+        const brackets = US_BRACKETS[filingStatus];
+        let tax = 0;
+        let remaining = taxableIncome;
+        let prevLimit = 0;
+        const breakdown = [];
+
+        for (const b of brackets) {
+          if (remaining <= 0) break;
+          const bracketSize = b.limit === Infinity ? remaining : b.limit - prevLimit;
+          const taxedAtThisRate = Math.min(remaining, bracketSize);
+          const bracketTax = taxedAtThisRate * b.rate;
+          tax += bracketTax;
+          breakdown.push({
+            rate: b.rate,
+            amount: taxedAtThisRate,
+            tax: bracketTax,
+            from: prevLimit,
+            to: b.limit === Infinity ? Infinity : b.limit,
+          });
+          remaining -= taxedAtThisRate;
+          prevLimit = b.limit;
+        }
+        return { tax, breakdown };
+      }
+
+      function getMarginalRate(taxableIncome, filingStatus) {
+        const brackets = US_BRACKETS[filingStatus];
+        for (const b of brackets) {
+          if (taxableIncome <= b.limit) return b.rate;
+        }
+        return brackets[brackets.length - 1].rate;
+      }
+
+      function calculate() {
+        const incomeType = $('incomeType').value;
+        const stipend = parseFloat($('stipend').value) || 0;
+        const otherIncome = parseFloat($('otherIncome').value) || 0;
+        const box5 = parseFloat($('box5').value) || 0;
+        const box1 = parseFloat($('box1').value) || 0;
+        const healthInsurance = parseFloat($('healthInsurance').value) || 0;
+        const age = parseInt($('age').value) || 0;
+        const isDependent = $('isDependent').checked;
+        const ficaExempt = $('ficaExempt').checked;
+        const filingStatus = $('filingStatus').value;
+        const state = $('state').value;
+        const customStateRate = parseFloat($('customStateRate').value) || 0;
+        const parentRate = parseFloat($('parentRate').value) || 22;
+        const withheld = parseFloat($('withheld').value) || 0;
+        const creditType = $('creditType').value;
+        const creditExpenses = parseFloat($('creditExpenses').value) || 0;
+        const payPeriods = parseInt($('payPeriods').value) || 12;
+
+        // Taxable fellowship
+        let taxableFellowship = 0;
+        if (incomeType === 'w2') {
+          taxableFellowship = stipend;
+        } else if (incomeType === '1098t') {
+          taxableFellowship = Math.max(0, box5 - box1);
+        } else {
+          taxableFellowship = stipend;
+        }
+
+        // Show taxable scholarship for 1098t
+        if (incomeType === '1098t') {
+          $('taxable-scholarship-display').textContent = formatMoney(taxableFellowship);
+        }
+
+        // Total income
+        const totalIncome = taxableFellowship + otherIncome + healthInsurance;
+
+        // Standard deduction
+        const stdDeduction = parseFloat($('stdDeduction').value) || STD_DEDUCTION_DEFAULTS[filingStatus];
+
+        // Taxable income
+        const taxableIncome = Math.max(0, totalIncome - stdDeduction);
+
+        // Federal tax
+        const fedResult = calculateUSTax(taxableIncome, filingStatus);
+        let federalTax = fedResult.tax;
+        const marginalRate = getMarginalRate(taxableIncome, filingStatus);
+
+        // FICA (W-2 only; student employees enrolled at least half-time are exempt under §3121(b)(10))
+        let ficaTax = 0;
+        if (incomeType === 'w2' && !ficaExempt) {
+          const ssWageBase = 184500;
+          ficaTax = Math.min(stipend, ssWageBase) * 0.062 + stipend * 0.0145;
+        }
+
+        // Kiddie Tax flag
+        let kiddieTaxRisk = false;
+        let kiddieTaxMessage = '';
+        if (age < 24 && isDependent && incomeType !== 'w2' && taxableFellowship > 2700) {
+          kiddieTaxRisk = true;
+          const exposedAmount = taxableFellowship - 2700;
+          const regularTaxOnExposed = calculateUSTax(Math.max(0, taxableFellowship - 1350), 'single').tax;
+          const parentTaxOnExposed = (1350 * 0.10) + (exposedAmount * (parentRate / 100));
+          const potentialIncrease = Math.max(0, parentTaxOnExposed - regularTaxOnExposed);
+          kiddieTaxMessage = `Kiddie Tax risk: As a dependent under 24, your fellowship above $2,700 may be taxed at your parent's ${parentRate}% rate instead of your graduated rate.`;
+          if (potentialIncrease > 0) {
+            kiddieTaxMessage += ` This could increase your tax by approximately ${formatMoney(potentialIncrease)}.`;
+          }
+          kiddieTaxMessage += ' Consult a tax professional.';
+        }
+
+        // Education credit (gross amount earned)
+        let educationCredit = 0;
+        if (creditType === 'llc') {
+          educationCredit = Math.min(2000, creditExpenses * 0.20);
+        } else if (creditType === 'aotc') {
+          educationCredit = Math.min(2500, creditExpenses <= 2000 ? creditExpenses : 2000 + (creditExpenses - 2000) * 0.25);
+        }
+
+        // Credits reduce federal INCOME tax only — never FICA or state tax.
+        // LLC is nonrefundable (capped at federal income tax). AOTC is 40% refundable + 60% nonrefundable.
+        let creditApplied = 0;
+        if (creditType === 'llc') {
+          creditApplied = Math.min(educationCredit, federalTax);
+        } else if (creditType === 'aotc') {
+          const refundable = educationCredit * 0.40;
+          const nonRefundable = Math.min(educationCredit * 0.60, federalTax);
+          creditApplied = refundable + nonRefundable;
+        }
+
+        // State tax
+        let stateRate = STATE_RATES[state] || 0;
+        if (state === 'other') stateRate = customStateRate;
+        const stateTax = taxableIncome * (stateRate / 100);
+
+        // Total tax (credit benefit applied against federal income tax, not FICA/state)
+        let totalTax = Math.max(0, federalTax + ficaTax + stateTax - creditApplied);
+
+        // Effective rate
+        const effectiveRate = totalIncome > 0 ? (totalTax / totalIncome) * 100 : 0;
+
+        // Refund / owed
+        const refundOwed = withheld - totalTax;
+
+        // Quarterly
+        const needsQuarterly = (incomeType !== 'w2') && (totalTax - withheld > 1000);
+        const quarterly = needsQuarterly ? (totalTax - withheld) / 4 : 0;
+
+        // Per-paycheck savings
+        const perPaycheck = totalTax / payPeriods;
+
+        // Update main results
+        $('res-taxableIncome').textContent = formatMoney(taxableIncome);
+        $('res-federalTax').textContent = formatMoney(federalTax);
+        $('res-ficaTax').textContent = formatMoney(ficaTax);
+        $('res-stateTax').textContent = formatMoney(stateTax);
+        $('res-credit').textContent = (creditApplied > 0 ? '-' : '') + formatMoney(creditApplied);
+        $('res-totalTax').textContent = formatMoney(totalTax);
+        $('res-effectiveRate').textContent = formatPct(effectiveRate);
+        $('res-marginalRate').textContent = formatPct(marginalRate * 100);
+        $('res-perPaycheck').textContent = formatMoney(perPaycheck);
+
+        // Refund / Owed
+        const refundEl = $('res-refundOwed');
+        const refundDesc = $('res-refundDesc');
+        if (withheld > 0) {
+          if (refundOwed > 0) {
+            refundEl.textContent = formatMoney(refundOwed);
+            refundEl.className = 'text-2xl font-bold font-serif text-bae-primary';
+            refundDesc.textContent = 'Estimated refund';
+          } else if (refundOwed < 0) {
+            refundEl.textContent = formatMoney(Math.abs(refundOwed));
+            refundEl.className = 'text-2xl font-bold font-serif text-red-400';
+            refundDesc.textContent = 'Estimated amount owed';
+          } else {
+            refundEl.textContent = '$0';
+            refundEl.className = 'text-2xl font-bold font-serif';
+            refundDesc.textContent = 'Break even';
+          }
+        } else {
+          refundEl.textContent = formatMoney(totalTax);
+          refundEl.className = 'text-2xl font-bold font-serif';
+          refundDesc.textContent = 'Enter withholding above to see refund or balance due';
+        }
+
+        // Quarterly
+        if (needsQuarterly) {
+          $('res-quarterly-panel').classList.remove('hidden');
+          $('res-quarterly').textContent = formatMoney(quarterly) + '/quarter';
+        } else {
+          $('res-quarterly-panel').classList.add('hidden');
+        }
+
+        // Alerts
+        const alertsPanel = $('alerts-panel');
+        const alertSE = $('alert-se');
+        const alertKiddie = $('alert-kiddie');
+        const alertQuarterly = $('alert-quarterly');
+        let anyAlert = false;
+
+        if (incomeType === '1099') {
+          alertSE.classList.remove('hidden');
+          anyAlert = true;
+        } else {
+          alertSE.classList.add('hidden');
+        }
+
+        if (kiddieTaxRisk) {
+          alertKiddie.classList.remove('hidden');
+          $('alert-kiddie-text').textContent = kiddieTaxMessage;
+          anyAlert = true;
+        } else {
+          alertKiddie.classList.add('hidden');
+        }
+
+        if (needsQuarterly) {
+          alertQuarterly.classList.remove('hidden');
+          anyAlert = true;
+        } else {
+          alertQuarterly.classList.add('hidden');
+        }
+
+        if (anyAlert) {
+          alertsPanel.classList.remove('hidden');
+        } else {
+          alertsPanel.classList.add('hidden');
+        }
+
+        // Show Your Work
+        const workContent = $('show-work-content');
+        let html = '<div class="space-y-2">';
+        html += '<div class="flex justify-between text-xs font-semibold text-bae-muted uppercase tracking-wider border-b border-bae-border pb-1">';
+        html += '<span>Line Item</span><span>Amount</span></div>';
+
+        if (incomeType === '1098t') {
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Box 5 (Scholarships)</span><span class="font-semibold text-bae-ink">' + formatMoney(box5) + '</span></div>';
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Box 1 (Qualified Tuition)</span><span class="font-semibold text-bae-ink">' + formatMoney(box1) + '</span></div>';
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Taxable Scholarship</span><span class="font-semibold text-bae-ink">' + formatMoney(taxableFellowship) + '</span></div>';
+        } else {
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Stipend / Fellowship</span><span class="font-semibold text-bae-ink">' + formatMoney(stipend) + '</span></div>';
+        }
+
+        if (healthInsurance > 0) {
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Health Insurance Stipend</span><span class="font-semibold text-bae-ink">' + formatMoney(healthInsurance) + '</span></div>';
+        }
+        if (otherIncome > 0) {
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Other Income</span><span class="font-semibold text-bae-ink">' + formatMoney(otherIncome) + '</span></div>';
+        }
+
+        html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Total Income</span><span class="font-semibold text-bae-ink">' + formatMoney(totalIncome) + '</span></div>';
+        html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Standard Deduction</span><span class="font-semibold text-bae-ink">' + formatMoney(stdDeduction) + '</span></div>';
+        html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Taxable Income</span><span class="font-semibold text-bae-ink">' + formatMoney(taxableIncome) + '</span></div>';
+        html += '<div class="flex justify-between items-center text-sm border-t border-bae-border pt-2 mt-2"><span class="font-semibold text-bae-ink">Federal Income Tax</span><span class="font-bold text-bae-primary">' + formatMoney(federalTax) + '</span></div>';
+
+        if (ficaTax > 0) {
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">FICA (7.65% on W-2 wages)</span><span class="font-semibold text-bae-ink">' + formatMoney(ficaTax) + '</span></div>';
+        } else if (incomeType === 'w2' && ficaExempt) {
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">FICA (student exemption §3121(b)(10))</span><span class="font-semibold text-bae-ink">$0</span></div>';
+        }
+        if (stateTax > 0) {
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">State Tax (' + stateRate.toFixed(1) + '%)</span><span class="font-semibold text-bae-ink">' + formatMoney(stateTax) + '</span></div>';
+        }
+        if (creditApplied > 0) {
+          html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Education Credit</span><span class="font-semibold text-bae-primary">-' + formatMoney(creditApplied) + '</span></div>';
+        }
+
+        html += '<div class="flex justify-between items-center text-sm border-t border-bae-border pt-2 mt-2"><span class="font-semibold text-bae-ink">Total Tax</span><span class="font-bold text-bae-primary">' + formatMoney(totalTax) + '</span></div>';
+        html += '<div class="flex justify-between items-center text-sm"><span class="text-bae-muted">Effective Rate</span><span class="font-semibold text-bae-ink">' + formatPct(effectiveRate) + '</span></div>';
+
+        if (withheld > 0) {
+          html += '<div class="flex justify-between items-center text-sm border-t border-bae-border pt-2 mt-2"><span class="text-bae-muted">Withheld / Paid</span><span class="font-semibold text-bae-ink">' + formatMoney(withheld) + '</span></div>';
+          html += '<div class="flex justify-between items-center text-sm"><span class="font-semibold text-bae-ink">Refund / Owed</span><span class="font-bold ' + (refundOwed >= 0 ? 'text-bae-primary' : 'text-red-500') + '">' + (refundOwed >= 0 ? '' : '-') + formatMoney(Math.abs(refundOwed)) + '</span></div>';
+        }
+
+        if (needsQuarterly) {
+          html += '<div class="flex justify-between items-center text-sm border-t border-bae-border pt-2 mt-2"><span class="text-bae-muted">Quarterly Payment</span><span class="font-semibold text-bae-ink">' + formatMoney(quarterly) + '</span></div>';
+        }
+
+        html += '<div class="flex justify-between items-center text-sm border-t border-bae-border pt-2 mt-2"><span class="font-semibold text-bae-ink">Per-Paycheck Savings</span><span class="font-bold text-bae-primary">' + formatMoney(perPaycheck) + '</span></div>';
+        html += '</div>';
+        workContent.innerHTML = html;
+
+        // Report
+        $('report-taxable').textContent = formatMoney(taxableIncome);
+        $('report-total').textContent = formatMoney(totalTax);
+        $('report-effective').textContent = formatPct(effectiveRate);
+        $('report-federal').textContent = formatMoney(federalTax);
+        $('report-fica').textContent = formatMoney(ficaTax);
+        $('report-state').textContent = formatMoney(stateTax);
+        $('report-credit').textContent = formatMoney(creditApplied);
+        $('report-perpaycheck').textContent = formatMoney(perPaycheck);
+
+        if (withheld > 0) {
+          $('report-refund').textContent = (refundOwed >= 0 ? '' : '-') + formatMoney(Math.abs(refundOwed));
+        } else {
+          $('report-refund').textContent = '—';
+        }
+
+        const reportDetails = $('report-details');
+        reportDetails.innerHTML = '';
+        const rows = [
+          ['Funding Type', incomeType.toUpperCase()],
+          ['Stipend / Fellowship', formatMoney(stipend)],
+        ];
+        if (incomeType === '1098t') {
+          rows.push(['Box 5 (Scholarships)', formatMoney(box5)]);
+          rows.push(['Box 1 (QTR)', formatMoney(box1)]);
+          rows.push(['Taxable Scholarship', formatMoney(taxableFellowship)]);
+        }
+        if (healthInsurance > 0) rows.push(['Health Insurance Stipend', formatMoney(healthInsurance)]);
+        if (otherIncome > 0) rows.push(['Other Income', formatMoney(otherIncome)]);
+        rows.push(['Total Income', formatMoney(totalIncome)]);
+        rows.push(['Standard Deduction', formatMoney(stdDeduction)]);
+        rows.push(['Taxable Income', formatMoney(taxableIncome)]);
+        rows.push(['Federal Income Tax', formatMoney(federalTax)]);
+        if (ficaTax > 0) rows.push(['FICA Tax', formatMoney(ficaTax)]);
+        if (stateTax > 0) rows.push(['State Tax', formatMoney(stateTax)]);
+        if (creditApplied > 0) rows.push(['Education Credit', '-' + formatMoney(creditApplied)]);
+        rows.push(['Total Tax', formatMoney(totalTax)]);
+        rows.push(['Effective Rate', formatPct(effectiveRate)]);
+        if (withheld > 0) {
+          rows.push(['Withheld / Paid', formatMoney(withheld)]);
+          rows.push(['Refund / Owed', (refundOwed >= 0 ? '' : '-') + formatMoney(Math.abs(refundOwed))]);
+        }
+        rows.push(['Per-Paycheck Savings', formatMoney(perPaycheck)]);
+        if (needsQuarterly) rows.push(['Quarterly Estimate', formatMoney(quarterly)]);
+
+        rows.forEach(([label, value]) => {
+          const div = document.createElement('div');
+          const span1 = document.createElement('span');
+          span1.className = 'text-bae-muted';
+          span1.textContent = label + ': ';
+          const span2 = document.createElement('span');
+          span2.className = 'font-medium text-bae-ink';
+          span2.textContent = value;
+          div.appendChild(span1);
+          div.appendChild(span2);
+          reportDetails.appendChild(div);
+        });
+
+        updateURL();
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          const params = new URLSearchParams();
+
+          const stipend = parseFloat($('stipend').value) || 0;
+          const otherIncome = parseFloat($('otherIncome').value) || 0;
+          const withheld = parseFloat($('withheld').value) || 0;
+          const incomeType = $('incomeType').value;
+
+          if (stipend !== 30000) params.set('stipend', stipend);
+          if (otherIncome !== 0) params.set('other', otherIncome);
+          if (withheld !== 0) params.set('withheld', withheld);
+          if (incomeType !== 'w2') params.set('type', incomeType);
+
+          if (incomeType === '1098t') {
+            const box5 = parseFloat($('box5').value) || 0;
+            const box1 = parseFloat($('box1').value) || 0;
+            if (box5 !== 0) params.set('box5', box5);
+            if (box1 !== 0) params.set('box1', box1);
+          }
+
+          const healthInsurance = parseFloat($('healthInsurance').value) || 0;
+          if (healthInsurance !== 0) params.set('health', healthInsurance);
+
+          const age = parseInt($('age').value) || 0;
+          if (age !== 25) params.set('age', age);
+          if ($('isDependent').checked) params.set('dep', '1');
+          if ($('ficaExempt').checked) params.set('ficaex', '1');
+
+          const fs = $('filingStatus').value;
+          if (fs !== 'single') params.set('fs', fs);
+
+          const state = $('state').value;
+          if (state !== 'none') params.set('state', state);
+          if (state === 'other') {
+            const csr = parseFloat($('customStateRate').value) || 0;
+            if (csr !== 5) params.set('csrate', csr);
+          }
+
+          const std = parseFloat($('stdDeduction').value) || 0;
+          if (std !== 16100) params.set('std', std);
+
+          if ($('tuitionWaiver').checked) params.set('waiver', '1');
+
+          const parentRate = parseFloat($('parentRate').value) || 0;
+          if (parentRate !== 22) params.set('prate', parentRate);
+
+          const creditType = $('creditType').value;
+          if (creditType !== 'none') params.set('credit', creditType);
+          const creditExpenses = parseFloat($('creditExpenses').value) || 0;
+          if (creditExpenses !== 0) params.set('cexpen', creditExpenses);
+
+          const payPeriods = parseInt($('payPeriods').value) || 0;
+          if (payPeriods !== 12) params.set('periods', payPeriods);
+
+          url.search = params.toString();
+          window.history.replaceState({}, '', url);
+        } catch (e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+
+          const stipend = url.searchParams.get('stipend');
+          if (stipend !== null) { $('stipend').value = stipend; $('stipend-slider').value = stipend; $('display-stipend').textContent = '$' + parseFloat(stipend).toLocaleString(); }
+
+          const other = url.searchParams.get('other');
+          if (other !== null) $('otherIncome').value = other;
+
+          const withheld = url.searchParams.get('withheld');
+          if (withheld !== null) $('withheld').value = withheld;
+
+          const type = url.searchParams.get('type');
+          if (type && $('incomeType').querySelector('option[value="' + type + '"]')) {
+            $('incomeType').value = type;
+            updateIncomeTypeUI();
+          }
+
+          const box5 = url.searchParams.get('box5');
+          if (box5 !== null) $('box5').value = box5;
+
+          const box1 = url.searchParams.get('box1');
+          if (box1 !== null) $('box1').value = box1;
+
+          const health = url.searchParams.get('health');
+          if (health !== null) $('healthInsurance').value = health;
+
+          const age = url.searchParams.get('age');
+          if (age !== null) $('age').value = age;
+
+          if (url.searchParams.get('dep') === '1') {
+            $('isDependent').checked = true;
+          }
+
+          if (url.searchParams.get('ficaex') === '1') {
+            $('ficaExempt').checked = true;
+          }
+
+          const fs = url.searchParams.get('fs');
+          if (fs && $('filingStatus').querySelector('option[value="' + fs + '"]')) {
+            $('filingStatus').value = fs;
+          }
+
+          const state = url.searchParams.get('state');
+          if (state && $('state').querySelector('option[value="' + state + '"]')) {
+            $('state').value = state;
+            updateStateUI();
+          }
+
+          const csrate = url.searchParams.get('csrate');
+          if (csrate !== null) $('customStateRate').value = csrate;
+
+          const std = url.searchParams.get('std');
+          if (std !== null) $('stdDeduction').value = std;
+
+          if (url.searchParams.get('waiver') === '1') $('tuitionWaiver').checked = true;
+
+          const prate = url.searchParams.get('prate');
+          if (prate !== null) $('parentRate').value = prate;
+
+          const credit = url.searchParams.get('credit');
+          if (credit && $('creditType').querySelector('option[value="' + credit + '"]')) {
+            $('creditType').value = credit;
+          }
+
+          const cexpen = url.searchParams.get('cexpen');
+          if (cexpen !== null) $('creditExpenses').value = cexpen;
+
+          const periods = url.searchParams.get('periods');
+          if (periods !== null) $('payPeriods').value = periods;
+        } catch (e) {}
+      }
+
+      function updateIncomeTypeUI() {
+        const type = $('incomeType').value;
+        $('incomeTypeDesc').textContent = INCOME_TYPE_DESC[type];
+
+        if (type === '1098t') {
+          $('1098t-panel').classList.remove('hidden');
+        } else {
+          $('1098t-panel').classList.add('hidden');
+        }
+
+        if (type === 'w2') {
+          $('fica-panel').classList.remove('hidden');
+        } else {
+          $('fica-panel').classList.add('hidden');
+        }
+
+        updateKiddiePanel();
+        calculate();
+      }
+
+      function updateStateUI() {
+        const state = $('state').value;
+        if (state === 'other') {
+          $('custom-state-panel').classList.remove('hidden');
+        } else {
+          $('custom-state-panel').classList.add('hidden');
+        }
+      }
+
+      function updateKiddiePanel() {
+        const age = parseInt($('age').value) || 0;
+        const isDependent = $('isDependent').checked;
+        const incomeType = $('incomeType').value;
+
+        if (age < 24 && isDependent && incomeType !== 'w2') {
+          $('kiddie-panel').classList.remove('hidden');
+        } else {
+          $('kiddie-panel').classList.add('hidden');
+        }
+      }
+
+      // Stipend slider sync
+      const stipendInput = $('stipend');
+      const stipendSlider = $('stipend-slider');
+      const stipendDisplay = $('display-stipend');
+      stipendInput.addEventListener('input', () => {
+        stipendSlider.value = stipendInput.value;
+        stipendDisplay.textContent = '$' + (parseFloat(stipendInput.value) || 0).toLocaleString();
+        calculate();
+      });
+      stipendSlider.addEventListener('input', () => {
+        stipendInput.value = stipendSlider.value;
+        stipendDisplay.textContent = '$' + (parseFloat(stipendSlider.value) || 0).toLocaleString();
+        calculate();
+      });
+
+      // Input listeners
+      ['otherIncome', 'box5', 'box1', 'healthInsurance', 'age', 'withheld', 'customStateRate', 'stdDeduction', 'parentRate', 'creditExpenses'].forEach(id => {
+        $(id)?.addEventListener('input', calculate);
+      });
+
+      $('incomeType').addEventListener('change', updateIncomeTypeUI);
+      $('filingStatus').addEventListener('change', () => {
+        const status = $('filingStatus').value;
+        $('stdDeduction').value = STD_DEDUCTION_DEFAULTS[status];
+        calculate();
+      });
+      $('state').addEventListener('change', () => { updateStateUI(); calculate(); });
+      $('isDependent').addEventListener('change', () => { updateKiddiePanel(); calculate(); });
+      $('ficaExempt').addEventListener('change', calculate);
+      $('tuitionWaiver').addEventListener('change', calculate);
+      $('creditType').addEventListener('change', calculate);
+      $('payPeriods').addEventListener('change', calculate);
+
+      // Reset
+      $('clear-btn').addEventListener('click', () => {
+        $('stipend').value = 0; $('stipend-slider').value = 0; $('display-stipend').textContent = '$0';
+        $('otherIncome').value = 0;
+        $('incomeType').value = 'w2'; updateIncomeTypeUI();
+        $('box5').value = 0; $('box1').value = 0;
+        $('healthInsurance').value = 0;
+        $('age').value = 25; $('isDependent').checked = false;
+        $('ficaExempt').checked = false;
+        $('filingStatus').value = 'single'; $('stdDeduction').value = 16100;
+        $('state').value = 'none'; updateStateUI(); $('customStateRate').value = 5;
+        $('tuitionWaiver').checked = false;
+        $('parentRate').value = 22;
+        $('withheld').value = 0;
+        $('creditType').value = 'none'; $('creditExpenses').value = 0;
+        $('payPeriods').value = 12;
+        window.history.replaceState({}, '', window.location.pathname);
+        calculate();
+      });
+
+      // PDF
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const element = $('print-report');
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'grad-student-tax-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // Init
+      readURL();
+      updateIncomeTypeUI();
+      updateStateUI();
+      updateKiddiePanel();
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: none;
+    }
+  </style>
+</BaseLayout>

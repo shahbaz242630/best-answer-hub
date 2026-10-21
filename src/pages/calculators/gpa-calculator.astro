@@ -1,0 +1,964 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolRelatedCTA from '../../components/tools/ToolRelatedCTA.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub GPA Calculator?',
+    a: 'The Best Answer Hub GPA Calculator is a free, privacy-first browser tool that calculates your semester, cumulative, and weighted GPA across eight grading scales. Enter your courses, grades, and credit hours to see your GPA instantly. The calculator supports U.S. 4.0 and 5.0 scales, percentage systems, UK Honours, German, Indian 10-point CGPA, and Australian 7-point scales. You can also model "what if" scenarios to find out exactly what grades you need to reach a target GPA. Everything runs instantly in your browser, with no signup, no server, and no data collection.',
+  },
+  {
+    q: 'How is a weighted GPA different from an unweighted GPA, and why can my weighted GPA go above 4.0?',
+    a: 'An unweighted GPA caps all grades at 4.0 regardless of course difficulty. A weighted GPA adds bonus points for honors, AP, IB, or advanced courses, allowing the maximum to reach 5.0 or even 6.0 at some schools. For example, an A in a regular class might equal 4.0, while an A in an AP class could equal 5.0. Colleges typically see both figures on your transcript but often recalculate using their own formula. The Best Answer Hub GPA Calculator lets you toggle between weighted and unweighted views to see both numbers side by side.',
+  },
+  {
+    q: 'How do I calculate my cumulative GPA across multiple semesters without just averaging them?',
+    a: 'You cannot simply average semester GPAs because each semester may have a different number of credit hours. The correct formula is Total Quality Points divided by Total Credit Hours. Quality points for a course equal the grade value multiplied by the credit hours. For example, a B+ (3.3) in a 4-credit course earns 13.2 quality points. Add all quality points from every semester, add all credit hours, and divide. The Best Answer Hub GPA Calculator handles this automatically when you enter your previous cumulative GPA and total credits.',
+  },
+  {
+    q: 'I have a 2.5 GPA with 60 credits. How many straight A\'s do I need to reach a 3.0?',
+    a: 'With 60 credits at a 2.5 GPA, you have 150 quality points. Because every extra credit of A adds both credits and quality points, you would need straight A\'s for about 30 more credits (roughly two 15-credit semesters) to reach a 3.0 cumulative GPA. At that point you would have 270 quality points across 90 credits, which is exactly 3.0. One 15-credit semester of A\'s alone would only raise your cumulative GPA to 2.80. The Best Answer Hub GPA Calculator\'s target planner instantly shows the exact average you need on your remaining credits, and warns you if a goal is mathematically impossible.',
+  },
+  {
+    q: 'Does an A- really lower my GPA, or does it still count as a 4.0?',
+    a: 'At most schools that use plus and minus grades, an A- counts as 3.7, not 4.0. Only a straight A earns the full 4.0. The exact values vary slightly by institution, but the standard 0.3-step scale is: A+ = 4.3, A = 4.0, A- = 3.7, B+ = 3.3, B = 3.0, B- = 2.7, and so on. Some schools cap A+ at 4.0. The Best Answer Hub GPA Calculator includes a plus-minus scale option so you can match your school\'s exact grading policy.',
+  },
+  {
+    q: 'If I take a class pass/fail and pass, will it hurt or help my GPA?',
+    a: 'A Pass (P) typically has no effect on your GPA at all. It adds credit hours toward graduation but contributes zero quality points, so your GPA stays unchanged. A Fail (F), however, usually counts as 0.0 and will lower your GPA just like any other failing grade. A Withdrawal (W) generally does not affect GPA, but a Withdrawal-Failing (WF) counts as an F. During the COVID-19 pandemic, many schools expanded pass/fail options, which is why understanding this distinction is more important than ever.',
+  },
+  {
+    q: 'When I transfer to a new college, do my old grades count toward my new GPA?',
+    a: 'Generally, no. Most four-year universities start your GPA fresh at 0.0 when you transfer. Your previous credits usually count toward graduation requirements, but only grades earned at the new institution factor into your new cumulative GPA. However, some graduate programs and professional school applications (such as AMCAS for medical school) require you to report every college course you have ever taken, including community college, and they calculate their own cumulative GPA across all institutions.',
+  },
+  {
+    q: 'I scored 85% in India. What is my GPA on the U.S. 4.0 scale?',
+    a: 'An 85% in the Indian percentage system typically converts to approximately 3.4 on the U.S. 4.0 scale using the simple division method (percentage divided by 25). If your Indian university uses the 10-point CGPA system, multiply your CGPA by 0.4, so a 7.5 CGPA equals roughly 3.0. WES and NACES evaluation services may use slightly different bracket mappings depending on your specific university. The Best Answer Hub GPA Calculator includes both Indian percentage and 10-point CGPA modes for instant conversion.',
+  },
+  {
+    q: 'What is a UK Upper Second Class honours degree (2:1) equivalent to on the American 4.0 GPA scale?',
+    a: 'Per the Fulbright US-UK Commission, a 2:1 (60–69%) equates to approximately 3.3 to 3.7 on the U.S. 4.0 scale. A First Class Honours (70%+) is roughly equivalent to 3.7 to 4.0. A 2:2 (50–59%) maps to about 2.7 to 3.2. These are guidelines rather than exact conversions because UK degree classifications are based on a different assessment culture. The Best Answer Hub GPA Calculator\'s UK Honours mode uses the standard Fulbright mapping for quick reference.',
+  },
+  {
+    q: 'How does AMCAS calculate my science GPA, and does my statistics class count toward BCPM?',
+    a: 'AMCAS calculates a separate BCPM GPA that includes Biology, Chemistry, Physics, and Math courses. Yes, Statistics counts as Math and therefore counts toward BCPM. So do Biostatistics and Psychological Statistics if the course content is at least 50% statistical. Psychology, Sociology, and Anthropology courses generally do not count unless they are heavily quantitative. The BCPM GPA is screened separately from your overall GPA by medical school admissions committees, so pre-med students should track it carefully.',
+  },
+  {
+    q: 'If I retake a class I failed, will AMCAS replace the F with my new grade in my GPA?',
+    a: 'No. AMCAS does not allow grade replacement under any circumstances. Both the original F (0.0) and the retake grade are averaged into your AMCAS GPA. This is the single biggest reason why a student\'s AMCAS GPA is often 0.2 to 0.5 points lower than their university-reported GPA. Some undergraduate schools offer grade forgiveness that replaces the F on your transcript, but AMCAS counts every attempt. The Best Answer Hub GPA Calculator helps you model the real impact of retakes on your cumulative average.',
+  },
+  {
+    q: 'Why does my B in a 4-credit biology lab hurt my GPA more than my A in a 1-credit PE class?',
+    a: 'GPA is credit-weighted, which means higher-credit courses have a proportionally larger impact. A B (3.0) in a 4-credit biology lab earns 12 quality points. An A (4.0) in a 1-credit PE class earns only 4 quality points. Over four years, consistently earning B\'s in 4-credit science courses and A\'s in 1-credit electives will pull your cumulative GPA down significantly. This is why science and math courses have such a powerful effect on pre-med and engineering GPAs.',
+  },
+  {
+    q: 'Is a 3.5 GPA good enough for competitive scholarships and honors programs?',
+    a: 'A 3.5 GPA is generally the minimum threshold for Dean\'s List, merit scholarships, and competitive graduate programs. The national average undergraduate GPA is approximately 3.15, so 3.5 places you well above average. However, top-tier scholarships such as the Rhodes, Marshall, or Fulbright typically expect 3.7 or higher. For graduate school, a 3.5 is competitive at most programs outside the top 20. The Best Answer Hub GPA Calculator\'s target planner shows you exactly how many A\'s you need to move from a 3.2 to a 3.5 or beyond.',
+  },
+  {
+    q: 'What is the minimum GPA I need for graduate school, and will a 3.2 get me rejected?',
+    a: 'Most graduate programs require a minimum 3.0 GPA for admission. A 3.2 will not get you automatically rejected from most programs, especially if you have strong research experience, compelling recommendation letters, or competitive test scores. Top-50 programs typically expect 3.5 or higher, while professional programs like law and medicine have higher medians. If your GPA is below 3.0, a strong GRE or GMAT score and a graduate certificate can help demonstrate academic readiness.',
+  },
+  {
+    q: 'If my college allows grade replacement and I retake a D with an A, which grade goes into my GPA?',
+    a: 'It depends entirely on your school\'s policy. Some colleges replace the D entirely with the A. Others average both grades, giving you a 2.5 for that course. Others keep only the higher grade. Professional school applications like AMCAS, LSAC, and CASPA almost always count every attempt and average them, regardless of what your undergraduate transcript shows. Always check your registrar\'s academic policy manual, and never assume a retake will fully erase a poor grade from every GPA calculation that matters.',
+  },
+];
+
+const seo = {
+  title: 'GPA Calculator — Weighted, Cumulative, International (2026)',
+  description: 'Calculate weighted and cumulative GPA across 8 grading scales. Supports US 4.0/5.0, percentage, UK, German, Indian, and Australian systems. Free, no signup.',
+  url: '/calculators/gpa-calculator/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-31T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'GPA Calculator', url: '/calculators/gpa-calculator/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+
+const steps = [
+  { title: 'Select your grading scale', description: 'Choose from 4.0 US, 5.0 weighted, percentage, UK Honours, German, Indian 10-point CGPA, or Australian 7-point. Pick straight-letter or plus-minus depending on your school.' },
+  { title: 'Enter your courses', description: 'Add each course with its grade and credit hours. Toggle pass/fail for courses that do not affect GPA. Enter your previous cumulative GPA and credits to blend them automatically.' },
+  { title: 'See your GPA and plan ahead', description: 'View your semester GPA, cumulative GPA, and grade distribution instantly. Use the target planner to find out exactly what average you need on remaining courses to hit your goal.' },
+];
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated May 2026
+          </div>
+          <a href="/calculators/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Calculators
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          GPA Calculator:<br/>
+          <em class="italic text-bae-primary">Weighted, cumulative & international</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Calculate your semester and cumulative GPA across eight grading scales. Model "what if" scenarios, track pass/fail courses, and see exactly what grades you need to reach your target.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="GPA calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Grading Scale -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Grading Scale</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink mb-2 block">Select your scale</label>
+                <select id="scale" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary">
+                  <option value="4.0-plus">4.0 US (with Plus/Minus)</option>
+                  <option value="4.0-straight">4.0 US (Straight Letters)</option>
+                  <option value="5.0">5.0 US (Weighted)</option>
+                  <option value="percentage">Percentage (0–100)</option>
+                  <option value="uk">UK Honours</option>
+                  <option value="german">German (1.0–5.0)</option>
+                  <option value="indian">Indian 10-point CGPA</option>
+                  <option value="australian">Australian 7-point</option>
+                </select>
+              </div>
+              <div id="scale-info" class="text-xs text-bae-muted bg-bae-bg rounded-bae-sm p-3 border border-bae-border-light">
+                A+ = 4.3, A = 4.0, A- = 3.7, B+ = 3.3, B = 3.0, B- = 2.7, C+ = 2.3, C = 2.0, C- = 1.7, D+ = 1.3, D = 1.0, D- = 0.7, F = 0.0
+              </div>
+            </div>
+          </div>
+
+          <!-- Course Table -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted">Courses</h2>
+              <button type="button" id="clear-courses-btn" class="text-xs font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer">
+                Clear table
+              </button>
+            </div>
+            <p class="text-xs text-bae-muted mb-3">Enter each course below. Use the <strong>Type</strong> column to mark Pass/Fail courses: Pass earns credits with no GPA impact; Fail counts as an F.</p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-bae-border">
+                    <th class="text-left py-2 pr-3 text-xs font-semibold text-bae-muted uppercase tracking-wider">Course</th>
+                    <th class="text-left py-2 px-3 text-xs font-semibold text-bae-muted uppercase tracking-wider w-36">Grade</th>
+                    <th class="text-left py-2 px-3 text-xs font-semibold text-bae-muted uppercase tracking-wider w-24">Credits</th>
+                    <th class="text-left py-2 px-3 text-xs font-semibold text-bae-muted uppercase tracking-wider w-24">Type</th>
+                    <th class="text-right py-2 pl-3 text-xs font-semibold text-bae-muted uppercase tracking-wider w-10"></th>
+                  </tr>
+                </thead>
+                <tbody id="courses-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+            <button type="button" id="add-course-btn" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-bae-primary hover:text-bae-ink transition-colors bg-transparent border-0 cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Add course
+            </button>
+          </div>
+
+          <!-- Cumulative & Target Planner -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Cumulative & Target Planner</h2>
+            <p class="text-xs text-bae-muted mb-4">Enter your previous cumulative GPA and total credits to blend them with this semester. Then set a target to see exactly what average you need on remaining courses.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink mb-2 block">Previous Cumulative GPA</label>
+                <input type="number" id="prev-gpa" min="0" max="10" step="0.01" value="" placeholder="e.g. 3.20" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink mb-2 block">Previous Credits</label>
+                <input type="number" id="prev-credits" min="0" max="500" step="1" value="" placeholder="e.g. 60" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+            <div class="border-t border-bae-border pt-4">
+              <p class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-3">Target Planner</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink mb-2 block">Desired Cumulative GPA</label>
+                  <input type="number" id="target-gpa" min="0" max="10" step="0.01" value="" placeholder="e.g. 3.50" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink mb-2 block">Remaining Credits</label>
+                  <input type="number" id="target-credits" min="0" max="500" step="1" value="" placeholder="e.g. 30" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+              </div>
+              <div id="target-result" class="mt-4 p-3 rounded-bae-sm text-sm hidden"></div>
+            </div>
+          </div>
+
+          <div class="flex justify-end -mt-2 mb-1">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset calculator
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <!-- GPA Display -->
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Semester GPA</h3>
+            <div class="text-3xl md:text-4xl font-bold font-serif mb-1" id="result-semester-gpa">0.00</div>
+            <p class="text-xs text-white/50 mb-5">Based on entered courses</p>
+
+            <div class="space-y-3 border-t border-white/10 pt-4">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-white/70">Cumulative GPA</span>
+                <span class="text-sm font-semibold" id="result-cumulative-gpa">—</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-white/70">Total Credits</span>
+                <span class="text-sm font-semibold" id="result-total-credits">0</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-white/70">Quality Points</span>
+                <span class="text-sm font-semibold" id="result-quality-points">0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grade Distribution -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Grade Distribution</h3>
+            <div class="space-y-2.5" id="grade-distribution">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Scale Info Card -->
+          <div class="bg-bae-primary-soft border border-bae-primary/20 rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-primary mb-3">Scale Maximum</h3>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-bae-muted">Highest possible GPA</span>
+              <span class="text-sm font-semibold text-bae-ink" id="scale-max">4.3</span>
+            </div>
+          </div>
+
+          <button type="button" id="pdf-btn" class="w-full bg-bae-ink hover:bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+            Download PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hidden PDF Report -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">GPA Report</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">GPA Calculator Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Semester GPA</p>
+              <p class="text-3xl font-bold text-bae-ink" id="report-semester-gpa">0.00</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Cumulative GPA</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-cumulative-gpa">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Credits</p>
+              <p class="text-2xl font-bold text-bae-primary" id="report-total-credits">0</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" id="report-details">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="mt-6">
+          <p class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Courses</p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-bae-border">
+                  <th class="text-left py-2 pr-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Course</th>
+                  <th class="text-left py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Grade</th>
+                  <th class="text-right py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Credits</th>
+                  <th class="text-right py-2 pl-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Quality Pts</th>
+                </tr>
+              </thead>
+              <tbody id="report-courses-body">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>GPA calculations are estimates based on standard grading scales. Actual institutional policies may vary. Always verify your official transcript and consult your academic advisor for definitive GPA calculations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/compound-interest/" class="text-bae-primary hover:underline">Compound Interest Calculator</a>, <a href="/calculators/mortgage-calculator/" class="text-bae-primary hover:underline">Mortgage Calculator</a>, and <a href="/calculators/" class="text-bae-primary hover:underline">Calculators Hub</a>.</p>
+        </div>
+        <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all calculators →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What students calculate with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What students calculate with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from undergraduates, pre-med students, international applicants, and transfer students.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Pre-Med Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Tracking science GPA alongside overall GPA</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">BCPM awareness before AMCAS submission</p>
+          <p class="text-sm text-bae-muted">Pre-med students use the Best Answer Hub GPA Calculator to model how a B in Organic Chemistry versus an A affects their overall and science GPAs. The credit-weighted breakdown reveals why 4-credit labs have outsized impact compared to 1-credit seminars.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">International Applicants</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Converting Indian CGPA or UK honours to U.S. 4.0</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">8 grading scales including WES-style mappings</p>
+          <p class="text-sm text-bae-muted">Students from India, the UK, Germany, and Australia use the international scale modes to translate their home grades into U.S. equivalents for graduate school and scholarship applications. The calculator shows both native and converted values side by side.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Seniors & Honors Candidates</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Planning final semester grades for honors eligibility</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Target planner with impossibility warnings</p>
+          <p class="text-sm text-bae-muted">Students aiming for cum laude or Dean's List use the target planner to reverse-calculate exactly what GPA they need on remaining credits. The calculator warns if a target is mathematically impossible, saving students from unrealistic expectations before finals.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Transfer Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Blending community college and university transcripts</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Cumulative blending with previous GPA input</p>
+          <p class="text-sm text-bae-muted">Transfer students enter their previous institution's cumulative GPA and total credits to see how new semester grades affect their blended average. This helps set realistic goals when adjusting to a new school's grading curve and course rigor.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      const GRADE_SCALES = {
+        '4.0-plus': {
+          name: '4.0 US (with Plus/Minus)',
+          max: 4.3,
+          grades: [
+            { label: 'A+', value: '4.3' }, { label: 'A', value: '4.0' }, { label: 'A-', value: '3.7' },
+            { label: 'B+', value: '3.3' }, { label: 'B', value: '3.0' }, { label: 'B-', value: '2.7' },
+            { label: 'C+', value: '2.3' }, { label: 'C', value: '2.0' }, { label: 'C-', value: '1.7' },
+            { label: 'D+', value: '1.3' }, { label: 'D', value: '1.0' }, { label: 'D-', value: '0.7' },
+            { label: 'F', value: '0.0' }
+          ],
+          inputType: 'select',
+          info: 'A+ = 4.3, A = 4.0, A- = 3.7, B+ = 3.3, B = 3.0, B- = 2.7, C+ = 2.3, C = 2.0, C- = 1.7, D+ = 1.3, D = 1.0, D- = 0.7, F = 0.0'
+        },
+        '4.0-straight': {
+          name: '4.0 US (Straight Letters)',
+          max: 4.0,
+          grades: [
+            { label: 'A', value: '4.0' }, { label: 'B', value: '3.0' }, { label: 'C', value: '2.0' },
+            { label: 'D', value: '1.0' }, { label: 'F', value: '0.0' }
+          ],
+          inputType: 'select',
+          info: 'A = 4.0, B = 3.0, C = 2.0, D = 1.0, F = 0.0'
+        },
+        '5.0': {
+          name: '5.0 US (Weighted)',
+          max: 5.0,
+          grades: [
+            { label: 'A', value: '5.0' }, { label: 'B', value: '4.0' }, { label: 'C', value: '3.0' },
+            { label: 'D', value: '2.0' }, { label: 'F', value: '0.0' }
+          ],
+          inputType: 'select',
+          info: 'A = 5.0, B = 4.0, C = 3.0, D = 2.0, F = 0.0'
+        },
+        'percentage': {
+          name: 'Percentage (0–100)',
+          max: 4.0,
+          inputType: 'number',
+          inputMin: 0,
+          inputMax: 100,
+          step: 0.1,
+          convert: (v) => v / 25,
+          format: (v) => v.toFixed(1) + '%',
+          info: 'GPA = Percentage ÷ 25. Example: 85% = 3.4 GPA'
+        },
+        'uk': {
+          name: 'UK Honours',
+          max: 4.0,
+          grades: [
+            { label: 'First', value: '4.0' }, { label: '2:1', value: '3.3' }, { label: '2:2', value: '3.0' },
+            { label: 'Third', value: '2.0' }, { label: 'Pass', value: '1.0' }, { label: 'Fail', value: '0.0' }
+          ],
+          inputType: 'select',
+          info: 'First = 4.0, 2:1 = 3.3, 2:2 = 3.0, Third = 2.0, Pass = 1.0, Fail = 0.0'
+        },
+        'german': {
+          name: 'German (1.0–5.0)',
+          max: 4.0,
+          inputType: 'number',
+          inputMin: 1.0,
+          inputMax: 5.0,
+          step: 0.3,
+          convert: (v) => {
+            const map = { 1.0: 4.0, 1.3: 3.7, 1.7: 3.3, 2.0: 3.0, 2.3: 2.7, 2.7: 2.3, 3.0: 2.0, 3.3: 1.7, 3.7: 1.3, 4.0: 1.0 };
+            if (map[v] !== undefined) return map[v];
+            if (v > 4.0) return 0.0;
+            return Math.max(0, 4.0 - (v - 1.0));
+          },
+          format: (v) => v.toFixed(1),
+          info: '1.0 = 4.0, 1.3 = 3.7, 1.7 = 3.3, 2.0 = 3.0, 2.3 = 2.7, 2.7 = 2.3, 3.0 = 2.0, 3.3 = 1.7, 3.7 = 1.3, 4.0 = 1.0, 4.3+ = 0.0'
+        },
+        'indian': {
+          name: 'Indian 10-point CGPA',
+          max: 4.0,
+          inputType: 'number',
+          inputMin: 0,
+          inputMax: 10,
+          step: 0.1,
+          convert: (v) => v * 0.4,
+          format: (v) => v.toFixed(1),
+          info: 'GPA = CGPA × 0.4. Example: 7.5 CGPA = 3.0 GPA'
+        },
+        'australian': {
+          name: 'Australian 7-point',
+          max: 4.0,
+          grades: [
+            { label: 'HD', value: '7.0' }, { label: 'D', value: '6.0' }, { label: 'C', value: '5.0' },
+            { label: 'P', value: '4.0' }, { label: 'F', value: '0.0' }
+          ],
+          inputType: 'select',
+          convert: (v) => (v / 7) * 4,
+          info: 'HD = 4.0, D = 3.43, C = 2.86, P = 2.29, F = 0.0'
+        }
+      };
+
+      let courses = [];
+      let courseIdCounter = 0;
+
+      function getScale() {
+        return GRADE_SCALES[$('scale').value];
+      }
+
+      function createGradeInput(courseId, scale) {
+        if (scale.inputType === 'select') {
+          const select = document.createElement('select');
+          select.className = 'w-full text-sm border border-bae-border rounded-bae-sm px-2 py-2 bg-white focus:outline-none focus:border-bae-primary';
+          select.dataset.courseId = courseId;
+          scale.grades.forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g.value;
+            opt.textContent = g.label + ' (' + g.value + ')';
+            select.appendChild(opt);
+          });
+          return select;
+        } else {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.min = scale.inputMin ?? 0;
+          input.max = scale.inputMax ?? 100;
+          input.step = scale.step ?? 0.1;
+          input.value = scale.inputType === 'number' && scale.name.includes('German') ? '2.0' : (scale.inputType === 'number' && scale.name.includes('Indian') ? '7.0' : '85');
+          input.className = 'w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary';
+          input.dataset.courseId = courseId;
+          return input;
+        }
+      }
+
+      function getGradeValue(input, scale) {
+        const raw = scale.inputType === 'select' ? (parseFloat(input.value) || 0) : parseFloat(input.value);
+        if (isNaN(raw)) return 0;
+        if (scale.convert) return scale.convert(raw);
+        return raw;
+      }
+
+      function getGradeLabel(input, scale) {
+        if (scale.inputType === 'select') {
+          const g = scale.grades.find(x => x.value == input.value);
+          return g ? g.label : input.value;
+        } else {
+          return input.value;
+        }
+      }
+
+      function addCourse(data) {
+        const id = courseIdCounter++;
+        const scale = getScale();
+        const tbody = $('courses-body');
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-bae-border/50';
+        tr.dataset.courseId = id;
+
+        const nameTd = document.createElement('td');
+        nameTd.className = 'py-2 pr-3';
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.placeholder = 'Course name';
+        nameInput.value = data?.name || '';
+        nameInput.className = 'w-full text-sm border border-bae-border rounded-bae-sm px-2 py-1.5 bg-white focus:outline-none focus:border-bae-primary';
+        nameTd.appendChild(nameInput);
+
+        const gradeTd = document.createElement('td');
+        gradeTd.className = 'py-2 px-3';
+        const gradeInput = createGradeInput(id, scale);
+        if (data?.grade !== undefined) gradeInput.value = data.grade;
+        gradeTd.appendChild(gradeInput);
+
+        const creditsTd = document.createElement('td');
+        creditsTd.className = 'py-2 px-3';
+        const creditsInput = document.createElement('input');
+        creditsInput.type = 'number';
+        creditsInput.min = 0;
+        creditsInput.max = 20;
+        creditsInput.step = 0.5;
+        creditsInput.value = data?.credits || '3';
+        creditsInput.className = 'w-full text-sm border border-bae-border rounded-bae-sm px-2 py-1.5 bg-white focus:outline-none focus:border-bae-primary';
+        creditsTd.appendChild(creditsInput);
+
+        const typeTd = document.createElement('td');
+        typeTd.className = 'py-2 px-3';
+        const typeSelect = document.createElement('select');
+        typeSelect.className = 'w-full text-sm border border-bae-border rounded-bae-sm px-2 py-1.5 bg-white focus:outline-none focus:border-bae-primary';
+        typeSelect.innerHTML = '<option value="graded">Graded</option><option value="pass">Pass</option><option value="fail">Fail</option>';
+        typeSelect.value = data?.type || 'graded';
+        typeTd.appendChild(typeSelect);
+
+        const removeTd = document.createElement('td');
+        removeTd.className = 'py-2 pl-3 text-right';
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.innerHTML = '<svg class="w-4 h-4 text-bae-muted hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+        removeBtn.className = 'bg-transparent border-0 cursor-pointer p-1';
+        removeBtn.addEventListener('click', () => {
+          tr.remove();
+          calculate();
+        });
+        removeTd.appendChild(removeBtn);
+
+        tr.appendChild(nameTd);
+        tr.appendChild(gradeTd);
+        tr.appendChild(creditsTd);
+        tr.appendChild(typeTd);
+        tr.appendChild(removeTd);
+        tbody.appendChild(tr);
+
+        // Bind events
+        nameInput.addEventListener('input', () => updateURL());
+        gradeInput.addEventListener('change', () => { calculate(); updateURL(); });
+        creditsInput.addEventListener('input', () => { calculate(); updateURL(); });
+        typeSelect.addEventListener('change', () => { calculate(); updateURL(); });
+      }
+
+      function getCourseRows() {
+        const rows = [];
+        $('courses-body').querySelectorAll('tr').forEach(tr => {
+          const inputs = tr.querySelectorAll('input, select');
+          const nameInput = inputs[0];
+          const gradeInput = inputs[1];
+          const creditsInput = inputs[2];
+          const typeSelect = inputs[3];
+          rows.push({
+            name: nameInput.value,
+            gradeInput: gradeInput,
+            creditsInput: creditsInput,
+            type: typeSelect.value,
+            tr: tr
+          });
+        });
+        return rows;
+      }
+
+      function calculate() {
+        const scale = getScale();
+        const rows = getCourseRows();
+        let totalQualityPoints = 0;
+        let totalCredits = 0;
+        let passCredits = 0;
+        let failCredits = 0;
+        const gradeCounts = {};
+        let gradedCount = 0;
+
+        rows.forEach(row => {
+          const credits = parseFloat(row.creditsInput.value) || 0;
+          if (row.type === 'pass') {
+            passCredits += credits;
+            gradeCounts['Pass'] = (gradeCounts['Pass'] || 0) + 1;
+            return;
+          }
+          if (row.type === 'fail') {
+            failCredits += credits;
+            gradeCounts['Fail'] = (gradeCounts['Fail'] || 0) + 1;
+            totalCredits += credits;
+            return;
+          }
+          gradedCount++;
+          const gradeValue = getGradeValue(row.gradeInput, scale);
+          const qualityPoints = gradeValue * credits;
+          totalQualityPoints += qualityPoints;
+          totalCredits += credits;
+
+          const label = getGradeLabel(row.gradeInput, scale);
+          gradeCounts[label] = (gradeCounts[label] || 0) + 1;
+        });
+
+        const semesterGPA = totalCredits > 0 ? totalQualityPoints / totalCredits : 0;
+
+        // Previous cumulative
+        const prevGPA = parseFloat($('prev-gpa').value) || 0;
+        const prevCredits = parseFloat($('prev-credits').value) || 0;
+        const prevQualityPoints = prevGPA * prevCredits;
+        const combinedQualityPoints = prevQualityPoints + totalQualityPoints;
+        const combinedCredits = prevCredits + totalCredits;
+        const cumulativeGPA = combinedCredits > 0 ? combinedQualityPoints / combinedCredits : 0;
+
+        // Update results
+        if (gradedCount === 0 && passCredits > 0) {
+          $('result-semester-gpa').textContent = '—';
+          $('result-semester-gpa').title = 'Pass courses do not affect GPA';
+        } else {
+          $('result-semester-gpa').textContent = semesterGPA.toFixed(2);
+          $('result-semester-gpa').title = '';
+        }
+        $('result-cumulative-gpa').textContent = (prevCredits > 0 && cumulativeGPA > 0) ? cumulativeGPA.toFixed(2) : '—';
+        $('result-total-credits').textContent = Math.round(totalCredits + passCredits);
+        $('result-quality-points').textContent = totalQualityPoints.toFixed(2);
+        $('scale-max').textContent = scale.max.toFixed(1);
+
+        // Grade distribution
+        const distContainer = $('grade-distribution');
+        distContainer.innerHTML = '';
+        if (Object.keys(gradeCounts).length === 0) {
+          distContainer.innerHTML = '<p class="text-sm text-bae-muted">Add courses to see distribution</p>';
+        } else {
+          const maxCount = Math.max(...Object.values(gradeCounts));
+          Object.entries(gradeCounts).forEach(([grade, count]) => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-3';
+            const pct = maxCount > 0 ? (count / maxCount) * 100 : 0;
+            div.innerHTML = '<div class="w-10 text-xs font-medium text-bae-muted">' + grade + '</div>' +
+              '<div class="flex-1 h-2 bg-bae-bg rounded-full overflow-hidden"><div class="h-full rounded-full bg-bae-primary" style="width:' + pct + '%"></div></div>' +
+              '<div class="w-6 text-right text-xs font-semibold text-bae-ink">' + count + '</div>';
+            distContainer.appendChild(div);
+          });
+        }
+
+        // Target planner
+        const targetGPA = parseFloat($('target-gpa').value) || 0;
+        const targetCredits = parseFloat($('target-credits').value) || 0;
+        const targetResult = $('target-result');
+        if (targetGPA > 0 && targetCredits > 0) {
+          targetResult.classList.remove('hidden');
+          const neededTotalQP = targetGPA * (combinedCredits + targetCredits);
+          const neededQP = neededTotalQP - combinedQualityPoints;
+          const neededGPA = targetCredits > 0 ? neededQP / targetCredits : 0;
+
+          if (neededGPA > scale.max) {
+            targetResult.className = 'mt-4 p-3 rounded-bae-sm text-sm bg-red-50 border border-red-200 text-red-700';
+            targetResult.innerHTML = '<strong>Not possible.</strong> You would need a ' + neededGPA.toFixed(2) + ' GPA on a ' + scale.max.toFixed(1) + ' scale. Try a lower target or more credits.';
+          } else if (neededGPA < 0) {
+            targetResult.className = 'mt-4 p-3 rounded-bae-sm text-sm bg-green-50 border border-green-200 text-green-700';
+            targetResult.innerHTML = '<strong>Already achievable!</strong> Your current trajectory exceeds this target. You only need a ' + Math.max(0, neededGPA).toFixed(2) + ' average on remaining courses.';
+          } else {
+            targetResult.className = 'mt-4 p-3 rounded-bae-sm text-sm bg-bae-primary-soft border border-bae-primary/20 text-bae-ink';
+            targetResult.innerHTML = 'You need a <strong>' + neededGPA.toFixed(2) + '</strong> average on your remaining ' + targetCredits + ' credits to reach a ' + targetGPA.toFixed(2) + ' cumulative GPA.';
+          }
+        } else {
+          targetResult.classList.add('hidden');
+        }
+
+        // PDF report
+        $('report-semester-gpa').textContent = semesterGPA.toFixed(2);
+        $('report-cumulative-gpa').textContent = (prevCredits > 0 && cumulativeGPA > 0) ? cumulativeGPA.toFixed(2) : '—';
+        $('report-total-credits').textContent = Math.round(totalCredits + passCredits);
+
+        const reportDetails = $('report-details');
+        reportDetails.innerHTML = '';
+        const detailRows = [
+          ['Grading Scale', scale.name],
+          ['Scale Maximum', scale.max.toFixed(1)],
+          ['Semester Credits', totalCredits.toString()],
+          ['Pass Credits', passCredits > 0 ? passCredits.toString() : '0'],
+          ['Fail Credits', failCredits > 0 ? failCredits.toString() : '0'],
+          ['Quality Points', totalQualityPoints.toFixed(2)],
+        ];
+        if (prevCredits > 0) {
+          detailRows.push(['Previous GPA', prevGPA.toFixed(2)]);
+          detailRows.push(['Previous Credits', prevCredits.toString()]);
+          detailRows.push(['Cumulative GPA', cumulativeGPA.toFixed(2)]);
+        }
+        if (targetGPA > 0 && targetCredits > 0) {
+          const neededTotalQP = targetGPA * (combinedCredits + targetCredits);
+          const neededQP = neededTotalQP - combinedQualityPoints;
+          const neededGPA = targetCredits > 0 ? neededQP / targetCredits : 0;
+          if (neededGPA <= scale.max && neededGPA >= 0) {
+            detailRows.push(['Target GPA', targetGPA.toFixed(2)]);
+            detailRows.push(['Remaining Credits', targetCredits.toString()]);
+            detailRows.push(['Required Average', neededGPA.toFixed(2)]);
+          }
+        }
+        detailRows.forEach(([label, value]) => {
+          const div = document.createElement('div');
+          div.innerHTML = '<span class="text-bae-muted">' + label + ': </span><span class="font-medium text-bae-ink">' + value + '</span>';
+          reportDetails.appendChild(div);
+        });
+
+        const reportCoursesBody = $('report-courses-body');
+        reportCoursesBody.innerHTML = '';
+        rows.forEach(row => {
+          const credits = parseFloat(row.creditsInput.value) || 0;
+          const gradeLabel = getGradeLabel(row.gradeInput, scale);
+          const gradeValue = getGradeValue(row.gradeInput, scale);
+          let displayLabel = gradeLabel;
+          let qp = (gradeValue * credits).toFixed(2);
+          if (row.type === 'pass') { displayLabel = 'Pass'; qp = '—'; }
+          if (row.type === 'fail') { displayLabel = 'Fail'; qp = '0.00'; }
+          const tr = document.createElement('tr');
+          tr.className = 'border-b border-bae-border/50';
+          tr.innerHTML = '<td class="py-2 pr-4 text-bae-ink">' + (row.name || '—') + '</td>' +
+            '<td class="py-2 px-4 text-bae-ink">' + displayLabel + '</td>' +
+            '<td class="py-2 px-4 text-right text-bae-ink">' + credits + '</td>' +
+            '<td class="py-2 pl-4 text-right text-bae-ink">' + qp + '</td>';
+          reportCoursesBody.appendChild(tr);
+        });
+
+        updateURL();
+      }
+
+      function rebuildGradeInputs() {
+        const scale = getScale();
+        const rows = getCourseRows();
+        rows.forEach(row => {
+          const oldValue = row.gradeInput.value;
+          const td = row.gradeInput.parentElement;
+          td.innerHTML = '';
+          const newInput = createGradeInput(0, scale);
+          if (oldValue) {
+            // Try to preserve the closest grade value
+            if (scale.inputType === 'select') {
+              const match = scale.grades.find(g => g.value == oldValue);
+              if (match) newInput.value = match.value;
+            } else {
+              newInput.value = oldValue;
+            }
+          }
+          td.appendChild(newInput);
+          newInput.addEventListener('change', () => { calculate(); updateURL(); });
+        });
+        calculate();
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          const params = new URLSearchParams();
+
+          const scaleVal = $('scale').value;
+          if (scaleVal !== '4.0-plus') params.set('scale', scaleVal);
+
+          const rows = getCourseRows();
+          rows.forEach((row, i) => {
+            if (row.name) params.set('n' + i, row.name);
+            params.set('g' + i, row.gradeInput.value);
+            params.set('c' + i, row.creditsInput.value);
+            if (row.type !== 'graded') params.set('t' + i, row.type);
+          });
+
+          const prevGPA = parseFloat($('prev-gpa').value);
+          const prevCredits = parseFloat($('prev-credits').value);
+          if (prevGPA > 0) params.set('pg', prevGPA);
+          if (prevCredits > 0) params.set('pc', prevCredits);
+
+          const targetGPA = parseFloat($('target-gpa').value);
+          const targetCredits = parseFloat($('target-credits').value);
+          if (targetGPA > 0) params.set('tg', targetGPA);
+          if (targetCredits > 0) params.set('tc', targetCredits);
+
+          url.search = params.toString();
+          window.history.replaceState({}, '', url);
+        } catch (e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+          const scale = url.searchParams.get('scale');
+          if (scale && GRADE_SCALES[scale]) {
+            $('scale').value = scale;
+          }
+
+          const pg = url.searchParams.get('pg');
+          const pc = url.searchParams.get('pc');
+          const tg = url.searchParams.get('tg');
+          const tc = url.searchParams.get('tc');
+
+          if (pg !== null) $('prev-gpa').value = pg;
+          if (pc !== null) $('prev-credits').value = pc;
+          if (tg !== null) $('target-gpa').value = tg;
+          if (tc !== null) $('target-credits').value = tc;
+
+          // Rebuild grade inputs for the correct scale
+          rebuildGradeInputs();
+
+          // Add courses from URL
+          const courseParams = [];
+          url.searchParams.forEach((value, key) => {
+            const m = key.match(/^g(\d+)$/);
+            if (m) courseParams.push(parseInt(m[1]));
+          });
+          courseParams.sort((a, b) => a - b);
+
+          if (courseParams.length > 0) {
+            $('courses-body').innerHTML = '';
+            courseParams.forEach(i => {
+              addCourse({
+                name: url.searchParams.get('n' + i) || '',
+                grade: url.searchParams.get('g' + i) || '',
+                credits: url.searchParams.get('c' + i) || '3',
+                type: url.searchParams.get('t' + i) || 'graded'
+              });
+            });
+          }
+        } catch (e) {}
+      }
+
+      // Scale change
+      $('scale').addEventListener('change', () => {
+        const scale = getScale();
+        $('scale-info').textContent = scale.info;
+        rebuildGradeInputs();
+      });
+
+      // Add course
+      $('add-course-btn').addEventListener('click', () => {
+        addCourse();
+        calculate();
+      });
+
+      // Clear courses table only
+      $('clear-courses-btn').addEventListener('click', () => {
+        $('courses-body').innerHTML = '';
+        // Add one blank course
+        addCourse();
+        calculate();
+      });
+
+      // Clear all / Reset
+      $('clear-btn').addEventListener('click', () => {
+        $('scale').value = '4.0-plus';
+        $('scale-info').textContent = GRADE_SCALES['4.0-plus'].info;
+        $('courses-body').innerHTML = '';
+        $('prev-gpa').value = '';
+        $('prev-credits').value = '';
+        $('target-gpa').value = '';
+        $('target-credits').value = '';
+        window.history.replaceState({}, '', window.location.pathname);
+        // Add default courses
+        addCourse({ name: '', grade: '4.0', credits: '3' });
+        addCourse({ name: '', grade: '4.0', credits: '3' });
+        addCourse({ name: '', grade: '4.0', credits: '3' });
+        calculate();
+      });
+
+      // Previous GPA / target inputs
+      ['prev-gpa', 'prev-credits', 'target-gpa', 'target-credits'].forEach(id => {
+        $(id).addEventListener('input', calculate);
+      });
+
+      // PDF button
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '210mm';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.style.margin = '0';
+
+        const report = $('print-report').cloneNode(true);
+        report.removeAttribute('id');
+        report.classList.remove('hidden');
+        wrapper.appendChild(report);
+        document.body.appendChild(wrapper);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'gpa-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(wrapper).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (wrapper.parentNode) document.body.removeChild(wrapper);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // Init
+      readURL();
+      if ($('courses-body').children.length === 0) {
+        addCourse({ name: '', grade: '4.0', credits: '3' });
+        addCourse({ name: '', grade: '4.0', credits: '3' });
+        addCourse({ name: '', grade: '4.0', credits: '3' });
+      }
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+  </style>
+</BaseLayout>

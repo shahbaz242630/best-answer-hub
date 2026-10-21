@@ -1,0 +1,526 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is an IP address?',
+    a: 'An IP address is a unique numerical label assigned to every device connected to a computer network. It serves two main functions: identifying the host or network interface, and providing the location of the device in the network. There are two versions in use today: IPv4 (e.g., 192.168.1.1) and IPv6 (e.g., 2001:0db8:85a3::8a2e:0370:7334).',
+  },
+  {
+    q: 'What is the difference between IPv4 and IPv6?',
+    a: 'IPv4 uses 32-bit addresses and supports approximately 4.3 billion unique addresses. IPv6 uses 128-bit addresses and supports a virtually unlimited number of devices. IPv6 was introduced to solve IPv4 address exhaustion and includes improvements in security and routing efficiency.',
+  },
+  {
+    q: 'What is my public IP address?',
+    a: 'Your public IP address is the address assigned to your network by your Internet Service Provider. It is visible to websites and online services you connect to. You can see your current public IP address displayed at the top of this page. It may be IPv4, IPv6, or both depending on your network configuration.',
+  },
+  {
+    q: 'Can someone track my location with my IP address?',
+    a: 'An IP address reveals your approximate location (typically your city and country) but not your exact street address. This is because IP geolocation databases map IP ranges to geographic areas. For precise location tracking, websites would need additional data like GPS coordinates from your browser or device.',
+  },
+  {
+    q: 'How do I hide or change my IP address?',
+    a: 'You can hide your IP address using a Virtual Private Network (VPN), which routes your traffic through an encrypted tunnel to a remote server. Other methods include proxy servers and the Tor network. Each method offers different levels of privacy, speed, and security.',
+  },
+  {
+    q: 'What is the difference between a public IP and a private IP?',
+    a: 'A public IP address is assigned by your ISP and is visible on the internet. A private IP address is assigned by your router to devices within your local network (like 192.168.x.x or 10.x.x.x) and is not accessible from the internet. Your router uses Network Address Translation (NAT) to map private IPs to your public IP.',
+  },
+  {
+    q: 'Why does my IP address show the wrong location?',
+    a: 'IP geolocation is not always accurate because databases map IP ranges to broad geographic areas. If your ISP routes traffic through a data center in another city, or if you are using a VPN, proxy, or mobile connection, the location shown may differ from your physical location by hundreds of miles.',
+  },
+  {
+    q: 'Is it safe to share my IP address?',
+    a: 'Sharing your IP address is generally low-risk for everyday use. However, it can reveal your approximate location and ISP. In rare cases, malicious actors could use an IP address to launch targeted attacks or attempt to identify your ISP account. For maximum privacy, use a VPN to mask your real IP.',
+  },
+  {
+    q: 'What is a VPN and how does it hide my IP?',
+    a: 'A VPN creates an encrypted tunnel between your device and a remote server operated by the VPN provider. All your internet traffic passes through this tunnel, and websites see the VPN server\'s IP address instead of your real one. This hides your location, encrypts your data, and prevents your ISP from seeing your browsing activity.',
+  },
+  {
+    q: 'What is a proxy server?',
+    a: 'A proxy server acts as an intermediary between your device and the internet. When you use a proxy, your requests go to the proxy first, which then forwards them to the destination. The destination sees the proxy\'s IP address instead of yours. Proxies offer less security than VPNs because they typically do not encrypt traffic.',
+  },
+  {
+    q: 'How do I check if my VPN is working?',
+    a: 'First, connect to your VPN and then visit the Best Answer Hub IP Address Checker. If the IP address shown matches the VPN server location and not your real location, your VPN is working. You should also check that the "VPN Detected" status shows as active. For thorough verification, run a DNS leak test and WebRTC leak test.',
+  },
+  {
+    q: 'What is an ISP and why does it show on IP lookups?',
+    a: 'An ISP is an Internet Service Provider, the company that provides your internet connection (e.g., Comcast, AT&T, Verizon, BT). When you connect to the internet, your ISP assigns you an IP address from its pool. IP lookup services can identify your ISP because IP address ranges are registered to specific organizations in public databases.',
+  },
+  {
+    q: 'What is a DNS leak and why should VPN users care?',
+    a: 'A DNS leak happens when your browser sends DNS queries (the requests that translate domain names like "google.com" into IP addresses) directly to your ISP\'s servers instead of through your VPN tunnel. The result: your VPN hides your IP address, but your ISP can still see every domain you visit. DNS leaks are the most common way VPNs fail to deliver full privacy without the user realising anything is wrong. To check, connect to your VPN and run a DNS leak test: if the DNS server shown belongs to your ISP rather than your VPN provider, you have a leak. High-quality VPN providers ship with DNS leak protection enabled by default.',
+  },
+  {
+    q: 'What is a WebRTC leak and can it expose my real IP address even when I use a VPN?',
+    a: 'WebRTC is a browser technology that enables real-time communication features like video calls and peer-to-peer file sharing. To establish connections, WebRTC queries your device directly for its local and public IP addresses, bypassing the VPN tunnel entirely. This means your true IP can be visible to any website that uses a WebRTC query, even while your VPN masks it at the network level. Studies suggest roughly 23% of VPN connections have detectable WebRTC leaks. To check, run a WebRTC leak test in your browser while connected to a VPN. The fix is to disable WebRTC in your browser settings or use a browser extension that blocks WebRTC requests.',
+  },
+  {
+    q: 'What is the difference between a static IP and a dynamic IP address?',
+    a: 'A static IP address is permanently assigned to a device or account and does not change. Businesses, web servers, and remote workers often use static IPs because they need a consistent address for DNS records, remote access, or whitelisting. A dynamic IP address is assigned from a pool each time you connect, and can change with each router restart or after a period of inactivity. Almost all residential home internet connections use dynamic IPs assigned automatically by DHCP. Your home IP may appear to stay the same for weeks or months (ISPs tend to reassign the same address to the same customer for efficiency), but it is not guaranteed to persist.',
+  },
+];
+
+const steps = [
+  { title: 'Click the button', description: 'Tap "Check Your Public IP" to instantly detect your public IP address. No signup, no data stored on any server. Everything runs in your browser.' },
+  { title: 'Review your IP data', description: 'See your IPv4 or IPv6 address, ISP, approximate location, timezone, and connection details in a clean, organized layout.' },
+  { title: 'Copy or protect your IP', description: 'Click the copy button to copy your IP to the clipboard. If your IP is exposed, consider using a VPN to hide it from websites and trackers.' },
+];
+
+const seo = {
+  title: 'What Is My IP Address? — Free IP Checker (IPv4 & IPv6)',
+  description: 'Find your public IP address instantly. Check IPv4, IPv6, ISP, location, timezone, and VPN or proxy detection. No signup. No data stored.',
+  url: '/tools/ip-address-checker/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'IP Address Checker', url: '/tools/ip-address-checker/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Stored"
+    title="IP Address Checker:"
+    accentText="Find your public IP instantly"
+    description="Discover your IPv4 or IPv6 address, ISP, approximate location, timezone, and security status. Everything runs in your browser. No signup, no tracking, no logs."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <!-- IP Checker Interface -->
+  <section class="py-6 md:py-8" aria-label="IP address checker">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+
+        <!-- Initial CTA -->
+        <div id="ip-initial" class="bg-bae-card border border-bae-border rounded-bae p-8 md:p-12 text-center">
+          <div class="w-14 h-14 rounded-full bg-bae-primary-soft flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-bae-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-bae-ink mb-1">Check Your Public IP Address</h3>
+          <p class="text-sm text-bae-muted mb-5 max-w-sm mx-auto">Find your IPv4 or IPv6 address, ISP, location, timezone, and security status instantly. No signup required.</p>
+          <button type="button" id="check-ip-btn" class="inline-flex items-center gap-2 bg-bae-ink text-white px-6 py-3 rounded-bae-sm font-semibold text-sm hover:bg-bae-primary transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            Check Your Public IP
+          </button>
+        </div>
+
+        <!-- Loading -->
+        <div id="ip-loading" class="hidden bg-bae-card border border-bae-border rounded-bae p-8 md:p-12 text-center">
+          <div class="w-10 h-10 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p class="text-sm font-medium text-bae-ink">Detecting your IP address...</p>
+          <p class="text-xs text-bae-muted mt-1">This takes less than a second</p>
+        </div>
+
+        <!-- Results -->
+        <div id="ip-results" class="hidden space-y-4">
+
+          <!-- Main IP Display -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-6 md:p-8 text-center">
+            <p class="text-xs font-semibold uppercase tracking-wider text-bae-muted mb-2">Your Public IP Address</p>
+            <div class="flex items-center justify-center gap-3 flex-wrap">
+              <span id="ip-address" class="text-3xl md:text-4xl font-mono font-bold text-bae-ink tracking-tight">—</span>
+              <span id="ip-type" class="text-xs font-bold px-2.5 py-1 rounded-full bg-bae-primary-soft text-bae-primary">—</span>
+            </div>
+            <button type="button" id="copy-ip-btn" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-bae-primary hover:text-bae-accent transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              <span id="copy-label">Copy IP Address</span>
+            </button>
+          </div>
+
+          <!-- Info Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="info-grid">
+            <div class="info-card hidden bg-bae-card border border-bae-border rounded-bae p-4">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-1">Location</p>
+              <p class="text-sm font-medium text-bae-ink" id="ip-location">—</p>
+            </div>
+            <div class="info-card hidden bg-bae-card border border-bae-border rounded-bae p-4">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-1">ISP</p>
+              <p class="text-sm font-medium text-bae-ink" id="ip-isp">—</p>
+            </div>
+            <div class="info-card hidden bg-bae-card border border-bae-border rounded-bae p-4">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-1">Organization</p>
+              <p class="text-sm font-medium text-bae-ink" id="ip-org">—</p>
+            </div>
+            <div class="info-card hidden bg-bae-card border border-bae-border rounded-bae p-4">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-1">Timezone</p>
+              <p class="text-sm font-medium text-bae-ink" id="ip-timezone">—</p>
+            </div>
+            <div class="info-card hidden bg-bae-card border border-bae-border rounded-bae p-4">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-1">Connection</p>
+              <p class="text-sm font-medium text-bae-ink" id="ip-connection">—</p>
+            </div>
+            <div class="info-card hidden bg-bae-card border border-bae-border rounded-bae p-4">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-1">ASN</p>
+              <p class="text-sm font-medium text-bae-ink" id="ip-asn">—</p>
+            </div>
+          </div>
+
+          <!-- Security Status -->
+          <div id="security-section" class="hidden bg-bae-card border border-bae-border rounded-bae p-5">
+            <p class="text-xs font-semibold uppercase tracking-wider text-bae-muted mb-3">Security Status</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="security-grid">
+              <!-- Security badges injected by JS -->
+            </div>
+          </div>
+
+
+
+        </div>
+
+        <!-- Error -->
+        <div id="ip-error" class="hidden bg-red-50 border border-red-200 rounded-bae p-6 text-center">
+          <svg class="w-8 h-8 text-red-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <p class="text-sm font-semibold text-red-800 mb-1">Could not detect your IP address</p>
+          <p class="text-xs text-red-600 mb-3">This may be due to a network restriction, ad blocker, or privacy extension blocking the request.</p>
+          <button type="button" id="retry-btn" class="text-sm font-semibold text-bae-primary hover:text-bae-accent transition-colors">Try Again</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Use Cases -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto">
+        <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-2">Common use cases</h2>
+        <p class="text-sm text-bae-muted mb-6">Why people check their IP address</p>
+        <div class="space-y-3">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold shrink-0">1</span>
+            <div>
+              <p class="text-sm font-semibold text-bae-ink">Verify your VPN is working</p>
+              <p class="text-xs text-bae-muted mt-0.5">Connect to your VPN and refresh this page. If the IP and location match your VPN server, your traffic is protected.</p>
+            </div>
+          </div>
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold shrink-0">2</span>
+            <div>
+              <p class="text-sm font-semibold text-bae-ink">Troubleshoot network issues</p>
+              <p class="text-xs text-bae-muted mt-0.5">IT support teams often ask for your public IP to diagnose connectivity problems, whitelist access, or trace routing issues.</p>
+            </div>
+          </div>
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold shrink-0">3</span>
+            <div>
+              <p class="text-sm font-semibold text-bae-ink">Check for proxy or VPN leaks</p>
+              <p class="text-xs text-bae-muted mt-0.5">If you are behind a proxy or VPN and this tool still shows your real IP, your connection may be leaking.</p>
+            </div>
+          </div>
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold shrink-0">4</span>
+            <div>
+              <p class="text-sm font-semibold text-bae-ink">Remote access whitelist</p>
+              <p class="text-xs text-bae-muted mt-0.5">When setting up firewalls, databases, or cloud servers, you may need to provide your public IP for access control lists.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Who uses this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">REMOTE WORKER</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Remote Worker: VPN verification</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">10-SECOND CHECK</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"My company VPN said it was connected but I needed to confirm my traffic was actually routing through the corporate server. The Best Answer Hub IP Address Checker confirmed the VPN IP and showed the correct ISP. Took 10 seconds."</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">PRIVACY CHECK</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Privacy-Conscious User: leak check</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">BEFORE & AFTER VERIFY</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"I heard about DNS leaks and wanted to know if my VPN was actually hiding my browsing. Checked my IP before and after connecting. The ISP changed to my VPN provider, which confirmed the tunnel was working properly."</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">DEVELOPER</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Developer: geo-restricted testing</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">REGION CONFIRMED</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"I need to test how my app behaves for users in different regions. I use the Best Answer Hub IP Address Checker to confirm which country my IP is resolving to before running region-specific tests, faster than any other method."</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">TRAVELLER SAFETY</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Traveller: public Wi-Fi safety check</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">5-SECOND SANITY CHECK</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"Before using airport or hotel Wi-Fi, I check my IP to see who my ISP is. If it looks suspicious or my VPN is not masking it, I know not to log into anything sensitive. Quick sanity check that takes five seconds."</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/website-speed-test/" class="text-bae-primary hover:underline">Speed Test</a>, <a href="/tools/password-generator/" class="text-bae-primary hover:underline">Password Generator</a>, <a href="/tools/seo-score-checker/" class="text-bae-primary hover:underline">SEO Checker</a>, <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code Generator</a>, <a href="/tools/broken-link-checker/" class="text-bae-primary hover:underline">Broken Link Checker</a>, <a href="/tools/invoice-generator/" class="text-bae-primary hover:underline">Invoice Generator</a>, <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>, <a href="/tools/image-compressor/" class="text-bae-primary hover:underline">Image Compressor</a>, and <a href="/developer-toolbox/" class="text-bae-primary hover:underline">Developer Toolbox</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const loadingEl = document.getElementById('ip-loading');
+      const resultsEl = document.getElementById('ip-results');
+      const errorEl = document.getElementById('ip-error');
+      const retryBtn = document.getElementById('retry-btn');
+
+      const ipAddressEl = document.getElementById('ip-address');
+      const ipTypeEl = document.getElementById('ip-type');
+      const copyBtn = document.getElementById('copy-ip-btn');
+      const copyLabel = document.getElementById('copy-label');
+
+      const locationEl = document.getElementById('ip-location');
+      const ispEl = document.getElementById('ip-isp');
+      const orgEl = document.getElementById('ip-org');
+      const timezoneEl = document.getElementById('ip-timezone');
+      const connectionEl = document.getElementById('ip-connection');
+      const asnEl = document.getElementById('ip-asn');
+
+      const initialEl = document.getElementById('ip-initial');
+      const checkIpBtn = document.getElementById('check-ip-btn');
+      const securitySection = document.getElementById('security-section');
+      const securityGrid = document.getElementById('security-grid');
+
+      let currentIp = '';
+
+      function showCard(el) {
+        el.classList.remove('hidden');
+      }
+
+      function setText(el, text) {
+        if (el) el.textContent = text || '—';
+      }
+
+      function createSecurityBadge(label, detected, icon) {
+        const colorClass = detected
+          ? 'bg-amber-50 text-amber-700 border-amber-200'
+          : 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        const statusText = detected ? 'Detected' : 'Not detected';
+        const iconSvg = detected
+          ? '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>'
+          : '<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-bae-sm border ' + colorClass;
+        div.innerHTML = iconSvg + '<span>' + label + ': ' + statusText + '</span>';
+        return div;
+      }
+
+      function renderData(data) {
+        currentIp = data.ip || '';
+
+        // Hide initial CTA, show results
+        initialEl.classList.add('hidden');
+
+        // Main IP display
+        setText(ipAddressEl, currentIp);
+        setText(ipTypeEl, data.type || 'IP');
+
+        // Info grid
+        const city = data.city || '';
+        const region = data.region || data.region_code || '';
+        const country = data.country || data.country_name || '';
+        const locationParts = [city, region, country].filter(Boolean);
+        if (locationParts.length > 0) {
+          setText(locationEl, locationParts.join(', '));
+          showCard(locationEl.closest('.info-card'));
+        }
+
+        if (data.isp || data.connection?.isp) {
+          setText(ispEl, data.isp || data.connection.isp);
+          showCard(ispEl.closest('.info-card'));
+        }
+
+        if (data.org || data.connection?.org) {
+          setText(orgEl, data.org || data.connection.org);
+          showCard(orgEl.closest('.info-card'));
+        }
+
+        if (data.timezone || data.timezone_name) {
+          setText(timezoneEl, data.timezone || data.timezone_name);
+          showCard(timezoneEl.closest('.info-card'));
+        }
+
+        // Connection type
+        let connType = '';
+        if (data.security) {
+          if (data.security.hosting) connType = 'Hosting / Datacenter';
+          else if (data.security.proxy) connType = 'Proxy';
+          else if (data.security.vpn) connType = 'VPN';
+        }
+        if (!connType && data.connection) {
+          connType = data.connection.type || '';
+        }
+        if (!connType && data.asn) {
+          connType = 'Residential / ISP';
+        }
+        if (connType) {
+          setText(connectionEl, connType);
+          showCard(connectionEl.closest('.info-card'));
+        }
+
+        if (data.asn || data.connection?.asn) {
+          setText(asnEl, 'AS' + (data.asn || data.connection.asn));
+          showCard(asnEl.closest('.info-card'));
+        }
+
+        // Security badges
+        if (data.security) {
+          securityGrid.innerHTML = '';
+          const sec = data.security;
+          securityGrid.appendChild(createSecurityBadge('Proxy', sec.proxy || false));
+          securityGrid.appendChild(createSecurityBadge('VPN', sec.vpn || false));
+          securityGrid.appendChild(createSecurityBadge('Tor', sec.tor || false));
+          securityGrid.appendChild(createSecurityBadge('Hosting', sec.hosting || false));
+          securitySection.classList.remove('hidden');
+        }
+
+        // Show results
+        loadingEl.classList.add('hidden');
+        resultsEl.classList.remove('hidden');
+        errorEl.classList.add('hidden');
+      }
+
+      function renderMinimal(ip) {
+        currentIp = ip;
+        initialEl.classList.add('hidden');
+        setText(ipAddressEl, ip);
+        setText(ipTypeEl, 'IP');
+        loadingEl.classList.add('hidden');
+        resultsEl.classList.remove('hidden');
+        errorEl.classList.add('hidden');
+        // Hide info cards and security that need rich data
+        document.querySelectorAll('.info-card').forEach(c => c.classList.add('hidden'));
+        securitySection.classList.add('hidden');
+      }
+
+      function showError() {
+        initialEl.classList.add('hidden');
+        loadingEl.classList.add('hidden');
+        resultsEl.classList.add('hidden');
+        errorEl.classList.remove('hidden');
+      }
+
+      async function detectIp() {
+        loadingEl.classList.remove('hidden');
+        resultsEl.classList.add('hidden');
+        errorEl.classList.add('hidden');
+
+        // Try ipwho.is first (richest data)
+        try {
+          const res = await fetch('https://ipwho.is/');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success && data.ip) {
+              renderData(data);
+              return;
+            }
+          }
+        } catch (e) {
+          // Silent fail, try next
+        }
+
+        // Fallback 1: ipinfo.io
+        try {
+          const res = await fetch('https://ipinfo.io/json');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.ip) {
+              // Normalize ipinfo format to match our renderer
+              const normalized = {
+                ip: data.ip,
+                type: data.ip.includes(':') ? 'IPv6' : 'IPv4',
+                city: data.city,
+                region: data.region,
+                country: data.country,
+                org: data.org,
+                isp: data.org,
+                timezone: data.timezone,
+                asn: null,
+                connection: { org: data.org, isp: data.org },
+                security: null
+              };
+              renderData(normalized);
+              return;
+            }
+          }
+        } catch (e) {
+          // Silent fail, try next
+        }
+
+        // Fallback 2: ipify (IP only)
+        try {
+          const res = await fetch('https://api64.ipify.org?format=json');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.ip) {
+              renderMinimal(data.ip);
+              return;
+            }
+          }
+        } catch (e) {
+          // Silent fail
+        }
+
+        showError();
+      }
+
+      // Copy to clipboard
+      copyBtn.addEventListener('click', async () => {
+        if (!currentIp) return;
+        try {
+          await navigator.clipboard.writeText(currentIp);
+          copyLabel.textContent = 'Copied!';
+          setTimeout(() => { copyLabel.textContent = 'Copy IP Address'; }, 2000);
+        } catch (err) {
+          // Fallback for older browsers
+          const ta = document.createElement('textarea');
+          ta.value = currentIp;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          copyLabel.textContent = 'Copied!';
+          setTimeout(() => { copyLabel.textContent = 'Copy IP Address'; }, 2000);
+        }
+      });
+
+      checkIpBtn.addEventListener('click', detectIp);
+      retryBtn.addEventListener('click', detectIp);
+    })();
+  </script>
+</BaseLayout>

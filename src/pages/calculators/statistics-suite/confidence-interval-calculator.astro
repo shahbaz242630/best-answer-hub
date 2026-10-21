@@ -1,0 +1,1057 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ToolHero from '../../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is a confidence interval?',
+    a: 'A confidence interval is a range of values that is likely to contain the true population parameter with a specified level of confidence. For example, a 95% confidence interval for a mean means that if many samples were taken and an interval computed from each, about 95% of those intervals would contain the true population mean.',
+  },
+  {
+    q: 'How does the Best Answer Hub Confidence Interval Calculator work?',
+    a: 'Select whether you want to calculate a confidence interval for a mean or a proportion. Enter your sample statistics: sample mean, standard deviation, and sample size for means; or sample proportion and sample size for proportions. Choose a confidence level (90%, 95%, 99%, or custom). The calculator instantly returns the lower and upper bounds, margin of error, standard error, and critical value, along with step-by-step work and a plain-English interpretation.',
+  },
+  {
+    q: 'When should I use a z-interval versus a t-interval?',
+    a: 'Use a <strong>z-interval</strong> when the population standard deviation (σ) is known and the sample size is large (typically n ≥ 30). Use a <strong>t-interval</strong> when the population standard deviation is unknown and must be estimated from the sample standard deviation (s). The t-distribution has heavier tails than the normal distribution, which accounts for the extra uncertainty from estimating σ. The Best Answer Hub Confidence Interval Calculator automatically selects the appropriate method based on your input.',
+  },
+  {
+    q: 'What is the margin of error?',
+    a: 'The margin of error (ME or E) is the maximum likely distance between the sample statistic and the true population parameter. It equals the critical value multiplied by the standard error. A smaller margin of error means a more precise estimate. You can reduce the margin of error by increasing the sample size or accepting a lower confidence level.',
+  },
+  {
+    q: 'How do I interpret a 95% confidence interval?',
+    a: 'A 95% confidence interval does <strong>not</strong> mean there is a 95% probability that the true value lies inside this specific interval. It means that the method used to construct the interval would capture the true parameter in approximately 95% of repeated samples. The Best Answer Hub Confidence Interval Calculator includes a plain-English interpretation with every result to help avoid this common misconception.',
+  },
+  {
+    q: 'Why is my confidence interval wider than I expected?',
+    a: 'A wider interval usually means one of three things: (1) higher variability in the data (larger standard deviation), (2) a smaller sample size, or (3) a higher confidence level. The Best Answer Hub Confidence Interval Calculator shows the margin of error and standard error breakdown so you can see exactly what is driving the width.',
+  },
+  {
+    q: 'Can I calculate a confidence interval for a proportion?',
+    a: 'Yes. Switch to "Proportion" mode and enter either the number of successes and total trials, or the sample proportion directly. The Best Answer Hub Confidence Interval Calculator uses the normal approximation method for proportions: p̂ ± z* × √(p̂(1−p̂)/n). This works well when both np̂ and n(1−p̂) are at least 10.',
+  },
+  {
+    q: 'What confidence level should I use?',
+    a: '<strong>95%</strong> is the most common choice in scientific research and is a good default. <strong>90%</strong> is sometimes used in exploratory work or when a narrower interval is preferred. <strong>99%</strong> is used when you need very high certainty, though it produces wider intervals. The Best Answer Hub Confidence Interval Calculator supports all three as quick presets, plus any custom level you need.',
+  },
+  {
+    q: 'What is the standard error?',
+    a: 'The standard error (SE) measures the variability of a sample statistic. For a mean, SE = σ/√n (or s/√n). For a proportion, SE = √(p̂(1−p̂)/n). It represents how far the sample statistic is expected to deviate from the true parameter due to random sampling alone. The margin of error is the critical value multiplied by the standard error.',
+  },
+  {
+    q: 'Does the Best Answer Hub Confidence Interval Calculator show step-by-step work?',
+    a: 'Yes. The calculator displays every step of the computation: identifying the formula, substituting values, calculating the standard error, finding the critical value, computing the margin of error, and building the final interval. This makes it ideal for checking homework, studying for exams, or documenting statistical analysis.',
+  },
+  {
+    q: 'Can I export my confidence interval calculation to PDF?',
+    a: 'Yes. The Best Answer Hub Confidence Interval Calculator includes a one-click PDF export that captures all inputs, formulas, step-by-step work, the distribution visual, and the interpretation. No account or signup is required.',
+  },
+  {
+    q: 'What sample size do I need for a valid confidence interval?',
+    a: 'For means, there is no strict minimum, but the Central Limit Theorem ensures the sampling distribution is approximately normal for n ≥ 30. For smaller samples with unknown σ, the t-interval is used. For proportions, the normal approximation works well when both np̂ ≥ 10 and n(1−p̂) ≥ 10. The Best Answer Hub Confidence Interval Calculator includes a validation warning when these conditions may not be met.',
+  },
+  {
+    q: 'Is my data private when using this calculator?',
+    a: 'Yes. All calculations run entirely in your browser using client-side JavaScript. No data is uploaded, stored, or logged on any server. Sensitive research data can be calculated with complete privacy.',
+  },
+  {
+    q: 'Can I compare two confidence intervals to see if groups differ?',
+    a: 'Yes. If two confidence intervals do not overlap, the groups are likely statistically different at that confidence level. However, overlapping intervals do not always mean the groups are the same. The correct approach is to calculate a confidence interval for the difference between the two means or proportions. The Best Answer Hub Confidence Interval Calculator focuses on single-parameter intervals; for two-group comparisons, a dedicated <a href="/calculators/statistics-suite/">T-Test Calculator</a> (coming soon) will provide the proper statistical test.',
+  },
+  {
+    q: 'Is the Best Answer Hub Confidence Interval Calculator free?',
+    a: 'Yes. The entire Statistics Calculator Suite is free with no hidden fees, premium tiers, subscription plans, or advertisements.',
+  },
+];
+
+const steps = [
+  { title: 'Choose your parameter', description: 'Select whether you want to estimate a population mean or a population proportion. Toggle between known and unknown population standard deviation for means.' },
+  { title: 'Enter your data', description: 'Input your sample statistics: mean, standard deviation, and sample size for means; or successes and trials for proportions. Select your confidence level.' },
+  { title: 'Get instant results', description: 'See the confidence interval, margin of error, standard error, critical value, and a distribution visual. Export to PDF with one click.' },
+];
+
+const seo = {
+  title: 'Confidence Interval Calculator with Steps & Graph (2026)',
+  description: 'Free confidence interval calculator for means and proportions. Step-by-step work, margin of error, and z/t-intervals with a distribution visual. No signup.',
+  url: '/calculators/statistics-suite/confidence-interval-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Statistics Suite', url: '/calculators/statistics-suite/' },
+    { name: 'Confidence Interval Calculator', url: '/calculators/statistics-suite/confidence-interval-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    backLink="/calculators/statistics-suite/"
+    backLabel="← Statistics Suite"
+    badge="Free Tool · Statistical Analysis"
+    title="Confidence Interval Calculator"
+    accentText="with Steps, Margin of Error & Graph"
+    description="Calculate confidence intervals for means and proportions instantly. See step-by-step work, margin of error, standard error, and an interactive distribution visual. All calculations run in your browser, with no data sent to any server."
+  />
+
+  <!-- Calculator -->
+  <section class="py-6 md:py-8" aria-label="Confidence Interval Calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Left: Inputs -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <!-- Mode Selector -->
+          <div class="mb-5">
+            <label class="block text-sm font-medium text-bae-ink mb-2">What do you want to estimate?</label>
+            <div class="flex flex-wrap gap-2" id="mode-tabs">
+              <button type="button" data-mode="mean" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium">Mean</button>
+              <button type="button" data-mode="proportion" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Proportion</button>
+            </div>
+          </div>
+
+          <!-- Mean Mode Inputs -->
+          <div id="mean-inputs">
+            <!-- Sigma Known Toggle -->
+            <div class="mb-5">
+              <label class="block text-sm font-medium text-bae-ink mb-2">Population standard deviation</label>
+              <div class="flex gap-3">
+                <label class="flex items-center gap-2 text-sm text-bae-ink cursor-pointer">
+                  <input type="radio" name="sigma-known" value="unknown" checked class="accent-bae-primary">
+                  Unknown (use t-interval)
+                </label>
+                <label class="flex items-center gap-2 text-sm text-bae-ink cursor-pointer">
+                  <input type="radio" name="sigma-known" value="known" class="accent-bae-primary">
+                  Known (use z-interval)
+                </label>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-bae-ink mb-1">Sample Mean (x̄)</label>
+                <input type="number" id="input-mean" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 72">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-bae-ink mb-1" id="label-sd">Sample Standard Deviation (s)</label>
+                <input type="number" id="input-sd" step="any" min="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 12">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-bae-ink mb-1">Sample Size (n)</label>
+                <input type="number" id="input-n-mean" min="2" step="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 36">
+              </div>
+            </div>
+          </div>
+
+          <!-- Proportion Mode Inputs -->
+          <div id="proportion-inputs" class="hidden">
+            <!-- Input method toggle -->
+            <div class="mb-5">
+              <label class="block text-sm font-medium text-bae-ink mb-2">How do you want to enter the proportion?</label>
+              <div class="flex gap-3">
+                <label class="flex items-center gap-2 text-sm text-bae-ink cursor-pointer">
+                  <input type="radio" name="prop-method" value="counts" checked class="accent-bae-primary">
+                  Successes & Trials
+                </label>
+                <label class="flex items-center gap-2 text-sm text-bae-ink cursor-pointer">
+                  <input type="radio" name="prop-method" value="direct" class="accent-bae-primary">
+                  Direct proportion
+                </label>
+              </div>
+            </div>
+
+            <div class="space-y-4" id="prop-counts-wrapper">
+              <div>
+                <label class="block text-sm font-medium text-bae-ink mb-1">Number of Successes</label>
+                <input type="number" id="input-successes" min="0" step="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 84">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-bae-ink mb-1">Number of Trials (n)</label>
+                <input type="number" id="input-trials" min="1" step="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 200">
+              </div>
+            </div>
+
+            <div class="space-y-4 hidden" id="prop-direct-wrapper">
+              <div>
+                <label class="block text-sm font-medium text-bae-ink mb-1">Sample Proportion (p̂)</label>
+                <input type="number" id="input-phat" step="any" min="0" max="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 0.42">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-bae-ink mb-1">Sample Size (n)</label>
+                <input type="number" id="input-n-prop" min="1" step="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 200">
+              </div>
+            </div>
+          </div>
+
+          <!-- Confidence Level -->
+          <div class="mt-5">
+            <label class="block text-sm font-medium text-bae-ink mb-2">Confidence Level</label>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button type="button" class="conf-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-level="90">90%</button>
+              <button type="button" class="conf-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium" data-level="95">95%</button>
+              <button type="button" class="conf-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-level="99">99%</button>
+              <button type="button" class="conf-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-level="custom">Custom</button>
+            </div>
+            <div id="custom-level-wrapper" class="hidden">
+              <input type="number" id="input-custom-level" step="0.1" min="1" max="99.9" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 92.5">
+              <p class="text-xs text-bae-muted mt-1">Enter a value between 1 and 99.9</p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-3 mt-6">
+            <button type="button" id="calc-btn" class="bg-bae-primary text-white px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-primary-dark transition-colors">Calculate</button>
+            <button type="button" id="clear-btn" class="bg-white border border-bae-border text-bae-ink px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-border/20 transition-colors">Clear</button>
+            <button type="button" id="pdf-btn" class="bg-white border border-bae-border text-bae-ink px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-border/20 transition-colors hidden">Download PDF</button>
+          </div>
+        </div>
+
+        <!-- Right: Results -->
+        <div class="space-y-4">
+          <!-- Main Result Card -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="result-card" style="display: none;">
+            <h3 class="text-sm font-semibold text-bae-ink mb-4">Result</h3>
+            <div class="mb-4">
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Confidence Interval</p>
+              <p class="text-xl md:text-2xl font-bold text-bae-primary font-mono" id="result-ci">—</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Lower Bound</p>
+                <p class="text-lg font-bold text-bae-ink font-mono" id="result-lower">—</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Upper Bound</p>
+                <p class="text-lg font-bold text-bae-ink font-mono" id="result-upper">—</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Margin of Error</p>
+                <p class="text-base font-semibold text-bae-ink font-mono" id="result-me">—</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Standard Error</p>
+                <p class="text-base font-semibold text-bae-ink font-mono" id="result-se">—</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Critical Value</p>
+                <p class="text-base font-semibold text-bae-ink font-mono" id="result-critical">—</p>
+              </div>
+              <div id="result-df-wrapper">
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Degrees of Freedom</p>
+                <p class="text-base font-semibold text-bae-ink font-mono" id="result-df">—</p>
+              </div>
+            </div>
+            <div class="p-3 rounded-bae-sm bg-bae-primary-soft border border-bae-primary/20 text-sm text-bae-ink" id="result-interpretation"></div>
+            <div id="validation-warning" class="mt-3 hidden">
+              <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-bae-sm px-3 py-2"></p>
+            </div>
+          </div>
+
+          <!-- Distribution Visual -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="dist-card" style="display: none;">
+            <h3 class="text-sm font-semibold text-bae-ink mb-3">Distribution Visual</h3>
+            <canvas id="dist-canvas" width="500" height="220" class="w-full rounded-bae-sm border border-bae-border bg-white"></canvas>
+            <p class="text-xs text-bae-muted mt-2 text-center">Shaded region represents the confidence interval</p>
+          </div>
+
+          <!-- Step-by-Step -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="steps-card" style="display: none;">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-bae-ink">Step-by-Step Work</h3>
+              <button type="button" id="toggle-steps" class="text-xs text-bae-primary font-medium bg-transparent border-0 cursor-pointer">Hide</button>
+            </div>
+            <div id="steps-content" class="space-y-2 text-sm text-bae-ink"></div>
+          </div>
+
+          <!-- Initial State -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 text-center" id="empty-state">
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xl">📊</div>
+            <p class="text-sm font-medium text-bae-ink mb-1">Enter your values and click Calculate</p>
+            <p class="text-xs text-bae-muted">The confidence interval, margin of error, distribution visual, and step-by-step work will appear here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works / Formulas -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">How to Calculate a Confidence Interval</h2>
+      <p class="text-sm text-bae-muted mb-8">The formulas and a worked example for each type of confidence interval.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">Mean Confidence Interval</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-base font-mono text-bae-ink mb-2">x̄ ± t* × (s / √n)</p>
+            <p class="text-xs text-bae-muted">Use when population σ is unknown</p>
+          </div>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-base font-mono text-bae-ink mb-2">x̄ ± z* × (σ / √n)</p>
+            <p class="text-xs text-bae-muted">Use when population σ is known</p>
+          </div>
+          <ul class="text-sm text-bae-muted space-y-2">
+            <li><strong class="text-bae-ink">x̄</strong> = sample mean</li>
+            <li><strong class="text-bae-ink">s / σ</strong> = sample / population standard deviation</li>
+            <li><strong class="text-bae-ink">n</strong> = sample size</li>
+            <li><strong class="text-bae-ink">t* / z*</strong> = critical value from t or normal distribution</li>
+          </ul>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Worked Example (95% CI for mean, unknown σ)</p>
+            <p class="text-sm text-bae-muted mb-2">x̄ = 72, s = 12, n = 36</p>
+            <div class="space-y-1 text-sm text-bae-muted">
+              <p>1. SE = 12 / √36 = <span class="font-mono text-bae-ink">2.00</span></p>
+              <p>2. df = 36 − 1 = <span class="font-mono text-bae-ink">35</span></p>
+              <p>3. t* ≈ <span class="font-mono text-bae-ink">2.030</span> (for 95%, df=35)</p>
+              <p>4. ME = 2.030 × 2.00 = <span class="font-mono text-bae-ink">4.06</span></p>
+              <p>5. CI = 72 ± 4.06 = <span class="font-mono text-bae-ink">(67.94, 76.06)</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">Proportion Confidence Interval</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-base font-mono text-bae-ink mb-2">p̂ ± z* × √(p̂(1−p̂) / n)</p>
+            <p class="text-xs text-bae-muted">Normal approximation method</p>
+          </div>
+          <ul class="text-sm text-bae-muted space-y-2">
+            <li><strong class="text-bae-ink">p̂</strong> = sample proportion (successes / trials)</li>
+            <li><strong class="text-bae-ink">n</strong> = sample size (number of trials)</li>
+            <li><strong class="text-bae-ink">z*</strong> = critical value from normal distribution</li>
+          </ul>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Worked Example (95% CI for proportion)</p>
+            <p class="text-sm text-bae-muted mb-2">84 successes out of 200 trials</p>
+            <div class="space-y-1 text-sm text-bae-muted">
+              <p>1. p̂ = 84 / 200 = <span class="font-mono text-bae-ink">0.420</span></p>
+              <p>2. SE = √(0.42 × 0.58 / 200) = <span class="font-mono text-bae-ink">0.0349</span></p>
+              <p>3. z* = <span class="font-mono text-bae-ink">1.960</span> (for 95%)</p>
+              <p>4. ME = 1.960 × 0.0349 = <span class="font-mono text-bae-ink">0.0684</span></p>
+              <p>5. CI = 0.42 ± 0.068 = <span class="font-mono text-bae-ink">(0.352, 0.488)</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Calculators -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Related Statistics Calculators</h2>
+      <p class="text-sm text-bae-muted mb-6">Explore the other tools in the Best Answer Hub Statistics Calculator Suite.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a href="/calculators/statistics-suite/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Hub</span>
+            <span class="text-lg">📊</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Statistics Suite</h3>
+          <p class="text-xs text-bae-muted">All four statistical calculators in one place.</p>
+        </a>
+        <a href="/calculators/statistics-suite/z-score-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="text-lg">📐</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Z-Score Calculator</h3>
+          <p class="text-xs text-bae-muted">Calculate z-scores with bell curve and percentile.</p>
+        </a>
+        <a href="/calculators/statistics-suite/p-value-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="text-lg">🎯</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">P-Value Calculator</h3>
+          <p class="text-xs text-bae-muted">Convert z-scores, t-scores, chi-square, and F-ratios to p-values.</p>
+        </a>
+        <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-5 text-inherit cursor-not-allowed">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">Academic</span>
+            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink/70 mb-1">T-Test Calculator</h3>
+          <p class="text-xs text-bae-muted/70">One-sample, independent, and paired t-tests.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <ToolRelatedCTA currentHref="/calculators/statistics-suite/confidence-interval-calculator/" />
+
+  <!-- Hidden PDF Report -->
+  <div id="print-report" class="hidden bg-white p-8">
+    <div class="max-w-[190mm] mx-auto">
+      <h1 class="text-2xl font-bold text-bae-ink mb-1">Confidence Interval Report</h1>
+      <p class="text-sm text-bae-muted mb-6">Generated by Best Answer Hub Confidence Interval Calculator</p>
+      <div class="mb-6">
+        <p class="text-xs text-gray-500 uppercase mb-1">Confidence Interval</p>
+        <p class="text-2xl font-bold text-bae-primary font-mono" id="report-ci">—</p>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Lower Bound</p>
+          <p class="text-xl font-bold text-bae-ink font-mono" id="report-lower">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Upper Bound</p>
+          <p class="text-xl font-bold text-bae-ink font-mono" id="report-upper">—</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Margin of Error</p>
+          <p class="text-lg font-bold text-bae-ink font-mono" id="report-me">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Standard Error</p>
+          <p class="text-lg font-bold text-bae-ink font-mono" id="report-se">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Critical Value</p>
+          <p class="text-lg font-bold text-bae-ink font-mono" id="report-critical">—</p>
+        </div>
+      </div>
+      <div class="mb-6">
+        <p class="text-xs text-gray-500 uppercase mb-1">Interpretation</p>
+        <p class="text-sm text-bae-ink" id="report-interpretation"></p>
+      </div>
+      <div class="mb-6" id="report-dist-wrapper">
+        <p class="text-xs text-gray-500 uppercase mb-2">Distribution Visual</p>
+        <img id="report-dist" src="" alt="Distribution showing confidence interval" style="max-width:100%;height:auto;display:block;border:1px solid #e5e7eb;border-radius:4px;">
+      </div>
+      <div class="mb-6">
+        <p class="text-xs text-gray-500 uppercase mb-2">Calculation Details</p>
+        <div id="report-details" class="text-sm text-bae-ink space-y-1"></div>
+      </div>
+      <div class="mt-8 pt-4 border-t text-xs text-gray-400">
+        <p>Best Answer Hub · www.bestanswerhub.com/calculators/statistics-suite/confidence-interval-calculator/</p>
+        <p>All calculations performed client-side. No data stored.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/html2pdf.bundle.min.js" is:inline></script>
+  <script>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+      let currentMode = 'mean';
+      let currentConfLevel = 95;
+      let isCustomLevel = false;
+
+      // ── Inverse Normal CDF (Acklam's algorithm, |error| < 1.15e-9) ──
+      function invNormalCDF(p) {
+        if (p <= 0) return -Infinity;
+        if (p >= 1) return Infinity;
+        const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+        const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+        const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+        const d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+        const plow = 0.02425, phigh = 1 - plow;
+        let q, r;
+        if (p < plow) {
+          q = Math.sqrt(-2 * Math.log(p));
+          return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
+                 ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+        } else if (p <= phigh) {
+          q = p - 0.5; r = q * q;
+          return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q /
+                 (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+        }
+        q = Math.sqrt(-2 * Math.log(1 - p));
+        return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
+                ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+      }
+
+      // ── Student's t critical value via exact inverse-t (incomplete beta) ──
+      // Regularized incomplete beta I_x(a,b) — Numerical Recipes continued fraction
+      function betacf(a, b, x) {
+        const MAXIT = 200, EPS = 3e-12, FPMIN = 1e-300;
+        const qab = a + b, qap = a + 1, qam = a - 1;
+        let c = 1, d = 1 - qab * x / qap;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        d = 1 / d;
+        let h = d;
+        for (let m = 1; m <= MAXIT; m++) {
+          const m2 = 2 * m;
+          let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+          d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+          c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;
+          d = 1 / d; h *= d * c;
+          aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+          d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+          c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;
+          d = 1 / d;
+          const del = d * c; h *= del;
+          if (Math.abs(del - 1) < EPS) break;
+        }
+        return h;
+      }
+
+      function betai(a, b, x) {
+        if (x <= 0) return 0;
+        if (x >= 1) return 1;
+        const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+        if (x < (a + 1) / (a + b + 2)) return bt * betacf(a, b, x) / a;
+        return 1 - bt * betacf(b, a, 1 - x) / b;
+      }
+
+      // Student's t cumulative distribution function P(T <= t)
+      function tCDF(t, df) {
+        const ib = 0.5 * betai(df / 2, 0.5, df / (df + t * t));
+        return t > 0 ? 1 - ib : ib;
+      }
+
+      // Inverse t: t such that CDF(t) = p, by bisection (exact to ~1e-10)
+      function tInv(p, df) {
+        let lo = 0, hi = 1e4;
+        for (let i = 0; i < 120; i++) {
+          const mid = (lo + hi) / 2;
+          if (tCDF(mid, df) < p) lo = mid; else hi = mid;
+        }
+        return (lo + hi) / 2;
+      }
+
+      function tCritical(df, confLevel) {
+        const alpha = 1 - confLevel / 100;
+        return tInv(1 - alpha / 2, df);
+      }
+
+      function zCritical(confLevel) {
+        const alpha = 1 - confLevel / 100;
+        return invNormalCDF(1 - alpha / 2);
+      }
+
+      // ── Distribution Visual ──
+      function drawDistribution(canvas, lower, upper, center, mode, sdOrSe, df) {
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        const padL = 45, padR = 15, padT = 15, padB = 30;
+        const graphW = w - padL - padR, graphH = h - padT - padB;
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+
+        const spread = Math.max(Math.abs(lower - center), Math.abs(upper - center), sdOrSe * 4) * 1.5;
+        const xMin = center - spread;
+        const xMax = center + spread;
+
+        // Visual uses a normal curve centered at the estimate (t ≈ normal at the
+        // sample sizes shown; the interval bounds themselves use the exact t critical value).
+        function normalPdfAt(x) {
+          const z = (x - center) / sdOrSe;
+          return (1 / Math.sqrt(2 * Math.PI * sdOrSe * sdOrSe)) * Math.exp(-0.5 * z * z);
+        }
+
+        const yMax = normalPdfAt(center);
+        const scaleX = graphW / (xMax - xMin);
+        const scaleY = graphH / (yMax * 1.15);
+
+        function toCanvasX(x) { return padL + (x - xMin) * scaleX; }
+        function toCanvasY(y) { return padT + graphH - y * scaleY; }
+
+        // Shaded CI region
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.15)';
+        ctx.beginPath();
+        const step = (xMax - xMin) / 200;
+        let first = true;
+        for (let x = Math.max(lower, xMin); x <= Math.min(upper, xMax); x += step) {
+          const px = toCanvasX(x), py = toCanvasY(normalPdfAt(x));
+          if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+          else ctx.lineTo(px, py);
+        }
+        if (!first) {
+          ctx.lineTo(toCanvasX(Math.min(upper, xMax)), toCanvasY(0));
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Grid lines
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        const gridStep = Math.pow(10, Math.floor(Math.log10(spread)));
+        for (let x = Math.floor(xMin / gridStep) * gridStep; x <= xMax; x += gridStep) {
+          const cx = toCanvasX(x);
+          if (cx >= padL && cx <= w - padR) {
+            ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, h - padB); ctx.stroke();
+          }
+        }
+
+        // X-axis
+        ctx.strokeStyle = '#9ca3af';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, toCanvasY(0));
+        ctx.lineTo(w - padR, toCanvasY(0));
+        ctx.stroke();
+
+        // X-axis labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        for (let x = Math.floor(xMin / gridStep) * gridStep; x <= xMax; x += gridStep) {
+          const cx = toCanvasX(x);
+          if (cx >= padL && cx <= w - padR) {
+            const label = Math.abs(x - center) < gridStep * 0.01 ? 'μ' : x.toFixed(1);
+            ctx.fillText(label, cx, h - 10);
+          }
+        }
+
+        // Curve
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        first = true;
+        for (let x = xMin; x <= xMax; x += step) {
+          const px = toCanvasX(x), py = toCanvasY(normalPdfAt(x));
+          if (first) { ctx.moveTo(px, py); first = false; }
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // CI boundary lines
+        [lower, upper].forEach(bound => {
+          if (bound >= xMin && bound <= xMax) {
+            const bx = toCanvasX(bound);
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 3]);
+            ctx.beginPath();
+            ctx.moveTo(bx, padT);
+            ctx.lineTo(bx, toCanvasY(0));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#dc2626';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.textAlign = 'center';
+            const label = bound === lower ? 'LB' : 'UB';
+            ctx.fillText(label, bx, padT + 10);
+          }
+        });
+      }
+
+      // lgamma (Lanczos) — used by the incomplete beta function for exact t critical values
+      function lgamma(z) {
+        // Lanczos approximation
+        const g = 7;
+        const C = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+                   771.32342877765313, -176.61502916214059, 12.507343278686905,
+                   -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+        if (z < 0.5) return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - lgamma(1 - z);
+        z -= 1;
+        let x = C[0];
+        for (let i = 1; i < g + 2; i++) x += C[i] / (z + i);
+        const t = z + g + 0.5;
+        return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+      }
+
+      // ── Mode Switching ──
+      function updateMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-tab').forEach(btn => {
+          if (btn.dataset.mode === mode) {
+            btn.classList.remove('bg-white', 'text-bae-ink');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-white', 'text-bae-ink');
+          }
+        });
+        $('mean-inputs').classList.toggle('hidden', mode !== 'mean');
+        $('proportion-inputs').classList.toggle('hidden', mode !== 'proportion');
+      }
+
+      document.querySelectorAll('.mode-tab').forEach(btn => {
+        btn.addEventListener('click', () => updateMode(btn.dataset.mode));
+      });
+
+      // Sigma known toggle
+      document.querySelectorAll('input[name="sigma-known"]').forEach(r => {
+        r.addEventListener('change', (e) => {
+          $('label-sd').textContent = e.target.value === 'known' ? 'Population Standard Deviation (σ)' : 'Sample Standard Deviation (s)';
+        });
+      });
+
+      // Proportion method toggle
+      document.querySelectorAll('input[name="prop-method"]').forEach(r => {
+        r.addEventListener('change', (e) => {
+          $('prop-counts-wrapper').classList.toggle('hidden', e.target.value !== 'counts');
+          $('prop-direct-wrapper').classList.toggle('hidden', e.target.value !== 'direct');
+        });
+      });
+
+      // Confidence level buttons
+      document.querySelectorAll('.conf-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const level = btn.dataset.level;
+          isCustomLevel = level === 'custom';
+          document.querySelectorAll('.conf-btn').forEach(b => {
+            b.classList.remove('bg-bae-primary', 'text-white', 'font-medium');
+            b.classList.add('bg-white', 'text-bae-ink');
+          });
+          btn.classList.remove('bg-white', 'text-bae-ink');
+          btn.classList.add('bg-bae-primary', 'text-white', 'font-medium');
+
+          if (isCustomLevel) {
+            $('custom-level-wrapper').classList.remove('hidden');
+            currentConfLevel = parseFloat($('input-custom-level').value) || 95;
+          } else {
+            $('custom-level-wrapper').classList.add('hidden');
+            currentConfLevel = parseInt(level);
+          }
+        });
+      });
+
+      $('input-custom-level').addEventListener('input', (e) => {
+        currentConfLevel = parseFloat(e.target.value) || 95;
+      });
+
+      // ── Calculate ──
+      function calculate() {
+        const confLevel = Math.min(Math.max(currentConfLevel, 1), 99.9);
+        let lower, upper, me, se, critical, df = null;
+        let steps = [];
+        let interpretation = '';
+        let center = 0;
+        let warning = '';
+
+        if (currentMode === 'mean') {
+          const mean = parseFloat($('input-mean').value);
+          const sd = parseFloat($('input-sd').value);
+          const n = parseInt($('input-n-mean').value);
+          const sigmaKnown = document.querySelector('input[name="sigma-known"]:checked').value === 'known';
+
+          if (isNaN(mean) || isNaN(sd) || isNaN(n) || n < 2 || sd < 0) {
+            showEmpty();
+            return;
+          }
+
+          se = sd / Math.sqrt(n);
+          center = mean;
+
+          if (sigmaKnown) {
+            // z-interval: the normal distribution has no degrees of freedom
+            df = null;
+            critical = zCritical(confLevel);
+            steps.push(`Formula: CI = x̄ ± z* × (σ / √n)`);
+            steps.push(`Substitute: ${mean} ± z* × (${sd} / √${n})`);
+            steps.push(`Standard Error (SE) = ${sd} / √${n} = ${se.toFixed(4)}`);
+            steps.push(`Critical z* for ${confLevel}% = ${critical.toFixed(4)}`);
+          } else {
+            df = n - 1;
+            critical = tCritical(df, confLevel);
+            steps.push(`Formula: CI = x̄ ± t* × (s / √n)`);
+            steps.push(`Substitute: ${mean} ± t* × (${sd} / √${n})`);
+            steps.push(`Standard Error (SE) = ${sd} / √${n} = ${se.toFixed(4)}`);
+            steps.push(`Degrees of freedom = ${n} − 1 = ${df}`);
+            steps.push(`Critical t* for ${confLevel}%, df=${df} = ${critical.toFixed(4)}`);
+          }
+
+          me = critical * se;
+          steps.push(`Margin of Error (ME) = ${critical.toFixed(4)} × ${se.toFixed(4)} = ${me.toFixed(4)}`);
+
+          lower = mean - me;
+          upper = mean + me;
+          steps.push(`Lower bound = ${mean} − ${me.toFixed(4)} = ${lower.toFixed(4)}`);
+          steps.push(`Upper bound = ${mean} + ${me.toFixed(4)} = ${upper.toFixed(4)}`);
+          steps.push(`Result: ${confLevel}% CI = (${lower.toFixed(4)}, ${upper.toFixed(4)})`);
+
+          const param = sigmaKnown ? 'population mean' : 'population mean';
+          interpretation = `We are ${confLevel}% confident that the true ${param} lies between ${lower.toFixed(4)} and ${upper.toFixed(4)}. The point estimate is ${mean.toFixed(4)} with a margin of error of ±${me.toFixed(4)}.`;
+
+        } else {
+          // Proportion mode
+          const method = document.querySelector('input[name="prop-method"]:checked').value;
+          let phat, n;
+
+          if (method === 'counts') {
+            const successes = parseInt($('input-successes').value);
+            n = parseInt($('input-trials').value);
+            if (isNaN(successes) || isNaN(n) || n < 1 || successes < 0 || successes > n) {
+              showEmpty();
+              return;
+            }
+            phat = successes / n;
+          } else {
+            phat = parseFloat($('input-phat').value);
+            n = parseInt($('input-n-prop').value);
+            if (isNaN(phat) || isNaN(n) || n < 1 || phat < 0 || phat > 1) {
+              showEmpty();
+              return;
+            }
+          }
+
+          critical = zCritical(confLevel);
+          se = Math.sqrt(phat * (1 - phat) / n);
+          center = phat;
+
+          steps.push(`Formula: CI = p̂ ± z* × √(p̂(1−p̂) / n)`);
+          steps.push(`Sample proportion p̂ = ${phat.toFixed(4)}`);
+          steps.push(`Sample size n = ${n}`);
+          steps.push(`Standard Error (SE) = √(${phat.toFixed(4)} × ${(1-phat).toFixed(4)} / ${n}) = ${se.toFixed(4)}`);
+          steps.push(`Critical z* for ${confLevel}% = ${critical.toFixed(4)}`);
+
+          me = critical * se;
+          steps.push(`Margin of Error (ME) = ${critical.toFixed(4)} × ${se.toFixed(4)} = ${me.toFixed(4)}`);
+
+          lower = phat - me;
+          upper = phat + me;
+          steps.push(`Lower bound = ${phat.toFixed(4)} − ${me.toFixed(4)} = ${lower.toFixed(4)}`);
+          steps.push(`Upper bound = ${phat.toFixed(4)} + ${me.toFixed(4)} = ${upper.toFixed(4)}`);
+          if (lower < 0 || upper > 1) {
+            lower = Math.max(0, lower);
+            upper = Math.min(1, upper);
+            steps.push(`A proportion must lie within [0, 1], so the interval is truncated to (${lower.toFixed(4)}, ${upper.toFixed(4)}).`);
+          }
+          steps.push(`Result: ${confLevel}% CI = (${lower.toFixed(4)}, ${upper.toFixed(4)})`);
+
+          interpretation = `We are ${confLevel}% confident that the true population proportion lies between ${(lower * 100).toFixed(2)}% and ${(upper * 100).toFixed(2)}%. The sample estimate is ${(phat * 100).toFixed(2)}% with a margin of error of ±${(me * 100).toFixed(2)} percentage points.`;
+
+          // Validation warning for proportions
+          if (n * phat < 10 || n * (1 - phat) < 10) {
+            warning = `Warning: The normal approximation may not be reliable because np̂ = ${(n * phat).toFixed(1)} or n(1−p̂) = ${(n * (1 - phat)).toFixed(1)} is below 10. Consider using an exact method (e.g., Wilson score or Clopper-Pearson) for more accurate results.`;
+          }
+        }
+
+        // Show results
+        $('empty-state').style.display = 'none';
+        $('result-card').style.display = 'block';
+        $('dist-card').style.display = 'block';
+        $('steps-card').style.display = 'block';
+        $('pdf-btn').classList.remove('hidden');
+
+        $('result-ci').textContent = `(${lower.toFixed(4)}, ${upper.toFixed(4)})`;
+        $('result-lower').textContent = lower.toFixed(4);
+        $('result-upper').textContent = upper.toFixed(4);
+        $('result-me').textContent = me.toFixed(4);
+        $('result-se').textContent = se.toFixed(4);
+        $('result-critical').textContent = critical.toFixed(4);
+        $('result-df-wrapper').style.display = (df !== null) ? 'block' : 'none';
+        if (df !== null) $('result-df').textContent = df;
+        $('result-interpretation').textContent = interpretation;
+
+        const warnEl = $('validation-warning');
+        if (warning) {
+          warnEl.classList.remove('hidden');
+          warnEl.querySelector('p').textContent = warning;
+        } else {
+          warnEl.classList.add('hidden');
+        }
+
+        $('steps-content').innerHTML = steps.map(s => '<p class="font-mono text-xs bg-white border border-bae-border rounded-bae-sm px-3 py-2">' + s + '</p>').join('');
+
+        // Draw distribution
+        const canvas = $('dist-canvas');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = 220 * 2;
+        drawDistribution(canvas, lower, upper, center, currentMode, se, df);
+
+        // PDF report
+        $('report-ci').textContent = `(${lower.toFixed(4)}, ${upper.toFixed(4)})`;
+        $('report-lower').textContent = lower.toFixed(4);
+        $('report-upper').textContent = upper.toFixed(4);
+        $('report-me').textContent = me.toFixed(4);
+        $('report-se').textContent = se.toFixed(4);
+        $('report-critical').textContent = critical.toFixed(4);
+        $('report-interpretation').textContent = interpretation;
+        $('report-details').innerHTML = steps.map(s => '<p>' + s + '</p>').join('');
+        $('report-dist').src = canvas.toDataURL('image/png');
+        $('report-dist-wrapper').style.display = 'block';
+
+        updateURL();
+      }
+
+      function showEmpty() {
+        $('empty-state').style.display = 'block';
+        $('result-card').style.display = 'none';
+        $('dist-card').style.display = 'none';
+        $('steps-card').style.display = 'none';
+        $('pdf-btn').classList.add('hidden');
+      }
+
+      $('calc-btn').addEventListener('click', calculate);
+
+      $('clear-btn').addEventListener('click', () => {
+        $('input-mean').value = '';
+        $('input-sd').value = '';
+        $('input-n-mean').value = '';
+        $('input-successes').value = '';
+        $('input-trials').value = '';
+        $('input-phat').value = '';
+        $('input-n-prop').value = '';
+        $('input-custom-level').value = '';
+        const defLevel = document.querySelector('.conf-btn[data-level="95"]');
+        if (defLevel) defLevel.click();
+        showEmpty();
+      });
+
+      // PDF generation
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating...';
+        btn.disabled = true;
+
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '210mm';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.style.margin = '0';
+
+        const report = $('print-report').cloneNode(true);
+        report.removeAttribute('id');
+        report.classList.remove('hidden');
+        wrapper.appendChild(report);
+        document.body.appendChild(wrapper);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'confidence-interval-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(wrapper).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (wrapper.parentNode) document.body.removeChild(wrapper);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // URL sharing
+      function updateURL() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('mode', currentMode);
+        url.searchParams.set('cl', currentConfLevel);
+        if (currentMode === 'mean') {
+          url.searchParams.set('mean', $('input-mean').value);
+          url.searchParams.set('sd', $('input-sd').value);
+          url.searchParams.set('n', $('input-n-mean').value);
+          url.searchParams.set('sk', document.querySelector('input[name="sigma-known"]:checked').value);
+        } else {
+          const method = document.querySelector('input[name="prop-method"]:checked').value;
+          url.searchParams.set('pm', method);
+          if (method === 'counts') {
+            url.searchParams.set('suc', $('input-successes').value);
+            url.searchParams.set('tri', $('input-trials').value);
+          } else {
+            url.searchParams.set('phat', $('input-phat').value);
+            url.searchParams.set('n', $('input-n-prop').value);
+          }
+        }
+        window.history.replaceState({}, '', url);
+      }
+
+      function readURL() {
+        const url = new URL(window.location.href);
+        const mode = url.searchParams.get('mode');
+        if (mode && ['mean', 'proportion'].includes(mode)) {
+          updateMode(mode);
+        }
+
+        const cl = url.searchParams.get('cl');
+        if (cl) {
+          const level = parseFloat(cl);
+          if ([90, 95, 99].includes(level)) {
+            document.querySelectorAll('.conf-btn').forEach(b => {
+              b.classList.remove('bg-bae-primary', 'text-white', 'font-medium');
+              b.classList.add('bg-white', 'text-bae-ink');
+            });
+            const btn = document.querySelector(`.conf-btn[data-level="${level}"]`);
+            if (btn) {
+              btn.classList.remove('bg-white', 'text-bae-ink');
+              btn.classList.add('bg-bae-primary', 'text-white', 'font-medium');
+            }
+            currentConfLevel = level;
+            isCustomLevel = false;
+            $('custom-level-wrapper').classList.add('hidden');
+          } else {
+            currentConfLevel = level;
+            isCustomLevel = true;
+            document.querySelectorAll('.conf-btn').forEach(b => {
+              b.classList.remove('bg-bae-primary', 'text-white', 'font-medium');
+              b.classList.add('bg-white', 'text-bae-ink');
+            });
+            const customBtn = document.querySelector('.conf-btn[data-level="custom"]');
+            if (customBtn) {
+              customBtn.classList.remove('bg-white', 'text-bae-ink');
+              customBtn.classList.add('bg-bae-primary', 'text-white', 'font-medium');
+            }
+            $('custom-level-wrapper').classList.remove('hidden');
+            $('input-custom-level').value = level;
+          }
+        }
+
+        if (mode === 'mean' || !mode) {
+          if (url.searchParams.has('mean')) $('input-mean').value = url.searchParams.get('mean');
+          if (url.searchParams.has('sd')) $('input-sd').value = url.searchParams.get('sd');
+          if (url.searchParams.has('n')) $('input-n-mean').value = url.searchParams.get('n');
+          const sk = url.searchParams.get('sk');
+          if (sk) {
+            document.querySelectorAll('input[name="sigma-known"]').forEach(r => {
+              r.checked = r.value === sk;
+            });
+            $('label-sd').textContent = sk === 'known' ? 'Population Standard Deviation (σ)' : 'Sample Standard Deviation (s)';
+          }
+        }
+
+        if (mode === 'proportion') {
+          const pm = url.searchParams.get('pm');
+          if (pm) {
+            document.querySelectorAll('input[name="prop-method"]').forEach(r => {
+              r.checked = r.value === pm;
+            });
+            $('prop-counts-wrapper').classList.toggle('hidden', pm !== 'counts');
+            $('prop-direct-wrapper').classList.toggle('hidden', pm !== 'direct');
+          }
+          if (pm === 'counts') {
+            if (url.searchParams.has('suc')) $('input-successes').value = url.searchParams.get('suc');
+            if (url.searchParams.has('tri')) $('input-trials').value = url.searchParams.get('tri');
+          } else {
+            if (url.searchParams.has('phat')) $('input-phat').value = url.searchParams.get('phat');
+            if (url.searchParams.has('n')) $('input-n-prop').value = url.searchParams.get('n');
+          }
+        }
+
+        // Auto-calculate if we have enough data
+        const hasMeanData = $('input-mean').value && $('input-sd').value && $('input-n-mean').value;
+        const hasPropCounts = $('input-successes').value && $('input-trials').value;
+        const hasPropDirect = $('input-phat').value && $('input-n-prop').value;
+        if (hasMeanData || hasPropCounts || hasPropDirect) {
+          calculate();
+        }
+      }
+
+      // Toggle steps
+      let stepsVisible = true;
+      $('toggle-steps').addEventListener('click', () => {
+        stepsVisible = !stepsVisible;
+        $('steps-content').style.display = stepsVisible ? 'block' : 'none';
+        $('toggle-steps').textContent = stepsVisible ? 'Hide' : 'Show';
+      });
+
+      readURL();
+    })();
+  </script>
+</BaseLayout>

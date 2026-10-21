@@ -1,0 +1,347 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub URL Encoder/Decoder?', a: 'The Best Answer Hub URL Encoder/Decoder is a free, browser-based tool that percent-encodes and decodes text and URLs. It has a Component mode for a single value like a query parameter and a Full URL mode for a whole address, works in both directions, and runs entirely on your device so nothing is uploaded, with no account needed.' },
+  { q: 'What is URL encoding (percent-encoding)?', a: 'URL encoding, or percent-encoding, replaces a character with a percent sign and two hexadecimal digits of its byte value, so characters that are unsafe or have special meaning can travel in a URL. RFC 3986 defines it. Modern URLs encode text as its UTF-8 bytes. The Best Answer Hub URL Encoder applies this in your browser.' },
+  { q: 'Which characters need to be URL-encoded?', a: 'The unreserved characters, letters, digits, hyphen, period, underscore, and tilde, are never encoded. Reserved delimiter characters such as a slash, question mark, hash, ampersand, and equals sign must be encoded when they appear inside a value. The percent sign itself is always encoded to %25. The Best Answer Hub URL Encoder follows this RFC 3986 classification.' },
+  { q: 'Why does a space become %20 or a plus sign?', a: 'It depends on context. In a URL path or query a space is %20, but in an HTML form body sent as application/x-www-form-urlencoded a space is a plus sign. JavaScript encodeURIComponent produces %20, so a form body sometimes needs %20 swapped for a plus. The Best Answer Hub URL Encoder uses %20 to match URL standards.' },
+  { q: 'What is the difference between encodeURI and encodeURIComponent?', a: 'encodeURI is for a whole, well-formed URL and leaves the delimiters like slash, question mark, and ampersand intact. encodeURIComponent is for one component, such as a single query value, and encodes those delimiters too. Using the wrong one breaks links. The Best Answer Hub URL Encoder offers both as Full URL and Component modes.' },
+  { q: 'Which function should I use for a query parameter?', a: 'Use encodeURIComponent, the Component mode. A query value can contain characters like an ampersand or equals sign that would otherwise be read as URL structure, and encodeURIComponent encodes them so the value stays intact. MDN recommends it for user-entered form fields. The Best Answer Hub URL Encoder Component mode does exactly this.' },
+  { q: 'Why is my URL showing %2520?', a: 'A %2520 means the string was encoded twice. Because the percent sign is a reserved trigger, encoding an already-encoded string turns every percent into %25, so %20 becomes %2520. Decoding once leaves a still-encoded string, so you decode again. Encode exactly once. The Best Answer Hub URL Encoder shows live output so double-encoding is easy to spot.' },
+  { q: 'How are emoji and accented letters encoded?', a: 'They are converted to their UTF-8 bytes, and each byte is written as a percent sign and two hex digits. An accented e-acute becomes %C3%A9, and an emoji becomes a series of percent-encoded bytes. The Best Answer Hub URL Encoder handles full Unicode input in both modes, matching how browsers and Node.js encode text.' },
+  { q: 'What are reserved and unreserved characters?', a: 'Unreserved characters, defined by RFC 3986 as letters, digits, hyphen, period, underscore, and tilde, are always safe and never need encoding. Reserved characters are the delimiters that structure a URL, such as a slash, question mark, hash, and ampersand, and must be encoded when used as data. The Best Answer Hub URL Encoder applies this distinction.' },
+  { q: 'Is it safe to paste a URL with a token into an online encoder?', a: 'Only if the tool encodes on your device. Many popular encoders process on their servers by default, so a pasted token or internal URL is sent to a third party. The Best Answer Hub URL Encoder runs client-side, so nothing is transmitted. You can confirm it by opening the Network tab or going offline after the page loads.' },
+  { q: 'Does this tool decode as well as encode?', a: 'Yes. The Best Answer Hub URL Encoder works in both directions. Paste a percent-encoded string, choose the mode, and decode it back to plain text using the browser native decode functions. It handles standard RFC 3986 encoding and the UTF-8 sequences that modern frameworks produce, all in your browser.' },
+  { q: 'Can I use the URL Encoder offline?', a: 'Yes. Because all encoding and decoding runs client-side, the Best Answer Hub URL Encoder keeps working after you disconnect. Once the page has loaded it needs no internet connection, which is useful in secure environments or anywhere network access is restricted, and it also means your input never leaves the device.' },
+  { q: 'What is the difference between URL encoding and Base64?', a: 'URL encoding makes text safe for web addresses using percent signs and hex, while Base64 represents data with a 64-character alphabet and is better suited to binary content. They solve different problems. For a string you are placing in a URL, use URL encoding; for the Base64 case, the Best Answer Hub Base64 Encoder is the right tool.' },
+  { q: 'How is it different from other online encoders?', a: 'The Best Answer Hub URL Encoder is client-side by default, always, where the popular encoders process on their servers unless you enable a limited opt-in mode. It also makes the Component versus Full URL choice explicit and both encodes and decodes, with no signup and no ads, and it works offline.' },
+  { q: 'Is the URL Encoder free?', a: 'Yes. The Best Answer Hub URL Encoder is completely free with no usage limits and no signup, and it stays free because Best Answer Hub is funded by optional paid assessments rather than advertising. It runs entirely in your browser, so it carries no ads and sends nothing to a server.' },
+];
+
+const seo = {
+  title: 'URL Encoding: %20 vs +, and encodeURI Explained',
+  description: 'What percent-encoding is, which characters need it, why a space is %20 or a plus, encodeURI versus encodeURIComponent, and the double-encoding bug behind %2520.',
+  url: '/playbooks/url-encoder/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'URL Encoder', url: '/playbooks/url-encoder/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Developer Tools</span>
+        <div class="cav">Encoded in your browser, not on a server</div>
+        <h1>URL Encoding, <em>and Which Function to Use</em></h1>
+        <p class="dek">A plain guide to percent-encoding: what it is, which characters need it, why a space becomes %20 in one place and a plus sign in another, the difference between encodeURI and encodeURIComponent, and the double-encoding bug that produces %2520. The Best Answer Hub URL Encoder does it all in your browser, so tokens and internal URLs are never sent to a server.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Privacy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Encode<small>and decode</small></div>
+          <div class="seg b2">Private<small>nothing uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">%20</div><div class="l">a space in a URL path</div><div class="src">vs + in a form body</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">functions: encodeURI vs encodeURIComponent</div><div class="src">MDN</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">bytes sent to a server</div><div class="src">encoded on your device</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#why">What URL encoding is</a>
+        <a href="#which">Which characters need it</a>
+        <a href="#space">Why %20 or +</a>
+        <a href="#functions">encodeURI vs Component</a>
+        <a href="#double">The %2520 bug</a>
+        <a href="#safe">Is it safe to paste?</a>
+        <a href="#different">Versus other encoders</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>URL encoding, also called percent-encoding, replaces characters that would break a web address with a percent sign and two hex digits, and the Best Answer Hub URL Encoder does it in both directions and in your browser, so nothing you paste is sent to a server.</strong> This guide explains what percent-encoding is, which characters need it, why a space becomes %20 in a URL but a plus sign in a form, the encodeURI versus encodeURIComponent choice that trips up most developers, and the double-encoding bug behind a stray %2520.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub URL Encoder/Decoder?</h2>
+        <p>The Best Answer Hub <a href="/tools/url-encoder/">URL Encoder/Decoder</a> is a single-page tool that percent-encodes and decodes text and URLs, with two modes: Component mode for a single value such as one query parameter, and Full URL mode for a whole address. It encodes and decodes in either direction and runs entirely in your browser with the native JavaScript functions, so nothing is transmitted, nothing is stored, and it keeps working offline. It needs no account and shows no ads. The tool sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The basics</div>
+        <h2 id="why">What is URL encoding and why is it needed?</h2>
+        <p>URL encoding represents a character as a percent sign followed by two hexadecimal digits of its byte value, so that characters with a special meaning, or none allowed in a URL, can travel safely. RFC 3986, the standard that defines URLs, puts it exactly: <a href="https://www.rfc-editor.org/rfc/rfc3986#section-2.1" target="_blank" rel="noopener noreferrer">"A percent-encoded octet is encoded as a character triplet, consisting of the percent character followed by the two hexadecimal digits representing that octet's numeric value."</a> Modern URLs encode text as its UTF-8 bytes, so an accented letter like e-acute becomes its two bytes, %C3%A9 (<a href="https://url.spec.whatwg.org/#percent-encoded-bytes" target="_blank" rel="noopener noreferrer">WHATWG URL Standard</a>). Without encoding, a space, an ampersand, or a non-English character would break the link or be misread by the server.</p>
+
+        <div class="cav">The character rules</div>
+        <h2 id="which">Which characters need to be encoded?</h2>
+        <p>The characters that never need encoding are the unreserved set, and everything with a structural role must be encoded when it appears in data rather than as a delimiter. RFC 3986 defines the unreserved characters as the letters, digits, hyphen, period, underscore, and tilde (<a href="https://www.rfc-editor.org/rfc/rfc3986#section-2.3" target="_blank" rel="noopener noreferrer">RFC 3986</a>). The reserved characters, the delimiters like <code>: / ? # [ ] @</code> and <code>! $ &amp; ' ( ) * + , ; =</code>, carry meaning in a URL, so if one of them is part of a value it must be percent-encoded (<a href="https://www.rfc-editor.org/rfc/rfc3986#section-2.2" target="_blank" rel="noopener noreferrer">RFC 3986</a>). The percent sign itself is always encoded, to %25, because it starts an encoding triplet. The table sets out the groups.</p>
+        <table>
+          <thead><tr><th>Group</th><th>Characters</th><th>Encoded?</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Unreserved</td><td><code>A-Z a-z 0-9 - . _ ~</code></td><td>Never</td></tr>
+            <tr><td class="band">Reserved (delimiters)</td><td><code>: / ? # [ ] @ ! $ &amp; ' ( ) * + , ; =</code></td><td>When used inside a value</td></tr>
+            <tr><td class="band">Percent</td><td><code>%</code></td><td>Always, to %25</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The classic confusion</div>
+        <h2 id="space">Why does a space become %20 or a plus sign?</h2>
+        <p>It depends on where the space appears. In a URL path or a normal query, a space is encoded as %20. In an HTML form body sent as <code>application/x-www-form-urlencoded</code>, a space is encoded as a plus sign instead. MDN states it plainly: a space is translated to "a plus, like in the percent-encoding version used in an application/x-www-form-urlencoded message, or in %20 like on URLs" (<a href="https://developer.mozilla.org/en-US/docs/Glossary/Percent-encoding" target="_blank" rel="noopener noreferrer">MDN</a>). The practical consequence is that JavaScript's <code>encodeURIComponent</code> produces %20, so for a form-urlencoded body you sometimes replace %20 with a plus, and a decoder has to know the context, because in form data a plus means a space but in a path a plus is a literal plus.</p>
+
+        <div class="cav">The developer question</div>
+        <h2 id="functions">encodeURI vs encodeURIComponent: which do you use?</h2>
+        <p>Use encodeURIComponent for a single piece you are dropping into a URL, and encodeURI for a whole URL you do not want to break. MDN is direct: encodeURI "is used to encode a URL as a whole," while for assembling values "you probably want to use encodeURIComponent() on each dynamic segment instead" (<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI" target="_blank" rel="noopener noreferrer">MDN</a>). The difference is what each one leaves alone: encodeURI keeps the URL delimiters <code>: / ? # &amp; =</code> intact, while encodeURIComponent encodes them too, which is exactly what you want for a query value. The Best Answer Hub URL Encoder offers both as Full URL and Component modes so the right one is a click away.</p>
+        <div class="codebox">
+          <div class="dt">Why the choice matters</div>
+          <div class="codelines">encodeURI("https://x.com/?q=Jack &amp; Jill")
+<span class="cmt">// "https://x.com/?q=Jack%20&amp;%20Jill"  the &amp; stays, and breaks the query</span>
+
+encodeURIComponent("Jack &amp; Jill")
+<span class="cmt">// "Jack%20%26%20Jill"  the &amp; becomes %26, safe as one value</span>
+
+"https://x.com/?q=" + encodeURIComponent("Jack &amp; Jill")
+<span class="cmt">// "https://x.com/?q=Jack%20%26%20Jill"  correct</span></div>
+          <p class="codenote">Encode the whole URL with encodeURI and an ampersand inside a value survives and is read by the server as a new field. Encode the value with encodeURIComponent (Component mode) and it becomes %26, so the value stays intact.</p>
+        </div>
+        <blockquote>If a user writes Jack &amp; Jill, without encodeURIComponent the ampersand <span class="accent">could be interpreted on the server as the start of a new field and jeopardize the integrity of the data.</span><cite>MDN Web Docs, encodeURIComponent</cite></blockquote>
+
+        <div class="cav">The stray percent</div>
+        <h2 id="double">Why is my URL showing %2520?</h2>
+        <p>A stray %2520 means the string was encoded twice. Because the percent sign is itself a reserved trigger, encoding an already-encoded string turns every percent into %25, so a space that was already %20 becomes %2520, and an ampersand that was %26 becomes %2526 (<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI" target="_blank" rel="noopener noreferrer">MDN</a>). Decoding it once is not enough; you get back a still-encoded string and have to decode again. The fix is to encode a value exactly once, and when decoding, if you still see %20 or %26 in the result, decode a second time. The Best Answer Hub URL Encoder shows the output immediately, so a double-encoded input is easy to spot and correct.</p>
+        <div class="callout peach"><div class="h">The double-encoding rule</div><p>Encode once, decode once. If you paste text that is already encoded into an encoder, you double it. If a decode leaves visible percent sequences behind, the input was double-encoded, so decode again. Watching the live output catches both cases before they reach production.</p></div>
+
+        <div class="cav">The part that matters</div>
+        <h2 id="safe">Is it safe to paste a URL with a token into an online encoder?</h2>
+        <p>It is safe only if the encoding happens on your own device, and many online encoders do it on their servers. Developers routinely encode URLs that carry sensitive material: session IDs, bearer tokens, signed query parameters, and internal hostnames. Two of the most popular encoders process on their servers by default and offer a browser-local "Live mode" only as an opt-in (<a href="https://www.urlencoder.org/" target="_blank" rel="noopener noreferrer">urlencoder.org</a>), and FreeFormatter's own privacy statement confirms its tools use "server side processing" (<a href="https://www.freeformatter.com/privacy-statement.html" target="_blank" rel="noopener noreferrer">FreeFormatter</a>). Even with a no-retention promise, the data is still sent to a third party. There is a real security dimension too: attackers double-encode characters to slip past naive input filters, which is why understanding encoding matters when reviewing code (<a href="https://owasp.org/www-community/Double_Encoding" target="_blank" rel="noopener noreferrer">OWASP</a>). The Best Answer Hub URL Encoder runs client-side by default, so a token never leaves your browser.</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from other online encoders?</h2>
+        <p>The difference is that the Best Answer Hub URL Encoder is client-side by default, always, where the popular encoders process on their servers unless you switch on a limited opt-in mode. It also makes the two choices that matter explicit, Component versus Full URL, and it both encodes and decodes. The table sets the usual experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical online encoder</th></tr></thead>
+          <tbody>
+            <tr><td>Where encoding happens</td><td class="band">In your browser, always</td><td>Often server-side by default</td></tr>
+            <tr><td>Data sent to a third party</td><td class="band">None</td><td>Yes in default modes</td></tr>
+            <tr><td>Component vs whole-URL</td><td class="band">Both, clearly labeled</td><td>Often one generic mode</td></tr>
+            <tr><td>Encodes and decodes</td><td class="band">Both</td><td>Usually both</td></tr>
+            <tr><td>No signup, no ads</td><td class="band">Yes</td><td>Varies</td></tr>
+            <tr><td>Works offline</td><td class="band">Yes</td><td>Not in default server mode</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolbox</div><p>The Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> has the neighbors you reach for next: a <a href="/tools/base64-encoder/">Base64 Encoder</a> for the other everyday encoding, and a <a href="/tools/json-formatter/">JSON Formatter</a> for the payloads those URLs carry. Each runs in the browser and sends nothing.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Encode it now</span>
+          <h3>Open the URL Encoder</h3>
+          <p>Free, no signup, and encoded entirely in your browser. Switch between Component and Full URL mode, encode or decode, and copy the result without sending a thing to a server.</p>
+          <a class="btn" href="/tools/url-encoder/">Encode or decode a URL</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about URL encoding</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, from a JSON formatter to a hash generator, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/base64-encoder/">Base64 Is Encoding, Not Encryption</a></b> The other everyday encoding, and why it is not a way to hide anything.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/json-formatter/">Format and Validate JSON, Nothing Uploaded</a></b> For the payloads your encoded URLs carry.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc3986#section-2.1" target="_blank" rel="noopener noreferrer">RFC 3986, URI Generic Syntax, Section 2.1</a>, 2005 (the percent-encoded triplet definition).</li>
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc3986#section-2.3" target="_blank" rel="noopener noreferrer">RFC 3986, Section 2.3</a>, 2005 (unreserved characters: letters, digits, hyphen, period, underscore, tilde).</li>
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc3986#section-2.2" target="_blank" rel="noopener noreferrer">RFC 3986, Section 2.2</a>, 2005 (reserved characters and their delimiter roles).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Glossary/Percent-encoding" target="_blank" rel="noopener noreferrer">Percent-encoding</a> (space becomes a plus in form-urlencoded, %20 in URLs).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI" target="_blank" rel="noopener noreferrer">encodeURI()</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent" target="_blank" rel="noopener noreferrer">encodeURIComponent()</a> (which to use; the Jack and Jill ampersand example; double-encoding).</li>
+          <li>WHATWG, <a href="https://url.spec.whatwg.org/#percent-encoded-bytes" target="_blank" rel="noopener noreferrer">URL Standard, percent-encoded bytes</a> (UTF-8 percent-encoding; the plus for a space in form-urlencoded).</li>
+          <li>OWASP, <a href="https://owasp.org/www-community/Double_Encoding" target="_blank" rel="noopener noreferrer">Double Encoding</a> (double-encoded characters used to bypass input filters).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/url-encoder/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">URL Encoder/Decoder</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, <a href="/tools/base64-encoder/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Base64 Encoder</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-style:normal;font-size:.82rem;color:var(--label);margin-top:10px}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.7;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codelines .cmt{color:var(--sage-dark)}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

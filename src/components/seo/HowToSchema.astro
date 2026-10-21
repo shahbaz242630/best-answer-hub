@@ -1,0 +1,38 @@
+---
+/**
+ * HowToSchema.astro
+ * Outputs HowTo JSON-LD schema only — no visual output.
+ * Used on calculator pages that have inline How It Works sections
+ * (pages that don't use the ToolHowItWorks component).
+ * Tool pages using ToolHowItWorks get this schema automatically from that component.
+ */
+
+interface Step {
+  name: string;
+  text: string;
+}
+
+interface Props {
+  steps: Step[];
+}
+
+const { steps } = Astro.props;
+const pageUrl = Astro.url.pathname;
+const baseUrl = 'https://www.bestanswerhub.com';
+
+const howToSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  '@id': `${baseUrl}${pageUrl.replace(/\/$/, '')}/#howto`,
+  url: `${baseUrl}${pageUrl}`,
+  totalTime: 'PT1M',
+  step: steps.map((step, i) => ({
+    '@type': 'HowToStep',
+    position: i + 1,
+    name: step.name,
+    text: step.text,
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(howToSchema)} />

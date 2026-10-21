@@ -1,0 +1,356 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-12T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Color Palette Generator?', a: 'The Best Answer Hub Color Palette Generator turns one seed color into a full design-system palette: a primary scale of shades, neutral grays, and semantic colors for success, warning, and error. It checks every pair against WCAG contrast, previews light and dark mode, and exports to CSS, Tailwind, or hex, all in your browser with no signup.' },
+  { q: 'What contrast ratio do I need for text?', a: 'For normal body text, aim for at least 4.5 to 1, the WCAG AA minimum, or 7 to 1 for the stricter AAA level. Large text, meaning 18 point or 14 point bold, needs 3 to 1 for AA and 4.5 to 1 for AAA. The Best Answer Hub Color Palette Generator checks each pair automatically and flags anything that falls short.' },
+  { q: 'What is the difference between WCAG AA and AAA?', a: 'AA is the standard most sites aim for, requiring 4.5 to 1 for normal text and 3 to 1 for large text. AAA is the enhanced level, requiring 7 to 1 and 4.5 to 1, and suits government, healthcare, and education sites. The Best Answer Hub Color Palette Generator reports both, so you can see how far a pair clears the bar.' },
+  { q: 'What is a contrast ratio, and how is it measured?', a: 'A contrast ratio compares the relative luminance of two colors and runs from 1 to 1, where they are identical, up to 21 to 1 for black on white. WCAG defines it with a fixed formula rather than a visual guess. The Best Answer Hub Color Palette Generator computes this ratio for every text-and-background pair in your palette.' },
+  { q: 'What are complementary, analogous, and triadic colors?', a: 'They are common color harmonies. Complementary colors sit opposite on the wheel, 180 degrees apart, for high contrast. Analogous colors are neighbors, about 30 degrees apart, for a calm feel. Triadic colors are three hues evenly spaced 120 degrees apart. Knowing these helps you choose the accent colors to pair with a seed in the Best Answer Hub Color Palette Generator.' },
+  { q: 'How does one seed color become a full palette?', a: 'The Best Answer Hub Color Palette Generator converts your seed color into HSL, then holds the hue steady while stepping the lightness up for pale tints and down for deep shades. That produces a numbered ramp, often 50 through 900, plus matching neutral grays and semantic colors, so a single color yields a coherent, ready-to-use set.' },
+  { q: 'What is the difference between HEX, RGB, and HSL?', a: 'HEX, like the code 6366f1, is the standard web format. RGB expresses a color as red, green, and blue channels from 0 to 255. HSL uses hue, saturation, and lightness, which makes tints and shades intuitive because you adjust only the lightness. The Best Answer Hub Color Palette Generator works in HSL internally and exports HEX and CSS values.' },
+  { q: 'Can I export the palette to CSS or Tailwind?', a: 'Yes. The Best Answer Hub Color Palette Generator exports as CSS custom properties, a Tailwind theme block, or a plain hex list. You copy the output straight into your stylesheet or config, so the palette lands in your project without retyping values, and a later change updates every use at once.' },
+  { q: 'What are design tokens?', a: 'Design tokens are named variables that hold design decisions, such as a color, so you write primary-600 instead of a raw hex code throughout a project. They keep a design system consistent and make updates a one-line change. The Best Answer Hub Color Palette Generator names its scales as tokens ready for CSS variables or Tailwind.' },
+  { q: 'How do I make a palette work in dark mode?', a: 'A good dark mode inverts the usage: dark neutrals become backgrounds, light neutrals become text, and the primary accent shifts to a lighter shade. The Best Answer Hub Color Palette Generator includes a live dark mode preview on real components, so you can see how each shade behaves and catch weak contrast before writing any CSS.' },
+  { q: 'How does color blindness affect palette choices?', a: 'Color blindness affects about 1 in 12 men and 1 in 200 women, most often as red-green, so color alone is a poor signal. Pair color with icons, labels, and clear lightness differences, and lean on contrast rather than hue. A palette checked for contrast in the Best Answer Hub Color Palette Generator stays readable regardless of how a reader perceives hue.' },
+  { q: 'What is the 60-30-10 rule?', a: 'The 60-30-10 rule is a design guideline for balance: about 60 percent a dominant neutral, 30 percent a secondary color, and 10 percent an accent for buttons and highlights. It is a convention rather than a standard. The Best Answer Hub Color Palette Generator separates colors into primary, neutral, and semantic roles that map neatly onto it.' },
+  { q: 'Is the generator free for commercial use?', a: 'Yes. Every palette from the Best Answer Hub Color Palette Generator is free for personal and commercial projects, with no license fee, no attribution requirement, and no watermark. The colors are generated mathematically from your seed, not taken from any proprietary source, so you can use them in any website, app, or brand.' },
+  { q: 'Does the tool send my colors to a server?', a: 'No. The Best Answer Hub Color Palette Generator computes everything in your browser with JavaScript, so your colors are never uploaded. It also works offline once the page has loaded, because generating a palette and checking contrast are pure math that needs no server round-trip.' },
+  { q: 'How is it different from Coolors and Adobe Color?', a: 'Coolors shows ads on its free tier, caps how many palettes you can save, and puts contrast checking behind its Pro plan, while Adobe Color asks you to sign in to save a theme. The Best Answer Hub Color Palette Generator is free with no signup and no ads, checks contrast for free, and exports to CSS and Tailwind.' },
+];
+
+const seo = {
+  title: 'How to Build an Accessible Color Palette (2026)',
+  description: 'What contrast ratio text needs, how color harmonies work, how one seed color becomes a full palette, and how to export it to CSS or Tailwind, checked for WCAG.',
+  url: '/playbooks/color-palette-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Color Palette Generator', url: '/playbooks/color-palette-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Design Tools</span>
+        <div class="cav">Built in your browser, checked for contrast</div>
+        <h1>Build a Color Palette, <em>Checked for Contrast</em></h1>
+        <p class="dek">A plain guide to building a color palette that actually works: what contrast ratio your text really needs, how color harmonies fit together, how one seed color becomes a full set of shades, and how to export it to CSS or Tailwind. The Best Answer Hub Color Palette Generator does it in your browser and checks every pair against WCAG.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Accessible by default</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Generate<small>from one seed</small></div>
+          <div class="seg b2">Accessible<small>WCAG checked</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">4.5:1</div><div class="l">minimum contrast for body text</div><div class="src">WCAG AA</div></div>
+      <div class="stat"><div class="n">1 in 12</div><div class="l">men have color blindness</div><div class="src">Colour Blind Awareness</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">signup, ads, or watermarks</div><div class="src">free to use</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">export formats</div><div class="src">CSS, Tailwind, hex</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#contrast">Contrast you need</a>
+        <a href="#harmonies">Colors that work</a>
+        <a href="#scales">One color to a palette</a>
+        <a href="#colorblind">Beyond hue</a>
+        <a href="#export">Using it in code</a>
+        <a href="#different">Versus other tools</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>A good color palette is not just a set of colors you like, it is a set that stays readable, and the Best Answer Hub Color Palette Generator builds one from a single seed color while checking every pair against the WCAG contrast standard.</strong> This guide explains the contrast ratio your text actually needs, how color harmonies fit together, how one color turns into a full scale of shades, why contrast matters more than hue for accessibility, and how to drop the result straight into CSS or Tailwind.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Color Palette Generator?</h2>
+        <p>The Best Answer Hub <a href="/tools/color-palette-generator/">Color Palette Generator</a> takes one seed color and builds a complete design-system palette from it: a primary scale of lighter and darker shades, a neutral gray scale, and semantic colors for success, warning, and error. It then checks every text-and-background combination against the WCAG accessibility standard and flags the pairs that fail, so you catch problems before they ship. You can preview the palette on real components in light and dark mode, lock the colors you like, and export the result as CSS variables, a Tailwind theme, or a plain hex list. Every step runs in your browser, with no account, no ads, and no watermark. The tool sits in the Best Answer Hub <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The number that matters</div>
+        <h2 id="contrast">What contrast ratio does your text actually need?</h2>
+        <p>For normal body text you need a contrast ratio of at least 4.5 to 1, and the Best Answer Hub Color Palette Generator checks every pair for you. That figure comes straight from the Web Content Accessibility Guidelines, where success criterion 1.4.3 sets the Level AA minimum at 4.5:1 for normal text and 3:1 for large text, meaning at least 18 point, or 14 point bold (<a href="https://www.w3.org/TR/WCAG21/#contrast-minimum" target="_blank" rel="noopener noreferrer">WCAG 2.1</a>). The stricter Level AAA raises that to 7:1 for normal text and 4.5:1 for large text, and a separate rule asks for 3:1 on buttons, form fields, and other non-text elements. Contrast ratios run from 1:1, where two colors are identical, up to 21:1, which is pure black on pure white, and the number is computed from the relative luminance of the two colors, not a guess by eye.</p>
+        <table>
+          <thead><tr><th>What you are coloring</th><th>Level AA (minimum)</th><th>Level AAA (enhanced)</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Normal text</td><td>4.5:1</td><td>7:1</td></tr>
+            <tr><td class="band">Large text (18pt, or 14pt bold)</td><td>3:1</td><td>4.5:1</td></tr>
+            <tr><td class="band">Buttons, inputs, icons</td><td>3:1</td><td>3:1</td></tr>
+          </tbody>
+        </table>
+        <div class="callout sage"><div class="h">Why an automatic check beats eyeballing it</div><p>Two colors that look fine to you can still fail the 4.5:1 test, especially mid-tone grays on white. The Best Answer Hub Color Palette Generator computes the ratio for every pair in the palette and marks the fails, so you fix them before a single page goes live rather than after a user cannot read your text.</p></div>
+
+        <div class="cav">The color wheel, briefly</div>
+        <h2 id="harmonies">How do you pick colors that work together?</h2>
+        <p>Colors that work together usually sit in a set relationship on the color wheel, and knowing the handful of harmonies makes the choice deliberate rather than random. A complementary pair sits directly opposite, 180 degrees apart, for maximum contrast and energy. Analogous colors sit next to each other, roughly 30 degrees apart, for a calm, cohesive feel. A triadic scheme uses three colors evenly spaced 120 degrees apart, vivid but balanced, and a square scheme spaces four colors 90 degrees apart (<a href="https://www.interaction-design.org/literature/topics/color-theory" target="_blank" rel="noopener noreferrer">Interaction Design Foundation</a>). A monochromatic scheme uses a single hue and varies only its lightness and saturation. Because the HSL color format expresses hue as an angle from 0 to 360, these relationships are simple math: a complement is the same color with 180 added to its hue (<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/hsl" target="_blank" rel="noopener noreferrer">MDN</a>).</p>
+        <table>
+          <thead><tr><th>Harmony</th><th>Relationship on the wheel</th><th>Feel</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Complementary</td><td>Two colors, 180 degrees apart</td><td>High contrast, energetic</td></tr>
+            <tr><td class="band">Analogous</td><td>Neighbors, about 30 degrees apart</td><td>Calm, cohesive</td></tr>
+            <tr><td class="band">Triadic</td><td>Three colors, 120 degrees apart</td><td>Vivid, balanced</td></tr>
+            <tr><td class="band">Square</td><td>Four colors, 90 degrees apart</td><td>Rich, needs care</td></tr>
+            <tr><td class="band">Monochromatic</td><td>One hue, varied lightness</td><td>Clean, understated</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">Ten shades from one</div>
+        <h2 id="scales">How does one color become a whole palette?</h2>
+        <p>One color becomes a whole palette by holding its hue steady and stepping its lightness up and down, which is exactly what the Best Answer Hub Color Palette Generator does. It converts your seed color into HSL, then generates a scale by raising the lightness for the pale tints and lowering it for the deep shades, keeping the hue so the family stays recognizable. That gives you a numbered ramp, often 50 through 900, where the light end suits backgrounds and the dark end suits text, plus matching neutral grays and semantic colors for success, warning, and error. The example below is a single blue hue stepped from light to dark; your own seed color produces the same kind of ramp.</p>
+        <div class="scalebox">
+          <div class="dt">One hue, stepped from light to dark</div>
+          <div class="scale">
+            <div class="sw" style="background:#eef2ff;color:#312e81">50</div>
+            <div class="sw" style="background:#e0e7ff;color:#312e81">100</div>
+            <div class="sw" style="background:#c7d2fe;color:#312e81">200</div>
+            <div class="sw" style="background:#a5b4fc;color:#312e81">300</div>
+            <div class="sw" style="background:#818cf8;color:#fff">400</div>
+            <div class="sw" style="background:#6366f1;color:#fff">500</div>
+            <div class="sw" style="background:#4f46e5;color:#fff">600</div>
+            <div class="sw" style="background:#4338ca;color:#fff">700</div>
+            <div class="sw" style="background:#3730a3;color:#fff">800</div>
+            <div class="sw" style="background:#312e81;color:#fff">900</div>
+          </div>
+          <p class="difnote">A single hue with rising then falling lightness gives a usable ramp: pale tints for surfaces, deep shades for text. The Best Answer Hub Color Palette Generator builds this for your primary, neutral, and semantic colors at once.</p>
+        </div>
+        <div class="callout peach"><div class="h">The role of each shade</div><p>Use the light end (50 to 200) for page and card backgrounds, the middle (400 to 600) for your primary buttons and links, and the dark end (700 to 900) for headings and body text. Naming them as tokens, like primary-600, means one change updates the whole interface.</p></div>
+
+        <div class="cav">Where hue falls short</div>
+        <h2 id="colorblind">Why contrast matters more than the exact hue</h2>
+        <p>Contrast matters more than the exact hue because a large share of your audience does not see hue the way you do. Color blindness affects about 1 in 12 men, roughly 8 percent, and about 1 in 200 women, and the most common form is red-green, where red and green are hard to tell apart (<a href="https://www.colourblindawareness.org/colour-blindness/" target="_blank" rel="noopener noreferrer">Colour Blind Awareness</a>, <a href="https://www.nei.nih.gov/learn-about-eye-health/eye-conditions-and-diseases/color-blindness" target="_blank" rel="noopener noreferrer">National Eye Institute</a>). That is why the accessibility guidelines say color must never be the only way you signal something, a rule called Use of Color (<a href="https://www.w3.org/TR/WCAG21/#use-of-color" target="_blank" rel="noopener noreferrer">WCAG 1.4.1</a>). A red error message that reads the same in gray, thanks to an icon and a label, works for everyone, and a strong lightness difference keeps text readable whatever a reader can or cannot distinguish by color.</p>
+        <div class="callout sage"><div class="h">A quick test</div><p>Turn your design to grayscale for a moment. If you can still tell the states apart, an error from a success, a link from plain text, then it does not depend on color alone. If everything blurs together, add an icon, a label, or a bigger lightness gap, which is where a checked palette helps.</p></div>
+
+        <div class="cav">Straight into your code</div>
+        <h2 id="export">How do you use the palette in your code?</h2>
+        <p>You use the palette by copying its values into your stylesheet, and the Best Answer Hub Color Palette Generator exports in the formats you actually work in. On the web, colors are written as HEX like <code>#6366f1</code>, as RGB channels, or as HSL, and all three are standard CSS notations (<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value" target="_blank" rel="noopener noreferrer">MDN</a>). The tidiest way to use them is as CSS custom properties, where you set a value once, such as <code>--color-primary-600</code>, and reference it everywhere with <code>var()</code>, so a rebrand is a one-line change rather than a search across hundreds of rules (<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_cascading_variables/Using_CSS_custom_properties" target="_blank" rel="noopener noreferrer">MDN</a>). The tool exports CSS variables, a Tailwind theme block, or a plain hex list, so the palette drops into your project without retyping a single code.</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from Coolors and Adobe Color?</h2>
+        <p>The difference is that the Best Answer Hub Color Palette Generator is free with no signup and no ads, and it builds accessibility checking in rather than charging for it. On Coolors, the free tier shows ads and caps how many palettes you can save, and contrast checking sits behind the paid Pro plan; Adobe Color asks you to sign in with an Adobe account to save a theme. This tool takes the opposite approach, as the table shows.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Coolors or Adobe Color</th></tr></thead>
+          <tbody>
+            <tr><td>Cost</td><td class="band">Free, no limits</td><td>Free tier plus paid plans</td></tr>
+            <tr><td>Signup to save or export</td><td class="band">Not required</td><td>Adobe needs an account; Coolors caps free saves</td></tr>
+            <tr><td>Ads</td><td class="band">None</td><td>Coolors shows ads on the free tier</td></tr>
+            <tr><td>Contrast checking</td><td class="band">Built in, free</td><td>Gated behind Coolors Pro</td></tr>
+            <tr><td>Export</td><td class="band">CSS, Tailwind, hex</td><td>Varies, some behind Pro</td></tr>
+            <tr><td>Where it runs</td><td class="band">In your browser</td><td>Online</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolbox</div><p>Once your palette is set, the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> has the neighbors you reach for next: a <a href="/tools/json-formatter/">JSON Formatter</a>, a Base64 encoder, and a hash generator, each running in the browser and sending nothing. Pick your colors here, then carry on building.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Build it now</span>
+          <h3>Open the Color Palette Generator</h3>
+          <p>Free, no signup, and built entirely in your browser. Enter one seed color, generate a full accessible palette, and export it to CSS, Tailwind, or hex.</p>
+          <a class="btn" href="/tools/color-palette-generator/">Generate a palette</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about color palettes</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, from a JSON formatter to a hash generator, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/json-formatter/">Format and Validate JSON, Nothing Uploaded</a></b> A privacy-first developer utility that runs entirely in your browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to PDFs.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>W3C, <a href="https://www.w3.org/TR/WCAG21/#contrast-minimum" target="_blank" rel="noopener noreferrer">WCAG 2.1, Success Criterion 1.4.3 Contrast (Minimum)</a> (4.5:1 normal text, 3:1 large text, Level AA), and <a href="https://www.w3.org/TR/WCAG21/#contrast-enhanced" target="_blank" rel="noopener noreferrer">1.4.6 Contrast (Enhanced)</a> (7:1 and 4.5:1, Level AAA).</li>
+          <li>W3C, <a href="https://www.w3.org/TR/WCAG21/#non-text-contrast" target="_blank" rel="noopener noreferrer">WCAG 2.1, Success Criterion 1.4.11 Non-text Contrast</a> (3:1 for UI components and graphics), and <a href="https://www.w3.org/TR/WCAG21/#use-of-color" target="_blank" rel="noopener noreferrer">1.4.1 Use of Color</a>.</li>
+          <li>W3C, <a href="https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html" target="_blank" rel="noopener noreferrer">Understanding Contrast (Minimum)</a> (contrast ratios range from 1:1 to 21:1; the (L1 + 0.05) / (L2 + 0.05) formula).</li>
+          <li>Interaction Design Foundation, <a href="https://www.interaction-design.org/literature/topics/color-theory" target="_blank" rel="noopener noreferrer">Color Theory</a> (complementary, analogous, triadic at 120 degrees, square at 90 degrees, monochromatic).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/hsl" target="_blank" rel="noopener noreferrer">hsl()</a> (hue is an angle; a complement is 180 degrees away) and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value" target="_blank" rel="noopener noreferrer">CSS color value</a> (HEX, RGB, and HSL notations).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_cascading_variables/Using_CSS_custom_properties" target="_blank" rel="noopener noreferrer">Using CSS custom properties</a> (set a color once as a variable, reference it with var()).</li>
+          <li>Colour Blind Awareness, <a href="https://www.colourblindawareness.org/colour-blindness/" target="_blank" rel="noopener noreferrer">Colour Blindness</a> (about 1 in 12 men and 1 in 200 women; red-green most common), and US National Eye Institute, <a href="https://www.nei.nih.gov/learn-about-eye-health/eye-conditions-and-diseases/color-blindness" target="_blank" rel="noopener noreferrer">Color Blindness</a>.</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/color-palette-generator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Color Palette Generator</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, <a href="/tools/json-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">JSON Formatter</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  .pb .scalebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0}
+  .pb .scalebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .scale{display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+  .pb .scale .sw{flex:1;height:64px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.64rem;font-weight:700}
+  .pb .difnote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}.pb .scale .sw{font-size:.5rem}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

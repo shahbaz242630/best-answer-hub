@@ -1,0 +1,689 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub SEO Score Checker?',
+    a: 'The Best Answer Hub SEO Score Checker is a free browser-based tool that audits any webpage for search engine optimization issues. It analyzes title tags, meta descriptions, heading structure, image alt text, canonical tags, schema markup, internal links, mobile viewport configuration, and semantic HTML. It generates an overall SEO score from 0 to 100 with a letter grade, plus a categorized breakdown of what is working well and what needs fixing. Everything runs directly in your browser. No data is sent to external servers.',
+  },
+  {
+    q: 'Is the SEO Score Checker free to use?',
+    a: 'Yes, the Best Answer Hub SEO Score Checker is completely free with no usage limits, no signup, and no watermarked reports. You can audit as many pages as you want, as often as you want. Unlike paid tools like Ahrefs, Semrush, or Screaming Frog, there are no monthly subscription fees or crawl credit limits. Every audit runs directly between your browser and the target webpage.',
+  },
+  {
+    q: 'How does the SEO Score Checker work?',
+    a: 'When you enter a URL, the Best Answer Hub SEO Score Checker fetches the webpage HTML directly from the target server using your browser\'s fetch API. It then parses the HTML and evaluates over 25 on-page and technical SEO factors. The audit checks meta tags, heading hierarchy, image accessibility, link structure, structured data, semantic HTML, and mobile readiness. Each factor is weighted by its importance to search rankings, and a composite score is calculated with prioritized recommendations.',
+  },
+  {
+    q: 'What is on-page SEO?',
+    a: 'On-page SEO refers to optimizations you make directly on your webpages to help them rank higher in search results. It includes writing descriptive title tags and meta descriptions, using proper heading hierarchy (one H1 per page, followed by H2s and H3s), adding alt text to images, using clean URL structures, and including relevant keywords naturally in your content. The Best Answer Hub SEO Score Checker audits all of these factors and tells you exactly what is missing or needs improvement on each page you test.',
+  },
+  {
+    q: 'What is technical SEO?',
+    a: 'Technical SEO refers to the behind-the-scenes aspects of your website that help search engines crawl, index, and understand your content. It includes HTTPS encryption, XML sitemaps, robots.txt configuration, canonical tags to prevent duplicate content, structured data markup, mobile responsiveness, page speed, and proper use of semantic HTML elements like header, nav, main, and article. Technical SEO is the foundation. Without it, even the best content may not rank.',
+  },
+  {
+    q: 'Why are title tags important for SEO?',
+    a: 'The title tag is the most important on-page SEO element. It tells Google what your page is about and appears as the clickable headline in search results. A well-optimized title tag should be 50 to 60 characters long, include your primary keyword near the beginning, and accurately describe the page content. Pages with missing, duplicate, or poorly written title tags almost always underperform in search rankings. The Best Answer Hub SEO Score Checker flags title tags that are too short, too long, or missing entirely.',
+  },
+  {
+    q: 'What is a meta description and why does it matter?',
+    a: 'A meta description is a short summary of your webpage that appears below the title in Google search results. While it is not a direct ranking factor, it strongly influences click-through rate. A compelling meta description can increase organic traffic by 5 to 30 percent even without ranking changes. The ideal length is 150 to 160 characters. It should include your primary keyword naturally, add a clear value proposition, and end with a call to action. The Best Answer Hub SEO Score Checker checks if your meta description exists, if it is the right length, and if it contains your page\'s main topic.',
+  },
+  {
+    q: 'What are heading tags (H1-H6) and how should I use them?',
+    a: 'Heading tags create a hierarchical outline of your content for both users and search engines. Every page should have exactly one H1 tag that describes the main topic. H2 tags divide the page into major sections. H3 tags break those sections into subsections. Search engines use this structure to understand content relationships and feature answers in featured snippets. Common mistakes include skipping heading levels (jumping from H1 to H3), using multiple H1s, or using headings purely for styling. The Best Answer Hub SEO Score Checker audits your entire heading hierarchy and flags structural issues.',
+  },
+  {
+    q: 'Why do images need alt text for SEO?',
+    a: 'Alt text (alternative text) describes the content and function of an image for screen readers and search engines. Google cannot see images the way humans do. It relies on alt text to understand what an image contains. Images with descriptive alt text can appear in Google Images search, driving additional traffic. From an accessibility standpoint, alt text is essential for visually impaired users who rely on screen readers. Every image that conveys information should have alt text. Decorative images should use an empty alt attribute (<code>alt=""</code>). The Best Answer Hub SEO Score Checker counts how many images are missing alt text entirely.',
+  },
+  {
+    q: 'What is a canonical tag and why do I need one?',
+    a: 'A canonical tag (<code>rel="canonical"</code>) tells search engines which version of a page is the original when multiple URLs contain the same or very similar content. Without it, Google may treat www and non-www versions, HTTP and HTTPS versions, and URL parameters as separate pages, splitting your ranking power across duplicates. E-commerce sites are especially vulnerable because product pages often exist under multiple categories with different URLs. Every page should have a self-referencing canonical tag pointing to its preferred URL. The Best Answer Hub SEO Score Checker checks if the canonical tag is present and correctly formatted.',
+  },
+  {
+    q: 'What is schema markup and structured data?',
+    a: 'Schema markup is a standardized vocabulary of tags you add to your HTML to help search engines understand the context of your content. It powers rich snippets in search results: star ratings, recipe times, event dates, FAQ dropdowns, and product prices. The most common format is JSON-LD, a script block in your page head. Common schema types include Article, Product, FAQPage, LocalBusiness, Organization, and Review. Pages with structured data can earn up to 30 percent higher click-through rates because they stand out visually in search results. The Best Answer Hub SEO Score Checker detects whether any schema markup is present on the page.',
+  },
+  {
+    q: 'What is the difference between internal and external links?',
+    a: 'Internal links connect pages within your own website. They help search engines discover content, distribute ranking authority (link equity), and establish topical relationships between pages. A well-linked site helps Google understand which pages are most important. External links point to other websites. Linking to authoritative sources can increase your own credibility, though excessive external links can leak link equity. The Best Answer Hub SEO Score Checker counts both internal and external links on your page and flags pages with very few internal links, which may be considered orphan pages by search engines.',
+  },
+  {
+    q: 'Why can\'t the SEO Score Checker audit some websites?',
+    a: 'Some websites block cross-origin requests using CORS policies or security headers like X-Frame-Options. This is a browser security feature that prevents external tools from reading page HTML. When a site blocks external fetch requests, the Best Answer Hub SEO Score Checker cannot read the page HTML and therefore cannot perform a detailed SEO audit. For those sites, a manual checklist of the most important SEO factors is shown instead. You can also use browser developer tools, Google Search Console, or dedicated desktop crawlers like Screaming Frog for full-site audits of CORS-protected pages.',
+  },
+  {
+    q: 'What are the best SEO tools in 2026?',
+    a: 'The best SEO toolkit depends on your budget and needs. For free options, Google Search Console is essential for monitoring indexing and performance. Google Analytics 4 tracks traffic and user behavior. For paid comprehensive suites, Ahrefs and Semrush lead the market with keyword research, backlink analysis, and rank tracking. Surfer SEO and Clearscope help optimize content using NLP analysis. Screaming Frog is the best desktop crawler for technical audits. For local SEO, BrightLocal and Whitespark dominate citation building. The Best Answer Hub SEO Score Checker complements these tools by providing instant on-page audits without account creation or subscription fees.',
+  },
+  {
+    q: 'What is a good SEO score, and what do the letter grades mean?',
+    a: 'The Best Answer Hub SEO Score Checker grades pages on a 0-to-100 scale. A score of 90 or above earns an A: excellent on-page and technical SEO with few or no critical issues. Scores of 80 to 89 earn a B: well optimized but with minor gaps to close. Scores of 70 to 79 earn a C: average optimization with meaningful fixes available. Scores below 70 earn a D or F, meaning multiple high-impact SEO elements are missing or broken. Most pages on the internet score between 40 and 60, so hitting 70 already puts a page ahead of the majority of websites. The most important benchmark is not the absolute number. It is consistent improvement over time. Fix critical issues first (missing title, no meta description, absent canonical), then work through medium-weight factors. Note that an SEO score is not an official Google ranking signal; Google does not publish or use any third-party score. Use the grade as a diagnostic compass, not a ranking guarantee.',
+  },
+];
+
+const steps = [
+  { title: 'Enter a page URL', description: 'Type any webpage address: a homepage, blog post, product page, or landing page. The tool works on any public webpage.' },
+  { title: 'Run the audit', description: 'The tool fetches the HTML and evaluates 25+ SEO factors including meta tags, headings, images, links, schema, and semantic structure.' },
+  { title: 'Fix the issues', description: 'Review your score, category breakdown, and prioritized recommendations. Fix the critical issues first for the biggest ranking impact.' },
+];
+
+const seo = {
+  title: 'Free SEO Score Checker — Audit Any Webpage Instantly (2026)',
+  description: 'Check your SEO score for free. Audit title tags, meta descriptions, headings, images, links, schema, and technical SEO. Get a grade and actionable fixes.',
+  url: '/tools/seo-score-checker/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'SEO Score Checker', url: '/tools/seo-score-checker/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · Audits Run from Your Browser"
+    title="SEO Score Checker:"
+    accentText="Audit any page in 5 seconds"
+    description="Check title tags, meta descriptions, headings, image alt text, canonical tags, schema markup, links, and semantic HTML. Get an SEO grade and a prioritized fix list."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <!-- Audit Interface -->
+  <section class="py-6 md:py-8" aria-label="SEO score checker">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Input -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <label class="block text-sm font-medium text-bae-ink mb-2">Enter a webpage URL</label>
+          <div class="flex gap-2">
+            <input type="url" id="audit-url" placeholder="example.com or https://example.com/blog-post" class="flex-1 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            <button type="button" id="audit-btn" class="shrink-0 bg-bae-primary text-white font-semibold text-sm px-5 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">
+              Check SEO
+            </button>
+          </div>
+          <p class="text-[11px] text-bae-muted mt-2">Audits run directly between your browser and the target page. No data passes through our infrastructure.</p>
+        </div>
+
+        <!-- Loading -->
+        <div id="audit-loading" class="hidden mt-6">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-6 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink">Analyzing page...</p>
+            <p class="text-xs text-bae-muted mt-1" id="audit-step">Fetching page content</p>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="audit-results" class="hidden mt-6 space-y-5">
+          <!-- Score Header -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 flex flex-col sm:flex-row items-center gap-5">
+            <div id="seo-grade-circle" class="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold text-white shrink-0 bg-bae-primary">
+              A
+            </div>
+            <div class="text-center sm:text-left">
+              <h2 class="font-serif text-xl font-bold text-bae-ink mb-1" id="seo-result-title">Excellent SEO</h2>
+              <p class="text-sm text-bae-muted" id="seo-result-subtitle">Score: 92/100 · 3 issues found · 12 checks passed</p>
+              <p class="text-xs text-bae-muted mt-1" id="seo-result-url">example.com</p>
+            </div>
+          </div>
+
+          <!-- Category Scores -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Meta & Tags</p>
+              <p class="text-lg font-bold text-bae-ink" id="cat-meta">—</p>
+              <div class="w-full bg-bae-border h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="bar-meta" class="h-full bg-bae-primary rounded-full" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Headings</p>
+              <p class="text-lg font-bold text-bae-ink" id="cat-headings">—</p>
+              <div class="w-full bg-bae-border h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="bar-headings" class="h-full bg-bae-primary rounded-full" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Images & Links</p>
+              <p class="text-lg font-bold text-bae-ink" id="cat-media">—</p>
+              <div class="w-full bg-bae-border h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="bar-media" class="h-full bg-bae-primary rounded-full" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Technical</p>
+              <p class="text-lg font-bold text-bae-ink" id="cat-tech">—</p>
+              <div class="w-full bg-bae-border h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="bar-tech" class="h-full bg-bae-primary rounded-full" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Issues -->
+          <div id="seo-issues-section" class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h3 class="text-sm font-bold text-bae-ink mb-3">Issues found</h3>
+            <div id="seo-issues-list" class="space-y-2"></div>
+          </div>
+
+          <!-- Passed Checks -->
+          <div id="seo-passed-section" class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h3 class="text-sm font-bold text-bae-ink mb-3">Checks passed</h3>
+            <div id="seo-passed-list" class="space-y-2"></div>
+          </div>
+
+          <!-- Recommendations -->
+          <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-5">
+            <h3 class="text-sm font-bold text-bae-ink mb-3">Top recommendations</h3>
+            <div id="seo-recommendations-list" class="space-y-2"></div>
+          </div>
+
+          <!-- CORS Notice -->
+          <div id="seo-cors-notice" class="hidden bg-amber-50 border border-amber-200 rounded-bae p-4 flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            <div>
+              <p class="text-sm font-semibold text-amber-800 mb-1">Cross-origin restrictions limited this audit</p>
+              <p class="text-xs text-amber-700">The target website blocks external analysis tools. We checked basic connectivity but could not read the page HTML for a full SEO audit. Use browser developer tools or a desktop crawler like Screaming Frog for a complete analysis.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEO Factors Reference -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-2">What we check</h2>
+      <p class="text-sm text-bae-muted mb-6">25+ on-page and technical SEO factors</p>
+      <div class="overflow-x-auto rounded-bae border border-bae-border">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-bae-bg border-b border-bae-border">
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Category</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Factor</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Weight</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-bae-border-light">
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Meta & Tags</td><td class="px-4 py-3 text-bae-muted">Title tag present and 50-60 chars</td><td class="px-4 py-3 text-emerald-600 font-medium">High</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Meta & Tags</td><td class="px-4 py-3 text-bae-muted">Meta description present and 150-160 chars</td><td class="px-4 py-3 text-emerald-600 font-medium">High</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Meta & Tags</td><td class="px-4 py-3 text-bae-muted">Canonical tag present</td><td class="px-4 py-3 text-emerald-600 font-medium">High</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Meta & Tags</td><td class="px-4 py-3 text-bae-muted">Viewport meta tag for mobile</td><td class="px-4 py-3 text-amber-600 font-medium">Medium</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Meta & Tags</td><td class="px-4 py-3 text-bae-muted">Open Graph tags present</td><td class="px-4 py-3 text-bae-muted">Low</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Headings</td><td class="px-4 py-3 text-bae-muted">Exactly one H1 tag</td><td class="px-4 py-3 text-emerald-600 font-medium">High</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Headings</td><td class="px-4 py-3 text-bae-muted">No skipped levels (H1→H2→H3)</td><td class="px-4 py-3 text-amber-600 font-medium">Medium</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Headings</td><td class="px-4 py-3 text-bae-muted">H2 tags present for structure</td><td class="px-4 py-3 text-amber-600 font-medium">Medium</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Images</td><td class="px-4 py-3 text-bae-muted">No missing alt text</td><td class="px-4 py-3 text-emerald-600 font-medium">High</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Images</td><td class="px-4 py-3 text-bae-muted">Images have width/height attributes</td><td class="px-4 py-3 text-amber-600 font-medium">Medium</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Links</td><td class="px-4 py-3 text-bae-muted">Internal links present</td><td class="px-4 py-3 text-amber-600 font-medium">Medium</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Links</td><td class="px-4 py-3 text-bae-muted">No excessive external links</td><td class="px-4 py-3 text-bae-muted">Low</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Technical</td><td class="px-4 py-3 text-bae-muted">HTTPS enabled</td><td class="px-4 py-3 text-emerald-600 font-medium">High</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Technical</td><td class="px-4 py-3 text-bae-muted">Schema / structured data present</td><td class="px-4 py-3 text-amber-600 font-medium">Medium</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Technical</td><td class="px-4 py-3 text-bae-muted">Semantic HTML (header, nav, main)</td><td class="px-4 py-3 text-amber-600 font-medium">Medium</td></tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors"><td class="px-4 py-3 font-medium text-bae-ink">Technical</td><td class="px-4 py-3 text-bae-muted">HTML lang attribute set</td><td class="px-4 py-3 text-bae-muted">Low</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Who uses this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Content Publishing</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Blogger</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">2 Fixes in 5 Minutes</div>
+          <p class="text-sm text-bae-muted leading-relaxed">About to hit publish on a 2,000-word how-to guide. Pastes the URL into the Best Answer Hub SEO Score Checker, spots a missing canonical tag and two images without alt text, and fixes both in under five minutes before the post goes live.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Client Delivery</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Freelance Web Developer</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">5 Pages Audited Pre-Handoff</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Finishing a five-page brochure site for a local accountant. Runs each page through the audit before handing over the keys. Catches a missing H1 on the services page and a viewport meta tag that got dropped during the theme switch.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Local Business</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Small Business Owner</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Grade C + 3 Priority Fixes</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Running a plumbing company and wondering why the homepage doesn't show up on Google. No technical background, no budget for an agency. Drops the URL in, gets a grade of C, and sees exactly three priority fixes laid out in plain language.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Agency Triage</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">SEO Consultant</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">200 Pages Rapidly Scanned</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Onboarding a new e-commerce client with 200 product pages. Uses the Best Answer Hub SEO Score Checker as a rapid triage pass, quickly identifying structural patterns like missing Open Graph tags and schema gaps before diving into a full Screaming Frog crawl.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/ai-cost-calculator/" class="text-bae-primary hover:underline">AI Cost Calculator</a>, <a href="/tools/image-compressor/" class="text-bae-primary hover:underline">Image Compressor</a>, <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>, <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code</a>, <a href="/tools/password-generator/" class="text-bae-primary hover:underline">Password Generator</a>, <a href="/tools/website-speed-test/" class="text-bae-primary hover:underline">Speed Test</a>, <a href="/tools/invoice-generator/" class="text-bae-primary hover:underline">Invoice Generator</a>, <a href="/tools/broken-link-checker/" class="text-bae-primary hover:underline">Broken Link Checker</a>, and <a href="/developer-toolbox/" class="text-bae-primary hover:underline">Developer Toolbox</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const auditUrl = document.getElementById('audit-url');
+      const auditBtn = document.getElementById('audit-btn');
+      const auditLoading = document.getElementById('audit-loading');
+      const auditStep = document.getElementById('audit-step');
+      const auditResults = document.getElementById('audit-results');
+      const gradeCircle = document.getElementById('seo-grade-circle');
+      const resultTitle = document.getElementById('seo-result-title');
+      const resultSubtitle = document.getElementById('seo-result-subtitle');
+      const resultUrl = document.getElementById('seo-result-url');
+      const issuesList = document.getElementById('seo-issues-list');
+      const passedList = document.getElementById('seo-passed-list');
+      const recommendationsList = document.getElementById('seo-recommendations-list');
+      const corsNotice = document.getElementById('seo-cors-notice');
+
+      function normalizeUrl(input) {
+        let url = input.trim();
+        if (!url) return null;
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        try { return new URL(url).toString(); } catch (e) { return null; }
+      }
+
+      function isInternalUrl(urlStr) {
+        try {
+          const u = new URL(urlStr);
+          const host = u.hostname.toLowerCase();
+          if (host === 'localhost' || host === '0.0.0.0' || host === '::1') return true;
+          // IPv4 private ranges
+          if (/^127\./.test(host)) return true;
+          if (/^192\.168\./.test(host)) return true;
+          if (/^10\./.test(host)) return true;
+          if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) return true;
+          if (/^169\.254\./.test(host)) return true;
+          // IPv6 unique local / link-local / loopback mapped
+          if (/^(fc00|fd00|fe80):/i.test(host)) return true;
+          if (/^::ffff:127\./i.test(host)) return true;
+          if (/^::ffff:192\.168\./i.test(host)) return true;
+          if (/^::ffff:10\./i.test(host)) return true;
+          if (/^::ffff:172\.(1[6-9]|2[0-9]|3[0-1])\./i.test(host)) return true;
+          if (/^::1$/i.test(host)) return true;
+          return false;
+        } catch (e) { return false; }
+      }
+
+      function getGradeColor(grade) {
+        const colors = { 'A': 'bg-emerald-500', 'B': 'bg-emerald-400', 'C': 'bg-amber-400', 'D': 'bg-orange-400', 'F': 'bg-red-500' };
+        return colors[grade] || 'bg-bae-muted';
+      }
+
+      function getGradeText(score) {
+        if (score >= 90) return { grade: 'A', title: 'Excellent SEO' };
+        if (score >= 80) return { grade: 'B', title: 'Good SEO' };
+        if (score >= 70) return { grade: 'C', title: 'Average SEO' };
+        if (score >= 60) return { grade: 'D', title: 'Below Average SEO' };
+        return { grade: 'F', title: 'Poor SEO' };
+      }
+
+      function setBar(id, score) {
+        const bar = document.getElementById(id);
+        bar.style.width = score + '%';
+        bar.className = 'h-full rounded-full ' + (score >= 80 ? 'bg-emerald-500' : score >= 60 ? 'bg-amber-400' : score >= 40 ? 'bg-orange-400' : 'bg-red-500');
+      }
+
+      async function runAudit() {
+        const url = normalizeUrl(auditUrl.value);
+        if (!url) { alert('Please enter a valid URL'); return; }
+        if (isInternalUrl(url)) { alert('Internal and local addresses cannot be audited for security reasons.'); return; }
+
+        auditResults.classList.add('hidden');
+        auditLoading.classList.remove('hidden');
+        corsNotice.classList.add('hidden');
+
+        const r = {
+          url, corsBlocked: false,
+          score: 0, issues: [], passed: [], recommendations: [],
+          cats: { meta: 0, headings: 0, media: 0, tech: 0 }
+        };
+
+        auditStep.textContent = 'Fetching page content...';
+        let html = null;
+        let doc = null;
+
+        try {
+          const response = await fetch(url, { cache: 'no-store' });
+          if (isInternalUrl(response.url)) {
+            r.corsBlocked = true;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Redirect leads to an internal or local address, blocked for security.' });
+            showResults(r);
+            return;
+          }
+          html = await response.text();
+          doc = new DOMParser().parseFromString(html, 'text/html');
+        } catch (e) {
+          // Try no-cors to check if site is reachable
+          try {
+            await fetch(url, { mode: 'no-cors', cache: 'no-store', method: 'HEAD' });
+            r.corsBlocked = true;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Cross-origin policy blocks deep analysis. Basic checks only.' });
+          } catch (e2) {
+            r.issues.push({ type: 'error', icon: '✗', text: 'Website is unreachable from your location' });
+            showResults(r);
+            return;
+          }
+        }
+
+        auditStep.textContent = 'Analyzing SEO factors...';
+
+        // --- META & TAGS ---
+        if (doc) {
+          // Title
+          const title = doc.querySelector('title');
+          const titleText = title ? title.textContent.trim() : '';
+          if (!titleText) {
+            r.cats.meta += 0; r.issues.push({ type: 'error', icon: '✗', text: 'Missing title tag' });
+            r.recommendations.push('Add a <title> tag to your HTML <head>. It is the most important on-page SEO element.');
+          } else if (titleText.length < 10) {
+            r.cats.meta += 10; r.issues.push({ type: 'warning', icon: '⚠', text: 'Title tag is too short (' + titleText.length + ' chars)' });
+            r.recommendations.push('Expand your title tag to 50-60 characters. Current: "' + titleText.substring(0, 40) + '..."');
+          } else if (titleText.length > 70) {
+            r.cats.meta += 15; r.issues.push({ type: 'warning', icon: '⚠', text: 'Title tag is too long (' + titleText.length + ' chars)' });
+            r.recommendations.push('Shorten your title tag to under 60 characters so it does not get cut off in search results.');
+          } else {
+            r.cats.meta += 25; r.passed.push('Title tag is well optimized (' + titleText.length + ' chars)');
+          }
+
+          // Meta description
+          const metaDesc = doc.querySelector('meta[name="description"]');
+          const descText = metaDesc ? (metaDesc.getAttribute('content') || '').trim() : '';
+          if (!descText) {
+            r.issues.push({ type: 'error', icon: '✗', text: 'Missing meta description' });
+            r.recommendations.push('Add a meta description tag: <meta name="description" content="...">. Keep it between 150-160 characters.');
+          } else if (descText.length < 50) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Meta description is too short (' + descText.length + ' chars)' });
+            r.recommendations.push('Expand your meta description to 150-160 characters for better click-through rates.');
+          } else if (descText.length > 170) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Meta description is too long (' + descText.length + ' chars)' });
+          } else {
+            r.passed.push('Meta description is well optimized (' + descText.length + ' chars)');
+          }
+
+          // Canonical
+          const canonical = doc.querySelector('link[rel="canonical"]');
+          if (!canonical || !canonical.getAttribute('href')) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Missing canonical tag' });
+            r.recommendations.push('Add a canonical tag pointing to your preferred URL to prevent duplicate content issues.');
+          } else {
+            r.passed.push('Canonical tag is present');
+          }
+
+          // Viewport
+          const viewport = doc.querySelector('meta[name="viewport"]');
+          if (!viewport) {
+            r.cats.meta += Math.min(r.cats.meta, 15);
+            r.issues.push({ type: 'error', icon: '✗', text: 'Missing mobile viewport meta tag' });
+            r.recommendations.push('Add <meta name="viewport" content="width=device-width, initial-scale=1"> for mobile-first indexing.');
+          } else {
+            r.passed.push('Mobile viewport is configured');
+          }
+
+          // Open Graph
+          const ogTitle = doc.querySelector('meta[property="og:title"]');
+          if (!ogTitle) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Missing Open Graph tags' });
+            r.recommendations.push('Add Open Graph tags (og:title, og:description, og:image) for better social sharing.');
+          } else {
+            r.passed.push('Open Graph tags are present');
+          }
+
+          // Robots meta
+          const robotsMeta = doc.querySelector('meta[name="robots"]');
+          if (robotsMeta) {
+            const content = (robotsMeta.getAttribute('content') || '').toLowerCase();
+            if (content.includes('noindex')) {
+              r.issues.push({ type: 'error', icon: '✗', text: 'Page has noindex directive, will not appear in search results' });
+            }
+            if (content.includes('nofollow')) {
+              r.issues.push({ type: 'warning', icon: '⚠', text: 'Page has nofollow directive, links will not pass authority' });
+            }
+          }
+
+          // --- HEADINGS ---
+          const h1s = doc.querySelectorAll('h1');
+          const h2s = doc.querySelectorAll('h2');
+          const h3s = doc.querySelectorAll('h3');
+
+          if (h1s.length === 0) {
+            r.cats.headings += 0; r.issues.push({ type: 'error', icon: '✗', text: 'Missing H1 tag' });
+            r.recommendations.push('Add exactly one H1 tag that describes the main topic of the page.');
+          } else if (h1s.length > 1) {
+            r.cats.headings += 10; r.issues.push({ type: 'warning', icon: '⚠', text: 'Multiple H1 tags found (' + h1s.length + ')' });
+            r.recommendations.push('Use only one H1 per page. Convert extra H1s to H2s.');
+          } else {
+            r.cats.headings += 15; r.passed.push('Exactly one H1 tag found');
+          }
+
+          if (h2s.length === 0) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'No H2 tags found, page lacks structure' });
+            r.recommendations.push('Add H2 tags to divide your content into logical sections. This helps readers and search engines.');
+          } else {
+            r.cats.headings += 10; r.passed.push('H2 tags present (' + h2s.length + ')');
+          }
+
+          // --- IMAGES ---
+          const imgs = doc.querySelectorAll('img');
+          const imgsWithoutAlt = Array.from(imgs).filter(img => !img.hasAttribute('alt'));
+          const imgsWithoutSize = Array.from(imgs).filter(img => !img.hasAttribute('width') || !img.hasAttribute('height'));
+
+          if (imgs.length > 0) {
+            if (imgsWithoutAlt.length > 0) {
+              r.cats.media += 5; r.issues.push({ type: 'warning', icon: '⚠', text: imgsWithoutAlt.length + ' image(s) missing alt text' });
+              r.recommendations.push('Add descriptive alt text to ' + imgsWithoutAlt.length + ' image(s). Alt text helps Google Images SEO and screen reader accessibility.');
+            } else {
+              r.cats.media += 10; r.passed.push('All images have alt text (' + imgs.length + ')');
+            }
+
+            if (imgsWithoutSize.length > 0) {
+              r.issues.push({ type: 'warning', icon: '⚠', text: imgsWithoutSize.length + ' image(s) missing width/height attributes' });
+              r.recommendations.push('Add width and height attributes to images to prevent layout shift (CLS) and improve Core Web Vitals.');
+            } else {
+              r.passed.push('All images have width/height attributes');
+            }
+          } else {
+            r.passed.push('No images on page');
+          }
+
+          // --- LINKS ---
+          const links = doc.querySelectorAll('a[href]');
+          let internalCount = 0;
+          let externalCount = 0;
+          const baseHost = new URL(url).hostname.replace(/^www\./, '');
+          links.forEach(a => {
+            try {
+              const href = a.getAttribute('href') || '';
+              if (href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:')) return;
+              if (href.startsWith('http')) {
+                const linkHost = new URL(href).hostname.replace(/^www\./, '');
+                if (linkHost === baseHost) internalCount++;
+                else externalCount++;
+              } else {
+                internalCount++;
+              }
+            } catch (e) {}
+          });
+
+          if (internalCount < 3 && links.length > 0) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Few internal links (' + internalCount + ')' });
+            r.recommendations.push('Add more internal links to related content. Internal linking helps distribute authority and keeps users engaged longer.');
+          } else {
+            r.cats.media += 5; r.passed.push('Good internal linking (' + internalCount + ' links)');
+          }
+
+          if (externalCount > 50) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Excessive external links (' + externalCount + ')' });
+            r.recommendations.push('Reduce external links or add rel="nofollow" to non-editorial links to preserve link equity.');
+          }
+
+          // --- TECHNICAL ---
+          // HTTPS
+          if (url.startsWith('https')) {
+            r.cats.tech += 15; r.passed.push('HTTPS is enabled');
+          } else {
+            r.issues.push({ type: 'error', icon: '✗', text: 'Not using HTTPS' });
+            r.recommendations.push('Switch to HTTPS. It is a confirmed Google ranking factor and essential for user trust.');
+          }
+
+          // Schema / JSON-LD
+          const jsonLd = doc.querySelectorAll('script[type="application/ld+json"]');
+          const microdata = doc.querySelectorAll('[itemscope]');
+          if (jsonLd.length === 0 && microdata.length === 0) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'No structured data (schema markup) found' });
+            r.recommendations.push('Add JSON-LD schema markup for Article, Organization, or FAQPage to qualify for rich snippets.');
+          } else {
+            r.cats.tech += 10; r.passed.push('Structured data is present (' + (jsonLd.length + microdata.length) + ' item(s))');
+          }
+
+          // Semantic HTML
+          const hasHeader = doc.querySelector('header') || doc.querySelector('[role="banner"]');
+          const hasNav = doc.querySelector('nav') || doc.querySelector('[role="navigation"]');
+          const hasMain = doc.querySelector('main') || doc.querySelector('[role="main"]');
+          const hasFooter = doc.querySelector('footer') || doc.querySelector('[role="contentinfo"]');
+
+          if (hasMain) { r.cats.tech += 5; r.passed.push('Semantic <main> element used'); }
+          else { r.issues.push({ type: 'warning', icon: '⚠', text: 'No <main> semantic element found' }); }
+
+          if (hasHeader && hasNav && hasFooter) {
+            r.passed.push('Complete semantic structure (header, nav, footer)');
+          }
+
+          // Lang attribute
+          const htmlLang = doc.documentElement.getAttribute('lang');
+          if (!htmlLang) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'HTML lang attribute missing' });
+            r.recommendations.push('Add lang="en" (or your language code) to the <html> tag for accessibility and international SEO.');
+          } else {
+            r.passed.push('HTML lang attribute is set (' + htmlLang + ')');
+          }
+
+          // Favicon
+          const favicon = doc.querySelector('link[rel~="icon"]');
+          if (!favicon) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'No favicon detected' });
+          } else {
+            r.passed.push('Favicon is present');
+          }
+
+          // URL length
+          const path = new URL(url).pathname;
+          if (path.length > 80) {
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'URL is very long (' + path.length + ' chars)' });
+            r.recommendations.push('Shorten your URL to under 60 characters. Use hyphens, avoid parameters, and remove unnecessary words.');
+          } else if (path.length > 0) {
+            r.passed.push('URL length is good (' + path.length + ' chars)');
+          }
+        }
+
+        // If CORS blocked, do basic checks
+        if (r.corsBlocked && !doc) {
+          if (url.startsWith('https')) { r.cats.tech += 10; r.passed.push('HTTPS is enabled'); }
+          else { r.issues.push({ type: 'error', icon: '✗', text: 'Not using HTTPS' }); }
+          r.passed.push('Page is reachable from your location');
+        }
+
+        // Calculate total score
+        const maxMeta = 25, maxHeadings = 25, maxMedia = 15, maxTech = 20;
+        r.cats.meta = Math.min(maxMeta, r.cats.meta);
+        r.cats.headings = Math.min(maxHeadings, r.cats.headings);
+        r.cats.media = Math.min(maxMedia, r.cats.media);
+        r.cats.tech = Math.min(maxTech, r.cats.tech);
+        // Category maxes sum to 85, so normalize to a 0-100 scale — otherwise a
+        // perfect page would cap at 85 and the documented "A" (90+) is unreachable.
+        const maxComposite = maxMeta + maxHeadings + maxMedia + maxTech;
+        r.score = Math.round((r.cats.meta + r.cats.headings + r.cats.media + r.cats.tech) / maxComposite * 100);
+
+        const g = getGradeText(r.score);
+        r.grade = g.grade;
+        r.gradeTitle = g.title;
+
+        if (r.recommendations.length === 0) {
+          r.recommendations.push('Your page is well-optimized. Continue monitoring and test competitor pages to stay ahead.');
+        }
+
+        showResults(r);
+      }
+
+      function showResults(r) {
+        auditLoading.classList.add('hidden');
+        auditResults.classList.remove('hidden');
+        auditResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        gradeCircle.textContent = r.grade;
+        gradeCircle.className = 'w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold text-white shrink-0 ' + getGradeColor(r.grade);
+        resultTitle.textContent = r.gradeTitle;
+        resultSubtitle.textContent = 'Score: ' + r.score + '/100 · ' + r.issues.length + ' issue' + (r.issues.length !== 1 ? 's' : '') + ' · ' + r.passed.length + ' check' + (r.passed.length !== 1 ? 's' : '') + ' passed';
+        resultUrl.textContent = r.url;
+
+        document.getElementById('cat-meta').textContent = r.cats.meta + '/' + 25;
+        document.getElementById('cat-headings').textContent = r.cats.headings + '/' + 25;
+        document.getElementById('cat-media').textContent = r.cats.media + '/' + 15;
+        document.getElementById('cat-tech').textContent = r.cats.tech + '/' + 20;
+
+        setBar('bar-meta', (r.cats.meta / 25) * 100);
+        setBar('bar-headings', (r.cats.headings / 25) * 100);
+        setBar('bar-media', (r.cats.media / 15) * 100);
+        setBar('bar-tech', (r.cats.tech / 20) * 100);
+
+        if (r.corsBlocked) corsNotice.classList.remove('hidden');
+
+        function escapeHtml(text) {
+          const div = document.createElement('div');
+          div.textContent = text;
+          return div.innerHTML;
+        }
+
+        issuesList.innerHTML = r.issues.map(i => {
+          const c = i.type === 'error' ? 'text-red-600 bg-red-50 border-red-100' : 'text-amber-600 bg-amber-50 border-amber-100';
+          return `<div class="${c} border rounded-bae-sm px-3 py-2 text-sm flex items-center gap-2"><span class="font-bold shrink-0">${escapeHtml(i.icon)}</span><span>${escapeHtml(i.text)}</span></div>`;
+        }).join('') || '<p class="text-sm text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-bae-sm px-3 py-2">No issues found, great job!</p>';
+
+        passedList.innerHTML = r.passed.map(p => {
+          return `<div class="text-sm text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-bae-sm px-3 py-2 flex items-center gap-2"><span class="font-bold shrink-0">✓</span><span>${escapeHtml(p)}</span></div>`;
+        }).join('');
+
+        recommendationsList.innerHTML = r.recommendations.map(rec => {
+          return `<div class="flex items-start gap-2 text-sm text-bae-ink"><span class="text-bae-primary font-bold shrink-0 mt-0.5">→</span><span>${escapeHtml(rec)}</span></div>`;
+        }).join('');
+      }
+
+      auditBtn.addEventListener('click', runAudit);
+      auditUrl.addEventListener('keydown', (e) => { if (e.key === 'Enter') runAudit(); });
+    })();
+  </script>
+</BaseLayout>

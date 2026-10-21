@@ -1,0 +1,834 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub AI Chat Archive Viewer?',
+    a: 'The Best Answer Hub AI Chat Archive Viewer is a free browser tool that opens the data-export ZIP from ChatGPT or Claude. Drop the file in and every conversation becomes readable again: browse them like the original chat, search all of them at once, and save any chat as PDF, Word, or Markdown. Everything runs on your device, with no upload and no signup. Updated July 2026.',
+  },
+  {
+    q: 'How do I export my ChatGPT history in the first place?',
+    a: 'In ChatGPT, open Settings, then Data controls, then Export data. OpenAI emails a download link that can take anywhere from minutes to a few days to arrive on large accounts, and the link expires 24 hours after it lands, so download the ZIP promptly. Then drop that ZIP straight into the Best Answer Hub AI Chat Archive Viewer, no unzipping needed.',
+  },
+  {
+    q: 'What do I do with the conversations.json file? It looks unreadable.',
+    a: 'That file is your entire ChatGPT history as raw JSON, usually a single enormous line, with each conversation stored as a branching tree rather than a readable thread. The Best Answer Hub AI Chat Archive Viewer decodes that structure: drop in the export ZIP, or conversations.json by itself, and every chat appears as a normal, readable conversation again.',
+  },
+  {
+    q: 'Is it safe to upload my ChatGPT or Claude export to a viewer website?',
+    a: 'Treat an export like a sensitive document: it can contain names, phone numbers, API keys, pasted contracts, and personal history. The Best Answer Hub AI Chat Archive Viewer never uploads anything. Parsing happens inside your browser, which you can verify by watching the Network tab or going offline before loading the file. Viewer sites that require an account keep your history on their servers instead.',
+  },
+  {
+    q: 'Why does the chat.html file in my export crash my browser?',
+    a: 'chat.html packs your entire history into one page, and past a certain size (users have reported 160 MB files) browsers lock up trying to render it. The Best Answer Hub AI Chat Archive Viewer avoids that failure mode: the export is parsed in a background worker and only one conversation is rendered at a time, so even multi-hundred-megabyte archives stay responsive.',
+  },
+  {
+    q: 'How do I save one ChatGPT conversation as a PDF or Word document?',
+    a: 'Open your export in the Best Answer Hub AI Chat Archive Viewer, click the conversation, and press the PDF, Word, or Markdown button. Only that chat is exported, cleanly formatted with roles and timestamps. This fills a real gap: ChatGPT has no per-conversation download, and browser extensions only capture chats one at a time from the live site.',
+  },
+  {
+    q: 'Does it work with Claude exports too?',
+    a: 'Yes. Claude\'s export (Settings, then Privacy, then Export data) delivers a ZIP whose conversations.json has no built-in reader at all. The Best Answer Hub AI Chat Archive Viewer auto-detects the Claude format, including pasted-document attachments whose text is preserved in the export. You can even drop your ChatGPT and Claude archives in together and browse both as one searchable library.',
+  },
+  {
+    q: 'Why is my ChatGPT export so big?',
+    a: 'Exports now include every image you generated or uploaded, so accounts with heavy DALL-E or image use can produce archives of several hundred megabytes; community reports mention 425 MB and 600 MB exports, with heavy multi-year accounts reaching a gigabyte. The Best Answer Hub AI Chat Archive Viewer copes because images are only unpacked from the ZIP when a conversation actually displays them.',
+  },
+  {
+    q: 'Can I see my DALL-E images and uploaded pictures in the viewer?',
+    a: 'Yes. When a conversation references an image, the Best Answer Hub AI Chat Archive Viewer finds the file inside your export ZIP and shows it inline, right where it appeared in the chat. Some older exports are missing image files (a known OpenAI export quirk); in that case a clear placeholder is shown instead of an error, and the text of the chat is unaffected.',
+  },
+  {
+    q: 'How do I find one old prompt among thousands of conversations?',
+    a: 'Use the search box: the Best Answer Hub AI Chat Archive Viewer searches full text across every conversation, titles and message content alike, and shows a snippet of the matching passage. That is usually the whole reason people open their export, because the ChatGPT app itself only recently gained history search and older accounts hold thousands of chats.',
+  },
+  {
+    q: 'Why are some conversations missing from my export?',
+    a: 'Two common reasons. Deleted and temporary chats are excluded from exports by design, and cannot be recovered from the ZIP. Separately, when you edited a message or regenerated a reply, ChatGPT stored every branch but marked only the active one; the Best Answer Hub AI Chat Archive Viewer follows the same branch you saw in the app, so the thread reads exactly as you remember it.',
+  },
+  {
+    q: 'Can I turn my whole chat history into Markdown or Obsidian notes?',
+    a: 'Yes, with one click. The "All chats to Markdown" button in the Best Answer Hub AI Chat Archive Viewer produces a ZIP containing one .md file per conversation, with titles, roles, timestamps, and code blocks preserved. The files drop straight into Obsidian, Logseq, or Notion, and any of them can be polished afterwards in the free <a href="/developer-toolbox/markdown-editor/">Markdown Editor</a>.',
+  },
+  {
+    q: 'What about Gemini, Grok, or Copilot exports?',
+    a: 'Not yet. Google exports Gemini chats through Takeout as an activity log rather than clean conversation threads, and Grok and Copilot have no stable documented export format. The Best Answer Hub AI Chat Archive Viewer currently reads the two formats people actually archive, ChatGPT and Claude, and support for more providers is planned as their exports stabilize.',
+  },
+  {
+    q: 'Is anything stored after I close the tab?',
+    a: 'No. The archive is held in your browser\'s memory only while the page is open; closing or refreshing the tab clears everything, and nothing was ever transmitted, cached, or logged anywhere. Your export ZIP on disk stays untouched, so you can re-open it in the Best Answer Hub AI Chat Archive Viewer whenever you need it, even fully offline.',
+  },
+  {
+    q: 'My export download link expired. Do I have to start over?',
+    a: 'Yes, request a fresh export; both OpenAI and Anthropic expire their download links 24 hours after the email arrives. Once you have the ZIP, keep it: it is your only permanent backup, which matters when models are retired (as happened with GPT-4o in February 2026) or an account is lost. The Best Answer Hub AI Chat Archive Viewer reads that saved ZIP forever, no account required.',
+  },
+];
+
+const steps = [
+  { title: 'Drop your export ZIP', description: 'Drag in the data export from ChatGPT, Claude, or both at once. Files are parsed in your browser and never uploaded anywhere.' },
+  { title: 'Browse & search everything', description: 'Every conversation appears in a readable thread with images inline. Full-text search finds any prompt or answer across your entire history in seconds.' },
+  { title: 'Export any conversation', description: 'Save a single chat as PDF, Word, or Markdown, copy it to the clipboard, or download your whole history as a ZIP of Markdown files.' },
+];
+
+const seo = {
+  title: 'ChatGPT & Claude Export Viewer: Search, Save as PDF (2026)',
+  description: 'Free viewer for ChatGPT and Claude data exports. Drop the ZIP to browse and search every chat, then save any conversation as PDF, Word, or Markdown. No upload.',
+  url: '/tools/ai-chat-archive-viewer/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'AI Chat Archive Viewer', url: '/tools/ai-chat-archive-viewer/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · Nothing Uploaded"
+    title="AI Chat Archive Viewer:"
+    accentText="browse, search, and save your ChatGPT & Claude history"
+    description="Drop your ChatGPT or Claude data-export ZIP and get your whole chat history back: readable conversations, full-text search, images inline, and one-click export of any chat to PDF, Word, or Markdown. 100% in your browser. No upload, no signup, no size tier."
+    href={seo.url}
+  />
+
+  <!-- Viewer Interface -->
+  <section class="py-6 md:py-8" aria-label="AI chat archive viewer">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-5xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-4">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1">Drop your ChatGPT or Claude export here</p>
+          <p class="text-xs text-bae-muted">The export ZIP as-is, or conversations.json on its own (.zip, .json, .jsonl). Both providers at once works too.</p>
+          <input type="file" id="file-input" class="hidden" accept=".zip,.json,.jsonl,application/zip,application/json" multiple />
+        </div>
+
+        <!-- File Info -->
+        <div id="file-info" class="hidden mb-4 text-center">
+          <p class="text-sm text-bae-ink font-medium" id="info-name"></p>
+          <p class="text-xs text-bae-muted" id="info-size"></p>
+          <button type="button" id="reset-top" class="mt-2 text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors">↺ Reset: choose different files</button>
+        </div>
+
+        <!-- Open button -->
+        <div id="settings-area" class="hidden mb-4 bg-bae-card border border-bae-border rounded-bae p-5">
+          <button type="button" id="open-btn" class="w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+            Open Archive
+          </button>
+          <p class="text-[11px] text-bae-muted mt-2 text-center">Everything runs locally: you can even go offline first.</p>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Reading archive...</p>
+            <p class="text-xs text-bae-muted mt-2">Processing locally in your browser. Large archives can take a minute.</p>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div id="error-area" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-4">
+          <p class="text-sm font-semibold text-amber-800 mb-1">Could not open the archive</p>
+          <p class="text-xs text-amber-700" id="error-text"></p>
+        </div>
+
+        <!-- Results -->
+        <div id="result-area" class="hidden">
+          <!-- Summary strip -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4" id="summary-strip"></div>
+
+          <!-- Warnings -->
+          <div id="warn-area" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-3">
+            <p class="text-xs text-amber-700" id="warn-text"></p>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 mb-4">
+            <div class="flex flex-col sm:flex-row gap-3">
+              <div class="relative flex-1">
+                <svg class="w-4 h-4 text-bae-muted absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="search-input" placeholder="Search every conversation..." class="w-full text-sm border border-bae-border rounded-bae-sm pl-9 pr-3 py-2.5 bg-bae-bg focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div class="flex gap-2 items-center">
+                <div id="provider-chips" class="hidden gap-1.5 items-center"></div>
+                <select id="sort-select" class="text-xs border border-bae-border rounded-bae-sm px-2 py-2.5 bg-bae-bg text-bae-ink focus:outline-none focus:border-bae-primary">
+                  <option value="new">Newest first</option>
+                  <option value="old">Oldest first</option>
+                  <option value="az">Title A to Z</option>
+                  <option value="msgs">Most messages</option>
+                </select>
+                <button type="button" id="export-all-btn" class="whitespace-nowrap text-xs font-semibold px-3 py-2.5 rounded-bae-sm bg-bae-ink text-white hover:bg-bae-primary transition-colors">⬇ All chats → Markdown</button>
+              </div>
+            </div>
+            <p class="text-[11px] text-bae-muted mt-2" id="search-status"></p>
+          </div>
+
+          <!-- Two-pane: list + conversation -->
+          <div class="grid grid-cols-1 md:grid-cols-[300px,1fr] gap-4 items-start">
+            <div id="list-pane" class="bg-bae-card border border-bae-border rounded-bae overflow-hidden">
+              <div class="max-h-[70vh] overflow-y-auto" id="convo-list"></div>
+              <button type="button" id="more-btn" class="hidden w-full text-xs font-semibold text-bae-primary py-3 border-t border-bae-border-light hover:bg-bae-primary-soft/30 transition-colors">Show more</button>
+            </div>
+            <div id="viewer-pane" class="hidden md:block bg-bae-card border border-bae-border rounded-bae">
+              <div id="viewer-empty" class="p-10 text-center text-sm text-bae-muted">Select a conversation to read it here.</div>
+              <div id="viewer-body" class="hidden">
+                <div class="border-b border-bae-border-light p-4 md:p-5">
+                  <button type="button" id="back-btn" class="md:hidden text-xs font-semibold text-bae-primary mb-2">← Back to list</button>
+                  <h2 class="text-base font-bold text-bae-ink break-words" id="viewer-title"></h2>
+                  <p class="text-[11px] text-bae-muted mt-1" id="viewer-meta"></p>
+                  <div class="flex flex-wrap gap-2 mt-3">
+                    <button type="button" id="pdf-btn" class="text-xs font-semibold px-3 py-2 rounded-bae-sm bg-bae-primary text-white hover:bg-bae-accent transition-colors">PDF</button>
+                    <button type="button" id="word-btn" class="text-xs font-semibold px-3 py-2 rounded-bae-sm bg-bae-primary text-white hover:bg-bae-accent transition-colors">Word</button>
+                    <button type="button" id="md-btn" class="text-xs font-semibold px-3 py-2 rounded-bae-sm bg-bae-primary text-white hover:bg-bae-accent transition-colors">Markdown</button>
+                    <button type="button" id="copy-btn" class="text-xs font-semibold px-3 py-2 rounded-bae-sm bg-bae-bg border border-bae-border text-bae-ink hover:border-bae-primary transition-colors">Copy text</button>
+                  </div>
+                  <p class="text-[11px] text-bae-muted mt-2 hidden" id="export-note"></p>
+                </div>
+                <div class="p-4 md:p-5 max-h-[70vh] overflow-y-auto" id="messages"></div>
+                <div class="px-4 pb-4">
+                  <button type="button" id="all-msgs-btn" class="hidden w-full text-xs font-semibold text-bae-primary py-2.5 border border-bae-border rounded-bae-sm hover:bg-bae-primary-soft/30 transition-colors">Show all messages</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-5xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What to keep in mind</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>ChatGPT and Claude exports only (for now):</strong> Gemini's Takeout activity log and Grok have no stable readable format yet; support is planned.</li>
+              <li><strong>Deleted chats are not in the export:</strong> if a conversation was deleted or temporary, no viewer can recover it; the ZIP simply never contained it.</li>
+              <li><strong>Claude exports carry text only:</strong> Anthropic includes pasted-document text but not image or file binaries, so Claude images show as named placeholders.</li>
+              <li><strong>Very long chats export best as Markdown or Word:</strong> PDF rendering of chats with hundreds of messages can be slow in the browser; Markdown is instant at any size.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+</BaseLayout>
+
+<script src="/chat-archive-parser.js" is:inline></script>
+<script>
+  // ───────────────────────────────────────────────────────────────────────────
+  // AI Chat Archive Viewer, 100% client-side. The heavy lifting (ZIP reading,
+  // byte-level JSON splitting, ChatGPT tree walking, Claude normalization,
+  // search, Markdown generation) lives in /chat-archive-parser.js, which runs
+  // here as a Web Worker so 100MB+ archives never freeze the page. The same
+  // file is loaded above as a page script for shared helpers (toMarkdown,
+  // safeFileName, formatBytes) and is node-tested as-is against fixtures.
+  // Rendering rules: every string from the archive is escaped; assistant
+  // markdown goes through marked.parse -> DOMPurify.sanitize before insertion.
+  // ───────────────────────────────────────────────────────────────────────────
+  (function () {
+    const $ = (id: string) => document.getElementById(id);
+    const dropZone = $('drop-zone');
+    const fileInput = $('file-input') as HTMLInputElement;
+    const fileInfo = $('file-info');
+    const infoName = $('info-name');
+    const infoSize = $('info-size');
+    const resetTop = $('reset-top');
+    const settingsArea = $('settings-area');
+    const openBtn = $('open-btn');
+    const progressArea = $('progress-area');
+    const progressText = $('progress-text');
+    const errorArea = $('error-area');
+    const errorText = $('error-text');
+    const resultArea = $('result-area');
+    const summaryStrip = $('summary-strip');
+    const warnArea = $('warn-area');
+    const warnText = $('warn-text');
+    const searchInput = $('search-input') as HTMLInputElement;
+    const searchStatus = $('search-status');
+    const providerChips = $('provider-chips');
+    const sortSelect = $('sort-select') as HTMLSelectElement;
+    const exportAllBtn = $('export-all-btn');
+    const listPane = $('list-pane');
+    const convoList = $('convo-list');
+    const moreBtn = $('more-btn');
+    const viewerPane = $('viewer-pane');
+    const viewerEmpty = $('viewer-empty');
+    const viewerBody = $('viewer-body');
+    const viewerTitle = $('viewer-title');
+    const viewerMeta = $('viewer-meta');
+    const backBtn = $('back-btn');
+    const pdfBtn = $('pdf-btn');
+    const wordBtn = $('word-btn');
+    const mdBtn = $('md-btn');
+    const copyBtn = $('copy-btn');
+    const exportNote = $('export-note');
+    const messagesEl = $('messages');
+    const allMsgsBtn = $('all-msgs-btn');
+
+    const P = (window as any).ChatArchiveParser;
+    const PAGE_SIZE = 150;
+    const MSG_PAGE = 250;
+
+    let worker: Worker | null = null;
+    let files: File[] = [];
+    let index: any[] = [];
+    let stats: any = null;
+    let listIds: string[] | null = null;   // null = full index; array = search results
+    let snippets: Record<string, string> = {};
+    let shown = PAGE_SIZE;
+    let providerFilter = 'all';
+    let currentId: string | null = null;
+    let currentConvo: any = null;
+    let showAllMsgs = false;
+    let searchReq = 0;
+    let libsLoaded = false;
+    const assetUrls: Record<string, string> = {};      // pointer -> blob URL
+    const assetWaiters: Record<string, Array<(u: string | null) => void>> = {};
+
+    function escapeHtml(s: any): string {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function showError(msg: string) {
+      progressArea?.classList.add('hidden');
+      if (errorText) errorText.textContent = msg;
+      errorArea?.classList.remove('hidden');
+    }
+    function loadScript(src: string): Promise<void> {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Failed to load ' + src));
+        document.head.appendChild(s);
+      });
+    }
+    function ensureLibs(): Promise<void> {
+      if (libsLoaded) return Promise.resolve();
+      return Promise.all([loadScript('/marked.min.js'), loadScript('/purify.min.js')]).then(() => { libsLoaded = true; });
+    }
+    function download(blob: Blob, name: string) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+    function dateLabel(ms: number | null): string {
+      if (!ms) return '';
+      const d = new Date(ms);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    function providerBadge(p: string): string {
+      return p === 'claude'
+        ? '<span class="inline-block text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 border border-orange-100">Claude</span>'
+        : '<span class="inline-block text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100">ChatGPT</span>';
+    }
+
+    /* ── worker wiring ── */
+    function ensureWorker(): Worker {
+      if (worker) return worker;
+      worker = new Worker('/chat-archive-parser.js');
+      worker.onmessage = (ev) => onWorkerMessage(ev.data || {});
+      worker.onerror = (e) => showError('The background parser failed to start: ' + (e.message || 'unknown error') + '. Try reloading the page.');
+      return worker;
+    }
+    function onWorkerMessage(msg: any) {
+      if (msg.type === 'progress') {
+        if (progressText) {
+          if (msg.phase === 'unzip') progressText.textContent = 'Opening ' + (msg.source || 'archive') + '...';
+          else if (msg.phase === 'read') progressText.textContent = 'Reading ' + (msg.source || 'conversations') + '...';
+          else if (msg.phase === 'parse') progressText.textContent = 'Parsing conversations... ' + (msg.total ? Math.min(100, Math.round((msg.done / msg.total) * 100)) + '%' : '');
+          else if (msg.phase === 'export') progressText.textContent = 'Building Markdown ZIP... ' + msg.done + '/' + msg.total;
+        }
+      } else if (msg.type === 'loaded') {
+        index = msg.index;
+        stats = msg.stats;
+        onLoaded();
+      } else if (msg.type === 'conversation') {
+        currentConvo = msg.conversation;
+        renderConversation();
+      } else if (msg.type === 'results') {
+        if (msg.reqId !== searchReq) return;
+        listIds = msg.results.map((r: any) => r.id);
+        snippets = {};
+        msg.results.forEach((r: any) => { snippets[r.id] = r.snippet; });
+        shown = PAGE_SIZE;
+        if (searchStatus) searchStatus.textContent = msg.results.length + (msg.results.length === 500 ? '+' : '') + ' conversation' + (msg.results.length === 1 ? ' matches "' : 's match "') + msg.query + '"';
+        renderList();
+      } else if (msg.type === 'asset') {
+        const waiters = assetWaiters[msg.pointer] || [];
+        delete assetWaiters[msg.pointer];
+        let url: string | null = null;
+        if (msg.found && msg.buffer) {
+          url = URL.createObjectURL(new Blob([msg.buffer], { type: msg.mime }));
+          assetUrls[msg.pointer] = url;
+        }
+        waiters.forEach((w) => w(url));
+      } else if (msg.type === 'export-all') {
+        progressArea?.classList.add('hidden');
+        download(new Blob([msg.buffer], { type: 'application/zip' }), 'ai-chat-archive-markdown.zip');
+      } else if (msg.type === 'error') {
+        showError(msg.message);
+      }
+    }
+    function requestAsset(pointer: string): Promise<string | null> {
+      if (assetUrls[pointer]) return Promise.resolve(assetUrls[pointer]);
+      return new Promise((resolve) => {
+        if (!assetWaiters[pointer]) {
+          assetWaiters[pointer] = [resolve];
+          ensureWorker().postMessage({ type: 'asset', pointer });
+        } else {
+          assetWaiters[pointer].push(resolve);
+        }
+      });
+    }
+
+    /* ── file selection ── */
+    function acceptFiles(list: FileList | File[]) {
+      const arr = Array.from(list).filter((f) => /\.(zip|json|jsonl|txt)$/i.test(f.name) || f.type === 'application/zip' || f.type === 'application/json');
+      if (!arr.length) { showError('Please drop the export ZIP from ChatGPT or Claude, or a conversations.json file.'); return; }
+      files = arr;
+      errorArea?.classList.add('hidden');
+      resultArea?.classList.add('hidden');
+      if (infoName) infoName.textContent = arr.map((f) => f.name).join(' + ');
+      if (infoSize) infoSize.textContent = P.formatBytes(arr.reduce((s, f) => s + f.size, 0));
+      fileInfo?.classList.remove('hidden');
+      settingsArea?.classList.remove('hidden');
+      if (fileInput) fileInput.value = '';
+    }
+    dropZone?.addEventListener('click', () => fileInput?.click());
+    dropZone?.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary'); });
+    dropZone?.addEventListener('dragleave', () => dropZone.classList.remove('border-bae-primary'));
+    dropZone?.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-bae-primary');
+      if (e.dataTransfer?.files?.length) acceptFiles(e.dataTransfer.files);
+    });
+    fileInput?.addEventListener('change', () => { if (fileInput.files?.length) acceptFiles(fileInput.files); });
+
+    openBtn?.addEventListener('click', () => {
+      if (!files.length) return;
+      settingsArea?.classList.add('hidden');
+      errorArea?.classList.add('hidden');
+      progressArea?.classList.remove('hidden');
+      if (progressText) progressText.textContent = 'Reading archive...';
+      ensureWorker().postMessage({ type: 'load', files });
+      ensureLibs().catch(() => { /* rendering falls back to escaped text */ });
+    });
+
+    function resetAll() {
+      if (worker) { worker.terminate(); worker = null; }
+      Object.keys(assetUrls).forEach((k) => URL.revokeObjectURL(assetUrls[k]));
+      for (const k in assetUrls) delete assetUrls[k];
+      files = []; index = []; stats = null; listIds = null; snippets = {};
+      currentId = null; currentConvo = null; providerFilter = 'all'; shown = PAGE_SIZE;
+      if (fileInput) fileInput.value = '';
+      if (searchInput) searchInput.value = '';
+      fileInfo?.classList.add('hidden');
+      settingsArea?.classList.add('hidden');
+      progressArea?.classList.add('hidden');
+      errorArea?.classList.add('hidden');
+      resultArea?.classList.add('hidden');
+      viewerBody?.classList.add('hidden');
+      viewerEmpty?.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    resetTop?.addEventListener('click', resetAll);
+
+    /* ── loaded: summary + list ── */
+    function onLoaded() {
+      progressArea?.classList.add('hidden');
+      resultArea?.classList.remove('hidden');
+      shown = PAGE_SIZE;
+      listIds = null;
+      currentId = null;
+      if (searchInput) searchInput.value = '';
+      if (searchStatus) searchStatus.textContent = '';
+
+      const provs = Object.keys(stats.providers || {});
+      let range = '';
+      let lo = Infinity, hi = -Infinity;
+      index.forEach((c) => {
+        const t = c.createTime || c.updateTime;
+        if (t) { if (t < lo) lo = t; if (t > hi) hi = t; }
+      });
+      if (isFinite(lo) && isFinite(hi)) range = dateLabel(lo) + ' → ' + dateLabel(hi);
+
+      const provLabel = provs.map((p) => (p === 'claude' ? 'Claude' : 'ChatGPT')).join(' + ') || '–';
+      if (summaryStrip) {
+        summaryStrip.innerHTML = [
+          ['Conversations', String(index.length)],
+          ['Messages', stats.msgTotal.toLocaleString()],
+          ['Date range', range || '–'],
+          ['Source', provLabel + (stats.assets ? '<span class="block text-[10px] font-normal text-bae-muted mt-0.5">' + stats.assets.toLocaleString() + ' media files</span>' : '')],
+        ].map(([label, val]) => `
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 text-center">
+            <p class="text-[10px] uppercase tracking-wide text-bae-muted font-semibold mb-1">${label}</p>
+            <p class="text-sm font-bold text-bae-ink leading-snug">${val}</p>
+          </div>`).join('');
+      }
+
+      if (warnArea && warnText) {
+        const warn = (stats.warnings || []).concat(stats.failed ? [stats.failed + ' conversation' + (stats.failed === 1 ? '' : 's') + ' could not be parsed and ' + (stats.failed === 1 ? 'was' : 'were') + ' skipped.'] : []);
+        if (warn.length) { warnText.textContent = warn.join(' '); warnArea.classList.remove('hidden'); }
+        else warnArea.classList.add('hidden');
+      }
+
+      if (providerChips) {
+        if (provs.length > 1) {
+          providerFilter = 'all';
+          providerChips.classList.remove('hidden');
+          providerChips.classList.add('flex');
+          providerChips.innerHTML = ['all', 'chatgpt', 'claude'].map((p) =>
+            `<button type="button" data-prov="${p}" class="prov-chip text-[11px] font-semibold px-2.5 py-1.5 rounded-full border transition-colors ${p === 'all' ? 'bg-bae-primary text-white border-bae-primary' : 'bg-bae-bg text-bae-ink border-bae-border'}">${p === 'all' ? 'All' : p === 'claude' ? 'Claude' : 'ChatGPT'}</button>`).join('');
+          providerChips.querySelectorAll('.prov-chip').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              providerFilter = (btn as HTMLElement).dataset.prov || 'all';
+              providerChips.querySelectorAll('.prov-chip').forEach((b) => {
+                const active = (b as HTMLElement).dataset.prov === providerFilter;
+                b.className = 'prov-chip text-[11px] font-semibold px-2.5 py-1.5 rounded-full border transition-colors ' + (active ? 'bg-bae-primary text-white border-bae-primary' : 'bg-bae-bg text-bae-ink border-bae-border');
+              });
+              shown = PAGE_SIZE;
+              renderList();
+            });
+          });
+        } else {
+          providerChips.classList.add('hidden');
+          providerChips.classList.remove('flex');
+        }
+      }
+
+      viewerBody?.classList.add('hidden');
+      viewerEmpty?.classList.remove('hidden');
+      renderList();
+    }
+
+    function visibleIndex(): any[] {
+      let list = listIds ? listIds.map((id) => index.find((c) => c.id === id)).filter(Boolean) : index.slice();
+      if (providerFilter !== 'all') list = list.filter((c) => c.provider === providerFilter);
+      const mode = sortSelect?.value || 'new';
+      if (!listIds || mode !== 'new') {
+        list.sort((a, b) => {
+          if (mode === 'old') return (a.updateTime || a.createTime || 0) - (b.updateTime || b.createTime || 0);
+          if (mode === 'az') return a.title.localeCompare(b.title);
+          if (mode === 'msgs') return b.msgCount - a.msgCount;
+          return (b.updateTime || b.createTime || 0) - (a.updateTime || a.createTime || 0);
+        });
+      }
+      return list;
+    }
+
+    function renderList() {
+      if (!convoList) return;
+      const list = visibleIndex();
+      const slice = list.slice(0, shown);
+      convoList.innerHTML = slice.map((c) => `
+        <button type="button" data-id="${escapeHtml(c.id)}" class="convo-item w-full text-left px-4 py-3 border-b border-bae-border-light hover:bg-bae-primary-soft/30 transition-colors ${c.id === currentId ? 'bg-bae-primary-soft/50' : ''}">
+          <p class="text-xs font-semibold text-bae-ink truncate">${escapeHtml(c.title)}</p>
+          <p class="text-[10px] text-bae-muted mt-0.5">${providerBadge(c.provider)} <span class="ml-1">${escapeHtml(dateLabel(c.updateTime || c.createTime))}</span> · ${c.msgCount} msg${c.msgCount === 1 ? '' : 's'}</p>
+          ${snippets[c.id] ? '<p class="text-[10px] text-bae-muted mt-1 line-clamp-2">' + escapeHtml(snippets[c.id]) + '</p>' : ''}
+        </button>`).join('') || '<p class="text-xs text-bae-muted p-4">No conversations match.</p>';
+      convoList.querySelectorAll('.convo-item').forEach((btn) => {
+        btn.addEventListener('click', () => openConversation((btn as HTMLElement).dataset.id || ''));
+      });
+      if (moreBtn) {
+        if (list.length > shown) {
+          moreBtn.textContent = 'Show more (' + (list.length - shown) + ' remaining)';
+          moreBtn.classList.remove('hidden');
+        } else moreBtn.classList.add('hidden');
+      }
+    }
+    moreBtn?.addEventListener('click', () => { shown += PAGE_SIZE; renderList(); });
+    sortSelect?.addEventListener('change', () => { shown = PAGE_SIZE; renderList(); });
+
+    /* ── search ── */
+    let searchTimer = 0;
+    searchInput?.addEventListener('input', () => {
+      window.clearTimeout(searchTimer);
+      searchTimer = window.setTimeout(() => {
+        const q = searchInput.value.trim();
+        if (!q) {
+          listIds = null; snippets = {}; shown = PAGE_SIZE;
+          if (searchStatus) searchStatus.textContent = '';
+          renderList();
+          return;
+        }
+        searchReq++;
+        ensureWorker().postMessage({ type: 'search', query: q, reqId: searchReq });
+      }, 300);
+    });
+
+    /* ── conversation rendering ── */
+    function openConversation(id: string) {
+      if (!id) return;
+      currentId = id;
+      showAllMsgs = false;
+      ensureWorker().postMessage({ type: 'get', id });
+      renderList();
+      if (window.innerWidth < 768) {
+        listPane?.classList.add('hidden');
+        viewerPane?.classList.remove('hidden');
+      }
+    }
+    backBtn?.addEventListener('click', () => {
+      listPane?.classList.remove('hidden');
+      viewerPane?.classList.add('hidden');
+    });
+
+    function mdToHtml(text: string): string {
+      const w = window as any;
+      if (libsLoaded && w.marked && w.DOMPurify) {
+        try {
+          const html = w.marked.parse(text, { breaks: true, gfm: true, async: false });
+          return w.DOMPurify.sanitize(html);
+        } catch (e) { /* fall through */ }
+      }
+      return '<p>' + escapeHtml(text).replace(/\n/g, '<br>') + '</p>';
+    }
+
+    function blockHtml(blk: any, role: string): string {
+      if (blk.kind === 'text') {
+        if (role === 'user' || role === 'context') return '<div class="whitespace-pre-wrap break-words">' + escapeHtml(blk.text) + '</div>';
+        return '<div class="chat-md break-words">' + mdToHtml(blk.text) + '</div>';
+      }
+      if (blk.kind === 'code') {
+        return '<pre class="bg-bae-ink text-white text-[11px] rounded-bae-sm p-3 overflow-x-auto"><code>' + escapeHtml(blk.text) + '</code></pre>';
+      }
+      if (blk.kind === 'quote') {
+        return '<blockquote class="border-l-2 border-bae-primary pl-3 text-bae-muted text-xs">' + (blk.label ? '<strong>' + escapeHtml(blk.label) + '</strong>: ' : '') + escapeHtml(blk.text) + '</blockquote>';
+      }
+      if (blk.kind === 'image') {
+        return '<div class="img-slot my-2" data-pointer="' + escapeHtml(blk.pointer) + '"><div class="text-[10px] text-bae-muted bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 inline-block">Loading image from your archive...</div></div>';
+      }
+      if (blk.kind === 'audio') {
+        return '<div class="audio-slot my-2" data-pointer="' + escapeHtml(blk.pointer) + '"><div class="text-[10px] text-bae-muted bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 inline-block">🎤 Loading voice clip...</div></div>';
+      }
+      if (blk.kind === 'document') {
+        return '<div class="border border-bae-border rounded-bae-sm p-3 bg-bae-bg"><p class="text-[10px] font-bold uppercase tracking-wide text-bae-muted mb-1.5">Canvas · ' + escapeHtml(blk.label || 'Document') + '</p><div class="chat-md text-xs">' + mdToHtml(blk.text) + '</div></div>';
+      }
+      if (blk.kind === 'context') {
+        return '<details class="text-xs"><summary class="cursor-pointer font-semibold text-bae-muted">Custom instructions</summary><div class="whitespace-pre-wrap mt-2 text-bae-muted">' + escapeHtml(blk.text) + '</div></details>';
+      }
+      if (blk.kind === 'attachment') {
+        return '<details class="text-xs border border-bae-border rounded-bae-sm p-2 bg-bae-bg"><summary class="cursor-pointer font-semibold text-bae-ink">📎 ' + escapeHtml(blk.name) + '</summary>' + (blk.text ? '<pre class="whitespace-pre-wrap mt-2 text-[11px] text-bae-muted max-h-60 overflow-y-auto">' + escapeHtml(blk.text) + '</pre>' : '<p class="mt-2 text-bae-muted">No text content in the export.</p>') + '</details>';
+      }
+      if (blk.kind === 'file') {
+        return '<p class="text-[11px] text-bae-muted bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 inline-block">📄 ' + escapeHtml(blk.name) + ' (binary not included in Claude exports)</p>';
+      }
+      return '';
+    }
+
+    function timeLabel(ms: number | null): string {
+      if (!ms) return '';
+      const d = new Date(ms);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderConversation() {
+      const c = currentConvo;
+      if (!c) return;
+      viewerEmpty?.classList.add('hidden');
+      viewerBody?.classList.remove('hidden');
+      if (viewerTitle) viewerTitle.textContent = c.title;
+      if (viewerMeta) {
+        const bits = [c.provider === 'claude' ? 'Claude' : 'ChatGPT'];
+        if (c.model) bits.push(c.model);
+        if (c.createTime) bits.push('started ' + dateLabel(c.createTime));
+        bits.push(c.messages.length + ' messages');
+        viewerMeta.textContent = bits.join(' · ');
+      }
+      const total = c.messages.length;
+      const limit = showAllMsgs ? total : Math.min(total, MSG_PAGE);
+      let html = '';
+      for (let i = 0; i < limit; i++) {
+        const m = c.messages[i];
+        const isUser = m.role === 'user';
+        const label = m.role === 'context' ? 'Context' : isUser ? 'You' : c.provider === 'claude' ? 'Claude' : 'ChatGPT';
+        html += `
+          <div class="mb-4 ${isUser ? 'pl-4 md:pl-10' : 'pr-0 md:pr-6'}">
+            <div class="${isUser ? 'bg-bae-primary-soft/40' : 'bg-bae-bg'} border border-bae-border rounded-bae p-3 md:p-4">
+              <p class="text-[10px] font-bold uppercase tracking-wide ${isUser ? 'text-bae-primary' : 'text-bae-muted'} mb-1.5">${label}${m.time ? '<span class="font-normal normal-case tracking-normal"> · ' + escapeHtml(timeLabel(m.time)) + '</span>' : ''}</p>
+              <div class="text-sm text-bae-ink space-y-2">${m.blocks.map((b: any) => blockHtml(b, m.role)).join('')}</div>
+            </div>
+          </div>`;
+      }
+      if (messagesEl) {
+        messagesEl.innerHTML = html;
+        messagesEl.scrollTop = 0;
+        messagesEl.querySelectorAll('a').forEach((a) => { a.setAttribute('target', '_blank'); a.setAttribute('rel', 'noopener noreferrer'); });
+        hydrateAssets();
+      }
+      if (allMsgsBtn) {
+        if (total > limit) {
+          allMsgsBtn.textContent = 'Show all ' + total + ' messages';
+          allMsgsBtn.classList.remove('hidden');
+        } else allMsgsBtn.classList.add('hidden');
+      }
+      if (exportNote) exportNote.classList.add('hidden');
+    }
+    allMsgsBtn?.addEventListener('click', () => { showAllMsgs = true; renderConversation(); });
+
+    function hydrateAssets() {
+      messagesEl?.querySelectorAll('.img-slot').forEach((slot) => {
+        const pointer = (slot as HTMLElement).dataset.pointer || '';
+        requestAsset(pointer).then((url) => {
+          if (url) slot.innerHTML = '<img src="' + url + '" alt="Image from your chat archive" class="max-w-full rounded-bae-sm border border-bae-border" loading="lazy" style="max-height:420px" />';
+          else slot.innerHTML = '<div class="text-[10px] text-bae-muted bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 inline-block">🖼 Image not included in this export (a known export quirk); the chat text is unaffected.</div>';
+        });
+      });
+      messagesEl?.querySelectorAll('.audio-slot').forEach((slot) => {
+        const pointer = (slot as HTMLElement).dataset.pointer || '';
+        requestAsset(pointer).then((url) => {
+          if (url) slot.innerHTML = '<audio controls src="' + url + '" class="max-w-full"></audio>';
+          else slot.innerHTML = '<div class="text-[10px] text-bae-muted bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 inline-block">🎤 Voice clip not included in this export.</div>';
+        });
+      });
+    }
+
+    /* ── exports ── */
+    function noConvo(): boolean {
+      if (!currentConvo) { if (exportNote) { exportNote.textContent = 'Open a conversation first.'; exportNote.classList.remove('hidden'); } return true; }
+      return false;
+    }
+    mdBtn?.addEventListener('click', () => {
+      if (noConvo()) return;
+      const md = P.toMarkdown(currentConvo);
+      download(new Blob([md], { type: 'text/markdown' }), P.safeFileName(currentConvo.title, {}) + '.md');
+    });
+    copyBtn?.addEventListener('click', () => {
+      if (noConvo()) return;
+      navigator.clipboard.writeText(P.toMarkdown(currentConvo)).then(() => {
+        if (exportNote) { exportNote.textContent = 'Copied to clipboard as Markdown.'; exportNote.classList.remove('hidden'); }
+      }).catch(() => {
+        if (exportNote) { exportNote.textContent = 'Clipboard unavailable; use the Markdown download instead.'; exportNote.classList.remove('hidden'); }
+      });
+    });
+
+    function printableHtml(c: any, opts: { images: boolean }): string {
+      const label = (role: string) => role === 'context' ? 'Context' : role === 'user' ? 'You' : c.provider === 'claude' ? 'Claude' : 'ChatGPT';
+      let body = '<h1 style="font-size:20px;margin:0 0 4px">' + escapeHtml(c.title) + '</h1>';
+      const bits = [c.provider === 'claude' ? 'Claude' : 'ChatGPT'];
+      if (c.model) bits.push(c.model);
+      if (c.createTime) bits.push('started ' + dateLabel(c.createTime));
+      body += '<p style="font-size:11px;color:#6b6b80;margin:0 0 16px">' + escapeHtml(bits.join(' · ')) + ' · exported with Best Answer Hub AI Chat Archive Viewer</p>';
+      for (const m of c.messages) {
+        body += '<div style="margin:0 0 12px;padding:10px 12px;border:1px solid #e8e8f0;border-radius:8px;page-break-inside:avoid;background:' + (m.role === 'user' ? '#f4f4fd' : '#fafaf8') + '">';
+        body += '<p style="font-size:10px;font-weight:bold;text-transform:uppercase;color:' + (m.role === 'user' ? '#6366f1' : '#6b6b80') + ';margin:0 0 6px">' + label(m.role) + (m.time ? ' · ' + escapeHtml(timeLabel(m.time)) : '') + '</p>';
+        for (const b of m.blocks) {
+          if (b.kind === 'text' || b.kind === 'context') body += '<div style="font-size:12px;white-space:pre-wrap;word-break:break-word">' + escapeHtml(b.text) + '</div>';
+          else if (b.kind === 'code') body += '<pre style="font-size:10px;background:#0f0f1a;color:#fff;padding:8px;border-radius:6px;white-space:pre-wrap;word-break:break-word">' + escapeHtml(b.text) + '</pre>';
+          else if (b.kind === 'quote') body += '<div style="font-size:11px;color:#6b6b80;border-left:2px solid #6366f1;padding-left:8px">' + (b.label ? '<strong>' + escapeHtml(b.label) + '</strong>: ' : '') + escapeHtml(b.text) + '</div>';
+          else if (b.kind === 'image') {
+            const url = opts.images ? assetUrls[b.pointer] : null;
+            body += url ? '<img src="' + url + '" style="max-width:100%;max-height:380px;border-radius:6px;margin:4px 0" />' : '<p style="font-size:10px;color:#6b6b80">[Image: ' + escapeHtml(P.assetKeyFromPointer(b.pointer) || 'in export') + ']</p>';
+          }
+          else if (b.kind === 'audio') body += '<p style="font-size:10px;color:#6b6b80">[Voice clip]</p>';
+          else if (b.kind === 'document') body += '<div style="border:1px solid #e8e8f0;border-radius:6px;padding:8px;margin:4px 0"><p style="font-size:10px;font-weight:bold;margin:0 0 4px">Canvas: ' + escapeHtml(b.label || 'Document') + '</p><div style="font-size:11px;white-space:pre-wrap;word-break:break-word">' + escapeHtml(b.text) + '</div></div>';
+          else if (b.kind === 'attachment') body += '<div style="font-size:11px"><strong>Attachment: ' + escapeHtml(b.name) + '</strong>' + (b.text ? '<pre style="font-size:10px;white-space:pre-wrap;word-break:break-word;background:#fafaf8;border:1px solid #e8e8f0;padding:6px;border-radius:6px">' + escapeHtml(b.text.length > 4000 ? b.text.slice(0, 4000) + '\n… (truncated in export view)' : b.text) + '</pre>' : '') + '</div>';
+          else if (b.kind === 'file') body += '<p style="font-size:10px;color:#6b6b80">[File: ' + escapeHtml(b.name) + ' (binary not included in the export)]</p>';
+        }
+        body += '</div>';
+      }
+      return body;
+    }
+
+    wordBtn?.addEventListener('click', () => {
+      if (noConvo()) return;
+      const html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>' + escapeHtml(currentConvo.title) + '</title></head><body style="font-family:Calibri,Arial,sans-serif">' + printableHtml(currentConvo, { images: false }) + '</body></html>';
+      download(new Blob(['﻿' + html], { type: 'application/msword' }), P.safeFileName(currentConvo.title, {}) + '.doc');
+      if (exportNote) { exportNote.textContent = 'Word export saves as .doc; images are referenced by name (PDF keeps them inline).'; exportNote.classList.remove('hidden'); }
+    });
+
+    pdfBtn?.addEventListener('click', async () => {
+      if (noConvo()) return;
+      const c = currentConvo;
+      if (c.messages.length > 400) {
+        if (exportNote) { exportNote.textContent = 'This chat has ' + c.messages.length + ' messages; browser PDF rendering may struggle. Markdown or Word export is instant at any size.'; exportNote.classList.remove('hidden'); }
+      }
+      if (exportNote && c.messages.length <= 400) { exportNote.textContent = 'Building PDF locally...'; exportNote.classList.remove('hidden'); }
+      try {
+        await loadScript('/html2pdf.bundle.min.js');
+        // Pre-load every image in the chat so the PDF includes them.
+        const pointers: string[] = [];
+        c.messages.forEach((m: any) => m.blocks.forEach((b: any) => { if (b.kind === 'image') pointers.push(b.pointer); }));
+        await Promise.all(pointers.slice(0, 40).map((p) => requestAsset(p)));
+        // html2pdf gotcha: element must be in normal flow on document.body.
+        const holder = document.createElement('div');
+        holder.style.width = '190mm';
+        holder.style.background = '#ffffff';
+        holder.style.padding = '0';
+        holder.innerHTML = printableHtml(c, { images: true });
+        document.body.appendChild(holder);
+        await (window as any).html2pdf().set({
+          margin: [10, 10, 12, 10],
+          filename: P.safeFileName(c.title, {}) + '.pdf',
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: false, logging: false },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'] },
+        }).from(holder).save();
+        holder.remove();
+        if (exportNote) { exportNote.textContent = 'PDF saved.'; exportNote.classList.remove('hidden'); }
+      } catch (err: any) {
+        if (exportNote) { exportNote.textContent = 'PDF failed (' + (err?.message || 'render error') + '). Markdown and Word exports always work; try those.'; exportNote.classList.remove('hidden'); }
+      }
+    });
+
+    exportAllBtn?.addEventListener('click', () => {
+      if (!index.length) return;
+      progressArea?.classList.remove('hidden');
+      if (progressText) progressText.textContent = 'Building Markdown ZIP...';
+      ensureWorker().postMessage({ type: 'export-all' });
+    });
+  })();
+</script>
+
+<style is:global>
+  /* Injected at runtime via innerHTML, so these must be global (no Astro scoping attr). */
+  .chat-md p { margin: 0 0 .5rem; }
+  .chat-md p:last-child { margin-bottom: 0; }
+  .chat-md ul, .chat-md ol { margin: 0 0 .5rem 1.1rem; list-style: disc; }
+  .chat-md ol { list-style: decimal; }
+  .chat-md li { margin-bottom: .15rem; }
+  .chat-md pre { background: #0f0f1a; color: #fff; font-size: 11px; border-radius: 8px; padding: .65rem; overflow-x: auto; margin: 0 0 .5rem; }
+  .chat-md code { font-size: .85em; background: rgba(99, 102, 241, .08); border-radius: 4px; padding: .05rem .3rem; }
+  .chat-md pre code { background: transparent; padding: 0; }
+  .chat-md h1, .chat-md h2, .chat-md h3, .chat-md h4 { font-weight: 700; margin: .6rem 0 .3rem; font-size: 1em; }
+  .chat-md h1 { font-size: 1.15em; }
+  .chat-md h2 { font-size: 1.08em; }
+  .chat-md table { border-collapse: collapse; font-size: .85em; margin: 0 0 .5rem; display: table; white-space: normal; overflow-x: auto; }
+  .chat-md th, .chat-md td { border: 1px solid #e8e8f0; padding: .25rem .5rem; }
+  .chat-md blockquote { border-left: 2px solid #6366f1; padding-left: .6rem; color: #6b6b80; margin: 0 0 .5rem; }
+  .chat-md a { color: #6366f1; text-decoration: underline; }
+  .chat-md hr { border: 0; border-top: 1px solid #e8e8f0; margin: .6rem 0; }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+</style>

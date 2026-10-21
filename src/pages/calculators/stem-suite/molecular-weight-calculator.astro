@@ -1,0 +1,647 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ToolFAQ from '../../../components/tools/ToolFAQ.astro';
+import ToolHowItWorks from '../../../components/tools/ToolHowItWorks.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+import HowToSchema from '../../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Molecular Weight Calculator?',
+    a: 'The Best Answer Hub Molecular Weight Calculator is a free, browser-based chemistry tool that calculates the molar mass of any chemical formula instantly. Enter a formula like H₂O, Ca(NO₃)₂, or CuSO₄·5H₂O and see a step-by-step element breakdown with percent composition. The calculator also includes a built-in grams-to-moles converter. All calculations run entirely in your browser, with no data uploaded to any server and no signup required.',
+  },
+  {
+    q: 'Is molecular weight the same as molar mass?',
+    a: 'Yes. In practice, molecular weight and molar mass refer to the same quantity and are used interchangeably in chemistry classrooms and textbooks. Strictly speaking, molecular weight is a dimensionless ratio relative to one-twelfth of a carbon-12 atom, while molar mass has units of grams per mole. Numerically, they are identical. For example, the molecular weight of water is 18.015 and its molar mass is 18.015 g/mol. The Best Answer Hub Molecular Weight Calculator returns the value in g/mol, which is the standard unit used in stoichiometry calculations and solution preparation.',
+  },
+  {
+    q: 'How do I calculate the molar mass of a compound using the calculator?',
+    a: 'Type the chemical formula into the input box and click Calculate. The Best Answer Hub Molecular Weight Calculator accepts standard notation such as H₂O, CO₂, C₆H₁₂O₆, and CaCl₂. It also handles parentheses for polyatomic ions like (NH₄)₂SO₄ and hydrate notation like CuSO₄·5H₂O. After clicking Calculate, the total molar mass appears at the top of the results panel, followed by a per-element breakdown table showing each element\'s symbol, atomic weight, atom count, total contribution, and percent composition.',
+  },
+  {
+    q: 'What is the molar mass of Ca(NO₃)₂ and how do I handle the parentheses?',
+    a: 'The molar mass of Ca(NO₃)₂ is 164.09 g/mol. Calcium contributes 40.08 g/mol. Inside the parentheses, one nitrogen contributes 14.01 g/mol and three oxygens contribute 3 × 16.00 = 48.00 g/mol, so one NO₃ group is 62.01 g/mol. The subscript 2 outside the parentheses means there are two NO₃ groups, so 2 × 62.01 = 124.01 g/mol. The total is 40.08 + 124.01 = 164.09 g/mol. The Best Answer Hub Molecular Weight Calculator automatically distributes the subscript across everything inside the parentheses and shows the per-group breakdown in the results table.',
+  },
+  {
+    q: 'How do I calculate the molar mass of a hydrate like CuSO₄·5H₂O?',
+    a: 'Calculate the anhydrous salt first, then add the water of crystallization separately. For CuSO₄·5H₂O, copper sulfate (CuSO₄) has a molar mass of 159.61 g/mol. Five water molecules (5 × H₂O) contribute 5 × 18.015 = 90.08 g/mol. The total is 159.61 + 90.08 = 249.69 g/mol. The dot in the formula does not mean multiply. It simply indicates that five distinct water molecules are trapped in the crystal lattice. The Best Answer Hub Molecular Weight Calculator recognizes hydrate notation automatically and displays the anhydrous mass, hydrate mass, and total separately.',
+  },
+  {
+    q: 'What is the difference between formula mass and molecular mass?',
+    a: 'Molecular mass refers to the mass of a discrete molecule made of covalently bonded atoms, such as H₂O or CO₂. Formula mass is the term used for ionic compounds that exist as crystal lattices rather than individual molecules, such as NaCl or CaCO₃. In both cases, the calculation method is the same: sum the atomic weights of all atoms in the formula unit. The Best Answer Hub Molecular Weight Calculator handles both molecular and ionic formulas. For NaCl, it returns 58.44 g/mol, which is technically the formula mass, though many textbooks and instructors use the terms interchangeably.',
+  },
+  {
+    q: 'How do I find the percent composition of each element in a compound?',
+    a: 'Percent composition is the mass contribution of each element divided by the total molar mass, multiplied by 100. For H₂O, hydrogen contributes 2 × 1.008 = 2.016 g/mol and oxygen contributes 16.00 g/mol, for a total of 18.016 g/mol. Hydrogen\'s percent composition is (2.016 ÷ 18.016) × 100 = 11.19%, and oxygen\'s is (16.00 ÷ 18.016) × 100 = 88.81%. The Best Answer Hub Molecular Weight Calculator computes percent composition automatically for every element and displays it in the breakdown table alongside each element\'s mass contribution.',
+  },
+  {
+    q: 'How do I convert grams to moles using the molar mass?',
+    a: 'Divide the mass in grams by the molar mass in g/mol. For example, 36.0 grams of H₂O with a molar mass of 18.016 g/mol equals 36.0 ÷ 18.016 = 2.00 moles. To convert moles back to grams, multiply the number of moles by the molar mass. The Best Answer Hub Molecular Weight Calculator includes a built-in converter that performs both calculations instantly. After calculating the molar mass, enter any mass in grams to see the equivalent moles, or enter moles to see the equivalent mass, with no second calculator needed.',
+  },
+  {
+    q: 'What is the molar mass of glucose (C₆H₁₂O₆)?',
+    a: 'The molar mass of glucose (C₆H₁₂O₆) is 180.16 g/mol. Carbon contributes 6 × 12.011 = 72.066 g/mol. Hydrogen contributes 12 × 1.008 = 12.096 g/mol. Oxygen contributes 6 × 15.999 = 95.994 g/mol. The sum is 72.066 + 12.096 + 95.994 = 180.156 g/mol, which rounds to 180.16 g/mol. This value is essential for biology and biochemistry problems involving cellular respiration, blood sugar measurements, and fermentation calculations.',
+  },
+  {
+    q: 'Why does the calculator require uppercase and lowercase letters in chemical formulas?',
+    a: 'Element symbols are case-sensitive because the periodic table uses capitalization to distinguish different elements. CO is carbon monoxide, while Co is cobalt. Na is sodium, but NA or na would not be recognized as valid element symbols. The Best Answer Hub Molecular Weight Calculator enforces correct capitalization to prevent silent errors. If you type \'nacl\' instead of \'NaCl\', the calculator shows a clear error message explaining that lowercase \'n\' and \'a\' are not valid element symbols, rather than producing a wrong answer quietly.',
+  },
+  {
+    q: 'Does the dot in CuSO₄·5H₂O mean multiply or add?',
+    a: 'The dot means add, not multiply. In CuSO₄·5H₂O, the dot indicates that five water molecules are physically trapped within the copper sulfate crystal lattice. These water molecules are called water of crystallization. To calculate the molar mass, add the mass of the anhydrous salt (CuSO₄ = 159.61 g/mol) to the mass of five water molecules (5 × 18.015 = 90.08 g/mol). The total is 249.69 g/mol. The Best Answer Hub Molecular Weight Calculator recognizes the dot notation automatically, labels the anhydrous and hydrate portions separately, and computes the total for you.',
+  },
+  {
+    q: 'Can I enter common names like \'water\' or \'copper sulfate\' instead of formulas?',
+    a: 'Yes. The Best Answer Hub Molecular Weight Calculator recognizes common chemical names and converts them to formulas automatically. Type \'water\' to get H₂O, \'salt\' to get NaCl, \'glucose\' to get C₆H₁₂O₆, \'vinegar\' to get CH₃COOH, or \'copper sulfate\' to get CuSO₄. The calculator also recognizes hydrates by common name, such as \'blue vitriol\' for CuSO₄·5H₂O and \'epsom salt\' for MgSO₄·7H₂O. A dropdown of recognized common names appears as you type.',
+  },
+  {
+    q: 'Why does the calculator show more decimal places than my textbook?',
+    a: 'The Best Answer Hub Molecular Weight Calculator uses atomic weights from the IUPAC periodic table, which are measured to high precision in laboratories around the world. Textbooks often round these values for simplicity, for example using 16.0 for oxygen instead of 15.999. The calculator shows the full-precision value because it is more accurate for research and lab work. For homework, rounding the final answer to match your instructor\'s preferred significant figures is usually acceptable. The calculator displays two decimal places for the total molar mass, which matches the precision used in most AP Chemistry and university courses.',
+  },
+  {
+    q: 'How do I calculate the molar mass of a compound with nested parentheses like Ba₃(PO₄)₂?',
+    a: 'Work from the innermost parentheses outward. For Ba₃(PO₄)₂, start with PO₄: phosphorus is 30.97 g/mol and four oxygens are 4 × 16.00 = 64.00 g/mol, so one PO₄ group is 94.97 g/mol. The subscript 2 outside means two PO₄ groups, contributing 2 × 94.97 = 189.94 g/mol. Three barium atoms contribute 3 × 137.33 = 411.99 g/mol. The total is 411.99 + 189.94 = 601.93 g/mol. The Best Answer Hub Molecular Weight Calculator handles nested parentheses automatically and shows the contribution of each group in the results table.',
+  },
+  {
+    q: 'Is the Best Answer Hub Molecular Weight Calculator free and private?',
+    a: 'Yes. The calculator is completely free with no usage limits, no signup, no email capture, and no premium tiers. Every calculation runs entirely in your browser using client-side JavaScript. No chemical formulas, mass values, or calculation inputs are uploaded, stored, or logged on any server. To verify this, disconnect from the internet after loading the page and the calculator will continue working perfectly. Sensitive lab data and homework formulas remain completely private.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your chemical formula', description: 'Type a formula like H₂O, Ca(NO₃)₂, or CuSO₄·5H₂O. You can also type common names like \'water\', \'salt\', or \'glucose\' and the calculator will recognize them automatically.' },
+  { title: 'View the element breakdown', description: 'The calculator displays the total molar mass in g/mol, followed by a per-element table showing atomic weights, atom counts, subtotals, and percent composition. Hydrates are split into anhydrous and water portions.' },
+  { title: 'Convert between grams and moles', description: 'Use the built-in converter to turn any mass in grams into moles, or any amount in moles into grams. The conversion uses the molar mass you just calculated, with no second tool needed.' },
+];
+
+const seo = {
+  title: 'Molecular Weight Calculator — Molar Mass + Breakdown (2026)',
+  description: 'Free molecular weight calculator with step-by-step element breakdown and percent composition. Handles hydrates and parentheses. No signup.',
+  url: '/calculators/stem-suite/molecular-weight-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'STEM Suite', url: '/calculators/stem-suite/' },
+    { name: 'Molecular Weight Calculator', url: '/calculators/stem-suite/molecular-weight-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated June 2026
+          </div>
+          <a href="/calculators/stem-suite/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            STEM Suite
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Molecular Weight Calculator:<br/>
+          <em class="italic text-bae-primary">Molar mass with element breakdown</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Calculate molar mass from any chemical formula instantly. Supports hydrates, nested parentheses, and common chemical names. See per-element breakdown, percent composition, and convert between grams and moles. All calculations run locally in your browser.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section class="py-6 md:py-8" aria-label="Molecular weight calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Formula Input -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Chemical Formula</h2>
+            <div class="flex flex-wrap items-end gap-3">
+              <div class="flex-1 min-w-[200px]">
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Formula or Common Name</label>
+                <input type="text" id="formula-input" list="common-names" placeholder="e.g. H2O, Ca(NO3)2, or water" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <datalist id="common-names">
+                  <option value="water">
+                  <option value="salt">
+                  <option value="sugar">
+                  <option value="glucose">
+                  <option value="ethanol">
+                  <option value="methane">
+                  <option value="ammonia">
+                  <option value="vinegar">
+                  <option value="baking soda">
+                  <option value="bleach">
+                  <option value="hydrogen peroxide">
+                  <option value="rust">
+                  <option value="limestone">
+                  <option value="chalk">
+                  <option value="quartz">
+                  <option value="dry ice">
+                  <option value="table salt">
+                  <option value="epsom salt">
+                  <option value="gypsum">
+                  <option value="copper sulfate">
+                  <option value="blue vitriol">
+                  <option value="alum">
+                  <option value="aspirin">
+                  <option value="caffeine">
+                  <option value="benzene">
+                  <option value="acetone">
+                  <option value="urea">
+                  <option value="sulfuric acid">
+                  <option value="hydrochloric acid">
+                  <option value="sodium hydroxide">
+                </datalist>
+              </div>
+              <button type="button" id="calc-btn" class="px-5 py-2 bg-bae-primary text-white text-sm font-semibold rounded-bae-sm hover:bg-bae-primary-dark transition-colors">Calculate</button>
+              <button type="button" id="clear-btn" class="px-5 py-2 bg-white text-bae-ink border border-bae-border text-sm font-semibold rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+            </div>
+            <div id="error-msg" class="hidden mt-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-bae-sm px-3 py-2"></div>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="text-xs text-bae-muted self-center">Try:</span>
+              <button type="button" class="quick-formula px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">H2O</button>
+              <button type="button" class="quick-formula px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">CO2</button>
+              <button type="button" class="quick-formula px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">C6H12O6</button>
+              <button type="button" class="quick-formula px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">Ca(NO3)2</button>
+              <button type="button" class="quick-formula px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">CuSO4·5H2O</button>
+              <button type="button" class="quick-formula px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors">(NH4)2SO4</button>
+            </div>
+          </div>
+
+          <!-- Converter -->
+          <div id="converter-card" class="hidden bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Grams ↔ Moles Converter</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Mass (grams)</label>
+                <input type="number" id="grams-input" step="any" placeholder="e.g. 36.0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <div id="grams-result" class="mt-2 text-sm text-bae-muted"></div>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Amount (moles)</label>
+                <input type="number" id="moles-input" step="any" placeholder="e.g. 2.0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <div id="moles-result" class="mt-2 text-sm text-bae-muted"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Results -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg" id="result-panel">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Results</h3>
+            <div id="result-content">
+              <p class="text-sm text-white/70">Enter a chemical formula to see molar mass, element breakdown, and percent composition.</p>
+            </div>
+          </div>
+          <button type="button" id="pdf-btn" class="hidden w-full bg-bae-ink hover:bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+            Download PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <ToolHowItWorks steps={steps} />
+
+  <!-- FAQ -->
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Scenarios -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people calculate with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases for the Best Answer Hub Molecular Weight Calculator.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Chemistry Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Check stoichiometry homework step by step</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Element breakdown • Percent composition</p>
+          <p class="text-sm text-bae-muted">Verify hand-calculated molar masses for ionic compounds and molecular formulas. The per-element table shows exactly where each number comes from, making it easy to catch arithmetic errors before submitting worksheets.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">AP Chemistry Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Master hydrate and polyatomic ion problems</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Hydrates • Parentheses • Common names</p>
+          <p class="text-sm text-bae-muted">Practice with hydrates like CuSO₄·5H₂O and polyatomic ions like Ca(NO₃)₂. The calculator separates anhydrous salt from water of crystallization and distributes subscripts across parentheses automatically.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Lab Technicians</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Prepare solutions with precise molar mass data</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Grams ↔ moles • High precision • No signup</p>
+          <p class="text-sm text-bae-muted">Calculate exact reagent masses for molarity and molality solutions. The built-in grams-to-moles converter eliminates the need for a second tool during solution prep. All data stays client-side for sensitive formulations.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Biology Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Calculate molecular weight for biochemistry</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Organic compounds • Common names • Percent composition</p>
+          <p class="text-sm text-bae-muted">Find the molar mass of glucose, amino acids, and organic molecules for metabolism and enzyme kinetics problems. Type common names like \'glucose\' or \'caffeine\' instead of memorizing formulas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <ToolRelatedCTA currentHref="/calculators/stem-suite/molecular-weight-calculator/" />
+
+  <!-- PDF Report (hidden) -->
+  <section class="hidden" id="pdf-report">
+    <div class="container max-w-page mx-auto px-6 py-8">
+      <div id="pdf-content" class="bg-white border border-bae-border rounded-bae p-8">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={steps} name="How to Use the Best Answer Hub Molecular Weight Calculator" />
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = id => document.getElementById(id);
+
+      const ATOMIC_WEIGHTS = {
+        H:1.008, He:4.003, Li:6.941, Be:9.012, B:10.811, C:12.011, N:14.007, O:15.999,
+        F:18.998, Ne:20.180, Na:22.990, Mg:24.305, Al:26.982, Si:28.086, P:30.974, S:32.065,
+        Cl:35.453, K:39.098, Ca:40.078, Sc:44.956, Ti:47.867, V:50.942, Cr:51.996, Mn:54.938,
+        Fe:55.845, Co:58.933, Ni:58.693, Cu:63.546, Zn:65.380, Ga:69.723, Ge:72.640, As:74.922,
+        Se:78.960, Br:79.904, Kr:83.798, Rb:85.468, Sr:87.620, Y:88.906, Zr:91.224, Nb:92.906,
+        Mo:95.960, Tc:98.000, Ru:101.070, Rh:102.906, Pd:106.420, Ag:107.868, Cd:112.411,
+        In:114.818, Sn:118.710, Sb:121.760, Te:127.600, I:126.904, Xe:131.293, Cs:132.905,
+        Ba:137.327, La:138.905, Ce:140.116, Pr:140.908, Nd:144.242, Pm:145.000, Sm:150.360,
+        Eu:151.964, Gd:157.250, Tb:158.925, Dy:162.500, Ho:164.930, Er:167.259, Tm:168.934,
+        Yb:173.054, Lu:174.967, Hf:178.490, Ta:180.948, W:183.840, Re:186.207, Os:190.230,
+        Ir:192.217, Pt:195.084, Au:196.967, Hg:200.590, Tl:204.383, Pb:207.200, Bi:208.980,
+        Po:209.000, At:210.000, Rn:222.000, Fr:223.000, Ra:226.000, Ac:227.000, Th:232.038,
+        Pa:231.036, U:238.029
+      };
+
+      const COMMON_NAMES = {
+        water:'H2O', salt:'NaCl', sugar:'C12H22O11', glucose:'C6H12O6', sucrose:'C12H22O11',
+        fructose:'C6H12O6', ethanol:'C2H5OH', alcohol:'C2H5OH', methane:'CH4', ammonia:'NH3',
+        vinegar:'CH3COOH', 'acetic acid':'CH3COOH', 'baking soda':'NaHCO3', 'sodium bicarbonate':'NaHCO3',
+        bleach:'NaClO', 'sodium hypochlorite':'NaClO', 'hydrogen peroxide':'H2O2', rust:'Fe2O3',
+        hematite:'Fe2O3', limestone:'CaCO3', 'calcium carbonate':'CaCO3', chalk:'CaCO3', marble:'CaCO3',
+        quartz:'SiO2', sand:'SiO2', silica:'SiO2', 'dry ice':'CO2', 'table salt':'NaCl',
+        'epsom salt':'MgSO4·7H2O', 'magnesium sulfate':'MgSO4', gypsum:'CaSO4·2H2O',
+        'plaster of paris':'CaSO4·0.5H2O', 'copper sulfate':'CuSO4', 'copper ii sulfate':'CuSO4',
+        'blue vitriol':'CuSO4·5H2O', alum:'KAl(SO4)2·12H2O', tnt:'C7H5N3O6', aspirin:'C9H8O4',
+        'acetylsalicylic acid':'C9H8O4', caffeine:'C8H10N4O2', benzene:'C6H6', toluene:'C7H8',
+        methanol:'CH3OH', acetone:'C3H6O', formaldehyde:'CH2O', urea:'CO(NH2)2', 'oxalic acid':'C2H2O4',
+        'citric acid':'C6H8O7', 'sulfuric acid':'H2SO4', 'nitric acid':'HNO3', 'hydrochloric acid':'HCl',
+        'phosphoric acid':'H3PO4', 'ammonium nitrate':'NH4NO3', 'potassium nitrate':'KNO3',
+        'sodium hydroxide':'NaOH', 'potassium hydroxide':'KOH', 'calcium hydroxide':'Ca(OH)2',
+        'slaked lime':'Ca(OH)2', 'sodium carbonate':'Na2CO3', 'washing soda':'Na2CO3',
+        'potassium permanganate':'KMnO4', 'sodium thiosulfate':'Na2S2O3', 'barium sulfate':'BaSO4',
+        'lead nitrate':'Pb(NO3)2', 'silver nitrate':'AgNO3', 'zinc sulfate':'ZnSO4',
+        'iron sulfate':'FeSO4', 'ferrous sulfate':'FeSO4', 'titanium dioxide':'TiO2',
+        'sodium chloride':'NaCl', 'potassium chloride':'KCl', 'calcium chloride':'CaCl2',
+        'magnesium chloride':'MgCl2', 'aluminum oxide':'Al2O3', 'silicon dioxide':'SiO2',
+        'carbon dioxide':'CO2', 'carbon monoxide':'CO', 'nitrogen dioxide':'NO2',
+        'sulfur dioxide':'SO2', 'sulfur trioxide':'SO3', 'nitrous oxide':'N2O',
+        'dinitrogen tetroxide':'N2O4', ozone:'O3', 'hydrogen sulfide':'H2S',
+        'ammonium sulfate':'(NH4)2SO4', 'ammonium chloride':'NH4Cl', 'calcium sulfate':'CaSO4',
+        'magnesium oxide':'MgO', 'sodium sulfate':'Na2SO4', 'potassium carbonate':'K2CO3',
+        'lithium carbonate':'Li2CO3', 'barium carbonate':'BaCO3', 'strontium carbonate':'SrCO3',
+        'zinc oxide':'ZnO', 'cadmium sulfide':'CdS', 'mercury oxide':'HgO', 'tin chloride':'SnCl2',
+        'stannous chloride':'SnCl2', 'lead oxide':'PbO', litharge:'PbO', borax:'Na2B4O7·10H2O',
+        'boric acid':'H3BO3', 'lactic acid':'C3H6O3', 'salicylic acid':'C7H6O3',
+        'tartaric acid':'C4H6O6', 'malic acid':'C4H6O5', 'oxalic acid dihydrate':'C2H2O4·2H2O',
+        edta:'C10H16N2O8', glycine:'C2H5NO2', alanine:'C3H7NO2'
+      };
+
+      let lastMolarMass = 0;
+      let lastFormula = '';
+      let lastResult = null;
+
+      function escapeHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+
+      function parseFormula(input) {
+        const raw = input.trim();
+        const lower = raw.toLowerCase();
+        if (COMMON_NAMES[lower]) {
+          const resolved = COMMON_NAMES[lower];
+          const result = parseMolecule(resolved);
+          return { formula: resolved, commonName: raw, isCommonName: true, ...result };
+        }
+        const result = parseMolecule(raw);
+        return { formula: raw, ...result };
+      }
+
+      function parseMolecule(str) {
+        const hydrateMatch = str.match(/^(.+?)\s*[·\.*]\s*(\d*)\s*[Hh]2[Oo]$/);
+        let mainStr = str;
+        let hydrateCount = 0;
+        let hasHydrate = false;
+
+        if (hydrateMatch) {
+          mainStr = hydrateMatch[1].trim();
+          hydrateCount = parseInt(hydrateMatch[2] || '1', 10);
+          hasHydrate = true;
+        }
+
+        const anhydrousElements = {};
+        parseGroup(mainStr, 1, anhydrousElements);
+
+        const totalElements = {};
+        for (const k in anhydrousElements) totalElements[k] = anhydrousElements[k];
+        if (hasHydrate) {
+          parseGroup('H2O', hydrateCount, totalElements);
+        }
+
+        return { elements: totalElements, anhydrousElements, hasHydrate, hydrateCount };
+      }
+
+      function parseGroup(str, multiplier, elements) {
+        let i = 0;
+        while (i < str.length) {
+          const ch = str[i];
+          if (ch === '(' || ch === '[') {
+            const close = ch === '(' ? ')' : ']';
+            let depth = 1;
+            let j = i + 1;
+            while (j < str.length && depth > 0) {
+              if (str[j] === ch) depth++;
+              else if (str[j] === close) depth--;
+              j++;
+            }
+            const inner = str.slice(i + 1, j - 1);
+            let num = 0;
+            let k = j;
+            while (k < str.length && /\d/.test(str[k])) {
+              num = num * 10 + parseInt(str[k]);
+              k++;
+            }
+            if (num === 0) num = 1;
+            parseGroup(inner, multiplier * num, elements);
+            i = k;
+          } else if (/[A-Z]/.test(ch)) {
+            let symbol = ch;
+            let j = i + 1;
+            if (j < str.length && /[a-z]/.test(str[j])) {
+              symbol += str[j];
+              j++;
+            }
+            if (!ATOMIC_WEIGHTS[symbol]) {
+              throw new Error('Unknown element symbol: ' + symbol + '. Check capitalization. Na is sodium, but NA is not valid.');
+            }
+            let num = 0;
+            let k = j;
+            while (k < str.length && /\d/.test(str[k])) {
+              num = num * 10 + parseInt(str[k]);
+              k++;
+            }
+            if (num === 0) num = 1;
+            elements[symbol] = (elements[symbol] || 0) + multiplier * num;
+            i = k;
+          } else if (/\s/.test(ch) || ch === '-') {
+            i++;
+          } else {
+            throw new Error('Unexpected character: ' + ch);
+          }
+        }
+      }
+
+      function calculate() {
+        hideError();
+        const input = $('formula-input').value.trim();
+        if (!input) return;
+
+        let parsed;
+        try {
+          parsed = parseFormula(input);
+        } catch (e) {
+          showError(e.message);
+          return;
+        }
+
+        const elements = parsed.elements;
+        let total = 0;
+        for (const sym in elements) {
+          total += ATOMIC_WEIGHTS[sym] * elements[sym];
+        }
+
+        let anhydrousMass = 0;
+        let hydrateMass = 0;
+        if (parsed.hasHydrate) {
+          for (const sym in parsed.anhydrousElements) {
+            anhydrousMass += ATOMIC_WEIGHTS[sym] * parsed.anhydrousElements[sym];
+          }
+          hydrateMass = parsed.hydrateCount * (ATOMIC_WEIGHTS.H * 2 + ATOMIC_WEIGHTS.O);
+        }
+
+        const breakdown = Object.entries(elements).map(([symbol, count]) => {
+          const weight = ATOMIC_WEIGHTS[symbol];
+          const subtotal = weight * count;
+          const percent = (subtotal / total) * 100;
+          return { symbol, count, weight, subtotal, percent };
+        }).sort((a, b) => b.subtotal - a.subtotal);
+
+        lastMolarMass = total;
+        lastFormula = parsed.formula;
+        lastResult = { ...parsed, total, breakdown, anhydrousMass, hydrateMass };
+
+        renderResult(lastResult);
+        updateURL(parsed.formula);
+        $('converter-card').classList.remove('hidden');
+        $('pdf-btn').classList.remove('hidden');
+      }
+
+      function renderResult(result) {
+        let html = '';
+        if (result.commonName) {
+          html += '<div class="text-xs text-white/50 mb-2">Recognized as ' + escapeHtml(result.commonName) + '</div>';
+        }
+        html += '<div class="text-sm text-white/50 mb-1">Formula</div>';
+        html += '<div class="text-lg font-semibold mb-4">' + escapeHtml(result.formula) + '</div>';
+        html += '<div class="text-3xl font-bold font-serif mb-1">' + result.total.toFixed(2) + ' <span class="text-lg font-normal text-white/70">g/mol</span></div>';
+
+        if (result.hasHydrate) {
+          html += '<div class="mt-3 space-y-1 text-sm">';
+          html += '<div class="flex justify-between"><span class="text-white/50">Anhydrous</span><span class="font-medium">' + result.anhydrousMass.toFixed(2) + ' g/mol</span></div>';
+          html += '<div class="flex justify-between"><span class="text-white/50">Water (' + result.hydrateCount + ' H₂O)</span><span class="font-medium">' + result.hydrateMass.toFixed(2) + ' g/mol</span></div>';
+          html += '</div>';
+        }
+
+        html += '<div class="border-t border-white/10 pt-3 mt-3">';
+        html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Element Breakdown</div>';
+        html += '<table class="w-full text-sm">';
+        html += '<thead><tr class="text-white/50 text-xs"><th class="text-left py-1">Element</th><th class="text-right py-1">Mass</th><th class="text-right py-1">%</th></tr></thead>';
+        html += '<tbody>';
+        for (const el of result.breakdown) {
+          html += '<tr>';
+          html += '<td class="py-1 text-white/80">' + escapeHtml(el.symbol) + ' <span class="text-white/40">×' + el.count + '</span></td>';
+          html += '<td class="py-1 text-right text-white/80">' + el.subtotal.toFixed(2) + '</td>';
+          html += '<td class="py-1 text-right text-bae-primary font-medium">' + el.percent.toFixed(1) + '%</td>';
+          html += '</tr>';
+        }
+        html += '</tbody></table>';
+        html += '</div>';
+
+        $('result-content').innerHTML = html;
+      }
+
+      function renderPDFContent(result) {
+        let html = '<div style="font-family:sans-serif;color:#1a1a1a;">';
+        html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">';
+        html += '<div style="width:40px;height:40px;border-radius:10px;background:#0f0f1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;font-family:Georgia,serif;">B<span style=\"color:#8b5cf6;\">.</span></div>';
+        html += '<div><div style="font-size:18px;font-weight:bold;">Best Answer Hub</div><div style="font-size:13px;color:#666;">Molecular Weight Report</div></div>';
+        html += '</div>';
+        html += '<h1 style="font-size:22px;font-weight:bold;margin-bottom:8px;">Molecular Weight Calculation</h1>';
+        if (result.commonName) {
+          html += '<p style="color:#666;margin-bottom:4px;">Common name: ' + escapeHtml(result.commonName) + '</p>';
+        }
+        html += '<p style="color:#666;margin-bottom:16px;">Formula: ' + escapeHtml(result.formula) + '</p>';
+        html += '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:20px;">';
+        html += '<div style="font-size:28px;font-weight:bold;color:#1a1a1a;">' + result.total.toFixed(2) + ' <span style="font-size:16px;font-weight:normal;color:#666;">g/mol</span></div>';
+        if (result.hasHydrate) {
+          html += '<div style="margin-top:8px;font-size:13px;color:#666;">';
+          html += 'Anhydrous: ' + result.anhydrousMass.toFixed(2) + ' g/mol &nbsp;|&nbsp; ';
+          html += 'Water (' + result.hydrateCount + ' H₂O): ' + result.hydrateMass.toFixed(2) + ' g/mol';
+          html += '</div>';
+        }
+        html += '</div>';
+        html += '<h2 style="font-size:16px;font-weight:bold;margin-bottom:12px;">Element Breakdown</h2>';
+        html += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+        html += '<thead><tr style="border-bottom:2px solid #e2e8f0;">';
+        html += '<th style="padding:8px 6px;text-align:left;white-space:nowrap;">Element</th>';
+        html += '<th style="padding:8px 6px;text-align:right;white-space:nowrap;">Count</th>';
+        html += '<th style="padding:8px 6px;text-align:right;white-space:nowrap;">Atomic Wt.</th>';
+        html += '<th style="padding:8px 6px;text-align:right;white-space:nowrap;">Subtotal</th>';
+        html += '<th style="padding:8px 6px;text-align:right;white-space:nowrap;">%</th>';
+        html += '</tr></thead><tbody>';
+        for (const el of result.breakdown) {
+          html += '<tr style="border-bottom:1px solid #e2e8f0;">';
+          html += '<td style="padding:6px;text-align:left;">' + escapeHtml(el.symbol) + '</td>';
+          html += '<td style="padding:6px;text-align:right;">' + el.count + '</td>';
+          html += '<td style="padding:6px;text-align:right;">' + el.weight.toFixed(3) + '</td>';
+          html += '<td style="padding:6px;text-align:right;">' + el.subtotal.toFixed(2) + '</td>';
+          html += '<td style="padding:6px;text-align:right;font-weight:600;color:#6366f1;">' + el.percent.toFixed(1) + '%</td>';
+          html += '</tr>';
+        }
+        html += '</tbody></table>';
+        html += '<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:11px;color:#999;">';
+        html += 'Report generated by Best Answer Hub Molecular Weight Calculator. Atomic weights from IUPAC periodic table.';
+        html += '</div>';
+        html += '</div>';
+        return html;
+      }
+
+      function updateConverter() {
+        if (lastMolarMass <= 0) return;
+        const grams = parseFloat($('grams-input').value);
+        const moles = parseFloat($('moles-input').value);
+        if (!isNaN(grams) && grams !== 0) {
+          $('grams-result').textContent = (grams / lastMolarMass).toFixed(4) + ' moles';
+        } else {
+          $('grams-result').textContent = '';
+        }
+        if (!isNaN(moles) && moles !== 0) {
+          $('moles-result').textContent = (moles * lastMolarMass).toFixed(4) + ' grams';
+        } else {
+          $('moles-result').textContent = '';
+        }
+      }
+
+      function updateURL(formula) {
+        const url = new URL(window.location.href);
+        if (formula) {
+          url.searchParams.set('formula', formula);
+        } else {
+          url.searchParams.delete('formula');
+        }
+        history.replaceState({}, '', url);
+      }
+
+      function loadFromURL() {
+        const url = new URL(window.location.href);
+        const formula = url.searchParams.get('formula');
+        if (formula) {
+          $('formula-input').value = formula;
+          calculate();
+        }
+      }
+
+      async function exportPDF() {
+        if (typeof html2pdf === 'undefined' || !lastResult) return;
+        const btn = $('pdf-btn');
+        const orig = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const report = document.createElement('div');
+        report.style.cssText = 'width:210mm;padding:20px;box-sizing:border-box;background:#fff;color:#1a1a1a;font-family:sans-serif;';
+        report.innerHTML = renderPDFContent(lastResult);
+        document.body.appendChild(report);
+
+        await html2pdf().set({
+          margin: 0,
+          filename: 'molecular-weight-report.pdf',
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, scrollX: 0, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(report).save();
+
+        document.body.removeChild(report);
+        btn.textContent = orig;
+        btn.disabled = false;
+      }
+
+      function showError(msg) {
+        const el = $('error-msg');
+        el.textContent = msg;
+        el.classList.remove('hidden');
+      }
+
+      function hideError() {
+        $('error-msg').classList.add('hidden');
+      }
+
+      $('calc-btn').addEventListener('click', calculate);
+      $('clear-btn').addEventListener('click', () => {
+        $('formula-input').value = '';
+        $('result-content').innerHTML = '<p class="text-sm text-white/70">Enter a chemical formula to see molar mass, element breakdown, and percent composition.</p>';
+        $('converter-card').classList.add('hidden');
+        $('pdf-btn').classList.add('hidden');
+        $('grams-input').value = '';
+        $('moles-input').value = '';
+        $('grams-result').textContent = '';
+        $('moles-result').textContent = '';
+        hideError();
+        lastMolarMass = 0;
+        lastFormula = '';
+        lastResult = null;
+        updateURL('');
+      });
+      $('formula-input').addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
+      $('grams-input').addEventListener('input', updateConverter);
+      $('moles-input').addEventListener('input', updateConverter);
+      $('pdf-btn').addEventListener('click', exportPDF);
+
+      document.querySelectorAll('.quick-formula').forEach(btn => {
+        btn.addEventListener('click', () => {
+          $('formula-input').value = btn.textContent;
+          calculate();
+        });
+      });
+
+      loadFromURL();
+    })();
+  </script>
+</BaseLayout>

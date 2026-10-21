@@ -1,0 +1,387 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RelatedPlaybooks from '../../components/playbooks/RelatedPlaybooks.astro';
+
+const today = '2026-07-04T00:00:00+00:00';
+
+const faqs = [
+  { q: `What is the Best Answer Hub AI playbook for professional services firms?`, a: `It is a vendor-neutral guide for small agencies, consultancies, accounting practices, and law firms on adopting AI without eroding trust or margins. The method: automate the high-volume research, drafting, and admin first; never put identifiable client data into a public tool; keep a human reviewing every output; and rethink hourly billing as AI compresses the time work takes.` },
+  { q: `What are the best first AI use cases for a small professional firm?`, a: `Start with high-volume, repeatable knowledge work: first-draft documents and proposals, research and summarizing, drafting client correspondence, meeting notes, and routine bookkeeping or reconciliation. For tax and accounting firms, tax research is a strong first pilot. These tasks save real hours and let you check the output quickly before it reaches a client.` },
+  { q: `Is it safe to put client information into AI tools?`, a: `Not into free public tools. Treat any consumer AI tool as a public space: never enter identifiable client data, financials, contracts, or privileged material. Bar and accounting guidance is explicit that confidential client information must not go into tools lacking proper protections. Keep sensitive work to an approved, configured account, and anonymize wherever you can.` },
+  { q: `What does ABA Formal Opinion 512 say about lawyers using AI?`, a: `Issued in 2024, it holds that lawyers using generative AI must protect client confidentiality, understand the tool's risks well enough to use it competently, and review its output rather than trust it. On fees, it says a lawyer generally cannot bill a client for the time spent learning how to use an AI tool. It is the first US ethics guidance on the subject.` },
+  { q: `Do accountants have rules about using AI with client data?`, a: `Yes. AICPA guidance tells CPA firms to prohibit sharing confidential client and firm information with generative AI tools, and to treat AI submissions with the same care as a public post. It also says to supervise and review AI output as you would any team member's work, because the tool is not a licensed professional and can produce errors that create liability.` },
+  { q: `Can a small law firm use ChatGPT for legal research?`, a: `It can use AI to speed research, but with guardrails. Do not enter client-identifying facts into a public tool, and never file AI output without verifying every citation and quote against the primary source. Several lawyers have been sanctioned for filing briefs built on cases an AI tool invented. Used as a drafting and starting-point aid with human verification, AI is a legitimate research accelerator.` },
+  { q: `What happens if AI invents case citations or facts?`, a: `In professional work, unchecked AI fabrications create real liability. US courts have sanctioned lawyers for filing AI-invented citations, with penalties from $5,000 in the 2023 Mata v. Avianca case to $110,000 in a 2025 Oregon case. Deloitte refunded a government client over a report with fabricated references. The fix is simple: a human verifies every AI output before it leaves the firm.` },
+  { q: `Can I bill clients for work done faster with AI?`, a: `You can bill for the time you actually spend, including reviewing AI output, but the model strains under AI. ABA guidance says lawyers generally cannot charge for learning to use an AI tool, and fees must stay reasonable. As AI compresses the hours a task takes, firms relying on hourly billing give the saving to the client, which is pushing many toward fixed or value-based pricing.` },
+  { q: `How does AI change the billable-hour model?`, a: `AI cuts the hours a task takes, and under hourly billing fewer hours means less revenue, so the firm absorbs the loss while the client keeps the gain. Commentators at the Thomson Reuters Institute call this an unsustainable long-run setup and expect it to push firms toward fixed-fee and value-based pricing, where efficiency improves margin instead of shrinking the invoice.` },
+  { q: `How much time can AI save a professional services firm?`, a: `Independent studies show meaningful, task-specific gains: about 40% faster on professional writing tasks and 14% more output for support staff, rising to 34% for the least experienced. Thomson Reuters estimates AI could free up nearly 240 hours per professional per year. The size depends on the task, which is why measuring your own case matters more than any headline figure.` },
+  { q: `Will AI replace junior staff in professional firms?`, a: `The evidence points to augmentation, not wholesale replacement. AI helps the least experienced staff the most, narrowing the gap between junior and senior output, which makes training and supervision more valuable, not less. The bigger shift is in what juniors do: less rote research and drafting, more review, judgment, and client work that AI cannot do.` },
+  { q: `Does my professional firm need a written AI policy?`, a: `If anyone uses AI on client work, yes. A short policy should name approved tools, state what client data must never be entered, require human review of AI output before it reaches a client, and name who is responsible. Both bar and accounting guidance treat a written policy as basic risk management, and it is quick to put on a single page.` },
+  { q: `Which AI tools should a small professional firm use?`, a: `Match the tool to the task and the confidentiality need. A general assistant on a paid business tier that does not train on your data suits drafting and research, while profession-specific tools exist for legal and tax research. The deciding factor is data handling: read the terms, prefer accounts with training switched off, and keep the most sensitive work out of any external tool.` },
+  { q: `How do I start with AI without risking client trust?`, a: `Pick one low-risk, high-volume internal task, such as first drafts or research, where no identifiable client data is needed. Run it for a set period with a human checking every output. Write a one-page rule on data and review before you widen use. Starting on internal, low-stakes work builds the habit safely before anything client-facing.` },
+  { q: `How is this different from a vendor's AI guide for professional firms?`, a: `Most guides are published by tool vendors and steer every step toward their product, often within a single profession. This playbook sells nothing, carries no affiliate links, spans law, accounting, and consulting, and cites the actual regulators and court rulings. It is just as willing to tell you to slow down, write a policy, or rethink your pricing as to adopt a tool.` },
+];
+
+const seo = {
+  title: 'AI for Professional Services Firms: A 2026 Playbook',
+  description: 'How agencies, accountants, and law firms can adopt AI safely: which workflows to automate first, the confidentiality rule, and what AI does to billable hours.',
+  url: '/playbooks/ai-for-professional-services/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'AI for Professional Services Firms', url: '/playbooks/ai-for-professional-services/' },
+  ],
+  faq: faqs.map((f) => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · By Industry</span>
+        <h1>AI for <em>Professional Services Firms</em></h1>
+        <p class="dek">A plain-English playbook for small agencies, consultancies, accounting practices, and law firms. The workflows worth automating first, the one confidentiality rule that matters, what unchecked output has actually cost firms, and what AI does to the billable hour.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~10 min read</span><span>Vendor-neutral</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg s1">1 · Automate the routine<small>research, drafting, admin</small></div>
+          <div class="seg s2">2 · Guard the data<small>one confidentiality rule</small></div>
+          <div class="seg s3">3 · Review every output<small>a human signs off</small></div>
+          <div class="seg s4">4 · Rethink pricing<small>hours vs value</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">22%</div><div class="l">of professional-services firms now use generative AI, nearly double 2024</div><div class="src">Thomson Reuters, 2025</div></div>
+      <div class="stat"><div class="n">240 hrs</div><div class="l">potential time freed per professional each year</div><div class="src">Thomson Reuters, 2025 estimate</div></div>
+      <div class="stat"><div class="n">40%</div><div class="l">faster on professional writing tasks with AI</div><div class="src">Noy &amp; Zhang, Science, 2023</div></div>
+      <div class="stat"><div class="n">$110K</div><div class="l">largest US sanction for AI-fabricated case citations</div><div class="src">US federal court, 2025</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#where">Where AI fits</a>
+        <a href="#adoption">Are firms using it?</a>
+        <a href="#value">What it saves</a>
+        <a href="#confidential">The confidentiality rule</a>
+        <a href="#risk">When output goes unchecked</a>
+        <a href="#billing">AI and the billable hour</a>
+        <a href="#start">How to start</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead">For a small professional services firm, the smart place to start with AI is the <strong>high-volume research, drafting, and admin work</strong> that fills your week, governed by one firm rule: never put identifiable client information into a public AI tool, and a human checks every output before it leaves the building. Get those two things right and AI becomes leverage. Get them wrong and it becomes a liability.</p>
+
+        <p>This playbook is for owners of small agencies, consultancies, accounting and bookkeeping practices, and law firms, the kind of 1 to 50 person business with no IT department. It spans the professions on purpose, because the use cases, the confidentiality duties, and the pricing pressure rhyme across all of them. For the broader question of whether your firm is set up to adopt AI at all, start with the pillar guide, <a href="/playbooks/small-business-ai-readiness/">Is Your Small Business Ready for AI?</a></p>
+
+        <h2 id="where">Where does AI actually fit in a professional firm?</h2>
+        <div class="chaprule"></div>
+        <p>It fits the repeatable knowledge work that sits between you and the billable or advisory work you would rather be doing: research, first drafts, summaries, correspondence, and routine number-crunching. The pattern across professions is the same, even though the tasks differ. Tax research is the top reported use among tax and accounting professionals, used by 77% of them, ahead of return preparation at 63% and advisory at 62% (<a href="https://www.thomsonreuters.com/en/press-releases/2025/april/from-incubation-to-integration-generative-ai-adoption-nearly-doubles-as-professional-services-reach-crossroads" target="_blank" rel="noopener noreferrer">Thomson Reuters, 2025</a>).</p>
+        <table>
+          <thead><tr><th>Firm type</th><th>Strong first AI uses</th><th>Keep a human on</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Accounting &amp; bookkeeping</td><td>Reconciliations, transaction coding, tax research, draft client emails</td><td><span class="score sc3">Final filings</span></td></tr>
+            <tr><td class="band">Small law firm</td><td>First-draft memos, document review, plain-language summaries</td><td><span class="score sc4">Every citation</span></td></tr>
+            <tr><td class="band">Consultancy</td><td>Desk research, proposal drafts, meeting notes, slide outlines</td><td><span class="score sc3">Client-facing claims</span></td></tr>
+            <tr><td class="band">Agency / creative</td><td>First-draft copy, briefs, content variants, campaign ideation</td><td><span class="score sc2">Brand voice</span></td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">The principle that travels across all four</div>Point AI at the high-volume, low-stakes work where you can check the result quickly, and keep human judgment on anything that reaches a client, a court, or a regulator. AI drafts; the professional decides.</div>
+
+        <h2 id="adoption">Are professional firms really using AI yet?</h2>
+        <div class="chaprule"></div>
+        <p>Increasingly, yes, and fast. Generative AI use across professional services nearly doubled in a year, from 12% of organizations in 2024 to 22% in 2025. Legal use rose from 14% to 26%, and tax firms nearly tripled from 8% to 21% (<a href="https://www.thomsonreuters.com/en/press-releases/2025/april/from-incubation-to-integration-generative-ai-adoption-nearly-doubles-as-professional-services-reach-crossroads" target="_blank" rel="noopener noreferrer">Thomson Reuters, 2025</a>). Adoption is still early enough that a deliberate small firm can lead rather than scramble, but the direction is not in doubt.</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">Generative AI use in professional services, 2024 to 2025</figcaption>
+          <svg viewBox="0 0 600 300" role="img" aria-label="Grouped bar chart: generative AI organizational use rose from 12% to 22% across professional services overall, from 14% to 26% in legal, and from 8% to 21% in tax, between 2024 and 2025.">
+            <defs><linearGradient id="bargrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+            <line x1="60" y1="240" x2="575" y2="240" stroke="#e8e8f0" stroke-width="2"/>
+            <rect x="95" y="162" width="34" height="78" rx="4" fill="url(#bargrad)" opacity="0.45"/>
+            <text x="112" y="154" text-anchor="middle" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#6b6b80">12%</text>
+            <rect x="133" y="96" width="34" height="144" rx="4" fill="url(#bargrad)"/>
+            <text x="150" y="88" text-anchor="middle" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#0f0f1a">22%</text>
+            <text x="131" y="262" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#1a1a2e">Prof. services</text>
+            <rect x="255" y="148" width="34" height="92" rx="4" fill="url(#bargrad)" opacity="0.45"/>
+            <text x="272" y="140" text-anchor="middle" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#6b6b80">14%</text>
+            <rect x="293" y="70" width="34" height="170" rx="4" fill="url(#bargrad)"/>
+            <text x="310" y="62" text-anchor="middle" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#0f0f1a">26%</text>
+            <text x="291" y="262" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#1a1a2e">Legal</text>
+            <rect x="415" y="188" width="34" height="52" rx="4" fill="url(#bargrad)" opacity="0.45"/>
+            <text x="432" y="180" text-anchor="middle" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#6b6b80">8%</text>
+            <rect x="453" y="103" width="34" height="137" rx="4" fill="url(#bargrad)"/>
+            <text x="470" y="95" text-anchor="middle" font-family="Playfair Display,serif" font-size="16" font-weight="800" fill="#0f0f1a">21%</text>
+            <text x="451" y="262" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#1a1a2e">Tax</text>
+            <rect x="60" y="280" width="13" height="13" rx="3" fill="url(#bargrad)" opacity="0.45"/>
+            <text x="80" y="291" font-family="Inter,sans-serif" font-size="12" fill="#6b6b80">2024</text>
+            <rect x="135" y="280" width="13" height="13" rx="3" fill="url(#bargrad)"/>
+            <text x="155" y="291" font-family="Inter,sans-serif" font-size="12" fill="#6b6b80">2025</text>
+          </svg>
+          <p class="chart-src">Source: Thomson Reuters, 2025 Generative AI in Professional Services Report (survey of nearly 1,800 professionals). Organizational GenAI use, 2024 vs 2025.</p>
+        </figure>
+
+        <p>Adoption is running ahead of governance, which is the risk. Among legal firms, 48% still have no formal GenAI policy, and across professions 64% of users have had no training on it (<a href="https://www.thomsonreuters.com/en/press-releases/2025/april/from-incubation-to-integration-generative-ai-adoption-nearly-doubles-as-professional-services-reach-crossroads" target="_blank" rel="noopener noreferrer">Thomson Reuters, 2025</a>). That gap between using AI and governing it is exactly where avoidable trouble lives.</p>
+
+        <h2 id="value">How much time does AI actually save?</h2>
+        <div class="chaprule"></div>
+        <p>Enough to matter, on the right tasks. In a controlled trial published in Science, professionals using generative AI finished writing tasks 40% faster and produced 18% higher-quality work (<a href="https://www.science.org/doi/10.1126/science.adh2586" target="_blank" rel="noopener noreferrer">Noy and Zhang, Science, 2023</a>). In a study of more than 5,000 support agents, AI lifted output by about 14% on average and 34% for the least experienced (<a href="https://www.nber.org/papers/w31161" target="_blank" rel="noopener noreferrer">Brynjolfsson, Li and Raymond, NBER, 2023</a>). Thomson Reuters estimates the cumulative effect could free up nearly 240 hours per professional per year, an average value of about $19,000 each (<a href="https://www.thomsonreuters.com/en-us/posts/technology/future-of-professionals-2025/" target="_blank" rel="noopener noreferrer">Thomson Reuters Institute, 2025</a>). Note the pattern in the research: AI helps the newest staff most, on well-defined tasks. That is a training and capacity story, not a redundancy one. Turning those saved hours into actual return is its own discipline, covered in the companion guide on the <a href="/playbooks/ai-roi-small-business/">real ROI of AI for a small business</a>.</p>
+
+        <h2 id="confidential">The one rule: protect client confidentiality</h2>
+        <div class="chaprule"></div>
+        <p>This is the rule that separates safe AI use from a complaint to your professional body. The duty is the same whether you are bound by legal privilege or accounting confidentiality: client information must not go into a tool that could expose it. California's State Bar guidance states a lawyer must not input client confidential information into an AI tool that lacks adequate confidentiality protections, and should anonymize client details (<a href="https://www.calbar.ca.gov/sites/default/files/portals/0/documents/ethics/Generative-AI-Practical-Guidance.pdf" target="_blank" rel="noopener noreferrer">State Bar of California, 2023</a>). AICPA guidance tells CPA firms to prohibit sharing confidential client and firm information with generative AI tools, and to treat anything entered with the same care as a public social media post (<a href="https://www.journalofaccountancy.com/issues/2023/oct/generative-ai-and-risks-to-cpa-firms/" target="_blank" rel="noopener noreferrer">Journal of Accountancy, AICPA, 2023</a>). A practical way to write the rule is by tool tier.</p>
+        <table>
+          <thead><tr><th>Information</th><th>Free public tool</th><th>Approved configured tool</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Identifiable client data or matters</td><td><span class="score sc4">Never</span></td><td><span class="score sc2">Only if needed</span></td></tr>
+            <tr><td class="band">Financials, contracts, privileged material</td><td><span class="score sc4">Never</span></td><td><span class="score sc2">Caution</span></td></tr>
+            <tr><td class="band">Passwords and credentials</td><td><span class="score sc4">Never</span></td><td><span class="score sc4">Never</span></td></tr>
+            <tr><td class="band">Anonymized or hypothetical examples</td><td><span class="score sc1">OK</span></td><td><span class="score sc1">OK</span></td></tr>
+            <tr><td class="band">General research, public-domain questions</td><td><span class="score sc1">OK</span></td><td><span class="score sc1">OK</span></td></tr>
+          </tbody>
+        </table>
+        <p>The second duty is competence: you must understand the tool well enough to use it responsibly, which means reviewing what it produces. The American Bar Association's Formal Opinion 512, the first US ethics guidance on generative AI for lawyers, ties both duties together, holding that lawyers must safeguard confidentiality and verify AI output rather than rely on it (<a href="https://www.americanbar.org/content/dam/aba/administrative/professional_responsibility/ethics-opinions/aba-formal-opinion-512.pdf" target="_blank" rel="noopener noreferrer">ABA Formal Opinion 512, 2024</a>). AICPA puts the same point plainly: supervise and review AI output as you would the work of any other team member, because the tool is not a licensed professional. If your firm has staff using AI, this belongs in a short written policy, the subject of the companion guide on <a href="/playbooks/small-business-ai-policy/">whether your small business needs an AI policy</a>.</p>
+
+        <h2 id="risk">What happens when AI output goes unchecked?</h2>
+        <div class="chaprule"></div>
+        <p>The cautionary cases are now numerous and expensive, and they all share one cause: AI output sent onward without verification. Generative AI invents facts, citations, and quotations that read as completely authentic.</p>
+        <table>
+          <thead><tr><th>Case</th><th>What happened</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Mata v. Avianca (2023)</td><td>Lawyers filed a brief citing six court cases ChatGPT fabricated</td><td><span class="score sc2">$5,000</span></td></tr>
+            <tr><td class="band">Oregon federal case (2025)</td><td>Filings contained 15 fake case references and 8 invented quotations</td><td><span class="score sc4">$110,000</span></td></tr>
+            <tr><td class="band">Deloitte gov report (2025)</td><td>A commissioned report cited a nonexistent study and a fake court quote</td><td><span class="score sc3">Partial refund</span></td></tr>
+          </tbody>
+        </table>
+        <p>The Mata sanction came from a US federal court in 2023 (<a href="https://www.cnbc.com/2023/06/22/judge-sanctions-lawyers-whose-ai-written-filing-contained-fake-citations.html" target="_blank" rel="noopener noreferrer">reported by CNBC, 2023</a>); the $110,000 penalty, the largest of its kind to date, came from a federal judge in Oregon (<a href="https://www.abajournal.com/news/article/oregon-federal-judge-hands-down-110000-penalty-for-ai-errors" target="_blank" rel="noopener noreferrer">ABA Journal, 2026</a>). The point is not that lawyers are uniquely careless: Deloitte refunded part of a government contract after a report it delivered was found to contain AI-fabricated references (<a href="https://ia.acs.org.au/article/2025/deloitte-to-refund-government-over-ai-errors.html" target="_blank" rel="noopener noreferrer">ACS Information Age, 2025</a>). Any firm that forwards AI output as finished work carries the same exposure.</p>
+
+        <blockquote>AI output is a draft to verify, <span class="accent">never a final answer to send</span>. In professional work, the human review step is not optional polish. It is the job.</blockquote>
+
+        <h2 id="billing">What does AI do to the billable hour?</h2>
+        <div class="chaprule"></div>
+        <p>This is the strategic question most firms have not faced yet. If a task that took four hours now takes one, and you bill by the hour, your revenue on that task just fell by three quarters, and the client keeps the saving. Commentators at the Thomson Reuters Institute describe this as an unsustainable long-run setup, and argue generative AI is the catalyst pushing firms from hourly billing toward fixed-fee and value-based pricing (<a href="https://www.thomsonreuters.com/en-us/posts/legal/pricing-ai-driven-legal-services-billable-hour/" target="_blank" rel="noopener noreferrer">Thomson Reuters Institute, 2024</a>). The regulators reinforce the squeeze: ABA Opinion 512 says a lawyer generally cannot bill a client for the time spent learning to use an AI tool.</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">The same efficiency, two very different outcomes</figcaption>
+          <svg viewBox="0 0 640 360" role="img" aria-label="Flowchart. AI cuts the hours a task takes. Under hourly billing, fewer hours means lower revenue and the client keeps the saving. Under fixed or value pricing, the fee is unchanged, so the firm keeps the saving as higher margin.">
+            <defs>
+              <marker id="psarrow" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b9bdd6"></path></marker>
+            </defs>
+            <rect x="195" y="12" width="250" height="48" rx="10" fill="#0f0f1a"></rect>
+            <text x="320" y="34" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#fff">AI cuts the hours a task takes</text>
+            <text x="320" y="51" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#c4b5fd">4 hours becomes 1</text>
+            <path d="M320 60 V92 H170 V120" stroke="#b9bdd6" stroke-width="2" fill="none" marker-end="url(#psarrow)"></path>
+            <path d="M320 60 V92 H470 V120" stroke="#b9bdd6" stroke-width="2" fill="none" marker-end="url(#psarrow)"></path>
+            <text x="170" y="84" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#6b6b80">Hourly billing</text>
+            <text x="470" y="84" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#6366f1">Fixed / value pricing</text>
+            <rect x="60" y="122" width="220" height="60" rx="10" fill="#fff" stroke="#e8e8f0" stroke-width="1.5"></rect>
+            <text x="170" y="147" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#6b6b80">Bill 1 hour, not 4</text>
+            <text x="170" y="167" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#6b6b80">Revenue on the task falls</text>
+            <rect x="360" y="122" width="220" height="60" rx="10" fill="#fff" stroke="#6366f1" stroke-width="2"></rect>
+            <text x="470" y="147" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f0f1a">Same fee, less time</text>
+            <text x="470" y="167" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#6b6b80">Margin on the task rises</text>
+            <line x1="170" y1="182" x2="170" y2="212" stroke="#b9bdd6" stroke-width="2" marker-end="url(#psarrow)"></line>
+            <line x1="470" y1="182" x2="470" y2="212" stroke="#b9bdd6" stroke-width="2" marker-end="url(#psarrow)"></line>
+            <rect x="70" y="214" width="200" height="48" rx="10" fill="#eef0f6" stroke="#e8e8f0"></rect>
+            <text x="170" y="243" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#6b6b80">Client keeps the gain</text>
+            <rect x="370" y="214" width="200" height="48" rx="10" fill="#6366f1"></rect>
+            <text x="470" y="243" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#fff">Firm keeps the gain</text>
+            <text x="320" y="306" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f0f1a">The work got more efficient either way.</text>
+            <text x="320" y="326" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" fill="#6b6b80">Your pricing model decides who benefits.</text>
+          </svg>
+          <p class="chart-src">Why AI makes pricing a strategic question, not just an efficiency one. Based on Thomson Reuters Institute analysis, 2024.</p>
+        </figure>
+
+        <p>You do not have to overhaul your pricing overnight. But before you roll AI across client work, decide how the firm will capture the efficiency, through fixed fees, packaged services, or freed capacity used to take on more clients, rather than handing every gain back through a smaller invoice.</p>
+
+        <h2 id="start">How should a small firm actually start?</h2>
+        <div class="chaprule"></div>
+        <p>Start narrow and internal. Pick one high-volume task where no identifiable client data is required, such as first-draft research or summarizing your own documents, and run it for a few weeks with a human checking every output. Prove it saves real time, write a one-page rule on data and review, then widen use one task at a time. The same disciplined, one-task-at-a-time approach in the companion guide on <a href="/playbooks/where-to-start-with-ai/">where to start with AI</a> applies directly here, with the confidentiality rule layered on top.</p>
+        <div class="callout"><div class="h">A safe first 30 days for a professional firm</div>
+          <ul>
+            <li>Choose one internal task that needs no client-identifying data.</li>
+            <li>Use an approved account, ideally a business tier that does not train on your inputs.</li>
+            <li>Have a named person verify every output before it is used.</li>
+            <li>Write the data-and-review rule on a single page before anyone touches client work.</li>
+          </ul>
+        </div>
+        <div class="cta">
+          <span class="kicker">See where your firm stands</span>
+          <h3>Take the free SMB AI Readiness Score</h3>
+          <p>Before you adopt, see how ready your firm is across data, tools, process, skills, and governance. The free assessment takes about 15 minutes, with no signup and no email, and flags the gap to close first.</p>
+          <a class="btn" href="/knowledge-center/smb-ai-readiness/">Start the free assessment</a>
+        </div>
+
+        <h2 id="faq">Common questions about AI for professional services firms</h2>
+        <div class="chaprule"></div>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <h2>Sources</h2>
+        <div class="chaprule"></div>
+        <ul class="sources">
+          <li>Thomson Reuters, <a href="https://www.thomsonreuters.com/en/press-releases/2025/april/from-incubation-to-integration-generative-ai-adoption-nearly-doubles-as-professional-services-reach-crossroads" target="_blank" rel="noopener noreferrer">2025 Generative AI in Professional Services Report</a>, April 2025 (survey of nearly 1,800 professionals).</li>
+          <li>Thomson Reuters Institute, <a href="https://www.thomsonreuters.com/en-us/posts/technology/future-of-professionals-2025/" target="_blank" rel="noopener noreferrer">The Future of Professionals 2025</a>, June 2025 (240 hours / $19,000 per professional estimate).</li>
+          <li>Thomson Reuters Institute, <a href="https://www.thomsonreuters.com/en-us/posts/legal/pricing-ai-driven-legal-services-billable-hour/" target="_blank" rel="noopener noreferrer">Pricing AI-driven legal services and the billable hour</a>, 2024.</li>
+          <li>American Bar Association, <a href="https://www.americanbar.org/content/dam/aba/administrative/professional_responsibility/ethics-opinions/aba-formal-opinion-512.pdf" target="_blank" rel="noopener noreferrer">Formal Opinion 512: Generative Artificial Intelligence Tools</a>, 2024.</li>
+          <li>State Bar of California, <a href="https://www.calbar.ca.gov/sites/default/files/portals/0/documents/ethics/Generative-AI-Practical-Guidance.pdf" target="_blank" rel="noopener noreferrer">Practical Guidance for the Use of Generative AI in the Practice of Law</a>, 2023.</li>
+          <li>Journal of Accountancy (AICPA), <a href="https://www.journalofaccountancy.com/issues/2023/oct/generative-ai-and-risks-to-cpa-firms/" target="_blank" rel="noopener noreferrer">Generative AI and risks to CPA firms</a>, 2023.</li>
+          <li>CNBC, <a href="https://www.cnbc.com/2023/06/22/judge-sanctions-lawyers-whose-ai-written-filing-contained-fake-citations.html" target="_blank" rel="noopener noreferrer">Judge sanctions lawyers over AI-written filing with fake citations (Mata v. Avianca)</a>, 2023.</li>
+          <li>ABA Journal, <a href="https://www.abajournal.com/news/article/oregon-federal-judge-hands-down-110000-penalty-for-ai-errors" target="_blank" rel="noopener noreferrer">Oregon federal judge hands down $110,000 penalty for AI errors</a>, 2026.</li>
+          <li>ACS Information Age, <a href="https://ia.acs.org.au/article/2025/deloitte-to-refund-government-over-ai-errors.html" target="_blank" rel="noopener noreferrer">Deloitte to refund government over AI errors</a>, 2025.</li>
+          <li>Noy and Zhang, <a href="https://www.science.org/doi/10.1126/science.adh2586" target="_blank" rel="noopener noreferrer">Experimental evidence on the productivity effects of generative AI</a>, Science, 2023.</li>
+          <li>Brynjolfsson, Li and Raymond, <a href="https://www.nber.org/papers/w31161" target="_blank" rel="noopener noreferrer">Generative AI at Work</a>, NBER, 2023.</li>
+        </ul>
+              <RelatedPlaybooks track="smb" currentHref={seo.url} />
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Try our free tools: <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">All Tools</a>, <a href="/calculators/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Calculators</a>, <a href="/career-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Career Toolkit</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, and the <a href="/pdf-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Toolkit</a>.</p>
+</article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --primary:#6366f1; --accent:#8b5cf6; --accent-warm:#c4b5fd; --ink:#0f0f1a; --fg:#1a1a2e;
+    --muted:#6b6b80; --card:#fff; --border:#e8e8f0; --border-light:#f0f0f6;
+  }
+  .pb a{color:var(--primary)}
+  .pb .hero{background:radial-gradient(1200px 500px at 75% -10%,rgba(139,92,246,.35),transparent 60%),linear-gradient(160deg,#15152a 0%,#0f0f1a 100%);color:#fff;padding:28px 0 86px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-120px;top:30px;width:380px;height:380px;background:radial-gradient(circle,rgba(99,102,241,.45),transparent 70%);filter:blur(20px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:center;align-items:center;min-height:44px;margin:4px 0 34px}
+  .pb .masthead{display:flex;justify-content:center;align-items:center;gap:12px;margin:0}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;color:#fff;letter-spacing:.01em}
+  .pb .masthead .word i{font-style:normal;color:var(--accent-warm)}
+  .pb .backnav{position:absolute;right:0;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:7px;font-size:.8rem;font-weight:600;letter-spacing:.02em;color:var(--accent-warm);text-decoration:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:6px 13px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-warm);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);padding:6px 14px;border-radius:999px}
+  .pb h1{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(2.3rem,5.4vw,3.5rem);line-height:1.14;margin:22px 0 16px;padding-bottom:.12em;letter-spacing:-.015em;max-width:15em;color:#fff}
+  .pb h1 em{font-style:italic;background:linear-gradient(90deg,#a5b4fc,#c4b5fd);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;padding-bottom:.06em}
+  .pb .dek{font-size:1.18rem;color:#c9c9d6;max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:24px;font-size:.85rem;color:#9a9ab0}
+  .pb .byline b{color:#fff}
+  .pb .bandstrip{display:flex;gap:4px;margin-top:30px;max-width:680px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:10px 4px;border-radius:8px;font-size:.72rem;font-weight:600;color:#fff;border:1px solid rgba(255,255,255,.16)}
+  .pb .seg.s1{background:rgba(99,102,241,.28)}
+  .pb .seg.s2{background:rgba(99,102,241,.45)}
+  .pb .seg.s3{background:rgba(99,102,241,.66)}
+  .pb .seg.s4{background:rgba(99,102,241,.9)}
+  .pb .seg small{display:block;font-weight:500;opacity:.82;font-size:.64rem;margin-top:2px}
+  .pb .stat-grid{max-width:1080px;margin:-56px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 14px;text-align:center;box-shadow:0 14px 44px rgba(15,15,26,.12)}
+  .pb .stat .n{font-family:'Playfair Display',serif;font-weight:700;font-size:1.9rem;color:var(--primary);line-height:1}
+  .pb .stat .l{font-size:.76rem;color:var(--fg);margin-top:7px;font-weight:600}
+  .pb .stat .src{font-size:.64rem;color:var(--muted);margin-top:5px}
+  .pb .layout{max-width:1080px;margin:0 auto;padding:48px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--muted);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s}
+  .pb .toc a:hover{color:var(--primary);border-left-color:var(--primary)}
+  .pb .toc a.active{color:var(--primary);border-left-color:var(--primary);font-weight:600}
+  .pb article{min-width:0;max-width:740px}
+  .pb .lead{font-size:1.2rem;color:var(--ink);margin:0 0 26px}
+  .pb .lead strong{font-weight:700}
+  .pb h2{font-family:'Playfair Display',serif;font-weight:700;font-size:1.6rem;color:var(--ink);margin:40px 0 6px;letter-spacing:-.01em;scroll-margin-top:88px}
+  .pb .chaprule{height:3px;width:54px;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:2px;margin:0 0 16px}
+  .pb p{margin:14px 0}
+  .pb .sec{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin:16px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .pb .pillars{list-style:none;margin:4px 0;padding:0}
+  .pb .pillars li{padding:12px 0;border-bottom:1px solid var(--border-light);display:flex;gap:12px}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{width:26px;height:26px;border-radius:8px;background:rgba(99,102,241,.08);color:var(--primary);font-weight:700;font-size:.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:10px 0;font-size:.9rem}
+  .pb th{background:var(--ink);color:#fff;text-align:left;padding:11px 13px;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em}
+  .pb th:first-child{border-top-left-radius:10px}
+  .pb th:last-child{border-top-right-radius:10px}
+  .pb td{padding:12px 13px;border-top:1px solid var(--border-light);vertical-align:top;background:var(--card)}
+  .pb td.band{font-weight:700;color:var(--ink)}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 10px;border-radius:6px;display:inline-block;white-space:nowrap;letter-spacing:.01em}
+  .pb .sc1{background:#6366f1}
+  .pb .sc2{background:#4f46e5}
+  .pb .sc3{background:#4338ca}
+  .pb .sc4{background:#312e81}
+  .pb .callout{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:12px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-weight:700;color:var(--ink);margin-bottom:6px;font-size:.98rem}
+  .pb .callout ul{margin:6px 0 0 18px}
+  .pb .callout li{margin:4px 0}
+  .pb blockquote{font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;line-height:1.42;color:var(--ink);background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.18);border-left:4px solid var(--primary);border-radius:12px;padding:24px 28px;margin:28px 0}
+  .pb blockquote .accent{color:var(--primary)}
+  .pb blockquote .cite{display:block;font-family:'Inter',sans-serif;font-style:normal;font-size:.82rem;color:var(--muted);margin-top:10px}
+  .pb .cta{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);color:var(--ink);border-radius:16px;padding:32px;margin:24px 0;text-align:center}
+  .pb .cta .kicker{font-size:.76rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--primary)}
+  .pb .cta h3{font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;margin:8px 0 6px;color:var(--ink)}
+  .pb .cta p{margin:0 auto 20px;color:var(--muted);max-width:32em}
+  .pb .btn{display:inline-block;background:var(--primary);color:#fff;text-decoration:none;font-weight:700;font-size:.95rem;padding:14px 30px;border-radius:12px}
+  .pb .faq .q{font-weight:700;color:var(--ink);margin-top:18px}
+  .pb .faq .a{color:var(--fg);font-size:.96rem;margin-top:4px}
+  .pb .chart{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .pb .chart-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.08rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:12px;align-items:flex-start;min-height:0;margin:4px 0 28px}.pb .hero-top .masthead{justify-content:flex-start}.pb .backnav{position:static;transform:none}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

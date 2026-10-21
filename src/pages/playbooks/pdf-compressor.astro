@@ -1,0 +1,368 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-11T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub PDF Compressor?', a: 'The Best Answer Hub PDF Compressor is a free, browser-based tool that reduces PDF file size by re-encoding each page as an optimized JPEG image. You control the quality from 10 to 100 percent or set an exact target size. Everything runs locally, so the file is never uploaded, and there is no signup or watermark.' },
+  { q: 'How do you compress a PDF without uploading it?', a: 'Use a tool that compresses in the browser rather than on a server. The Best Answer Hub PDF Compressor loads the PDF locally, re-encodes each page at your chosen quality, and rebuilds a smaller file on your own device. Turning off your internet after the page loads proves the file never leaves.' },
+  { q: 'Is it safe to compress confidential PDFs online?', a: 'It depends on the tool. Most online compressors upload the file to their servers and keep it for one to 24 hours. The Best Answer Hub PDF Compressor uploads nothing, so contracts, payslips, and medical scans stay on your device. A file that is never sent cannot be retained or leaked.' },
+  { q: 'Why did my PDF barely shrink?', a: 'Because there was little left to compress. Scanned and photo-heavy PDFs are already made of compressed images, and plain-text PDFs are already small. The Best Answer Hub PDF Compressor shows the before and after size, so when a file cannot usefully shrink, you see it and can keep the original.' },
+  { q: 'Why did my PDF get bigger after compressing?', a: 'Because a text-only PDF is already highly efficient, and converting its crisp text pages into images can add size rather than remove it. This tool works best on bulky, image-heavy files. For a pure-text document, the original is usually the smaller version, so keeping it is the right call.' },
+  { q: 'What quality setting should I use?', a: 'Match it to the destination. Use 70 percent for on-screen reading, which cuts size by half or more with no visible loss. Use 85 to 95 percent for anything printed, since paper shows fine detail. Drop to 50 to 60 percent only when file size is the single priority for a text-heavy document.' },
+  { q: 'Does compressing a PDF reduce its quality?', a: 'Yes, because JPEG compression is lossy, so some image detail is discarded. At 70 percent the loss is invisible at normal reading zoom, which is why it is the default. Compression also stacks, so it is better to move the slider down once from the original than to compress an already-compressed file again.' },
+  { q: 'Why is the text no longer selectable after compressing?', a: 'Because the Best Answer Hub PDF Compressor renders each page as a JPEG image to achieve the large size reduction. The words become part of that image, so they can no longer be selected, searched, or copied. If selectable text is essential, a paid object-stream compressor preserves it instead.' },
+  { q: 'What is a good PDF file size for email?', a: 'Aim under 10 MB for reliable delivery, even though most mailboxes allow 25 MB, because larger messages can hit spam filters or corporate limits. A single-page invoice or letter is ideal under 500 KB. Most document PDFs compress well under those thresholds with no visible quality change.' },
+  { q: 'How do I hit an exact file size for a portal?', a: 'Use the target-size field. Type the limit, such as 200 KB or 5 MB, and the Best Answer Hub PDF Compressor retries at a lower quality up to three times to get there. It is best effort, because some files have a floor they cannot go below, and the tool says so rather than pretending.' },
+  { q: 'Does compressing break a digital signature?', a: 'Yes. Compressing rebuilds the document from page images, which creates a structurally new file and invalidates the cryptographic hash a signature was calculated against. If a signed PDF must be compressed, compress it first and then have the signer re-sign the smaller version afterward.' },
+  { q: 'Can I compress a password-protected PDF?', a: 'No. Encrypted or password-protected PDFs cannot be opened by browser libraries without the key, so the tool shows an error. Remove the protection first by opening the file in your system viewer and using Print to Save as PDF, then compress the unlocked copy.' },
+  { q: 'Can I compress a PDF on my phone?', a: 'Yes. Open the Best Answer Hub PDF Compressor in Safari or Chrome on your phone, pick the PDF from Files, set the quality, and download the result. It runs entirely in the mobile browser using client-side JavaScript, so nothing is uploaded and no app install is needed.' },
+  { q: 'How is Best Answer Hub different from Smallpdf or iLovePDF?', a: 'Smallpdf and iLovePDF upload your file, process it on their servers, and keep it for one to two hours, with caps on free use. The Best Answer Hub PDF Compressor processes everything in your browser with no upload, no limits, no signup, and adds exact target-size control that most rivals lack.' },
+  { q: 'Is the Best Answer Hub PDF Compressor really free?', a: 'Yes, completely free with no signup, no watermark, and no daily limit. It runs on client-side JavaScript in your browser, so there are no server costs to pass on and no account to create. The file stays on your device from start to finish.' },
+];
+
+const seo = {
+  title: 'How to Compress a PDF Without Uploading It (2026)',
+  description: 'Compress a PDF free in your browser, nothing uploaded. How compression works, why some PDFs barely shrink, and how to hit an exact email or portal size limit.',
+  url: '/playbooks/pdf-compressor/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'PDF Compressor', url: '/playbooks/pdf-compressor/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · PDF Tools</span>
+        <div class="cav">Shrink it, don't share it</div>
+        <h1>How to Compress a PDF <em>Without Uploading It</em></h1>
+        <p class="dek">Nearly every online PDF compressor sends your file to a server first. Here is how compression actually works, why some PDFs barely shrink, and how to cut file size on your own device with nothing uploaded. The Best Answer Hub PDF Compressor does the whole job in your browser.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>No upload</span><span>Runs in your browser</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">On-screen<small>quality 70%</small></div>
+          <div class="seg b2">Printing<small>quality 85–95%</small></div>
+          <div class="seg b3">Smallest file<small>quality 50–60%</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">0</div><div class="l">files uploaded to any server when you compress here</div><div class="src">Best Answer Hub</div></div>
+      <div class="stat"><div class="n">40–80%</div><div class="l">typical size cut on image-heavy or scanned PDFs</div><div class="src">Best Answer Hub</div></div>
+      <div class="stat"><div class="n">2 hrs</div><div class="l">how long iLovePDF keeps your uploaded file</div><div class="src">iLovePDF, 2026</div></div>
+      <div class="stat"><div class="n">2.5s</div><div class="l">page-load target that heavy files miss</div><div class="src">Google, 2026</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#noupload">Compress without uploading</a>
+        <a href="#privacy">The privacy problem</a>
+        <a href="#how">How compression works</a>
+        <a href="#barely">Why it barely shrank</a>
+        <a href="#quality">Which quality to pick</a>
+        <a href="#size">Email and portal limits</a>
+        <a href="#tradeoff">What compression costs you</a>
+        <a href="#compare">Best Answer Hub vs the rest</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead">Compressing a PDF means shrinking its file size so it sends, uploads, and loads faster. The catch most people miss is where that shrinking happens. <strong>The Best Answer Hub PDF Compressor does the whole job inside your browser, so a contract, payslip, or medical scan never leaves your device, and there is no signup, no watermark, and no daily limit.</strong></p>
+
+        <p>That matters because the popular alternatives work differently. Smallpdf, iLovePDF, Adobe Acrobat online, PDF2Go, and Sejda all upload your file to their servers to compress it, then hold a copy for a window of time before deleting it (<a href="https://smallpdf.com/blog/is-smallpdf-safe" target="_blank" rel="noopener noreferrer">Smallpdf, 2026</a>; <a href="https://www.ilovepdf.com/help/faq" target="_blank" rel="noopener noreferrer">iLovePDF, 2026</a>). For a holiday flyer, that is fine. For anything with a name, an account number, or a signature on it, sending the file to a stranger is the part worth avoiding.</p>
+
+        <div class="cav">The simple version</div>
+        <h2 id="noupload">How do you compress a PDF without uploading it?</h2>
+        <p>You use a tool that runs the compression in your browser instead of on a server. The Best Answer Hub <a href="/tools/pdf-compressor/">PDF Compressor</a> loads your PDF locally, renders each page with JavaScript, re-encodes it at the quality you choose, and rebuilds a smaller file, all on your own machine. Nothing is sent anywhere. You can even switch off your internet connection after the page loads and it still works, which is the clearest proof that the file is staying put. The tool sits in the Best Answer Hub <a href="/pdf-toolkit/">PDF Toolkit</a>, needs no account, and shows no ads.</p>
+        <p>Using it takes three steps: drop the PDF in, set the JPEG quality slider (70% is the default sweet spot) or type an exact target size, and download the result. For a document full of photos, screenshots, or scanned pages, this usually cuts the file by 40 to 80%. The whole thing takes a few seconds for a normal file, and it works the same in Safari on an iPhone as it does on a laptop, with no app to install.</p>
+
+        <div class="cav">Read this before you drag a file in</div>
+        <h2 id="privacy">Why are online PDF compressors a privacy risk?</h2>
+        <p>Because most of them upload your document to a server you do not control, and then keep it for a while. The retention windows are published on the vendors' own pages: Smallpdf deletes files one hour after processing, iLovePDF keeps them for a maximum of two hours, Sejda's online tool deletes after two hours, and PDF2Go holds files for 24 hours or 10 downloads, whichever comes first (<a href="https://www.pdf2go.com/blog/are-my-files-safe" target="_blank" rel="noopener noreferrer">PDF2Go, 2026</a>; <a href="https://www.sejda.com/compress-pdf" target="_blank" rel="noopener noreferrer">Sejda, 2026</a>). Adobe uploads to its cloud storage and, if you do not sign in, deletes the file after what it calls a short time period, without naming the hours (<a href="https://helpx.adobe.com/document-cloud/faq/try-acrobat-online-services.html" target="_blank" rel="noopener noreferrer">Adobe, 2026</a>).</p>
+        <p>None of those companies are the villains here, and their transfers are encrypted. The point is simpler: a file that is never uploaded cannot be retained, leaked, or subpoenaed. That principle is exactly what regulators advise. The FTC tells businesses that if there is no need to hold sensitive personal information, they should not keep it (<a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">FTC</a>), and NIST guidance says organizations should minimize the collection and retention of personal data to what is strictly necessary (<a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-122.pdf" target="_blank" rel="noopener noreferrer">NIST SP 800-122</a>). Client-side compression applies that rule to you.</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">How long your file sits on someone else's server</figcaption>
+          <svg viewBox="0 0 600 250" role="img" aria-label="Retention comparison: Best Answer Hub never uploads your file; Smallpdf keeps it 1 hour; iLovePDF 2 hours; PDF2Go up to 24 hours">
+            <defs><linearGradient id="bargrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <line x1="150" y1="30" x2="150" y2="220" stroke="#E1D4be" stroke-width="2"/>
+            <text x="140" y="52" text-anchor="end" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">Best Answer Hub</text>
+            <circle cx="153" cy="47" r="5" fill="#6F8A6A"/>
+            <text x="168" y="52" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#5a7355">Never uploaded</text>
+            <text x="140" y="99" text-anchor="end" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">Smallpdf</text>
+            <rect x="150" y="86" width="20" height="22" rx="5" fill="url(#bargrad)"/>
+            <text x="178" y="102" font-family="Karla, sans-serif" font-size="12.5" fill="#847B6B">1 hour</text>
+            <text x="140" y="146" text-anchor="end" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">iLovePDF</text>
+            <rect x="150" y="133" width="39" height="22" rx="5" fill="url(#bargrad)"/>
+            <text x="197" y="149" font-family="Karla, sans-serif" font-size="12.5" fill="#847B6B">2 hours</text>
+            <text x="140" y="193" text-anchor="end" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">PDF2Go</text>
+            <rect x="150" y="180" width="392" height="22" rx="5" fill="url(#bargrad)"/>
+            <text x="170" y="196" font-family="Karla, sans-serif" font-size="12.5" font-weight="700" fill="#fff">up to 24 hours</text>
+          </svg>
+          <p class="chart-src">Sources: Smallpdf (1 hour), iLovePDF (2 hours), PDF2Go (24 hours or 10 downloads), 2026 vendor pages. Best Answer Hub compresses in the browser and uploads nothing.</p>
+        </figure>
+
+        <div class="callout peach"><div class="h">A word on unknown converter sites</div><p>The named tools above are legitimate. The real danger is the flood of unknown, ad-heavy "free converter" sites. In 2025 the FBI warned that criminals were using fake online file-converter tools to push malware and to harvest data out of uploaded documents, including names, banking details, and crypto wallet phrases (<a href="https://www.bleepingcomputer.com/news/security/fbi-warnings-are-true-fake-file-converters-do-push-malware/" target="_blank" rel="noopener noreferrer">BleepingComputer, 2025</a>). A tool that never asks for your file removes that risk entirely.</p></div>
+
+        <div class="cav">Under the hood</div>
+        <h2 id="how">How does PDF compression actually work?</h2>
+        <p>A PDF shrinks in a few different ways, and knowing them explains why results vary so much. The PDF format is an international standard, ISO 32000-2, and it lets the parts of a file be squeezed using built-in methods called filters (<a href="https://pdfa.org/resource/iso-32000-2/" target="_blank" rel="noopener noreferrer">PDF Association</a>). Text and page structure are packed with Flate, a general compressor that combines the LZ77 algorithm with Huffman coding to replace repeating data with shorter references. Images get their own filters: JPEG (DCTDecode), JPEG 2000 (JPXDecode), and JBIG2 for black-and-white scans (<a href="https://pdfa.org/understanding-brotli-pdf-compression/" target="_blank" rel="noopener noreferrer">PDF Association</a>). Fonts can be trimmed by subsetting, which embeds only the characters actually used rather than the whole typeface.</p>
+        <p>The Best Answer Hub PDF Compressor takes the most effective of those levers, the image path, and applies it to the whole page. It draws each page onto a canvas and saves it as a JPEG at the quality you set, then rebuilds the PDF from those images. That is why it is so good at flattening bulky, image-heavy files, and it is also the source of the one trade-off covered further down: because each page becomes a picture, the text on it stops being selectable.</p>
+
+        <div class="cav">The frustrating one</div>
+        <h2 id="barely">Why did my PDF barely shrink, or get bigger?</h2>
+        <p>Because there was little left to compress in the first place. Two kinds of file resist shrinking. A scanned or photo-heavy PDF is already made of JPEG images that were compressed when they were created, so re-compressing them buys little (<a href="https://pdfa.org/brotli-compression-coming-to-pdf/" target="_blank" rel="noopener noreferrer">PDF Association</a>). A plain text PDF is the opposite problem: it is already tiny and efficient, so turning its crisp text pages into images can actually add size rather than remove it. For a pure-text file, the original is often the smaller one, and the honest move is to keep it.</p>
+        <p>This is where a compressor earns trust by telling you the truth. The Best Answer Hub PDF Compressor shows the before and after size side by side, so if a file did not shrink, you see it immediately and can keep the original. It works best on the files that are genuinely bloated: presentations, scanned archives, photo reports, and slide exports.</p>
+
+        <div class="cav">Pick the right dial</div>
+        <h2 id="quality">What quality setting should you use?</h2>
+        <p>Match the quality to where the file will be read. On-screen documents survive aggressive compression because a screen cannot show the fine detail a lower setting drops, so 70% quality typically cuts size by half or more with no visible change at normal zoom. Anything destined for print needs more headroom, since paper reveals the artifacts a screen hides. Adobe's own print presets keep images at 300 ppi for exactly this reason (<a href="https://helpx.adobe.com/document-cloud/faq/try-acrobat-online-services.html" target="_blank" rel="noopener noreferrer">Adobe</a>), so stay at 85 to 95% for anything you will send to a printer.</p>
+        <table>
+          <thead><tr><th>Use case</th><th>Quality</th><th>What you get</th></tr></thead>
+          <tbody>
+            <tr><td class="band">On-screen reading</td><td><span class="score lv1">70%</span></td><td>File drops 50 to 65%, no visible loss at normal zoom. The default.</td></tr>
+            <tr><td class="band">Printing</td><td><span class="score lv2">85–95%</span></td><td>Preserves fine detail and small text for paper output.</td></tr>
+            <tr><td class="band">Size is all that matters</td><td><span class="score lv2">50–60%</span></td><td>Fine for text-heavy PDFs headed to an upload box or an email.</td></tr>
+            <tr><td class="band">Too far</td><td><span class="score lv3">below 40%</span></td><td>Artifacts show on photos and small text. Avoid unless desperate.</td></tr>
+          </tbody>
+        </table>
+        <p>If you are not sure, start at 70%, look at the result, and only drop lower if you still need to. Because the compression is lossy, every extra pass throws away more detail, so it is better to move the slider down once from the original than to compress an already-compressed file again.</p>
+
+        <div class="cav">The number that matters</div>
+        <h2 id="size">How small should a PDF be for email or a portal?</h2>
+        <p>Aim well under the stated cap, not right at it. Most mailboxes accept attachments up to about 25 MB, but messages over roughly 10 MB are more likely to bounce at strict corporate gateways or land in spam, so under 10 MB is the safe target for email, and under 500 KB is ideal for a single-page invoice or letter. Job and government portals are stricter still, often demanding 200 KB to 5 MB, and they simply reject anything larger.</p>
+        <p>This is where the target-size feature helps. Instead of guessing at the slider, you can type the exact limit, say 200 KB or 5 MB, and the Best Answer Hub PDF Compressor tries to hit it, automatically retrying at a lower quality up to three times. It is labeled best effort on purpose: some files have a compression floor they cannot go below, and the tool tells you when it cannot reach the target rather than pretending it did. Smaller files also load faster for anyone opening them, which matters because slow-loading pages miss Google's 2.5 second target for the largest element to appear, a benchmark tied to how its ranking systems reward good page experience (<a href="https://web.dev/articles/vitals" target="_blank" rel="noopener noreferrer">Google web.dev</a>).</p>
+
+        <div class="cav">The honest trade-off</div>
+        <h2 id="tradeoff">What does compressing a PDF cost you?</h2>
+        <p>Three things, and a good tool is upfront about all of them. First, the text stops being selectable. Because the Best Answer Hub PDF Compressor turns each page into an image to get that big size reduction, the words become part of the picture, so they can no longer be selected, searched, or copied. Second, it breaks digital signatures: a compressed file is structurally new, which invalidates the cryptographic hash a signature was built on, so a signed document has to be signed again afterward. Third, it cannot open password-protected or encrypted PDFs, because browser libraries have no key to unlock them.</p>
+        <div class="callout"><div class="h">When to reach for a different tool</div><p>If you must keep the text selectable, a paid desktop product like Adobe Acrobat Pro can perform object-stream compression that shrinks a file without flattening it to images. That is the right tool when searchable text matters more than absolute privacy. For everything else, where the goal is a smaller file that never leaves your device, browser-based compression wins.</p></div>
+
+        <div class="cav">Side by side</div>
+        <h2 id="compare">How is Best Answer Hub different from Smallpdf or iLovePDF?</h2>
+        <p>The core difference is where the work happens. Server-based tools upload, process, and store your file; the Best Answer Hub PDF Compressor does none of that. The table below lays out the practical gaps, including the one place the paid, server-side tools have an edge, which is preserving selectable text.</p>
+        <table>
+          <thead><tr><th>What matters</th><th>Best Answer Hub</th><th>Typical online compressor</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Where your file is processed</td><td>In your browser, on your device</td><td>Uploaded to the vendor's servers</td></tr>
+            <tr><td class="band">File kept afterward</td><td>Never uploaded, so never stored</td><td>1 to 24 hours, per their policies</td></tr>
+            <tr><td class="band">Daily limits</td><td>None</td><td>Common on free tiers (tasks or size caps)</td></tr>
+            <tr><td class="band">Signup or email</td><td>Never</td><td>Often required for full features</td></tr>
+            <tr><td class="band">Exact target size</td><td>Yes, with auto-retry</td><td>Rarely offered</td></tr>
+            <tr><td class="band">Works offline</td><td>Yes, after the page loads</td><td>No, needs a connection</td></tr>
+            <tr><td class="band">Keeps text selectable</td><td>No (pages become images)</td><td>Paid object-stream tools can</td></tr>
+            <tr><td class="band">Cost</td><td>Free, no watermark</td><td>Free tier limited; paid to remove caps</td></tr>
+          </tbody>
+        </table>
+
+        <blockquote>A file that is never uploaded cannot be retained, leaked, or handed over. <span class="accent">The safest place to compress a sensitive PDF is the device it already lives on.</span></blockquote>
+
+        <div class="cta">
+          <span class="kicker">Nothing leaves your device</span>
+          <h3>Compress a PDF free, with no upload</h3>
+          <p>Set the quality or an exact target size, and the whole job runs in your browser. No signup, no watermark, no daily limit.</p>
+          <a class="btn" href="/tools/pdf-compressor/">Open the PDF Compressor</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about compressing PDFs</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-pdf-tools/">Free PDF Tools, Nothing Uploaded</a></b> The whole PDF Toolkit explained, from merging to converting, all in your browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/pdf-to-word-converter/">Convert a PDF to Word Without Uploading It</a></b> Turn a PDF into an editable document on your own device.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/image-compressor/">Compress Images, Nothing Uploaded</a></b> The same privacy-first approach applied to photos, and how it strips hidden GPS data.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>Smallpdf, <a href="https://smallpdf.com/blog/is-smallpdf-safe" target="_blank" rel="noopener noreferrer">Is Smallpdf safe?</a>, 2026 (files deleted one hour after processing; vendor claim).</li>
+          <li>iLovePDF, <a href="https://www.ilovepdf.com/help/faq" target="_blank" rel="noopener noreferrer">Help / FAQ</a>, 2026 (files kept a maximum of two hours; vendor claim).</li>
+          <li>PDF2Go, <a href="https://www.pdf2go.com/blog/are-my-files-safe" target="_blank" rel="noopener noreferrer">Are my files safe?</a>, 2026 (deleted after 24 hours or 10 downloads; vendor claim).</li>
+          <li>Sejda, <a href="https://www.sejda.com/compress-pdf" target="_blank" rel="noopener noreferrer">Compress PDF</a>, 2026 (online files deleted after two hours; free-tier caps; vendor claim).</li>
+          <li>Adobe, <a href="https://helpx.adobe.com/document-cloud/faq/try-acrobat-online-services.html" target="_blank" rel="noopener noreferrer">Acrobat online services FAQ</a>, 2026 (files uploaded to Adobe cloud storage; print presets at 300 ppi).</li>
+          <li>FTC, <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">Protecting Personal Information: A Guide for Business</a> (do not keep sensitive data without a need).</li>
+          <li>NIST, <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-122.pdf" target="_blank" rel="noopener noreferrer">SP 800-122, Guide to Protecting the Confidentiality of PII</a>, 2010 (minimize collection and retention).</li>
+          <li>BleepingComputer, <a href="https://www.bleepingcomputer.com/news/security/fbi-warnings-are-true-fake-file-converters-do-push-malware/" target="_blank" rel="noopener noreferrer">FBI warnings are true: fake file converters do push malware</a>, 2025.</li>
+          <li>PDF Association, <a href="https://pdfa.org/resource/iso-32000-2/" target="_blank" rel="noopener noreferrer">ISO 32000-2 (PDF 2.0)</a>, and <a href="https://pdfa.org/understanding-brotli-pdf-compression/" target="_blank" rel="noopener noreferrer">Understanding PDF compression filters</a>.</li>
+          <li>Google, <a href="https://web.dev/articles/vitals" target="_blank" rel="noopener noreferrer">Web Vitals</a>, 2026 (Largest Contentful Paint target of 2.5 seconds).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/pdf-compressor/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Compressor</a>, <a href="/tools/pdf-merger/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Merger</a>, <a href="/tools/pdf-splitter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Splitter</a>, and <a href="/pdf-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">the PDF Toolkit</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 11px;border-radius:999px;display:inline-block;white-space:nowrap;font-family:'Bricolage Grotesque',sans-serif}
+  .pb .lv1{background:var(--sage)}
+  .pb .lv2{background:var(--clay)}
+  .pb .lv3{background:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

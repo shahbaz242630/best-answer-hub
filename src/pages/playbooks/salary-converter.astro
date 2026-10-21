@@ -1,0 +1,341 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-10T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Salary Converter?', a: 'The Best Answer Hub Salary Converter is a free, browser-based tool that converts pay between hourly, weekly, biweekly, semi-monthly, monthly, and yearly in real time. It blends overtime at time-and-a-half, adjusts for the weeks you actually work, and compares W-2 salary against 1099 contract pay. It needs no account and sends nothing to a server.' },
+  { q: 'How do you convert an hourly wage to an annual salary?', a: 'Multiply the hourly rate by hours per week, then by weeks per year. The usual shortcut is hourly times 2,080, since 40 hours across 52 weeks is 2,080 hours, so $30 an hour is about $62,400 a year before tax. To reverse it, divide the salary by 2,080. The Best Answer Hub Salary Converter does both directions instantly.' },
+  { q: 'Is 2,080 hours a year the correct number to use?', a: 'It is a convention, not a rule. The US Office of Personnel Management uses 2,087 hours to set federal hourly rates, because a clean 2,080 only occurs in 7 of every 28 years. Once paid time off is counted, your real worked hours are usually lower, which raises your true hourly. The Best Answer Hub Salary Converter lets you set your actual weeks worked.' },
+  { q: 'Why does my salary divided by twelve not match my paycheck?', a: 'That figure is gross pay, before deductions, while your paycheck is net pay. The IRS notes the gap is Social Security tax, Medicare tax, income tax withheld, and other deductions. Payroll tax alone is 7.65% of wages, and income tax withholding varies by state and filing. The Best Answer Hub Salary Converter shows gross and flags that net is lower.' },
+  { q: 'What is the difference between gross pay and net pay?', a: 'Gross pay is what you earn before anything is withheld. Net pay, or take-home pay, is what lands in your account after deductions. The main withholdings are the 7.65% payroll tax, federal income tax, and any state income tax. Because these vary by person, a converter shows gross, which is why the Best Answer Hub Salary Converter is clear about the difference.' },
+  { q: 'How does overtime change my true yearly pay?', a: 'Overtime can add thousands a flat conversion misses. Under federal law, non-exempt staff earn at least time-and-a-half over 40 hours a week. At $28 an hour, a 40-hour week is $58,240 a year, a 45-hour week is about $69,160, and a 50-hour week is about $80,080. The Best Answer Hub Salary Converter blends overtime into the annual total.' },
+  { q: 'What salary makes an employee exempt from overtime in 2026?', a: 'In 2026, most salaried staff must earn at least $684 a week, about $35,568 a year, plus meet a duties test, to be exempt from overtime. That figure follows a court ruling that vacated a 2024 increase, restored by the US Department of Labor. Highly compensated employees have a higher threshold of $107,432. Below these levels, overtime usually applies.' },
+  { q: 'Is a contract rate the same as a salary at the same number?', a: 'No. A 1099 contractor pays self-employment tax of 15.3% on net earnings, both halves of Social Security and Medicare, while a W-2 employee pays 7.65% and the employer covers the rest. Contractors also fund their own benefits and time off. The Best Answer Hub Salary Converter compares W-2 and 1099 side by side so offers match up fairly.' },
+  { q: 'How much self-employment tax does a 1099 contractor pay?', a: 'The self-employment tax rate is 15.3% of net earnings: 12.4% for Social Security up to the annual wage base, which is $184,500 in 2026, plus 2.9% for Medicare on all earnings, as set by the IRS. Contractors can deduct half of it on their income tax. The Best Answer Hub Salary Converter factors this gap into its W-2 versus 1099 view.' },
+  { q: 'What is the difference between biweekly and semi-monthly pay?', a: 'Biweekly means every two weeks, which is 26 pay periods a year. Semi-monthly means twice a month, which is 24 pay periods a year. Biweekly checks are smaller but arrive more often, and two months each year bring a third biweekly check. The Best Answer Hub Salary Converter shows both so the per-check amounts line up correctly.' },
+  { q: 'Do free salary calculators sell my data?', a: 'Some benchmarking sites are built to collect it. Salary.com charges roughly $30 to $80 for a personalized report and asks for your employer and history first, while Glassdoor and PayScale request your current pay and job details. The FTC advises businesses not to collect sensitive data they do not need. The Best Answer Hub Salary Converter asks for none of it.' },
+  { q: 'Are my pay figures uploaded when I use this converter?', a: 'No. The Best Answer Hub Salary Converter runs entirely in your browser, so your wage, hours, and results stay on your device and are never sent to a server. You can confirm this by disconnecting from the internet after the page loads: the tool keeps working. There is no account, no login, and no server-side copy of your pay.' },
+  { q: 'How do I find my real hourly rate after paid time off?', a: 'Divide your salary by the hours you actually work, not a flat 2,080. If a $60,000 salary comes with two weeks off, you work about 2,000 hours, so your real rate is $30.00 an hour rather than $28.85. Fewer worked hours for the same pay raises the true rate. The Best Answer Hub Salary Converter adjusts for your actual weeks.' },
+  { q: 'What is the federal minimum wage in 2026?', a: 'The federal minimum wage is $7.25 an hour, unchanged since July 2009, though many states and cities set higher local minimums. On a 40-hour week over 52 weeks, $7.25 an hour is about $15,080 a year before tax. The Best Answer Hub Salary Converter turns any local minimum into weekly, monthly, and yearly figures instantly.' },
+  { q: 'How is this different from Salary.com or PayScale?', a: 'Salary.com and PayScale are benchmarking sites that gate a personalized result behind your pay history or a fee. The Best Answer Hub Salary Converter does the conversion instead: hourly to yearly, overtime, and W-2 versus 1099, with no account and nothing uploaded. It answers what your pay converts to, not what a database thinks your job is worth.' },
+];
+
+const seo = {
+  title: 'How to Convert Hourly Pay to a Real Salary (2026)',
+  description: 'Convert hourly pay to a real yearly salary: the 2,080-hour myth, gross versus net, overtime, and W-2 versus 1099. Free, private, and no signup.',
+  url: '/playbooks/salary-converter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Salary Converter', url: '/playbooks/salary-converter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · Finance</span>
+        <div class="cav">The number behind the number</div>
+        <h1>What Your Hourly Pay <em>Really Converts To</em></h1>
+        <p class="dek">A plain guide to turning a wage into a salary and back: why 2,080 hours is a convention and not the law, why your pay divided by twelve is not your take-home, how overtime changes your true annual, and why so many salary sites want your personal data before they show a number. The Best Answer Hub Salary Converter does the math in your browser and sends nothing to a server.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Hourly to salary</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Your true rate<small>overtime and real hours</small></div>
+          <div class="seg b2">Private<small>nothing uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">55.6%</div><div class="l">of US wage workers are paid by the hour</div><div class="src">BLS, 2024</div></div>
+      <div class="stat"><div class="n">2,087</div><div class="l">work hours a year the US government uses, not 2,080</div><div class="src">OPM, 2026</div></div>
+      <div class="stat"><div class="n">7.65%</div><div class="l">payroll tax off your gross before any income tax</div><div class="src">IRS, 2026</div></div>
+      <div class="stat"><div class="n">$0</div><div class="l">of your pay figures sent to a server</div><div class="src">runs in your browser</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#convert">Hourly to annual</a>
+        <a href="#hours">The 2,080 myth</a>
+        <a href="#grossnet">Gross vs net</a>
+        <a href="#overtime">Overtime and your true annual</a>
+        <a href="#contract">W-2 vs 1099</a>
+        <a href="#private">Why sites want your data</a>
+        <a href="#different">Versus other converters</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub Salary Converter is a free, browser-based tool that turns any pay figure, whether hourly, weekly, monthly, or yearly, into all the others in real time, blends in overtime, and compares W-2 salary against 1099 contract pay.</strong> This guide explains how the conversion actually works, why the standard 2,080-hour year is a convention rather than a rule, why dividing your salary by twelve does not give your take-home, how overtime and self-employment tax change the real number, and why a surprising number of free salary sites treat your visit as a lead to sell.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Salary Converter?</h2>
+        <p>The Best Answer Hub <a href="/calculators/salary-converter/">Salary Converter</a> is a single-page tool that converts pay across every common frequency: hourly, daily, weekly, biweekly, semi-monthly, monthly, and annual. Type any one figure and the rest update instantly. It blends overtime at time-and-a-half so you see your real yearly total, adjusts for the weeks you actually work rather than a flat 52, and compares a W-2 salary against a 1099 contract rate so an offer can be judged like for like. Every calculation runs as JavaScript on your own device, so your wage, your hours, and your target number are never uploaded and no account is requested. The tool sits in the Best Answer Hub <a href="/finance-toolkit/">Finance Toolkit</a> next to a <a href="/calculators/compound-interest/">compound interest calculator</a> and a <a href="/calculators/tax-calculator/">tax calculator</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising or data sales.</p>
+
+        <div class="cav">The basic math</div>
+        <h2 id="convert">How do you convert an hourly wage to an annual salary?</h2>
+        <p>Multiply the hourly rate by the hours worked each week, then by the weeks worked each year. The common shortcut is hourly times 2,080, because a 40-hour week across 52 weeks is 2,080 hours, so $30 an hour works out to about $62,400 a year before tax. To go the other way, divide the annual salary by 2,080: a $62,400 salary is $30 an hour on that basis. The other frequencies follow the calendar. There are 52 weeks, 26 biweekly pay periods, 24 semi-monthly pay periods, and 12 months in a year, so a $62,400 salary is $1,200 a week, $2,400 every two weeks, $2,600 twice a month, and $5,200 a month. The Best Answer Hub Salary Converter runs all of these at once, so changing any single field rewrites the rest as you type.</p>
+
+        <div class="cav">The convention, not the law</div>
+        <h2 id="hours">Is 2,080 hours a year the real number?</h2>
+        <p>Not exactly, because 2,080 is a round convention rather than a legal standard. It assumes a perfect 40-hour week over 52 weeks, but a calendar year holds 365 or 366 days, so the count of workdays drifts year to year. The US Office of Personnel Management uses a divisor of 2,087 hours to set federal hourly rates, citing a 1981 government study showing that over a full 28-year cycle the average is 2,087.143 work hours, and that a clean 2,080 falls in only 7 of every 28 years. The gap matters most once paid time off enters the picture. A $60,000 salary is $28.85 an hour divided by 2,080, but if two weeks of vacation and holidays mean you actually work about 2,000 hours, your real rate is $30.00 an hour, and at 1,920 hours it is $31.25. The Best Answer Hub Salary Converter lets you set the weeks you truly work, so the hourly figure reflects your calendar rather than a textbook one.</p>
+
+        <div class="cav">Gross is not take-home</div>
+        <h2 id="grossnet">Why does your salary divided by twelve not match your paycheck?</h2>
+        <p>Because that figure is gross pay, the amount earned before anything is withheld, while your paycheck is net pay, the amount left after deductions. As the IRS puts it, the difference between the two is Social Security tax, Medicare tax, income tax withheld, and other amounts taken out. The payroll tax alone is 7.65% of your wage, split as 6.2% for Social Security up to the annual wage base, which is $184,500 in 2026, plus 1.45% for Medicare on all wages. On top of that sit federal income tax withholding, which varies with your filing status and W-4, and state income tax, which several states do not charge at all. That is why no honest converter promises a single take-home number: the deductions depend on where you live and how you file. The Best Answer Hub Salary Converter shows gross across every frequency and flags clearly that gross and net are not the same thing.</p>
+
+        <div class="cav">The hours nobody counts</div>
+        <h2 id="overtime">How does overtime change your true yearly pay?</h2>
+        <p>It can add many thousands of dollars that a flat 40-hour conversion never shows. Under the federal Fair Labor Standards Act, covered non-exempt employees must be paid at least time-and-a-half for every hour over 40 in a workweek. So at $28 an hour, a straight 40-hour week is $58,240 a year, but a steady 45-hour week adds five overtime hours at $42, worth about $10,920 more, for roughly $69,160. A 50-hour week adds ten overtime hours, about $21,840, pushing the true annual to around $80,080. Whether you qualify for overtime depends on your salary and duties: in 2026, following a court decision that vacated a 2024 increase, the US Department of Labor requires most salaried staff to earn at least $684 a week, about $35,568 a year, to be treated as exempt. The Best Answer Hub Salary Converter blends overtime into the annual figure so the number reflects the hours you really put in.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">Overtime turns $28 an hour into far more than $58,240 a year</figcaption>
+          <svg viewBox="0 0 600 300" role="img" aria-label="Bar chart: at 28 dollars an hour, a 40-hour week is 58,240 dollars a year, a 45-hour week with overtime is about 69,160 dollars, and a 50-hour week is about 80,080 dollars.">
+            <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <text x="20" y="30" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">True annual pay at $28/hour, overtime at time-and-a-half</text>
+            <text x="20" y="78" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">40-hour week</text>
+            <rect x="20" y="88" width="218" height="34" rx="6" fill="url(#bg)"/>
+            <text x="250" y="110" font-family="Bricolage Grotesque, sans-serif" font-size="16" font-weight="800" fill="#33302A">$58,240</text>
+            <text x="20" y="148" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">45-hour week</text>
+            <rect x="20" y="158" width="259" height="34" rx="6" fill="url(#bg)"/>
+            <text x="291" y="180" font-family="Bricolage Grotesque, sans-serif" font-size="16" font-weight="800" fill="#33302A">$69,160</text>
+            <text x="20" y="218" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">50-hour week</text>
+            <rect x="20" y="228" width="300" height="34" rx="6" fill="url(#bg)"/>
+            <text x="332" y="250" font-family="Bricolage Grotesque, sans-serif" font-size="16" font-weight="800" fill="#33302A">$80,080</text>
+          </svg>
+          <p class="chart-src">Computed at $28 an hour over 52 weeks, overtime paid at $42 an hour (time-and-a-half) for hours past 40, per the FLSA overtime standard (US Department of Labor, 2026). Figures are illustrative and before tax.</p>
+        </figure>
+
+        <div class="cav">Same money, different deal</div>
+        <h2 id="contract">Is a contract rate really the same as a salary?</h2>
+        <p>No, because a 1099 contract and a W-2 salary are taxed and supported very differently, even at the same headline number. An employee splits the payroll tax with their employer and pays 7.65% of wages. A self-employed contractor pays both halves as self-employment tax, a combined 15.3% on net earnings, since the IRS sets that rate as 12.4% for Social Security plus 2.9% for Medicare. A contractor also carries their own health insurance, retirement, and unpaid time off, none of which a salary figure reveals. So a $65 an hour contract that grosses about $135,200 over a full year is not equal to a $135,200 salary: after the extra tax and lost benefits it lands closer to a low-six-figure W-2 role. The Best Answer Hub Salary Converter puts the W-2 and 1099 views side by side so an offer can be compared on the same footing rather than on the sticker rate.</p>
+
+        <div class="cav">The honest part</div>
+        <h2 id="private">Why do salary sites ask for so much personal information?</h2>
+        <p>Because for many of them your personal data is the product, which is why the Best Answer Hub Salary Converter asks for none of it. Pure conversion needs nothing about you, since you already know the number you are converting. The friction appears on salary-benchmarking sites, whose business is collecting your pay history. Salary.com sells a personalized Personal Salary Report for roughly $30 to $80 and asks for your job title, employer size, industry, direct reports, experience, and education first. Glassdoor's Know Your Worth tool asks you to enter your current job title, employer, base salary, and location. PayScale routes you through a detailed profile survey before it shows a tailored figure. Handing pay and employer details to a server creates a record that can be stored, shared, or breached, and the Federal Trade Commission's own guidance to businesses is blunt: if you do not have a legitimate need for sensitive personal information, do not collect it. Because the Best Answer Hub Salary Converter computes everything in your browser, there is no server-side copy of your pay to protect and nothing to sell.</p>
+        <blockquote>A converter needs one number: the one you already have. <span class="accent">If a salary tool wants your employer and your current pay first, you are the product, not the user.</span></blockquote>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from Salary.com, PayScale, or other converters?</h2>
+        <p>The difference is that the Best Answer Hub Salary Converter does the full conversion, including overtime and W-2 versus 1099, asks nothing about you, and keeps every figure on your device, while the big salary sites gate a personalized result behind your data or a fee. To be fair, not every free tool harvests data: pure calculators like Omni Calculator and Calculator.net are also free and signup-free, and they are honest peers. The table sets the common experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical salary site</th></tr></thead>
+          <tbody>
+            <tr><td>Personal data to see your number</td><td class="band">None asked</td><td>Job, employer, current pay (Glassdoor, PayScale)</td></tr>
+            <tr><td>Cost of a personalized report</td><td class="band">Free</td><td>$30 to $80 (Salary.com)</td></tr>
+            <tr><td>Overtime blended into annual</td><td class="band">Yes</td><td>Rare</td></tr>
+            <tr><td>W-2 vs 1099 comparison</td><td class="band">Side by side</td><td>Uncommon</td></tr>
+            <tr><td>Gross vs net honesty</td><td class="band">Flags the difference</td><td>Often implies one take-home</td></tr>
+            <tr><td>Where the math runs</td><td class="band">In your browser</td><td>Often on a server</td></tr>
+          </tbody>
+        </table>
+        <p>None of this makes the arithmetic special, because a conversion is the same everywhere. What differs is what a tool does around the math: whether it shows overtime and the contractor gap, and whether it quietly turns your visit into a lead. The Best Answer Hub Salary Converter does the first and refuses the second.</p>
+        <div class="callout"><div class="h">Plan the whole picture</div><p>Pay is one number among several. Pair the converter with the Best Answer Hub <a href="/calculators/tax-calculator/">Tax Calculator</a> to estimate what you keep, the <a href="/calculators/compound-interest/">Compound Interest Calculator</a> to see what a raise could grow into if invested, and the <a href="/calculators/roi-calculator/">ROI Calculator</a> to weigh a move or a course against its payoff, all free and all in your browser.</p></div>
+
+        <div class="cta">
+          <span class="kicker">See your real number</span>
+          <h3>Open the Salary Converter</h3>
+          <p>Free, no signup, and nothing uploaded. Convert hourly, weekly, monthly, and yearly at once, blend in overtime, and compare a W-2 salary against a 1099 contract rate.</p>
+          <a class="btn" href="/calculators/salary-converter/">Convert my pay</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about converting pay</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-finance-tools/">Free Finance Tools, Nothing Uploaded</a></b> The full Finance Toolkit guide: salary, mortgage, compound interest, tax, and the bank statement converter.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/mortgage-calculator/">What Your Mortgage Payment Really Includes</a></b> The full monthly cost of a home, taxes and PMI included, worked out privately.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/compound-interest/">How Compound Interest Rewards Starting Early</a></b> See what a raise could become if you invested the difference instead of spending it.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/how-good-is-your-ai-knowledge/">How Good Is Your AI Knowledge?</a></b> A free, no-signup check on where you really stand with everyday AI tools.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>US Office of Personnel Management, <a href="https://www.opm.gov/policy-data-oversight/pay-leave/pay-administration/fact-sheets/computing-hourly-rates-of-pay-using-the-2087-hour-divisor/" target="_blank" rel="noopener noreferrer">Computing Hourly Rates of Pay Using the 2,087-Hour Divisor</a>, 2026 (2,087.143 average work hours a year; 2,080 occurs in 7 of every 28 years).</li>
+          <li>US Department of Labor, Wage and Hour Division, <a href="https://www.dol.gov/agencies/whd/overtime" target="_blank" rel="noopener noreferrer">Overtime Pay</a>, 2026 (time-and-a-half over 40 hours in a workweek for non-exempt employees).</li>
+          <li>US Department of Labor, <a href="https://www.dol.gov/agencies/whd/overtime/salary-levels" target="_blank" rel="noopener noreferrer">Earnings thresholds for the Executive, Administrative, and Professional exemption</a>, 2026 ($684 a week, about $35,568 a year; highly compensated $107,432, after the 2024 rule was vacated).</li>
+          <li>US Department of Labor, <a href="https://www.dol.gov/agencies/whd/minimum-wage/faq" target="_blank" rel="noopener noreferrer">Questions and Answers About the Minimum Wage</a>, 2026 ($7.25 an hour, effective July 24, 2009).</li>
+          <li>Internal Revenue Service, <a href="https://www.irs.gov/taxtopics/tc751" target="_blank" rel="noopener noreferrer">Topic no. 751, Social Security and Medicare withholding rates</a>, 2026 (employee FICA 7.65%: 6.2% Social Security plus 1.45% Medicare).</li>
+          <li>Internal Revenue Service, <a href="https://www.irs.gov/businesses/small-businesses-self-employed/self-employment-tax-social-security-and-medicare-taxes" target="_blank" rel="noopener noreferrer">Self-Employment Tax</a>, 2026 (15.3% rate: 12.4% Social Security plus 2.9% Medicare).</li>
+          <li>Social Security Administration, <a href="https://www.ssa.gov/oact/cola/cbb.html" target="_blank" rel="noopener noreferrer">Contribution and Benefit Base</a>, 2026 (Social Security wage base $184,500 for 2026).</li>
+          <li>US Bureau of Labor Statistics, <a href="https://www.bls.gov/opub/reports/minimum-wage/2024/" target="_blank" rel="noopener noreferrer">Characteristics of Minimum Wage Workers, 2024</a>, 2025 (80.3 million workers, 55.6% of wage and salary workers, are paid hourly).</li>
+          <li>Internal Revenue Service, <a href="https://apps.irs.gov/app/understandingTaxes/hows/tax_tutorials/mod01/tt_mod01_03.jsp" target="_blank" rel="noopener noreferrer">Understanding Taxes: gross pay versus net pay</a>, 2026 (net pay is gross minus Social Security, Medicare, income tax withheld, and other deductions).</li>
+          <li>Salary.com, <a href="https://www.salary.com/chronicles/understanding-the-new-personal-salary-report/" target="_blank" rel="noopener noreferrer">Understanding the Personal Salary Report</a>, 2026 (paid report, about $30 to $80, requiring job, employer, and experience details).</li>
+          <li>Glassdoor, <a href="https://www.glassdoor.com/blog/introducing-know-worth-glassdoor/" target="_blank" rel="noopener noreferrer">Introducing Know Your Worth</a>, 2026 (asks for current job title, employer, base salary, and location).</li>
+          <li>Federal Trade Commission, <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">Protecting Personal Information: A Guide for Business</a>, 2026 (do not collect sensitive personal information you do not need).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/calculators/salary-converter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Salary Converter</a>, <a href="/finance-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Finance Toolkit</a>, <a href="/calculators/compound-interest/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Compound Interest Calculator</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

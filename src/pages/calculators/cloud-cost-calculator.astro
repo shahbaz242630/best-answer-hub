@@ -1,0 +1,1038 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-07-03T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Cloud Cost Calculator?',
+    a: 'The Best Answer Hub Cloud Cost Calculator is a free, privacy-first browser tool that compares real monthly hosting costs across 8 cloud providers: Vercel, Netlify, Cloudflare, AWS Amplify, Supabase, Firebase, Render, and Railway. Enter your expected bandwidth, requests, CPU hours, storage, and auth users to see exactly what each provider will charge you. The Best Answer Hub Cloud Cost Calculator factors in every free tier, credit, and gotcha so you only see what you actually pay. Everything runs instantly in your browser. No signup, no server, no data collection.',
+  },
+  {
+    q: 'How much does it cost to host a web app at 10,000 users?',
+    a: 'It depends entirely on what kind of app. A lightweight SaaS dashboard at 10K monthly users typically runs $50–150/month across most stacks. The same user count on an image-heavy or media app can hit $300–800 because of bandwidth costs. The Best Answer Hub Cloud Cost Calculator asks you what kind of app you\'re building first. That\'s the variable that matters most, more than the user count itself.',
+  },
+  {
+    q: 'What\'s the cheapest stack for a Next.js SaaS?',
+    a: 'For most Next.js SaaS apps under 50K users, the cheapest credible stack is Cloudflare Pages + Workers paired with Supabase or a VPS-hosted Postgres. Cloudflare doesn\'t charge for bandwidth, which is the cost line that bites most growing apps. Run your specific numbers through the Best Answer Hub Cloud Cost Calculator. For some app types Vercel + Supabase can be competitive once you factor in developer time.',
+  },
+  {
+    q: 'Why is my hosting bill so much higher than the pricing page suggested?',
+    a: 'Three usual suspects. First, bandwidth: most pricing pages quote a generous-looking included amount, but image-heavy or media apps blow past it fast, and overage rates are $0.09–$0.15 per GB. Second, compute meters you didn\'t notice: active CPU time, function invocations, image optimization, and edge requests are often billed separately from the base plan. Third, per-seat charges if your team grew. The Best Answer Hub Cloud Cost Calculator surfaces all three so you can see which one is going to hit you.',
+  },
+  {
+    q: 'Are there any fixed-price platforms for hosting?',
+    a: 'Mostly no. The industry standard is base fee plus usage-based overages, which is why surprise bills happen. Closest you\'ll get to fixed pricing: a VPS (Hetzner, DigitalOcean, Contabo) at $5–20/month flat, where you self-host. Render\'s plan tiers are the most predictable among managed PaaS options. The Best Answer Hub Cloud Cost Calculator flags which providers in your comparison have hard spending caps available. That\'s the closest thing to safety.',
+  },
+  {
+    q: 'How much will my hosting cost at 100,000 users?',
+    a: 'At 100K users the spread between providers gets wide. Typically $200 to $2,000+/month depending on stack and app type. This is the point where bandwidth-free platforms (Cloudflare, Railway) pull significantly ahead of bandwidth-charging ones (Vercel, Netlify, Amplify) for image- or media-heavy apps. Use the Best Answer Hub Cloud Cost Calculator\'s grid view to see the full spread before you commit to a stack.',
+  },
+  {
+    q: 'What\'s the cheapest backend for a static site?',
+    a: 'If your site is genuinely static (no logins, no database), you don\'t need a backend. Cloudflare Pages or GitHub Pages will host it free indefinitely. If you need light dynamic features (form submissions, comments, simple auth), Cloudflare Workers + D1 or Supabase free tier are the cheapest credible options. The Best Answer Hub Cloud Cost Calculator\'s "no backend needed" toggle covers this case.',
+  },
+  {
+    q: 'Vercel vs Cloudflare vs Netlify, what\'s the actual cost difference?',
+    a: 'At identical usage, the gap can be 5–10× for bandwidth-heavy apps. Cloudflare doesn\'t charge for bandwidth at all. Vercel charges $0.15/GB after 1TB and meters CPU, memory, and invocations separately. Netlify uses a credit system that bundles bandwidth, compute, and deploys into one allowance. Easy to mis-estimate. Run your specific app type and user count through the Best Answer Hub Cloud Cost Calculator to see the real numbers.',
+  },
+  {
+    q: 'What are the hidden costs of cloud hosting?',
+    a: 'The four most-missed line items, in rough order of damage caused: (1) egress bandwidth: every GB leaving the provider is metered; (2) database operations: read amplification from listeners or unindexed queries scales fast; (3) per-seat team charges that compound with team size; (4) build minutes and deploy credits that drain even when your app has no traffic. The Best Answer Hub Cloud Cost Calculator includes all four in its estimates.',
+  },
+  {
+    q: 'Can I run my SaaS for under $5/month?',
+    a: 'At pre-launch or early validation stage, yes. Generous free tiers across Cloudflare Pages, Supabase, and Firebase will keep you at $0. Once you have real users (a few hundred MAU), $5/month becomes harder on managed platforms; a $5 Hetzner or DigitalOcean VPS with self-hosted Postgres is the standard way to stay under that line. The tradeoff is your time managing the server.',
+  },
+  {
+    q: 'When should I move from a managed PaaS to a VPS?',
+    a: 'Two common trigger points. First, when you\'re running 4+ small projects on managed services. Each project\'s base fee compounds and a single $20 VPS can host them all. Second, when your managed database bill alone passes $200–300/month. That\'s usually when self-hosted Postgres on a VPS starts paying off, factoring in the time cost of managing it yourself. Below those thresholds, managed services almost always win on total cost (including your time).',
+  },
+  {
+    q: 'What does my hosting provider not tell you about pricing?',
+    a: 'A few common omissions: pricing pages quote the base plan but rarely the overage rates in the same view; "free tier" almost never means "capped": it means "soft limit then bill"; per-seat charges compound as your team grows; and many platforms charge separately for related services (image optimization, edge middleware, dedicated compute) that aren\'t shown on the main pricing page. The Best Answer Hub Cloud Cost Calculator pulls overage rates from each provider\'s actual pricing docs.',
+  },
+  {
+    q: 'How do I cap spending so I don\'t get a surprise bill?',
+    a: 'Varies by provider, and this is genuinely uneven. AWS has Billing Alerts but no hard cap by default. GCP supports budget caps that can disable billing on a project. Cloudflare and Render have effective spending limits. Vercel, Netlify, and Firebase historically don\'t offer hard caps without enterprise contracts, meaning a viral moment or a bot attack can produce a real five-figure bill. Always set up billing alerts at minimum, ideally before you deploy.',
+  },
+  {
+    q: 'Is my usage data uploaded or stored?',
+    a: 'No. The Best Answer Hub Cloud Cost Calculator runs entirely in your browser, so the bandwidth, request, storage, and user figures you enter are never uploaded, logged, or stored, and no account is asked for. The comparison is calculated on your device, so your infrastructure plans stay private to you.',
+  },
+  {
+    q: 'How accurate are the estimates?',
+    a: 'They are directional, not a final bill. The Best Answer Hub Cloud Cost Calculator uses public list pricing from each provider, which changes over time and excludes commitment discounts such as AWS Savings Plans, up to 72% off, or Google Cloud committed use discounts, up to 70%. Confirm a final figure with the official calculators from AWS, Google Cloud, or Azure before committing.',
+  },
+];
+
+const seo = {
+  title: 'Cloud Cost Calculator — Compare Vercel, AWS & More (2026)',
+  description: 'Compare cloud hosting costs across 8 providers. Estimate bandwidth, compute, storage, and per-seat charges before you deploy.',
+  url: '/calculators/cloud-cost-calculator/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-23T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Cloud Cost Calculator', url: '/calculators/cloud-cost-calculator/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated May 2026 · 8 providers
+          </div>
+          <a href="/calculators/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Calculators
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Cloud Cost Calculator:<br/>
+          <em class="italic text-bae-primary">Compare 8 providers instantly</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Pick your frontend host and backend service, enter your expected usage, and see exactly what each provider will cost you. We factored in every free tier, credit, and gotcha.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Cloud cost calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Frontend Provider -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Frontend Provider</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="frontend-selector">
+              <button type="button" data-provider="vercel" class="provider-btn text-left px-3 py-3 rounded-bae-sm border border-bae-primary bg-bae-primary-soft ring-1 ring-bae-primary/20">
+                <div class="text-xs font-semibold text-bae-primary uppercase tracking-wider mb-1">Vercel</div>
+                <div class="text-sm font-semibold text-bae-ink">$20/seat</div>
+                <div class="text-[11px] text-bae-muted">1TB bandwidth</div>
+              </button>
+              <button type="button" data-provider="netlify" class="provider-btn text-left px-3 py-3 rounded-bae-sm border border-bae-border bg-white hover:border-bae-primary transition-colors">
+                <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-1">Netlify</div>
+                <div class="text-sm font-semibold text-bae-ink">$20 flat</div>
+                <div class="text-[11px] text-bae-muted">Credit system</div>
+              </button>
+              <button type="button" data-provider="cloudflare" class="provider-btn text-left px-3 py-3 rounded-bae-sm border border-bae-border bg-white hover:border-bae-primary transition-colors">
+                <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-1">Cloudflare</div>
+                <div class="text-sm font-semibold text-bae-ink">$5 base</div>
+                <div class="text-[11px] text-bae-muted">Free egress</div>
+              </button>
+              <button type="button" data-provider="amplify" class="provider-btn text-left px-3 py-3 rounded-bae-sm border border-bae-border bg-white hover:border-bae-primary transition-colors">
+                <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-1">Amplify</div>
+                <div class="text-sm font-semibold text-bae-ink">Pay-as-you-go</div>
+                <div class="text-[11px] text-bae-muted">15GB free</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Backend Provider -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted">Backend Provider</h2>
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="backend-toggle" checked class="w-4 h-4 rounded border-bae-border text-bae-primary focus:ring-bae-primary" />
+                <span class="text-sm text-bae-ink font-medium">Include backend</span>
+              </label>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="backend-selector">
+              <button type="button" data-provider="supabase" class="provider-btn text-left px-3 py-3 rounded-bae-sm border border-bae-primary bg-bae-primary-soft ring-1 ring-bae-primary/20">
+                <div class="text-xs font-semibold text-bae-primary uppercase tracking-wider mb-1">Supabase</div>
+                <div class="text-sm font-semibold text-bae-ink">$25 base</div>
+                <div class="text-[11px] text-bae-muted">250GB egress</div>
+              </button>
+              <button type="button" data-provider="firebase" class="provider-btn text-left px-3 py-3 rounded-bae-sm border border-bae-border bg-white hover:border-bae-primary transition-colors">
+                <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-1">Firebase</div>
+                <div class="text-sm font-semibold text-bae-ink">$0 base</div>
+                <div class="text-[11px] text-bae-muted">PAYG</div>
+              </button>
+              <button type="button" data-provider="render" class="provider-btn text-left px-3 py-3 rounded-bae-sm border border-bae-border bg-white hover:border-bae-primary transition-colors">
+                <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-1">Render</div>
+                <div class="text-sm font-semibold text-bae-ink">$25 + compute</div>
+                <div class="text-[11px] text-bae-muted">Instance-based</div>
+              </button>
+              <button type="button" data-provider="railway" class="provider-btn text-left px-3 py-3 rounded-bae-sm border border-bae-border bg-white hover:border-bae-primary transition-colors">
+                <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-1">Railway</div>
+                <div class="text-sm font-semibold text-bae-ink">$20 min</div>
+                <div class="text-[11px] text-bae-muted">Per-second</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Expected Users -->
+          <div class="bg-bae-primary-soft border border-bae-primary/20 rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-primary mb-4">Expected Users</h2>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div class="flex-1 w-full">
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Monthly Active Users</label>
+                <input type="number" id="expectedUsers" min="0" value="1000" class="w-full text-lg font-semibold border border-bae-border rounded-bae-sm px-4 py-3 bg-white focus:outline-none focus:border-bae-primary focus:ring-2 focus:ring-bae-primary/20" />
+              </div>
+            </div>
+            <p class="text-xs text-bae-muted mt-3 leading-relaxed">Enter your expected user count and we'll automatically estimate bandwidth, requests, compute, and storage based on typical SaaS usage patterns. Fine-tune individual values below if you know your exact numbers.</p>
+          </div>
+
+          <!-- Usage Inputs -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Expected Monthly Usage</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+              <!-- Bandwidth -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Bandwidth (GB)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-bandwidth">100 GB</span>
+                </div>
+                <input type="range" id="bandwidth-slider" min="0" max="5000" step="10" value="100" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="bandwidth" min="0" value="100" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- Edge Requests -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Edge Requests (millions)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-edgeRequests">1 M</span>
+                </div>
+                <input type="range" id="edgeRequests-slider" min="0" max="500" step="1" value="1" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="edgeRequests" min="0" value="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- API Calls -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">API / Function Calls (millions)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-apiCalls">0.5 M</span>
+                </div>
+                <input type="range" id="apiCalls-slider" min="0" max="100" step="0.1" value="0.5" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="apiCalls" min="0" step="0.1" value="0.5" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- CPU Hours -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Active CPU Hours</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-activeCpuHours">10 hrs</span>
+                </div>
+                <input type="range" id="activeCpuHours-slider" min="0" max="500" step="1" value="10" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="activeCpuHours" min="0" value="10" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- Storage -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Storage (GB)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-storageGB">50 GB</span>
+                </div>
+                <input type="range" id="storageGB-slider" min="0" max="1000" step="5" value="50" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="storageGB" min="0" value="50" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- Auth MAU -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Auth MAU</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-authMAU">5,000</span>
+                </div>
+                <input type="range" id="authMAU-slider" min="0" max="500000" step="1000" value="5000" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="authMAU" min="0" value="5000" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- DB Reads -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">DB Reads (100K)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-dbReads">10</span>
+                </div>
+                <input type="range" id="dbReads-slider" min="0" max="10000" step="10" value="10" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="dbReads" min="0" value="10" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- DB Writes -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">DB Writes (100K)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-dbWrites">5</span>
+                </div>
+                <input type="range" id="dbWrites-slider" min="0" max="5000" step="5" value="5" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="dbWrites" min="0" value="5" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- Build Minutes (Vercel) -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Build Minutes</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-buildMinutes">60 min</span>
+                </div>
+                <input type="range" id="buildMinutes-slider" min="0" max="5000" step="10" value="60" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="buildMinutes" min="0" value="60" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- Production Deploys (Netlify) -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Production Deploys</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-productionDeploys">30</span>
+                </div>
+                <input type="range" id="productionDeploys-slider" min="0" max="500" step="1" value="30" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="productionDeploys" min="0" value="30" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- Vercel Seats -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Team Seats (Vercel)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-seats">1</span>
+                </div>
+                <input type="range" id="seats-slider" min="1" max="20" step="1" value="1" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="seats" min="1" value="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- Railway CPU -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Railway vCPU</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-railwayCpu">0.5</span>
+                </div>
+                <input type="range" id="railwayCpu-slider" min="0.1" max="8" step="0.1" value="0.5" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="railwayCpu" min="0.1" step="0.1" value="0.5" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+
+              <!-- Railway RAM -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Railway RAM (GB)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-railwayRam">0.5</span>
+                </div>
+                <input type="range" id="railwayRam-slider" min="0.1" max="16" step="0.1" value="0.5" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="railwayRam" min="0.1" step="0.1" value="0.5" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Reset -->
+          <div class="flex justify-end -mt-1 mb-1">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset calculator
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <!-- Your Stack -->
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Your Stack Estimate</h3>
+            <div class="mb-4">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Frontend</div>
+              <div class="text-lg font-semibold" id="stack-frontend-name">Vercel</div>
+              <div class="text-xl font-bold font-serif text-bae-primary" id="stack-frontend-cost">$20</div>
+            </div>
+            <div class="mb-4" id="stack-backend-row">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Backend</div>
+              <div class="text-lg font-semibold" id="stack-backend-name">Supabase</div>
+              <div class="text-xl font-bold font-serif text-bae-primary" id="stack-backend-cost">$25</div>
+            </div>
+            <div class="border-t border-white/10 pt-4">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Total Monthly</div>
+              <div class="text-3xl md:text-4xl font-bold font-serif" id="stack-total">$45</div>
+            </div>
+            <button type="button" id="print-btn" class="w-full mt-4 bg-bae-primary hover:bg-bae-accent text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+              Download PDF Report
+            </button>
+          </div>
+
+          <!-- Frontend Comparison -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Frontend Comparison</h3>
+            <div class="space-y-3" id="frontend-comparison">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Backend Comparison -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm" id="backend-comparison-panel">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Backend Comparison</h3>
+            <div class="space-y-3" id="backend-comparison">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Report Summary (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Report Summary</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Cloud Cost Comparison Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Frontend</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-frontend-name">—</p>
+              <p class="text-xl font-bold text-bae-primary" id="report-frontend-cost">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Backend</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-backend-name">—</p>
+              <p class="text-xl font-bold text-bae-primary" id="report-backend-cost">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Monthly</p>
+              <p class="text-3xl font-bold text-bae-ink" id="report-total">$0</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" id="report-usage-details">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>Estimates are based on published pricing as of May 2026. Actual costs may vary by region, usage patterns, and provider pricing changes. Always verify current pricing on each provider's official website before committing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Pick your stack', text: 'Select a frontend host (Vercel, Netlify, Cloudflare, Amplify) and a backend service (Supabase, Firebase, Render, Railway). Toggle the backend off for static sites.' },
+    { name: 'Enter your usage', text: 'Adjust bandwidth, requests, API calls, storage, and auth users. Every free tier and included credit is already factored in. You only see what you actually pay.' },
+    { name: 'Compare and save', text: 'See your total stack cost and a side-by-side comparison of all providers. Download a PDF report to share with your team or finance.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Pick your stack</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Select a frontend host (Vercel, Netlify, Cloudflare, Amplify) and a backend service (Supabase, Firebase, Render, Railway). Toggle the backend off for static sites.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter your usage</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Adjust bandwidth, requests, API calls, storage, and auth users. Every free tier and included credit is already factored in. You only see what you actually pay.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Compare and save</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">See your total stack cost and a side-by-side comparison of all providers. Download a PDF report to share with your team or finance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/compound-interest/" class="text-bae-primary hover:underline">Compound Interest Calculator</a>, <a href="/tools/ai-cost-calculator/" class="text-bae-primary hover:underline">AI Cost Calculator</a>, and <a href="/calculators/" class="text-bae-primary hover:underline">Calculators Hub</a>.</p>
+        </div>
+        <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all calculators →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What People Pay -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What people pay</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Image-heavy SaaS, 12K users</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Vercel Pro + Supabase Pro</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $340/month</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Bandwidth ate 60% of the bill. Migrating images to Cloudflare R2 typically halves this.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Lightweight API + mobile app backend, 30K users</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Cloudflare Workers + Supabase Pro</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $55/month</div>
+          <p class="text-sm text-bae-muted leading-relaxed">No bandwidth charges + lean usage. The structural cost winner for API-first apps.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">SaaS dashboard, 8K users</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Vercel Pro + Firebase Blaze</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $180/month</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Firestore read amplification accounted for ~$90 of that. Common Firebase pattern.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Indie portfolio of 6 small projects, ~500 users each</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Hetzner VPS + self-hosted Postgres</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $12/month total</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Same projects on managed PaaS would be $150+/month. Tradeoff is time spent managing the box.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios based on public bill reports and modeled estimates. Your costs will vary.</p>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      function formatMoney(n) {
+        if (n >= 1000) return '$' + Math.round(n).toLocaleString();
+        if (n >= 1) return '$' + n.toFixed(2);
+        return '$' + n.toFixed(3);
+      }
+
+      function estimateUsageFromUsers(users) {
+        const u = Math.max(0, users);
+        return {
+          bandwidth: Math.round(u * 0.15),
+          edgeRequests: Math.max(0, +(u * 150 / 1_000_000).toFixed(2)),
+          apiCalls: Math.max(0, +(u * 80 / 1_000_000).toFixed(2)),
+          activeCpuHours: Math.max(0, Math.round(u * 0.02)),
+          storageGB: Math.max(0, Math.round(u * 0.02)),
+          authMAU: u,
+          dbReads: Math.max(0, +(u * 500 / 100_000).toFixed(1)),
+          dbWrites: Math.max(0, +(u * 50 / 100_000).toFixed(1)),
+          buildMinutes: 60,
+          productionDeploys: 30,
+          seats: Math.max(1, Math.ceil(u / 5000)),
+          railwayCpu: Math.max(0.5, +(u / 20_000).toFixed(1)),
+          railwayRam: Math.max(0.5, +(u / 10_000).toFixed(1)),
+        };
+      }
+
+      function applyEstimatesFromUsers(users) {
+        const estimates = estimateUsageFromUsers(users);
+        const suffixMap = {
+          bandwidth: ' GB', edgeRequests: ' M', apiCalls: ' M',
+          activeCpuHours: ' hrs', storageGB: ' GB', authMAU: '',
+          dbReads: '', dbWrites: '', buildMinutes: ' min',
+          productionDeploys: '', seats: '', railwayCpu: '', railwayRam: ' GB',
+        };
+        Object.entries(estimates).forEach(([key, value]) => {
+          const input = $(key);
+          const slider = $(key + '-slider');
+          const display = $('display-' + key);
+          if (input) input.value = value;
+          if (slider) slider.value = value;
+          if (display) display.textContent = parseFloat(value).toLocaleString() + (suffixMap[key] || '');
+        });
+      }
+
+      function getInputs() {
+        const val = (id) => parseFloat($(id)?.value) || 0;
+        return {
+          bandwidthGB: val('bandwidth'),
+          edgeRequests: val('edgeRequests') * 1_000_000,
+          apiCalls: val('apiCalls') * 1_000_000,
+          activeCpuHours: val('activeCpuHours'),
+          storageGB: val('storageGB'),
+          authMAU: val('authMAU'),
+          dbReads: val('dbReads'),
+          dbWrites: val('dbWrites'),
+          buildMinutes: val('buildMinutes'),
+          productionDeploys: val('productionDeploys'),
+          seats: val('seats'),
+          railwayCpu: val('railwayCpu'),
+          railwayRam: val('railwayRam'),
+        };
+      }
+
+      const FRONTEND = {
+        vercel: (u) => {
+          const seats = Math.max(1, u.seats || 1);
+          const base = 20 * seats;
+          const credit = 20 * seats;
+          let usage = 0;
+          usage += Math.max(0, u.bandwidthGB - 1024) * 0.15;
+          usage += Math.max(0, u.edgeRequests - 10_000_000) / 1_000_000 * 2.00;
+          usage += u.activeCpuHours * 0.128;
+          usage += (u.apiCalls / 1_000_000) * 0.60;
+          usage += (u.buildMinutes || 0) * 0.105;
+          return { cost: base + Math.max(0, usage - credit) };
+        },
+        netlify: (u) => {
+          let credits = 0;
+          credits += u.bandwidthGB * 20;
+          credits += (u.activeCpuHours || 0) * 10;
+          credits += (u.edgeRequests / 10_000) * 2;
+          credits += (u.productionDeploys || 0) * 15;
+          const excess = Math.max(0, credits - 3000);
+          return { cost: 20 + (excess / 1500) * 10 };
+        },
+        cloudflare: (u) => {
+          let cost = 5;
+          cost += Math.max(0, u.edgeRequests - 10_000_000) / 1_000_000 * 0.30;
+          cost += Math.max(0, u.activeCpuHours - 8.33) * 0.072;
+          return { cost };
+        },
+        amplify: (u) => {
+          let cost = 0;
+          cost += Math.max(0, u.bandwidthGB - 15) * 0.15;
+          cost += Math.max(0, u.storageGB - 5) * 0.023;
+          cost += Math.max(0, u.edgeRequests - 500_000) / 1_000_000 * 0.30;
+          cost += Math.max(0, u.activeCpuHours - 100) * 0.20;
+          return { cost };
+        },
+      };
+
+      const BACKEND = {
+        supabase: (u) => {
+          let cost = 25;
+          cost += Math.max(0, u.bandwidthGB - 250) * 0.09;
+          cost += Math.max(0, u.authMAU - 100_000) * 0.00325;
+          cost += Math.max(0, u.storageGB - 8) * 0.125;
+          cost += Math.max(0, (u.apiCalls / 1_000_000) - 2) * 2.00;
+          return { cost };
+        },
+        firebase: (u) => {
+          let cost = 0;
+          // dbReads/dbWrites are already in units of 100K. Firebase bills $0.06 per 100K
+          // reads and $0.18 per 100K writes, with ~1.5M reads (15 units) and ~600K writes
+          // (6 units) free per month — so charge only the units beyond the free tier.
+          cost += Math.max(0, u.dbReads - 15) * 0.06;
+          cost += Math.max(0, u.dbWrites - 6) * 0.18;
+          cost += Math.max(0, u.storageGB - 5) * 0.026;
+          cost += Math.max(0, u.bandwidthGB - 10.8) * 0.15;
+          cost += Math.max(0, (u.apiCalls / 1_000_000) - 2) * 0.40;
+          return { cost };
+        },
+        render: (u) => {
+          // Render Pro: flat $25/mo workspace fee. (Legacy MAU-tier model removed — Render
+          // does not price by monthly active users; service compute is instance-based and is
+          // not modeled here. The Pro plan includes 25 GB egress, then $0.15/GB.)
+          let cost = 25;
+          cost += Math.max(0, u.bandwidthGB - 25) * 0.15;
+          return { cost };
+        },
+        railway: (u) => {
+          let cost = 0;
+          const seconds = 730 * 3600;
+          cost += (u.railwayCpu || 0.5) * seconds * 0.00000772;
+          cost += (u.railwayRam || 0.5) * seconds * 0.00000386;
+          cost += u.bandwidthGB * 0.05;
+          cost = Math.max(cost, 20);
+          return { cost };
+        },
+      };
+
+      const frontendNames = { vercel: 'Vercel', netlify: 'Netlify', cloudflare: 'Cloudflare', amplify: 'AWS Amplify' };
+      const backendNames = { supabase: 'Supabase', firebase: 'Firebase', render: 'Render', railway: 'Railway' };
+
+      let selectedFrontend = 'vercel';
+      let selectedBackend = 'supabase';
+      let backendEnabled = true;
+
+      function calculate() {
+        const u = getInputs();
+        const fe = FRONTEND[selectedFrontend](u);
+        const be = backendEnabled ? BACKEND[selectedBackend](u) : { cost: 0 };
+        const total = fe.cost + be.cost;
+
+        // Update stack display
+        $('stack-frontend-name').textContent = frontendNames[selectedFrontend];
+        $('stack-frontend-cost').textContent = formatMoney(fe.cost);
+        $('stack-backend-name').textContent = backendEnabled ? backendNames[selectedBackend] : 'None';
+        $('stack-backend-cost').textContent = formatMoney(be.cost);
+        $('stack-total').textContent = formatMoney(total);
+        $('stack-backend-row').style.display = backendEnabled ? 'block' : 'none';
+
+        // Update report
+        $('report-frontend-name').textContent = frontendNames[selectedFrontend];
+        $('report-frontend-cost').textContent = formatMoney(fe.cost);
+        $('report-backend-name').textContent = backendEnabled ? backendNames[selectedBackend] : 'None';
+        $('report-backend-cost').textContent = formatMoney(be.cost);
+        $('report-total').textContent = formatMoney(total);
+
+        const details = $('report-usage-details');
+        details.innerHTML = '';
+        const rows = [
+          ['Expected Users', (parseInt($('expectedUsers').value) || 0).toLocaleString()],
+          ['Bandwidth', u.bandwidthGB + ' GB'],
+          ['Edge Requests', (u.edgeRequests / 1_000_000).toFixed(1) + ' M'],
+          ['API Calls', (u.apiCalls / 1_000_000).toFixed(1) + ' M'],
+          ['Storage', u.storageGB + ' GB'],
+          ['Auth MAU', u.authMAU.toLocaleString()],
+        ];
+        rows.forEach(([label, value]) => {
+          const div = document.createElement('div');
+          div.innerHTML = '<span class="text-bae-muted">' + label + ':</span> <span class="font-medium text-bae-ink">' + value + '</span>';
+          details.appendChild(div);
+        });
+
+        // Frontend comparison bars
+        const feContainer = $('frontend-comparison');
+        feContainer.innerHTML = '';
+        const feCosts = Object.keys(FRONTEND).map(k => ({ key: k, name: frontendNames[k], cost: FRONTEND[k](u).cost }));
+        const maxFe = Math.max(...feCosts.map(c => c.cost), 1);
+        feCosts.sort((a, b) => a.cost - b.cost).forEach(item => {
+          const isSelected = item.key === selectedFrontend;
+          const pct = Math.min(100, (item.cost / maxFe) * 100);
+          const row = document.createElement('div');
+          row.className = 'flex items-center gap-3';
+          row.innerHTML = '<div class="w-20 text-xs font-medium ' + (isSelected ? 'text-bae-primary' : 'text-bae-muted') + '">' + item.name + '</div>' +
+            '<div class="flex-1 h-2.5 bg-bae-bg rounded-full overflow-hidden"><div class="h-full rounded-full ' + (isSelected ? 'bg-bae-primary' : 'bg-bae-border') + '" style="width:' + pct + '%"></div></div>' +
+            '<div class="w-16 text-right text-sm font-semibold ' + (isSelected ? 'text-bae-ink' : 'text-bae-muted') + '">' + formatMoney(item.cost) + '</div>';
+          feContainer.appendChild(row);
+        });
+
+        // Backend comparison bars
+        const beContainer = $('backend-comparison');
+        beContainer.innerHTML = '';
+        if (backendEnabled) {
+          $('backend-comparison-panel').style.display = 'block';
+          const beCosts = Object.keys(BACKEND).map(k => ({ key: k, name: backendNames[k], cost: BACKEND[k](u).cost }));
+          const maxBe = Math.max(...beCosts.map(c => c.cost), 1);
+          beCosts.sort((a, b) => a.cost - b.cost).forEach(item => {
+            const isSelected = item.key === selectedBackend;
+            const pct = Math.min(100, (item.cost / maxBe) * 100);
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-3';
+            row.innerHTML = '<div class="w-20 text-xs font-medium ' + (isSelected ? 'text-bae-primary' : 'text-bae-muted') + '">' + item.name + '</div>' +
+              '<div class="flex-1 h-2.5 bg-bae-bg rounded-full overflow-hidden"><div class="h-full rounded-full ' + (isSelected ? 'bg-bae-primary' : 'bg-bae-border') + '" style="width:' + pct + '%"></div></div>' +
+              '<div class="w-16 text-right text-sm font-semibold ' + (isSelected ? 'text-bae-ink' : 'text-bae-muted') + '">' + formatMoney(item.cost) + '</div>';
+            beContainer.appendChild(row);
+          });
+        } else {
+          $('backend-comparison-panel').style.display = 'none';
+        }
+
+        updateURL();
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          const users = parseInt($('expectedUsers').value) || 0;
+          const estimates = estimateUsageFromUsers(users);
+
+          // Clear all params first
+          Array.from(url.searchParams.keys()).forEach(k => url.searchParams.delete(k));
+
+          // Only save fields that differ from defaults
+          if (users !== 1000) url.searchParams.set('expectedUsers', users);
+          if (selectedFrontend !== 'vercel') url.searchParams.set('fe', selectedFrontend);
+          if (selectedBackend !== 'supabase') url.searchParams.set('be', selectedBackend);
+          if (!backendEnabled) url.searchParams.set('beOn', '0');
+
+          // Only save usage fields that differ from auto-estimates
+          const diffs = [
+            ['bandwidth', estimates.bandwidth],
+            ['edgeRequests', estimates.edgeRequests],
+            ['apiCalls', estimates.apiCalls],
+            ['activeCpuHours', estimates.activeCpuHours],
+            ['storageGB', estimates.storageGB],
+            ['authMAU', estimates.authMAU],
+            ['dbReads', estimates.dbReads],
+            ['dbWrites', estimates.dbWrites],
+            ['buildMinutes', estimates.buildMinutes],
+            ['productionDeploys', estimates.productionDeploys],
+            ['seats', estimates.seats],
+            ['railwayCpu', estimates.railwayCpu],
+            ['railwayRam', estimates.railwayRam],
+          ];
+          diffs.forEach(([id, est]) => {
+            if (parseFloat($(id).value) !== est) url.searchParams.set(id, $(id).value);
+          });
+
+          window.history.replaceState({}, '', url);
+        } catch(e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+          const fe = url.searchParams.get('fe');
+          const be = url.searchParams.get('be');
+          const beOn = url.searchParams.get('beOn');
+          const eu = url.searchParams.get('expectedUsers');
+          if (fe && FRONTEND[fe]) selectedFrontend = fe;
+          if (be && BACKEND[be]) selectedBackend = be;
+          if (beOn !== null) backendEnabled = beOn === '1';
+          if (eu !== null) $('expectedUsers').value = eu;
+
+          ['bandwidth', 'edgeRequests', 'apiCalls', 'activeCpuHours', 'storageGB', 'authMAU', 'dbReads', 'dbWrites', 'buildMinutes', 'productionDeploys', 'seats', 'railwayCpu', 'railwayRam'].forEach(id => {
+            const v = url.searchParams.get(id);
+            if (v !== null) {
+              $(id).value = v;
+              const slider = $(id + '-slider');
+              if (slider) slider.value = v;
+            }
+          });
+        } catch(e) {}
+      }
+
+      // Provider selection
+      function setupProviderSelector(containerId, type) {
+        const container = $(containerId);
+        container.querySelectorAll('.provider-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            container.querySelectorAll('.provider-btn').forEach(b => {
+              b.classList.remove('border-bae-primary', 'bg-bae-primary-soft', 'ring-1', 'ring-bae-primary/20');
+              b.classList.add('border-bae-border', 'bg-white');
+              b.querySelector('.text-xs.font-semibold')?.classList.remove('text-bae-primary');
+              b.querySelector('.text-xs.font-semibold')?.classList.add('text-bae-muted');
+            });
+            btn.classList.remove('border-bae-border', 'bg-white');
+            btn.classList.add('border-bae-primary', 'bg-bae-primary-soft', 'ring-1', 'ring-bae-primary/20');
+            btn.querySelector('.text-xs.font-semibold')?.classList.remove('text-bae-muted');
+            btn.querySelector('.text-xs.font-semibold')?.classList.add('text-bae-primary');
+
+            if (type === 'frontend') selectedFrontend = btn.dataset.provider;
+            else selectedBackend = btn.dataset.provider;
+            calculate();
+          });
+        });
+      }
+
+      setupProviderSelector('frontend-selector', 'frontend');
+      setupProviderSelector('backend-selector', 'backend');
+
+      // Backend toggle
+      $('backend-toggle').addEventListener('change', (e) => {
+        backendEnabled = e.target.checked;
+        calculate();
+      });
+
+      // Input sync
+      function syncInputAndSlider(inputId, displayId, suffix) {
+        const input = $(inputId);
+        const slider = $(inputId + '-slider');
+        const display = $(displayId);
+        input.addEventListener('input', () => {
+          slider.value = input.value;
+          if (display) display.textContent = parseFloat(input.value).toLocaleString() + (suffix || '');
+          calculate();
+        });
+        slider.addEventListener('input', () => {
+          input.value = slider.value;
+          if (display) display.textContent = parseFloat(slider.value).toLocaleString() + (suffix || '');
+          calculate();
+        });
+      }
+
+      syncInputAndSlider('bandwidth', 'display-bandwidth', ' GB');
+      syncInputAndSlider('edgeRequests', 'display-edgeRequests', ' M');
+      syncInputAndSlider('apiCalls', 'display-apiCalls', ' M');
+      syncInputAndSlider('activeCpuHours', 'display-activeCpuHours', ' hrs');
+      syncInputAndSlider('storageGB', 'display-storageGB', ' GB');
+      syncInputAndSlider('authMAU', 'display-authMAU', '');
+      syncInputAndSlider('dbReads', 'display-dbReads', '');
+      syncInputAndSlider('dbWrites', 'display-dbWrites', '');
+      syncInputAndSlider('buildMinutes', 'display-buildMinutes', ' min');
+      syncInputAndSlider('productionDeploys', 'display-productionDeploys', '');
+      syncInputAndSlider('seats', 'display-seats', '');
+      syncInputAndSlider('railwayCpu', 'display-railwayCpu', '');
+      syncInputAndSlider('railwayRam', 'display-railwayRam', ' GB');
+
+      // Expected Users auto-estimate
+      $('expectedUsers').addEventListener('input', () => {
+        const users = parseInt($('expectedUsers').value) || 0;
+        if (users > 0) {
+          applyEstimatesFromUsers(users);
+          calculate();
+        }
+      });
+
+      // Clear / Reset
+      $('clear-btn').addEventListener('click', () => {
+        $('expectedUsers').value = 0;
+        applyEstimatesFromUsers(0);
+
+        // estimateUsageFromUsers has hardcoded mins for these — zero them explicitly
+        const zeroOut = [
+          { k: 'productionDeploys', sfx: '', min: 0 },
+          { k: 'buildMinutes',      sfx: ' min', min: 0 },
+          { k: 'seats',             sfx: '', min: 1 },
+          { k: 'railwayCpu',        sfx: '', min: 0.1 },
+          { k: 'railwayRam',        sfx: ' GB', min: 0.1 },
+        ];
+        zeroOut.forEach(({ k, sfx, min }) => {
+          const input = $(k);
+          const slider = $(k + '-slider');
+          const display = $('display-' + k);
+          if (input)  input.value = min;
+          if (slider) slider.value = min;
+          if (display) display.textContent = parseFloat(min).toLocaleString() + sfx;
+        });
+
+        selectedFrontend = 'vercel';
+        selectedBackend = 'supabase';
+        backendEnabled = true;
+        setInitialProviderState('frontend-selector', selectedFrontend);
+        setInitialProviderState('backend-selector', selectedBackend);
+        $('backend-toggle').checked = true;
+        calculate();
+        window.history.replaceState({}, '', window.location.pathname);
+      });
+
+      // PDF button
+      $('print-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('print-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const element = $('print-report');
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'cloud-cost-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // Init
+      readURL();
+      applyEstimatesFromUsers(parseInt($('expectedUsers').value) || 1000);
+      readURL(); // Re-apply any manual overrides from URL after estimates
+      // Update display labels
+      $('display-bandwidth').textContent = parseFloat($('bandwidth').value).toLocaleString() + ' GB';
+      $('display-edgeRequests').textContent = parseFloat($('edgeRequests').value).toLocaleString() + ' M';
+      $('display-apiCalls').textContent = parseFloat($('apiCalls').value).toLocaleString() + ' M';
+      $('display-activeCpuHours').textContent = parseFloat($('activeCpuHours').value).toLocaleString() + ' hrs';
+      $('display-storageGB').textContent = parseFloat($('storageGB').value).toLocaleString() + ' GB';
+      $('display-authMAU').textContent = parseFloat($('authMAU').value).toLocaleString();
+      $('display-dbReads').textContent = parseFloat($('dbReads').value).toLocaleString();
+      $('display-dbWrites').textContent = parseFloat($('dbWrites').value).toLocaleString();
+      $('display-buildMinutes').textContent = parseFloat($('buildMinutes').value).toLocaleString() + ' min';
+      $('display-productionDeploys').textContent = parseFloat($('productionDeploys').value).toLocaleString();
+      $('display-seats').textContent = parseFloat($('seats').value).toLocaleString();
+      $('display-railwayCpu').textContent = parseFloat($('railwayCpu').value).toLocaleString();
+      $('display-railwayRam').textContent = parseFloat($('railwayRam').value).toLocaleString() + ' GB';
+
+      // Set initial provider button states
+      function setInitialProviderState(containerId, selectedKey) {
+        const container = $(containerId);
+        container.querySelectorAll('.provider-btn').forEach(btn => {
+          const isSelected = btn.dataset.provider === selectedKey;
+          if (isSelected) {
+            btn.classList.remove('border-bae-border', 'bg-white');
+            btn.classList.add('border-bae-primary', 'bg-bae-primary-soft', 'ring-1', 'ring-bae-primary/20');
+            btn.querySelector('.text-xs.font-semibold')?.classList.remove('text-bae-muted');
+            btn.querySelector('.text-xs.font-semibold')?.classList.add('text-bae-primary');
+          } else {
+            btn.classList.remove('border-bae-primary', 'bg-bae-primary-soft', 'ring-1', 'ring-bae-primary/20');
+            btn.classList.add('border-bae-border', 'bg-white');
+            btn.querySelector('.text-xs.font-semibold')?.classList.remove('text-bae-primary');
+            btn.querySelector('.text-xs.font-semibold')?.classList.add('text-bae-muted');
+          }
+        });
+      }
+      setInitialProviderState('frontend-selector', selectedFrontend);
+      setInitialProviderState('backend-selector', selectedBackend);
+      $('backend-toggle').checked = backendEnabled;
+
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+  </style>
+
+  <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Cloud Hosting Cost Calculator",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0" }
+    }
+  </script>
+</BaseLayout>

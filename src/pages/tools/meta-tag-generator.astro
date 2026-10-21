@@ -1,0 +1,633 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Meta Tag Generator?',
+    a: 'The Best Answer Hub Meta Tag Generator is a free browser-based tool that creates SEO-friendly meta tags and Open Graph markup for any webpage. You fill in basic fields like page title, description, image URL, and author, and it instantly generates a complete HTML meta tag block plus JSON-LD structured data. It also shows live previews of how your page will look in Google search results, Facebook shares, and Twitter/X cards. Everything runs locally in your browser. No data is sent to any server.',
+  },
+  {
+    q: 'Is the Meta Tag Generator free to use?',
+    a: 'Yes, the Best Answer Hub Meta Tag Generator is completely free with no usage limits, no signup, and no watermarked output. You can generate meta tags for as many pages as you want. Unlike paid SEO suites like Surfer SEO or Clearscope, there are no subscription fees or credit limits. Every tag is generated instantly in your browser using vanilla JavaScript.',
+  },
+  {
+    q: 'How do I use the Meta Tag Generator?',
+    a: 'Enter your page title, meta description, canonical URL, and Open Graph image URL into the input fields. The Best Answer Hub Meta Tag Generator updates live previews in real time so you can see exactly how your page will appear in Google search results and social media shares. Once you are satisfied, copy the generated HTML meta tag block and paste it into the <code>&lt;head&gt;</code> section of your webpage. You can also copy the JSON-LD structured data snippet for rich snippets.',
+  },
+  {
+    q: 'What are meta tags and why do they matter for SEO?',
+    a: 'Meta tags are HTML elements in the <code>&lt;head&gt;</code> section that tell search engines and social platforms what your page is about. The title tag is the clickable headline in Google search results. The meta description is the short summary below it. While meta descriptions are not a direct ranking factor, they strongly influence click-through rate. A well-written title and description can increase organic traffic by 5 to 30 percent. Open Graph tags control how your link appears when shared on Facebook, LinkedIn, and Slack.',
+  },
+  {
+    q: 'What are Open Graph tags?',
+    a: 'Open Graph tags are a protocol created by Facebook that lets you control how your webpage appears when shared on social media. The four core tags are <code>og:title</code>, <code>og:description</code>, <code>og:image</code>, and <code>og:url</code>. Without these, social platforms guess what to display, often pulling random images or cutting off text awkwardly. Proper Open Graph tags ensure your shared links look professional and drive more clicks from social traffic.',
+  },
+  {
+    q: 'What is the ideal length for a meta title?',
+    a: 'The ideal meta title length is 50 to 60 characters. Google typically displays the first 600 pixels of a title, which works out to roughly 50 to 60 characters depending on letter width. Titles longer than 60 characters are often truncated with an ellipsis, hiding important keywords. Titles shorter than 30 characters may look incomplete and fail to communicate value. The Best Answer Hub Meta Tag Generator shows a live character counter and visual truncation indicator so you stay in the optimal range.',
+  },
+  {
+    q: 'What is the ideal length for a meta description?',
+    a: 'The ideal meta description length is 150 to 160 characters. Google generally shows about 920 to 1,000 pixels of description text, which translates to roughly 150 to 160 characters on desktop. On mobile, the limit is slightly shorter. Descriptions longer than 160 characters risk being cut off mid-sentence. Descriptions under 120 characters may not provide enough context to entice a click. The Best Answer Hub Meta Tag Generator previews exactly where Google will truncate your description.',
+  },
+  {
+    q: 'What is JSON-LD structured data?',
+    a: 'JSON-LD (JavaScript Object Notation for Linked Data) is a script block you add to your HTML <code>&lt;head&gt;</code> that helps search engines understand the context of your content. It powers rich snippets in search results: star ratings, FAQ dropdowns, product prices, and event dates. The most common types are WebPage, Article, Organization, and FAQPage. Pages with structured data can earn up to 30 percent higher click-through rates because they stand out visually. The Best Answer Hub Meta Tag Generator produces a clean JSON-LD WebPage or Article snippet you can copy and paste.',
+  },
+  {
+    q: 'What is a Twitter Card and how is it different from Open Graph?',
+    a: 'A Twitter Card controls how your link appears when shared on Twitter (now X). Twitter recognizes Open Graph tags as a fallback, but dedicated <code>twitter:</code> tags give you finer control. The two main card types are "summary" (small image left, text right) and "summary_large_image" (full-width image above text). If you want large preview images on Twitter, you must set <code>twitter:card</code> to <code>summary_large_image</code>. The Best Answer Hub Meta Tag Generator generates both Open Graph and Twitter Card tags so your links look great everywhere.',
+  },
+  {
+    q: 'Do I need a separate image for Open Graph?',
+    a: 'Yes, you should designate a specific Open Graph image. The recommended size is 1,200 x 630 pixels for Facebook and LinkedIn, and 1,200 x 600 for Twitter/X large image cards. The image should be under 8 MB. While social platforms can scrape any image from your page, they often pick the wrong one: a tiny icon, a banner ad, or a generic stock photo. Setting <code>og:image</code> guarantees the exact image you want appears in shares. You can upload an image directly into the Best Answer Hub Meta Tag Generator to preview how it will look.',
+  },
+  {
+    q: 'What is a canonical tag and when should I use one?',
+    a: 'A canonical tag (<code>rel="canonical"</code>) tells search engines which version of a page is the original when the same content exists at multiple URLs. You should use one on every page, even if there is only one version. E-commerce sites especially need canonical tags because product pages often appear under multiple category paths. Without a canonical tag, Google may split ranking power across duplicates. The Best Answer Hub Meta Tag Generator includes a canonical tag in every generated block.',
+  },
+  {
+    q: 'Can I use this tool for WordPress, Wix, Webflow, or Shopify?',
+    a: 'Yes. The generated meta tags are standard HTML that work on any platform. For WordPress, paste the tags into your theme\'s <code>header.php</code> file or use a plugin like Rank Math or Yoast SEO. For Wix, Webflow, and Shopify, use the built-in SEO settings panels and copy the title, description, and image values from the Best Answer Hub Meta Tag Generator directly into their fields. The JSON-LD snippet can be pasted into any custom HTML embed or script injection area.',
+  },
+  {
+    q: 'Is my data sent to a server?',
+    a: 'No. The Meta Tag Generator runs entirely in your browser using vanilla JavaScript. Your page titles, descriptions, and URLs are never uploaded, stored, or logged on any server. If you upload an image for preview, it stays in your browser memory and is never sent anywhere. You can verify this by opening your browser\'s Network tab in Developer Tools. You will see zero outgoing requests when you generate tags or preview results.',
+  },
+  {
+    q: 'Will Google actually use the meta title and description I write?',
+    a: 'Not always. Google rewrites meta descriptions approximately 68% of the time on desktop and 71% on mobile, typically when it judges the rewritten version better matches the search query. Google also rewrites title tags in roughly 60% of cases, usually shortening them or substituting a heading from the page body. However, writing a well-crafted title and description still matters. Google uses your version about 30% of the time, and well-targeted tags increase the chance Google retains them. Even when rewritten, your original copy is used as a strong signal about the page\'s topic. The Best Answer Hub Meta Tag Generator helps you write tags that are clear, on-topic, and within the length limits that make Google less likely to override them.',
+  },
+  {
+    q: 'Do meta keywords still help SEO in 2026?',
+    a: 'No. Google officially stopped using the meta keywords tag as a ranking signal in 2009 and has publicly confirmed it ignores the tag entirely. Bing has stated it may treat pages with excessive or keyword-stuffed meta keywords tags as a potential spam signal. Despite this, many legacy websites, older CMS templates, and outdated tutorials still reference the tag. The Best Answer Hub Meta Tag Generator intentionally does not generate a meta keywords tag. There is no SEO benefit to including one, and adding it wastes time without improving rankings.',
+  },
+];
+
+const steps = [
+  { title: 'Fill in your page details', description: 'Enter your page title, description, canonical URL, Open Graph image, and optional fields like author and keywords.' },
+  { title: 'Preview live results', description: 'See exactly how your page will look in Google search results, Facebook shares, and Twitter/X cards in real time.' },
+  { title: 'Copy the markup', description: 'Copy the complete HTML meta tag block or JSON-LD snippet and paste it into the <head> of your webpage.' },
+];
+
+const seo = {
+  title: 'Free Meta Tag Generator & Open Graph Preview (2026)',
+  description: 'Generate SEO meta tags and Open Graph markup instantly. Preview Google SERP, Facebook, and Twitter cards live. Copy-ready HTML + JSON-LD. No signup.',
+  url: '/tools/meta-tag-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Meta Tag Generator', url: '/tools/meta-tag-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Meta Tag Generator:"
+    accentText="Preview & generate SEO markup"
+    description="Create perfect meta tags, Open Graph markup, and Twitter Cards. Preview your Google SERP snippet, Facebook share, and Twitter card in real time. Copy-ready HTML + JSON-LD."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <!-- Meta Tag Generator Interface -->
+  <section class="py-6 md:py-8" aria-label="Meta tag generator">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-6xl mx-auto space-y-6">
+
+        <!-- Top row: Inputs (left) + Previews (right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <!-- Left: Inputs -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 h-fit">
+            <h2 class="text-sm font-bold text-bae-ink mb-4">Page Details</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Page Title <span class="text-bae-muted/60">(50–60 chars ideal)</span></label>
+                <input type="text" id="mt-title" maxlength="120" placeholder="Enter your page title" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+                <p class="text-[11px] text-bae-muted mt-1"><span id="mt-title-count">0</span> characters <span id="mt-title-warn" class="text-amber-600 hidden ml-1">(may be truncated in search results)</span></p>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Meta Description <span class="text-bae-muted/60">(150–160 chars ideal)</span></label>
+                <textarea id="mt-desc" rows="3" maxlength="300" placeholder="Enter a short description of your page" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+                <p class="text-[11px] text-bae-muted mt-1"><span id="mt-desc-count">0</span> characters <span id="mt-desc-warn" class="text-amber-600 hidden ml-1">(may be truncated in search results)</span></p>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">Canonical URL</label>
+                <input type="url" id="mt-url" placeholder="https://example.com/page" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-bae-muted mb-1.5">OG Image <span class="text-bae-muted/60">(1200×630 ideal)</span></label>
+                <div class="flex gap-2">
+                  <input type="url" id="mt-image" placeholder="https://example.com/image.jpg" class="flex-1 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+                  <label class="shrink-0 bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors cursor-pointer flex items-center">
+                    Upload
+                    <input type="file" id="mt-image-file" accept="image/*" class="hidden" />
+                  </label>
+                </div>
+                <div class="flex items-center gap-2 mt-1.5">
+                  <p class="text-[11px] text-bae-muted">Paste a URL or upload an image from your device.</p>
+                  <button type="button" id="mt-clear-image" class="text-[11px] font-semibold text-bae-primary hover:underline">Clear image</button>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-bae-muted mb-1.5">Site Name</label>
+                  <input type="text" id="mt-site" placeholder="My Site" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-bae-muted mb-1.5">Author / Twitter</label>
+                  <input type="text" id="mt-author" placeholder="@handle" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-bae-muted mb-1.5">OG Type</label>
+                  <select id="mt-type" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary">
+                    <option value="website">website</option>
+                    <option value="article">article</option>
+                    <option value="product">product</option>
+                    <option value="profile">profile</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-bae-muted mb-1.5">Twitter Card</label>
+                  <select id="mt-twitter-card" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary">
+                    <option value="summary_large_image">Summary Large Image</option>
+                    <option value="summary">Summary</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-bae-muted mb-1.5">Keywords</label>
+                  <input type="text" id="mt-keywords" placeholder="seo, tools, free" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-bae-muted mb-1.5">Language</label>
+                  <input type="text" id="mt-lang" value="en" placeholder="en" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink placeholder:text-bae-muted/50 focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+                </div>
+              </div>
+              <div class="pt-2">
+                <button type="button" id="mt-clear-all" class="w-full bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-ink transition-colors">Clear all fields</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Live Previews -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 h-fit">
+            <h2 class="text-sm font-bold text-bae-ink mb-4">Live Previews</h2>
+            <div class="space-y-5">
+              <!-- Google SERP -->
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-2">Google Search</p>
+                <div class="border border-bae-border rounded-bae-sm p-4 bg-white">
+                  <p class="text-[13px] text-[#1a0dab] truncate mb-0.5 min-h-[1.25em]" id="prev-google-title"></p>
+                  <p class="text-[12px] text-[#006621] truncate mb-0.5 min-h-[1.15em]" id="prev-google-url"></p>
+                  <p class="text-[13px] text-[#4d5156] leading-[1.58] line-clamp-2 min-h-[2.6em]" id="prev-google-desc"></p>
+                </div>
+              </div>
+              <!-- Facebook / LinkedIn -->
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-2">Facebook / LinkedIn</p>
+                <div class="border border-bae-border rounded-bae-sm overflow-hidden bg-white">
+                  <div class="bg-bae-bg border-b border-bae-border h-[200px] flex items-center justify-center text-sm text-bae-muted" id="prev-fb-img-wrap">
+                    <span id="prev-fb-img-placeholder">Image preview will appear here</span>
+                    <img id="prev-fb-img" src="" alt="Open Graph preview" class="w-full h-full object-cover hidden" />
+                  </div>
+                  <div class="p-3 bg-[#f0f2f5]">
+                    <p class="text-[11px] uppercase text-[#65676b] truncate min-h-[1.1em]" id="prev-fb-site"></p>
+                    <p class="text-[15px] font-semibold text-[#050505] leading-snug mt-0.5 min-h-[1.4em]" id="prev-fb-title"></p>
+                    <p class="text-[14px] text-[#65676b] leading-snug mt-0.5 line-clamp-2 min-h-[2.6em]" id="prev-fb-desc"></p>
+                  </div>
+                </div>
+              </div>
+              <!-- Twitter / X -->
+              <div>
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-2">Twitter / X</p>
+                <div class="border border-bae-border rounded-bae-sm overflow-hidden bg-white" id="prev-tw-card">
+                  <div class="bg-bae-bg border-b border-bae-border h-[200px] flex items-center justify-center text-sm text-bae-muted" id="prev-tw-img-wrap">
+                    <span id="prev-tw-img-placeholder">Image preview will appear here</span>
+                    <img id="prev-tw-img" src="" alt="Twitter card preview" class="w-full h-full object-cover hidden" />
+                  </div>
+                  <div class="p-3">
+                    <p class="text-[14px] text-[#0f1419] font-semibold leading-snug min-h-[1.4em]" id="prev-tw-title"></p>
+                    <p class="text-[13px] text-[#536471] leading-snug mt-0.5 line-clamp-2 min-h-[2.6em]" id="prev-tw-desc"></p>
+                    <p class="text-[12px] text-[#536471] mt-1 min-h-[1.1em]" id="prev-tw-domain"></p>
+                    <p class="text-[12px] text-bae-primary mt-0.5 min-h-[1.1em]" id="prev-tw-handle"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom: Generated Output -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-sm font-bold text-bae-ink">Generated Markup</h2>
+            <div class="flex gap-2">
+              <button type="button" id="mt-copy-html" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Copy HTML</button>
+              <button type="button" id="mt-copy-json" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy JSON-LD</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">HTML Meta Tags</label>
+              <pre id="mt-output-html" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono overflow-auto whitespace-pre-wrap"></pre>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">JSON-LD Structured Data</label>
+              <pre id="mt-output-json" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono overflow-auto whitespace-pre-wrap"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Who uses this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">CONTENT WRITER</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Content Writer: publishing without a developer</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">ONE-GO GENERATION</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"I write the articles but I do not have a developer to handle SEO markup. The Best Answer Hub Meta Tag Generator lets me generate the full meta block, Open Graph tags, and JSON-LD in one go and paste it straight into the CMS custom head field."</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">FREELANCE SEO</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Freelance SEO: client page audits</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">LIVE SERP PREVIEW</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"When I audit a client's site I use the Best Answer Hub Meta Tag Generator to rebuild missing or poorly formatted meta tags quickly. The live Google SERP preview means I can show clients exactly what their listing will look like before we publish."</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">DEVELOPER</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Developer: Open Graph setup for social sharing</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">NO GUESSING</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"Every time I launch a new project I use the Best Answer Hub Meta Tag Generator to set up the OG and Twitter Card tags correctly. The live Facebook and Twitter previews show me exactly how the link will look when someone shares it. No guessing."</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">SMALL BUSINESS</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Small Business Owner: DIY website SEO</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">COPY-PASTE READY</div>
+          <p class="text-sm text-bae-muted leading-relaxed">"I built my own Shopify store but never understood what meta tags were. The Best Answer Hub Meta Tag Generator walked me through title, description, and OG image in plain language and gave me copy-paste code that actually worked."</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more SEO & web tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/seo-score-checker/" class="text-bae-primary hover:underline">SEO Score Checker</a>, <a href="/tools/website-speed-test/" class="text-bae-primary hover:underline">Website Speed Test</a>, <a href="/tools/broken-link-checker/" class="text-bae-primary hover:underline">Broken Link Checker</a>, <a href="/tools/image-compressor/" class="text-bae-primary hover:underline">Image Compressor</a>, <a href="/tools/color-palette-generator/" class="text-bae-primary hover:underline">Color Palette</a>, and <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code Generator</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const inputs = {
+        title: document.getElementById('mt-title'),
+        desc: document.getElementById('mt-desc'),
+        url: document.getElementById('mt-url'),
+        image: document.getElementById('mt-image'),
+        imageFile: document.getElementById('mt-image-file'),
+        site: document.getElementById('mt-site'),
+        author: document.getElementById('mt-author'),
+        type: document.getElementById('mt-type'),
+        twitterCard: document.getElementById('mt-twitter-card'),
+        keywords: document.getElementById('mt-keywords'),
+        lang: document.getElementById('mt-lang'),
+      };
+
+      const counts = {
+        title: document.getElementById('mt-title-count'),
+        desc: document.getElementById('mt-desc-count'),
+      };
+
+      const warns = {
+        title: document.getElementById('mt-title-warn'),
+        desc: document.getElementById('mt-desc-warn'),
+      };
+
+      const previews = {
+        googleTitle: document.getElementById('prev-google-title'),
+        googleUrl: document.getElementById('prev-google-url'),
+        googleDesc: document.getElementById('prev-google-desc'),
+        fbImg: document.getElementById('prev-fb-img'),
+        fbImgWrap: document.getElementById('prev-fb-img-wrap'),
+        fbPlaceholder: document.getElementById('prev-fb-img-placeholder'),
+        fbSite: document.getElementById('prev-fb-site'),
+        fbTitle: document.getElementById('prev-fb-title'),
+        fbDesc: document.getElementById('prev-fb-desc'),
+        twImg: document.getElementById('prev-tw-img'),
+        twImgWrap: document.getElementById('prev-tw-img-wrap'),
+        twPlaceholder: document.getElementById('prev-tw-img-placeholder'),
+        twTitle: document.getElementById('prev-tw-title'),
+        twDesc: document.getElementById('prev-tw-desc'),
+        twDomain: document.getElementById('prev-tw-domain'),
+        twHandle: document.getElementById('prev-tw-handle'),
+        twCard: document.getElementById('prev-tw-card'),
+      };
+
+      const outputs = {
+        html: document.getElementById('mt-output-html'),
+        json: document.getElementById('mt-output-json'),
+      };
+
+      let uploadedImageDataUrl = '';
+
+      function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || '';
+        // textContent->innerHTML escapes & < > but NOT quotes; values are placed in
+        // double-quoted HTML attributes, so " must be escaped to avoid breaking the tag.
+        return div.innerHTML.replace(/"/g, '&quot;');
+      }
+
+      function truncate(str, len) {
+        if (!str) return '';
+        return str.length > len ? str.substring(0, len - 1) + '…' : str;
+      }
+
+      function getDomain(url) {
+        try {
+          const u = new URL(url);
+          return u.hostname.replace(/^www\./, '');
+        } catch (e) {
+          return '';
+        }
+      }
+
+      function getPathBread(url) {
+        try {
+          const u = new URL(url);
+          const parts = u.pathname.split('/').filter(Boolean);
+          return parts.map(p => p.replace(/-/g, ' ')).join(' › ');
+        } catch (e) {
+          return '';
+        }
+      }
+
+      function updateCounts() {
+        const tLen = (inputs.title.value || '').length;
+        const dLen = (inputs.desc.value || '').length;
+        counts.title.textContent = tLen;
+        counts.desc.textContent = dLen;
+        warns.title.classList.toggle('hidden', tLen <= 60);
+        warns.desc.classList.toggle('hidden', dLen <= 160);
+      }
+
+      function getImage() {
+        return uploadedImageDataUrl || inputs.image.value.trim();
+      }
+
+      function updatePreviews() {
+        const title = inputs.title.value.trim();
+        const desc = inputs.desc.value.trim();
+        const url = inputs.url.value.trim();
+        const image = getImage();
+        const site = inputs.site.value.trim();
+        const domain = getDomain(url);
+        const bread = getPathBread(url);
+
+        // Google
+        previews.googleTitle.textContent = title ? truncate(title, 63) : '';
+        previews.googleUrl.textContent = url ? (domain + (bread ? ' › ' + bread : '')) : '';
+        previews.googleDesc.textContent = desc ? truncate(desc, 160) : '';
+        previews.googleTitle.style.color = title.length > 70 ? '#d93025' : '#1a0dab';
+
+        // Facebook
+        if (image) {
+          previews.fbImg.src = image;
+          previews.fbImg.classList.remove('hidden');
+          previews.fbPlaceholder.classList.add('hidden');
+        } else {
+          previews.fbImg.classList.add('hidden');
+          previews.fbImg.src = '';
+          previews.fbPlaceholder.classList.remove('hidden');
+        }
+        previews.fbSite.textContent = (site || domain).toUpperCase();
+        previews.fbTitle.textContent = title;
+        previews.fbDesc.textContent = desc;
+
+        // Twitter
+        if (image) {
+          previews.twImg.src = image;
+          previews.twImg.classList.remove('hidden');
+          previews.twPlaceholder.classList.add('hidden');
+        } else {
+          previews.twImg.classList.add('hidden');
+          previews.twImg.src = '';
+          previews.twPlaceholder.classList.remove('hidden');
+        }
+        previews.twTitle.textContent = title;
+        previews.twDesc.textContent = desc;
+        previews.twDomain.textContent = domain;
+        const handle = inputs.author.value.trim();
+        previews.twHandle.textContent = handle ? (handle.startsWith('@') ? handle : '@' + handle) : '';
+
+        const cardType = inputs.twitterCard.value;
+        if (cardType === 'summary') {
+          previews.twCard.style.maxWidth = '436px';
+          previews.twImgWrap.style.height = '218px';
+        } else {
+          previews.twCard.style.maxWidth = '504px';
+          previews.twImgWrap.style.height = '252px';
+        }
+      }
+
+      function generateMarkup() {
+        const title = inputs.title.value.trim();
+        const desc = inputs.desc.value.trim();
+        const url = inputs.url.value.trim();
+        const image = getImage();
+        const site = inputs.site.value.trim();
+        const author = inputs.author.value.trim();
+        const type = inputs.type.value;
+        const twitterCard = inputs.twitterCard.value;
+        const keywords = inputs.keywords.value.trim();
+        const lang = inputs.lang.value.trim() || 'en';
+
+        if (!title && !desc && !url && !image) {
+          outputs.html.textContent = '<!-- Fill in your page details above to generate meta tags -->';
+          outputs.json.textContent = '<!-- Fill in your page details above to generate structured data -->';
+          return;
+        }
+
+        // Use a clean placeholder URL in output if user uploaded a local image (base64)
+        const isBase64Image = image.startsWith('data:');
+        const outputImage = isBase64Image ? 'https://yourdomain.com/og-image.jpg' : image;
+
+        const lines = [];
+        lines.push('<meta charset="UTF-8">');
+        lines.push('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+        if (lang) lines.push('<html lang="' + escapeHtml(lang) + '">');
+        if (title) lines.push('<title>' + escapeHtml(title) + '</title>');
+        if (desc) lines.push('<meta name="description" content="' + escapeHtml(desc) + '">');
+        if (keywords) lines.push('<meta name="keywords" content="' + escapeHtml(keywords) + '">');
+        if (author) lines.push('<meta name="author" content="' + escapeHtml(author.replace(/^@/, '')) + '">');
+        lines.push('<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">');
+        if (url) lines.push('<link rel="canonical" href="' + escapeHtml(url) + '">');
+        lines.push('');
+        if (title) lines.push('<meta property="og:title" content="' + escapeHtml(title) + '">');
+        if (desc) lines.push('<meta property="og:description" content="' + escapeHtml(desc) + '">');
+        if (url) lines.push('<meta property="og:url" content="' + escapeHtml(url) + '">');
+        if (image) {
+          if (isBase64Image) {
+            lines.push('<!-- Upload your image to your server or CDN, then replace the URL below -->');
+          }
+          lines.push('<meta property="og:image" content="' + escapeHtml(outputImage) + '">');
+        }
+        if (site) lines.push('<meta property="og:site_name" content="' + escapeHtml(site) + '">');
+        if (type) lines.push('<meta property="og:type" content="' + escapeHtml(type) + '">');
+        if (lang) lines.push('<meta property="og:locale" content="' + escapeHtml(lang.replace(/-.*$/, '')) + '_US">');
+        lines.push('');
+        if (twitterCard) lines.push('<meta name="twitter:card" content="' + escapeHtml(twitterCard) + '">');
+        if (title) lines.push('<meta name="twitter:title" content="' + escapeHtml(title) + '">');
+        if (desc) lines.push('<meta name="twitter:description" content="' + escapeHtml(desc) + '">');
+        if (image) {
+          if (isBase64Image) {
+            lines.push('<!-- Upload your image to your server or CDN, then replace the URL below -->');
+          }
+          lines.push('<meta name="twitter:image" content="' + escapeHtml(outputImage) + '">');
+        }
+        if (author) lines.push('<meta name="twitter:creator" content="' + (author.startsWith('@') ? escapeHtml(author) : '@' + escapeHtml(author)) + '">');
+
+        outputs.html.textContent = lines.join('\n');
+
+        const jsonLd = {
+          '@context': 'https://schema.org',
+          '@type': type === 'article' ? 'Article' : 'WebPage',
+        };
+        if (title) jsonLd.name = title;
+        if (desc) jsonLd.description = desc;
+        if (url) jsonLd.url = url;
+        if (image) {
+          jsonLd.image = outputImage;
+        }
+        if (author) jsonLd.author = { '@type': 'Organization', name: author.replace(/^@/, '') };
+        if (site) jsonLd.publisher = { '@type': 'Organization', name: site };
+
+        let jsonOutput = '<script type="application/ld+json">\n' + JSON.stringify(jsonLd, null, 2) + '\n<\/script>';
+        if (isBase64Image) {
+          jsonOutput = '<!-- Replace the image URL below with your hosted image after uploading to your server or CDN -->\n' + jsonOutput;
+        }
+        outputs.json.textContent = jsonOutput;
+      }
+
+      function updateAll() {
+        updateCounts();
+        updatePreviews();
+        generateMarkup();
+      }
+
+      Object.values(inputs).forEach(el => {
+        if (el && el.tagName) {
+          el.addEventListener('input', updateAll);
+          el.addEventListener('change', updateAll);
+        }
+      });
+
+      // Image file upload
+      inputs.imageFile.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.size > 20 * 1024 * 1024 * 1024) {
+          alert('Image must be under 20 GB');
+          inputs.imageFile.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          uploadedImageDataUrl = ev.target.result;
+          inputs.image.value = '';
+          updateAll();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // If user types in image URL, clear uploaded image
+      inputs.image.addEventListener('input', function() {
+        if (inputs.image.value.trim()) {
+          uploadedImageDataUrl = '';
+          inputs.imageFile.value = '';
+        }
+        updateAll();
+      });
+
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+
+      document.getElementById('mt-copy-html').addEventListener('click', () => copyText(outputs.html.textContent));
+      document.getElementById('mt-copy-json').addEventListener('click', () => copyText(outputs.json.textContent));
+
+      document.getElementById('mt-clear-image').addEventListener('click', () => {
+        inputs.image.value = '';
+        inputs.imageFile.value = '';
+        uploadedImageDataUrl = '';
+        updateAll();
+      });
+
+      document.getElementById('mt-clear-all').addEventListener('click', () => {
+        inputs.title.value = '';
+        inputs.desc.value = '';
+        inputs.url.value = '';
+        inputs.image.value = '';
+        inputs.imageFile.value = '';
+        uploadedImageDataUrl = '';
+        inputs.site.value = '';
+        inputs.author.value = '';
+        inputs.type.value = 'website';
+        inputs.twitterCard.value = 'summary_large_image';
+        inputs.keywords.value = '';
+        inputs.lang.value = 'en';
+        updateAll();
+      });
+
+      // Initialize clean
+      updateAll();
+    })();
+  </script>
+</BaseLayout>

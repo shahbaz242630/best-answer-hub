@@ -1,0 +1,364 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RelatedPlaybooks from '../../components/playbooks/RelatedPlaybooks.astro';
+
+const today = '2026-07-04T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub AI Knowledge Test?', a: 'The Best Answer Hub AI Knowledge Test is a free, browser-based check of how much you really understand about AI. It serves 50 questions across five domains, then returns a 0 to 100 score and a level: Beginner, Intermediate, or Advanced. There is no signup, no email, and no vendor agenda.' },
+  { q: 'What does "AI literacy" actually mean?', a: 'AI literacy is the ability to understand, use, evaluate, and question AI responsibly, not just type a prompt. UNESCO frames it across four dimensions: a human-centered mindset, ethics, AI techniques and applications, and system design. In practice it means knowing what AI is, how it works, and when to distrust it.' },
+  { q: 'Why do people overestimate their AI knowledge?', a: 'Because using AI feels effortless, and ease is mistaken for understanding. An Aalto University study found people overestimated their performance when using ChatGPT, and those who rated themselves most AI-literate overestimated the most. Quick, confident answers remove the friction that normally tells you when you are wrong.' },
+  { q: 'How do I know if I am good at AI or just confident?', a: 'Confidence is a poor signal. Many people who feel fluent cannot explain how AI generates answers or spot when it is wrong. The honest way to separate skill from self-belief is an objective test that checks what you can actually do, not how capable you feel. That is what a knowledge test measures.' },
+  { q: 'What is the difference between a beginner and an advanced AI user?', a: 'A beginner uses AI for simple tasks and tends to trust the output. An advanced user understands how the model works, writes structured prompts, verifies results, and knows the ethical limits. The Best Answer Hub AI Knowledge Test sorts you into Beginner, Intermediate, or Advanced based on what you answer, not how you rate yourself.' },
+  { q: 'Is ChatGPT a search engine or a database?', a: 'Neither. A large language model does not store and retrieve facts like a database. As OpenAI explains, its models do not keep copies of their training data; they learn patterns and predict the most likely next word, one at a time. That is why they can sound certain and still be wrong.' },
+  { q: 'Why does AI sound so confident when it is wrong?', a: 'Because the model predicts fluent text, not verified truth, and a confident tone is just a common pattern in its training. Research on sycophancy shows people rate agreeable, self-assured answers as higher quality even when they are less accurate. Treating every answer as a draft to check is a core literacy skill.' },
+  { q: 'Does AI literacy actually matter for my career?', a: 'Increasingly, yes. PwC analysis of nearly a billion job ads found roles requiring AI skills carried a 56% wage premium. Microsoft and LinkedIn found 66% of leaders would not hire someone without AI skills, while only 39% had received AI training at work. Knowing where you stand helps you close that gap.' },
+  { q: 'Is AI literacy a legal requirement now?', a: 'Sort of, but not as a test. Since 2 February 2025, Article 4 of the EU AI Act has required organizations using AI to ensure staff have a sufficient level of AI literacy. The law mandates no exam, score, or certificate, so this is a self-check to see where you stand, not a legal credential.' },
+  { q: 'How long does the AI Knowledge Test take?', a: 'About 20 minutes. The Best Answer Hub AI Knowledge Test serves 50 questions, ten in each of the five domains, ramped from easier to harder. It runs entirely in your browser and scores instantly, so you get your level and a domain breakdown the moment you finish, with nothing to download or sign up for.' },
+  { q: 'Do I need a technical background to be AI-literate?', a: 'No. AI literacy is about judgment, not coding. The skills that matter most are writing a clear prompt, checking the output, knowing how the model works in plain terms, and understanding the ethical limits. None of these require a technical role, which is why the test is written for everyday users, not engineers.' },
+  { q: 'What are the most common AI knowledge gaps?', a: 'The biggest gaps are thinking AI is a fact database rather than a prediction engine, trusting confident answers without checking, and not knowing what data is unsafe to paste in. Most people are strong on everyday use but weak on evaluation and limitations, which is exactly where the test tends to surprise people.' },
+  { q: 'How can I improve my AI skills without getting overwhelmed?', a: 'Pick one tool and one recurring task, then build a habit. Microsoft research found the people who gain most from AI experiment consistently and reorganize one workflow at a time. Chasing every new tool is what causes overwhelm. Depth on a single use beats shallow familiarity with ten.' },
+  { q: 'Will this test give me a certificate?', a: 'No, and any tool claiming to certify your AI literacy in minutes is worth treating with caution. The Best Answer Hub AI Knowledge Test gives you an honest score and level to learn from, not a credential. The EU AI Act itself, which expects AI literacy, deliberately requires no certificate or exam.' },
+  { q: 'How is this different from a vendor’s free AI quiz?', a: 'Most free AI quizzes exist to recommend the maker’s own product, and many gate your result behind an email for sales follow-up. The Best Answer Hub AI Knowledge Test sells nothing, carries no affiliate links, captures no email, and runs in your browser. The honest diagnosis is the deliverable, not a lead.' },
+];
+
+const seo = {
+  title: 'How Good Is Your AI Knowledge, Really? A 2026 Literacy Check',
+  description: 'Most people overrate their AI skills. What AI literacy really means, the gap between confidence and competence, and how to test where you stand, free.',
+  url: '/playbooks/how-good-is-your-ai-knowledge/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'How Good Is Your AI Knowledge, Really?', url: '/playbooks/how-good-is-your-ai-knowledge/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · Start Here</span>
+        <div class="cav">Let's find out, together</div>
+        <h1>How Good Is Your AI Knowledge, <em>Really?</em></h1>
+        <p class="dek">Most people rate their AI skills higher than they can prove. Here is what AI literacy actually involves, the gap between feeling fluent and being fluent, the three levels of AI users, and how to see where you really stand.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~11 min read</span><span>Evidence-based</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Beginner<small>0–49</small></div>
+          <div class="seg b2">Intermediate<small>50–79</small></div>
+          <div class="seg b3">Advanced<small>80–100</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">63%</div><div class="l">of workers admit exaggerating their AI skills</div><div class="src">GCheck, 2026</div></div>
+      <div class="stat"><div class="n">90%</div><div class="l">of jobseekers are concerned about AI at work</div><div class="src">Express &amp; Harris Poll, 2026</div></div>
+      <div class="stat"><div class="n">56%</div><div class="l">wage premium for jobs that require AI skills</div><div class="src">PwC, 2025</div></div>
+      <div class="stat"><div class="n">66%</div><div class="l">of leaders would not hire without AI skills</div><div class="src">Microsoft &amp; LinkedIn, 2024</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#overrate">Why people overrate</a>
+        <a href="#literacy">What AI literacy means</a>
+        <a href="#gap">Confidence vs competence</a>
+        <a href="#model">The one idea experts get</a>
+        <a href="#matters">Why it matters now</a>
+        <a href="#levels">The three levels</a>
+        <a href="#find">Find where you stand</a>
+        <a href="#improve">How to get better</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead">You are probably less of an AI expert than you feel, and so is nearly everyone else. When a tool answers instantly and fluently, that ease gets mistaken for understanding. <strong>Real AI literacy is not how comfortable you are with ChatGPT. It is whether you know how it works, when to trust it, and when it is quietly wrong.</strong></p>
+
+        <p>The evidence is uncomfortable. When researchers at Aalto University asked around 500 people to solve reasoning problems with ChatGPT, almost everyone overestimated how well they had done, and the people who rated themselves as most AI-literate were the most overconfident of all (<a href="https://www.aalto.fi/en/news/ai-use-makes-us-overestimate-our-cognitive-performance" target="_blank" rel="noopener noreferrer">Aalto University, 2025</a>). In a separate 2026 survey of 1,500 workers, 63% admitted exaggerating their AI skills to look more capable, rising to 80% among Gen Z, while only 34% could confidently perform every AI skill they claimed (<a href="https://www.globenewswire.com/news-release/2026/05/19/3297597/0/en/63-of-Workers-Admit-to-Exaggerating-AI-Skills-as-Automation-Anxiety-Fuels-an-AI-Skills-Bubble-New-GCheck-Report-Finds.html" target="_blank" rel="noopener noreferrer">GCheck, 2026</a>). Most people sense they are bluffing. Few have ever checked.</p>
+
+        <div class="cav">Be honest for a second</div>
+        <h2 id="overrate">Why do most people overrate their AI knowledge?</h2>
+        <p>The short answer is that AI removes the friction that normally tells you when you are struggling. Type a question, get a polished paragraph back, and your brain reads the smooth result as proof you understood the problem. In the Aalto experiments, most people prompted ChatGPT only once per question rather than probing or checking it, so they never hit the moment of feedback that exposes a shaky grasp. The classic pattern where novices know the least about their own limits did not just hold, it reversed: the more AI-literate people believed they were, the more they overestimated.</p>
+        <p>Self-rating, in other words, is close to useless as a measure of skill. A study presented at the 2026 Learning Analytics and Knowledge conference compared what people said about their AI literacy with how they scored on an objective test and found only a weak link between the two, with a clear group who rated themselves high and performed lower (<a href="https://arxiv.org/abs/2601.06101" target="_blank" rel="noopener noreferrer">Zhang et al., LAK26, 2026</a>). The takeaway is simple. If you want to know how good you are at AI, feeling confident is not the answer. Being tested is.</p>
+
+        <div class="cav">More than prompting</div>
+        <h2 id="literacy">What does AI literacy actually mean?</h2>
+        <p>AI literacy is broader than knowing how to prompt a chatbot. UNESCO defines it across four dimensions: a human-centered mindset, the ethics of AI, AI techniques and applications, and AI system design, each progressing from understanding to applying to creating (<a href="https://www.unesco.org/en/articles/ai-competency-framework-students" target="_blank" rel="noopener noreferrer">UNESCO, 2024</a>). Put plainly, being AI-literate means you can use AI well, judge what it gives you, and understand enough about how it works to know where it fails. The Best Answer Hub AI Knowledge Test measures this across five practical domains.</p>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">1</span><div><b>Foundations and concepts.</b> What AI, machine learning, and large language models are, and the words that actually describe them.</div></li>
+            <li><span class="dot">2</span><div><b>Everyday use and applications.</b> Prompting, picking the right tool, and getting reliable results on real tasks.</div></li>
+            <li><span class="dot">3</span><div><b>How generative AI works.</b> Tokens, context windows, training cutoffs, and why the model behaves the way it does.</div></li>
+            <li><span class="dot">4</span><div><b>Critical evaluation and limitations.</b> Spotting hallucinations, checking claims, and knowing when a confident answer is wrong.</div></li>
+            <li><span class="dot">5</span><div><b>Ethics, bias, and responsible use.</b> What data is unsafe to share, where bias creeps in, and keeping a human in the loop.</div></li>
+          </ul>
+        </div>
+        <div class="callout sage"><div class="h">Where most people are strong, and weak</div><p>Comfort with everyday use is common. The gaps almost always sit in domains three and four: understanding how the model really works, and evaluating whether to believe it. Those are the domains that separate a confident user from a capable one.</p></div>
+
+        <div class="cav">The uncomfortable bit</div>
+        <h2 id="gap">Why doesn’t confidence equal competence?</h2>
+        <p>Because nothing forces the two to line up. You can use AI every day, feel completely at home with it, and still hold a flawed mental model and weak verification habits. The 2026 GCheck survey put numbers on the bluff: 63% of workers admit exaggerating their AI skills, only 34% can confidently do everything they claim, and 64% say their employer has never once checked (<a href="https://www.globenewswire.com/news-release/2026/05/19/3297597/0/en/63-of-Workers-Admit-to-Exaggerating-AI-Skills-as-Automation-Anxiety-Fuels-an-AI-Skills-Bubble-New-GCheck-Report-Finds.html" target="_blank" rel="noopener noreferrer">GCheck, 2026</a>). The gap between claimed and real skill is wide, and mostly invisible.</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">The gap between claimed and real AI skill</figcaption>
+          <svg viewBox="0 0 600 280" role="img" aria-label="Bar chart: 63% of workers admit exaggerating their AI skills, while only 34% can confidently perform every AI skill they claim">
+            <defs><linearGradient id="bargrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <line x1="70" y1="232" x2="560" y2="232" stroke="#E1D4be" stroke-width="2"/>
+            <rect x="150" y="127" width="120" height="105" rx="8" fill="url(#bargrad)" opacity="0.85"/>
+            <text x="210" y="117" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="27" font-weight="800" fill="#33302A">63%</text>
+            <text x="210" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="14" fill="#847B6B">Admit exaggerating</text>
+            <rect x="350" y="176" width="120" height="56" rx="8" fill="url(#bargrad)"/>
+            <text x="410" y="166" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="27" font-weight="800" fill="#33302A">34%</text>
+            <text x="410" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="14" fill="#847B6B">Can do what they claim</text>
+          </svg>
+          <p class="chart-src">Source: GCheck Automation Anxiety Report, 2026 (survey of 1,500 US workers). 63% admit exaggerating their AI skills; 34% can confidently perform every skill they claim.</p>
+        </figure>
+
+        <p>There is a second trap hiding inside everyday use: over-trust. Large language models are trained to sound helpful and agreeable, so a wrong answer often arrives wrapped in a confident tone. Research on this sycophancy effect shows people rate self-assured, agreeable answers as higher quality and trust them more, even when they are less accurate. It shows up in real work, too. A 2026 Workday study of 3,200 employees found that nearly 40% of the time AI saves is then spent correcting, verifying, or rewriting its output (<a href="https://newsroom.workday.com/2026-01-14-New-Workday-Research-Companies-Are-Leaving-AI-Gains-on-the-Table" target="_blank" rel="noopener noreferrer">Workday, 2026</a>). The skill that protects you is not faster prompting. It is knowing when and how to check.</p>
+
+        <blockquote>Confidence is a poor guide to competence. <span class="accent">The people most certain they understand AI are often the ones who overestimate most.</span></blockquote>
+
+        <div class="cav">If you remember one thing</div>
+        <h2 id="model">The one idea that separates beginners from experts</h2>
+        <p>If there is a single concept that marks the line between feeling fluent and being fluent, it is this: a large language model is a prediction engine, not a fact database. Many people quietly picture ChatGPT as a search engine with a friendly voice, looking up stored answers. It does not work that way. As OpenAI explains, its models do not keep copies of the data they were trained on; they adjust internal patterns during training and then predict the most likely next word, one word at a time (<a href="https://help.openai.com/en/articles/7842364-how-chatgpt-and-our-foundation-models-are-developed" target="_blank" rel="noopener noreferrer">OpenAI, 2026</a>).</p>
+        <div class="callout"><div class="h">Why this one idea changes everything</div><p>Once you see AI as predicting plausible text rather than retrieving verified facts, its quirks stop being surprising. Hallucinations, confident wrong answers, and made-up sources are not glitches in a database. They are the expected behavior of a system built to sound right, which is exactly why your judgment, not the model’s confidence, has to be the final check.</p></div>
+
+        <div class="cav">Why it is worth it</div>
+        <h2 id="matters">Why does AI literacy matter now?</h2>
+        <p>Because it has moved from a nice-to-have to something measured in pay and hiring. PwC analysis of close to a billion job ads found that roles requiring AI skills carried a 56% wage premium, more than double the year before (<a href="https://www.pwc.com/gx/en/news-room/press-releases/2025/ai-linked-to-a-fourfold-increase-in-productivity-growth.html" target="_blank" rel="noopener noreferrer">PwC, 2025</a>). Analysing 1.3 billion postings, Lightcast put the premium at 28% higher salaries, roughly $18,000 more a year, and found that more than half of the jobs asking for AI skills now sit outside IT (<a href="https://lightcast.io/resources/blog/beyond-the-buzz-press-release-2025-07-23" target="_blank" rel="noopener noreferrer">Lightcast, 2025</a>).</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">Jobs that require AI skills pay more</figcaption>
+          <svg viewBox="0 0 600 280" role="img" aria-label="Bar chart: PwC found a 56% wage premium for AI-skill jobs; Lightcast found a 28% salary premium, about 18,000 dollars a year">
+            <defs><linearGradient id="paygrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <line x1="70" y1="232" x2="560" y2="232" stroke="#E1D4be" stroke-width="2"/>
+            <rect x="150" y="82" width="120" height="150" rx="8" fill="url(#paygrad)"/>
+            <text x="210" y="72" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="27" font-weight="800" fill="#33302A">56%</text>
+            <text x="210" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="14" fill="#847B6B">Wage premium (PwC)</text>
+            <rect x="350" y="157" width="120" height="75" rx="8" fill="url(#paygrad)" opacity="0.78"/>
+            <text x="410" y="147" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="27" font-weight="800" fill="#33302A">28%</text>
+            <text x="410" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="14" fill="#847B6B">Salary premium (Lightcast)</text>
+          </svg>
+          <p class="chart-src">Sources: PwC 2025 Global AI Jobs Barometer (56% wage premium); Lightcast, 2025 (28% salary premium, about $18,000 a year).</p>
+        </figure>
+
+        <p>The bar to get hired is rising at the same time. Microsoft and LinkedIn found that 66% of leaders would not hire someone without AI skills, yet only 39% of people had received any AI training at work (<a href="https://news.microsoft.com/source/2024/05/08/microsoft-and-linkedin-release-the-2024-work-trend-index-on-the-state-of-ai-at-work/" target="_blank" rel="noopener noreferrer">Microsoft and LinkedIn, 2024</a>). The World Economic Forum expects 39% of workers’ core skills to be disrupted by 2030 (<a href="https://www.weforum.org/publications/the-future-of-jobs-report-2025/" target="_blank" rel="noopener noreferrer">WEF, 2025</a>). No wonder the anxiety is widespread: 90% of jobseekers say they are concerned about AI at work (<a href="https://www.prnewswire.com/news-releases/ai-is-driving-workplace-gains-but-deepening-job-anxiety-for-us-workers-302794236.html" target="_blank" rel="noopener noreferrer">Express and Harris Poll, 2026</a>).</p>
+        <div class="callout peach"><div class="h">A note on the EU AI Act</div><p>Since 2 February 2025, Article 4 of the EU AI Act has required organizations that use AI to ensure their staff have a sufficient level of AI literacy, and the rule covers everyday tools like ChatGPT, not just high-risk systems (<a href="https://artificialintelligenceact.eu/article/4/" target="_blank" rel="noopener noreferrer">EU AI Act, Article 4</a>). Importantly, the law deliberately mandates no exam, score, or certificate. So treat this test as an honest mirror of where you stand, never as proof of compliance or a credential.</p></div>
+
+        <div class="cav">Find your starting line</div>
+        <h2 id="levels">Beginner, Intermediate, or Advanced: which are you?</h2>
+        <p>Real AI knowledge tends to fall into three broad levels. The level is not a grade. It is a starting point that tells you what to focus on next.</p>
+        <table>
+          <thead><tr><th>Level</th><th>Score</th><th>What it usually looks like</th><th>Focus next on</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Beginner</td><td><span class="score lv1">0–49</span></td><td>Uses AI for simple tasks, tends to trust the output</td><td>The basics: what AI is, safe use, checking answers</td></tr>
+            <tr><td class="band">Intermediate</td><td><span class="score lv2">50–79</span></td><td>Comfortable daily, shaky on how it works and its limits</td><td>Mental model, structured prompts, verification habits</td></tr>
+            <tr><td class="band">Advanced</td><td><span class="score lv3">80–100</span></td><td>Understands the model, prompts and verifies deliberately</td><td>Edge cases, ethics, evaluating and stress-testing output</td></tr>
+          </tbody>
+        </table>
+        <p>The catch is that guessing your own level is exactly the thing people get wrong, as the overestimation research shows. Most people assume they are Intermediate or Advanced and are surprised by where an objective test actually places them, usually because of domains three and four.</p>
+
+        <div class="cav">Your turn</div>
+        <h2 id="find">How do you find out where you really stand?</h2>
+        <p>You take a test that checks what you can do, not how you feel. The free AI Knowledge Test serves 50 questions across the five domains, scores each one objectively, and shows your level plus a radar breakdown of your strongest and weakest areas, so you learn where the real gaps are rather than where you assume they are.</p>
+        <div class="cta">
+          <span class="kicker">See where you really stand</span>
+          <h3>Take the free AI Knowledge Test</h3>
+          <p>50 questions, about 20 minutes, no signup and no email. Your score, level, and domain radar are computed in your browser and never uploaded.</p>
+          <a class="btn" href="/knowledge-center/ai-knowledge-test/">Start the free test</a>
+        </div>
+
+        <div class="cav">One step at a time</div>
+        <h2 id="improve">How do you actually get better at AI?</h2>
+        <p>Not by chasing every new tool. The fastest route is to pick one tool and one recurring task, then build a habit. Microsoft research found that the people who gain the most from AI are the ones who experiment consistently and reorganize one workflow at a time, saving more than 30 minutes a day (<a href="https://news.microsoft.com/source/2024/05/08/microsoft-and-linkedin-release-the-2024-work-trend-index-on-the-state-of-ai-at-work/" target="_blank" rel="noopener noreferrer">Microsoft and LinkedIn, 2024</a>). Depth on a single use beats shallow familiarity with ten.</p>
+        <p>There is a quieter payoff, too. Building real understanding is what calms the anxiety. A peer-reviewed study found that higher AI literacy was associated with lower job-seeking anxiety, because understanding AI, rather than avoiding it, is what restores a sense of control (<a href="https://bmcpsychology.biomedcentral.com/articles/10.1186/s40359-025-02757-2" target="_blank" rel="noopener noreferrer">BMC Psychology, 2025</a>). Knowing where you stand is the first step, and it costs nothing but 20 minutes.</p>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about AI knowledge and literacy</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>Aalto University, <a href="https://www.aalto.fi/en/news/ai-use-makes-us-overestimate-our-cognitive-performance" target="_blank" rel="noopener noreferrer">AI use makes us overestimate our cognitive performance</a>, 2025 (peer-reviewed study, ~500 participants).</li>
+          <li>Zhang et al., <a href="https://arxiv.org/abs/2601.06101" target="_blank" rel="noopener noreferrer">How to Assess AI Literacy: Misalignment Between Self-Reported and Objective-Based Measures</a>, LAK26, 2026.</li>
+          <li>UNESCO, <a href="https://www.unesco.org/en/articles/ai-competency-framework-students" target="_blank" rel="noopener noreferrer">AI Competency Framework for Students</a>, 2024.</li>
+          <li>GCheck, <a href="https://www.globenewswire.com/news-release/2026/05/19/3297597/0/en/63-of-Workers-Admit-to-Exaggerating-AI-Skills-as-Automation-Anxiety-Fuels-an-AI-Skills-Bubble-New-GCheck-Report-Finds.html" target="_blank" rel="noopener noreferrer">Automation Anxiety Report</a>, 2026 (survey of 1,500 US workers; commercial survey).</li>
+          <li>OpenAI, <a href="https://help.openai.com/en/articles/7842364-how-chatgpt-and-our-foundation-models-are-developed" target="_blank" rel="noopener noreferrer">How ChatGPT and our foundation models are developed</a>, 2026.</li>
+          <li>Workday, <a href="https://newsroom.workday.com/2026-01-14-New-Workday-Research-Companies-Are-Leaving-AI-Gains-on-the-Table" target="_blank" rel="noopener noreferrer">Beyond Productivity</a>, 2026 (survey of 3,200 employees and leaders).</li>
+          <li>PwC, <a href="https://www.pwc.com/gx/en/news-room/press-releases/2025/ai-linked-to-a-fourfold-increase-in-productivity-growth.html" target="_blank" rel="noopener noreferrer">2025 Global AI Jobs Barometer</a>, 2025.</li>
+          <li>Lightcast, <a href="https://lightcast.io/resources/blog/beyond-the-buzz-press-release-2025-07-23" target="_blank" rel="noopener noreferrer">Beyond the Buzz: AI skills command a salary premium</a>, 2025.</li>
+          <li>Microsoft and LinkedIn, <a href="https://news.microsoft.com/source/2024/05/08/microsoft-and-linkedin-release-the-2024-work-trend-index-on-the-state-of-ai-at-work/" target="_blank" rel="noopener noreferrer">2024 Work Trend Index</a>, 2024.</li>
+          <li>World Economic Forum, <a href="https://www.weforum.org/publications/the-future-of-jobs-report-2025/" target="_blank" rel="noopener noreferrer">Future of Jobs Report 2025</a>, 2025.</li>
+          <li>European Union, <a href="https://artificialintelligenceact.eu/article/4/" target="_blank" rel="noopener noreferrer">EU AI Act, Article 4 (AI literacy)</a>, in force 2 February 2025.</li>
+          <li>BMC Psychology, <a href="https://bmcpsychology.biomedcentral.com/articles/10.1186/s40359-025-02757-2" target="_blank" rel="noopener noreferrer">AI attitudes and AI literacy mediate job-seeking anxiety</a>, 2025.</li>
+        </ul>
+              <RelatedPlaybooks track="aikt" currentHref={seo.url} />
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Try our free tools: <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">All Tools</a>, <a href="/calculators/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Calculators</a>, <a href="/career-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Career Toolkit</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, and the <a href="/pdf-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Toolkit</a>.</p>
+</article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 11px;border-radius:999px;display:inline-block;white-space:nowrap;font-family:'Bricolage Grotesque',sans-serif}
+  .pb .lv1{background:var(--sage)}
+  .pb .lv2{background:var(--clay)}
+  .pb .lv3{background:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

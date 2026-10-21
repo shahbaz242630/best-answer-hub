@@ -1,0 +1,335 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-14T00:00:00+00:00';
+
+const faqs = [
+    { q: 'What is the Best Answer Hub Mock API Key Generator?', a: 'The Best Answer Hub Mock API Key Generator is a free, browser-based tool that generates realistic-looking but fake API keys in the format of major providers such as OpenAI, AWS, Stripe, GitHub, Google, and Slack. Each key matches the real prefix, length, and character set but is random and invalid, so it unlocks nothing. Use it for docs, .env.example files, tutorials, tests, and screenshots. Nothing is uploaded and no account is needed.' },
+    { q: 'Are these mock API keys real or usable?', a: 'No. Every key the Best Answer Hub generator produces is a random placeholder that only imitates the shape of a real key. It has no account behind it and grants no access to any service. Some formats, like GitHub tokens, even include a checksum that a fake key deliberately fails, so any system that validates it will correctly reject it. The keys are built to look authentic and validate as false.' },
+    { q: 'Why should I use a fake key instead of a real one in my code?', a: 'Because real keys leak at massive scale. GitGuardian found more than 28 million secrets in public GitHub in 2025, and in November 2025 watchTowr found 80,000-plus pastes exposing real secrets on online tools. A placeholder that unlocks nothing removes the risk. Keep the real key in a git-ignored .env file and commit a .env.example with fake values from the Best Answer Hub Mock API Key Generator instead.' },
+    { q: 'What is a .env.example file and how do mock keys fit in?', a: 'A .env.example is a committed template that lists every environment variable a project needs, with placeholder values instead of real secrets. Your real .env stays git-ignored on each machine. Filling the example with realistic mock keys from the Best Answer Hub generator shows teammates the exact shape each value should take without ever publishing a working credential, which is the workflow the Twelve-Factor App methodology recommends.' },
+    { q: 'Which providers can it imitate?', a: 'The Best Answer Hub generator produces keys in the format of six major providers: OpenAI, AWS, Stripe, GitHub, Google, and Slack. Each has a recognizable prefix and fixed shape, such as sk- for OpenAI, AKIA for AWS access key IDs, sk_live_ or sk_test_ for Stripe, ghp_ for GitHub tokens, AIza for Google, and xoxb- for Slack. The tool copies those shapes and fills the rest with random characters.' },
+    { q: 'Is it safe to generate keys here, and does anything get uploaded?', a: 'Yes and no, in that order: it is safe and nothing is uploaded. The Best Answer Hub Mock API Key Generator builds each key locally in your browser and never sends, logs, or stores it. That client-side approach is the same habit that protects you with real data. You should never paste a real key into any online tool to test it, which is exactly how the secrets in the watchTowr report were exposed.' },
+    { q: 'Could a mock key accidentally match a real one?', a: 'The chance is negligible. The keys the Best Answer Hub generator creates are long random strings within each provider format, so the space of possible values is astronomically large, and even a coincidental match would not be tied to your account or grant access to anything you control. Where a format carries a checksum, the placeholder is generated to fail it, further ensuring the fake is treated as invalid.' },
+    { q: 'How is this different from a random string or UUID generator?', a: 'A random string or UUID does not look like an API key, so it is an unconvincing placeholder in documentation. The Best Answer Hub Mock API Key Generator produces the exact provider shapes, like sk_live_ or AKIA, that read as authentic. A faker library can do this too but must be installed and configured in code, whereas this is a paste-ready value generated in the browser with nothing to set up.' },
+    { q: 'Can I use these in a public GitHub repository?', a: 'Yes, that is a core use. Because keys from the Best Answer Hub generator are fake and unlock nothing, committing them in a README or a .env.example is safe. It is committing a real key that is dangerous, and GitHub scans public repositories for known key formats for free and can block a push that contains a real one. Mock keys let you document the format without tripping that protection.' },
+    { q: 'What should I do if I accidentally exposed a real API key?', a: 'Treat it as compromised and act immediately. OWASP guidance is to revoke the exposed key at once and rotate to a new one, rather than assume it went unnoticed, because attackers actively scan public code and paste sites for keys. After rotating, move the new secret into a git-ignored .env file and use a Best Answer Hub mock key anywhere the value needs to be visible.' },
+    { q: 'Do the fake keys expire or need refreshing?', a: 'No. A Best Answer Hub mock key is just a static string of text with nothing behind it, so there is nothing to expire, refresh, or revoke. You can generate as many as you need and paste them wherever a placeholder belongs. If you want a different value, simply generate another one; each is independent and equally non-functional.' },
+    { q: 'Can I generate several mock keys at once?', a: 'Yes. The Best Answer Hub Mock API Key Generator lets you produce keys across the supported providers as many times as you like, which is handy when a .env.example needs placeholders for several services at once, or when a tutorial walks through more than one integration. Each key is produced locally and independently, so generating a batch still uploads nothing and stores nothing.' },
+    { q: 'Does the tool work offline?', a: 'Yes. After the page loads once, the Best Answer Hub generator works with no internet connection because it builds every key locally in your browser. Nothing is transmitted or stored off your device, which is fitting for a tool whose whole purpose is to keep real secrets out of places they should not be. Closing the tab clears everything.' },
+    { q: 'Is generating fake keys against any provider terms?', a: 'Generating a random string that merely resembles a key format is not accessing or misusing any provider service, since the keys are invalid and connect to nothing. The Best Answer Hub generator is a formatting aid for placeholders, not a way to obtain or forge real credentials. As always, follow each provider terms for how you handle their actual keys, which is precisely what mock keys help you avoid exposing.' },
+    { q: 'Is the Mock API Key Generator free?', a: 'Yes. It is completely free with no usage limits, no watermarks, and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so the tool carries no ads and never asks you to upgrade to keep generating placeholder keys for your documentation, tests, and templates.' },
+  ];
+
+const seo = {
+  title: 'Mock API Key Generator, Safe Placeholder Keys',
+  description: 'Generate realistic but fake API keys for docs, .env.example, tests, and screenshots, all in your browser. Never expose a real key. Six provider formats.',
+  url: '/playbooks/mock-api-key-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Mock API Key Generator', url: '/playbooks/mock-api-key-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Developer</span>
+        <div class="cav">Realistic-looking keys that unlock nothing</div>
+        <h1>Mock API Key Generator, <em>Nothing Real Inside</em></h1>
+        <p class="dek">A plain guide to generating realistic but fake API keys for tutorials, documentation, CI pipelines, tests, and .env.example files, without ever exposing a real secret. The Best Answer Hub Mock API Key Generator builds placeholder keys entirely in your browser, matching the shape of real provider keys while unlocking nothing, so you can share and commit them safely.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Client-side</span><span>No signup</span></div>
+        <p class="notaffil">The keys this tool generates are fake, random placeholders that match the visual format of real keys but are not valid and grant no access. Provider names such as OpenAI, AWS, Stripe, GitHub, Google, and Slack are trademarks of their owners, used here only to describe the key formats the tool imitates. Best Answer Hub is not affiliated with any of them.</p>
+        <div class="bandstrip">
+          <div class="seg b1">Generate<small>realistic format</small></div>
+          <div class="seg b2">Client-side<small>nothing sent</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">28.6M</div><div class="l">secrets leaked to public GitHub in 2025</div><div class="src">GitGuardian, 2026 report</div></div>
+      <div class="stat"><div class="n">80,000+</div><div class="l">real pastes exposed on online tools</div><div class="src">watchTowr, Nov 2025</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">valid keys, every one is fake</div><div class="src">generated on your device</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">provider key formats supported</div><div class="src">OpenAI, AWS, Stripe, and more</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#why">Why fake keys</a>
+        <a href="#formats">What they look like</a>
+        <a href="#safe">The safe workflow</a>
+        <a href="#how">How it works</a>
+        <a href="#different">Versus random strings</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub Mock API Key Generator produces realistic-looking but non-functional API keys, the kind you drop into a tutorial, a screenshot, a test, or a .env.example file so nobody has to see or guess a real one.</strong> Each key matches the recognizable shape of a real provider key, a prefix and the right length and character set, yet it is randomly generated and unlocks nothing. It runs entirely in your browser, so even the fakes are made on your own device. This guide covers why placeholders beat real keys, what each format looks like, and the safe workflow they fit into.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Mock API Key Generator?</h2>
+        <p>The Best Answer Hub <a href="/developer-toolbox/mock-api-key-generator/">Mock API Key Generator</a> is a single-page tool that creates fake API keys in the format of major providers, including OpenAI, AWS, Stripe, GitHub, Google, and Slack. It exists so you never have to paste a real secret into a tutorial, a bug report, a demo, or a template. Each generated key carries the right prefix, length, and character set to look authentic in documentation or a test, but it is random and invalid, so it grants no access to anything. The tool runs on your device with no account and no upload, adds no watermark, and shows no ads. It sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The reason</div>
+        <h2 id="why">Why generate fake API keys instead of using a real one?</h2>
+        <p>Because real keys leak constantly, and the moment one lands in a public place it is found and used. GitGuardian's State of Secrets Sprawl report found that more than 28 million secrets were detected in public GitHub commits during 2025, a 34 percent jump on the year before, with leaks tied to AI services surging the fastest (<a href="https://www.gitguardian.com/state-of-secrets-sprawl-report-2026" target="_blank" rel="noopener noreferrer">GitGuardian</a>). Those are not just committed to code. In November 2025, researchers at watchTowr found that popular online formatter and paste sites had accumulated more than 80,000 saved submissions, over 5GB of data, exposing real database passwords, cloud keys, and API tokens through a public "Recent Links" feature (<a href="https://www.bleepingcomputer.com/news/security/code-formatters-expose-thousands-of-secrets-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">BleepingComputer</a>). They even planted honeypot AWS keys and watched them get tested 48 hours after upload, a full day after the temporary link had expired, proof that attackers actively scan these tools. A placeholder that unlocks nothing removes the risk entirely.</p>
+        <blockquote>The safest secret is the one that was never real. <span class="accent">A fake key in your docs cannot be stolen, because there is nothing behind it.</span></blockquote>
+        <p>This is exactly what the convention of a <code>.env.example</code> file is for. The Twelve-Factor App methodology says configuration and secrets belong in the environment, never in code, and sets a simple test: your codebase "could be made open source at any moment, without compromising any credentials" (<a href="https://12factor.net/config" target="_blank" rel="noopener noreferrer">The Twelve-Factor App</a>). You keep the real key in a local <code>.env</code> that is git-ignored, and you commit a <code>.env.example</code> with fake placeholder values so a teammate knows the shape without ever seeing the secret. Hard-coding a real credential instead is the exact weakness catalogued as <a href="https://cwe.mitre.org/data/definitions/798.html" target="_blank" rel="noopener noreferrer">CWE-798, Use of Hard-coded Credentials</a>.</p>
+        <div class="callout sage"><div class="h">If a real key ever does leak</div><p>Treat it as burned. The OWASP Secrets Management guidance is to revoke the exposed key immediately and rotate to a new one, rather than hoping nobody noticed (<a href="https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP</a>). GitHub also scans public repositories for known key formats for free and can block a push that contains one (<a href="https://docs.github.com/en/code-security/concepts/secret-security/push-protection" target="_blank" rel="noopener noreferrer">GitHub</a>).</p></div>
+
+        <div class="cav">The shapes</div>
+        <h2 id="formats">What do the placeholder keys look like?</h2>
+        <p>They look like the real thing at a glance, because each provider stamps its keys with a recognizable prefix and a fixed shape, and the generator copies that shape while filling the rest with random characters. Knowing the shapes is also useful in its own right: it is why a leaked key is so easy for a scanner to spot. The table shows the format each fake key imitates, described as a pattern rather than a working value.</p>
+        <table>
+          <thead><tr><th>Provider</th><th>Recognizable shape (imitated, not real)</th></tr></thead>
+          <tbody>
+            <tr><td class="band">OpenAI</td><td>An <code>sk-</code> prefix followed by a long random alphanumeric string</td></tr>
+            <tr><td class="band">AWS access key ID</td><td>Starts <code>AKIA</code>, twenty characters in total, uppercase and digits</td></tr>
+            <tr><td class="band">Stripe</td><td>An <code>sk_test_</code> or <code>sk_live_</code> prefix, then a random string</td></tr>
+            <tr><td class="band">GitHub token</td><td>A <code>ghp_</code> prefix and about forty characters, including a checksum</td></tr>
+            <tr><td class="band">Google API key</td><td>Begins <code>AIza</code>, thirty-nine characters in total</td></tr>
+            <tr><td class="band">Slack</td><td>An <code>xoxb-</code> or <code>xoxp-</code> prefix with hyphen-separated segments</td></tr>
+          </tbody>
+        </table>
+        <div class="callout peach"><div class="h">Why they cannot be mistaken for valid</div><p>Some providers, GitHub among them, build a checksum into the token so software can spot a typo offline. A random placeholder in that shape will fail the checksum, which is the point: it looks right in a document but any real system that checks it will reject it. The fakes are designed to look authentic and validate as false.</p></div>
+
+        <div class="cav">The workflow</div>
+        <h2 id="safe">Where do fake keys fit in a safe setup?</h2>
+        <p>They fill every spot where a real key would otherwise be exposed to people who should not see it. In documentation and READMEs, a placeholder shows the format without publishing a live credential. In a committed <code>.env.example</code>, fake values map out every variable a project needs while the real <code>.env</code> stays git-ignored on each machine. In tutorials, videos, and screenshots, a realistic fake keeps the lesson clear without flashing a working key on screen. In tests and CI pipelines, a placeholder stands in wherever the code only needs a value of the right shape, not a real one. Each of these is a place where, historically, real keys have slipped into public view.</p>
+        <table>
+          <thead><tr><th>Where you use it</th><th>What the fake key saves you from</th></tr></thead>
+          <tbody>
+            <tr><td class="band">README and docs</td><td>Publishing a live credential in a public repository</td></tr>
+            <tr><td class="band">Committed .env.example</td><td>Committing the real .env by accident</td></tr>
+            <tr><td class="band">Tutorials and screenshots</td><td>A working key captured on screen or in a video frame</td></tr>
+            <tr><td class="band">Tests and CI</td><td>Wiring a real secret into a pipeline that only needs the shape</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The how-to</div>
+        <h2 id="how">How does the generator work?</h2>
+        <p>It builds each key locally in your browser from the provider's format and a source of randomness, then hands it back without sending anything anywhere. You pick a provider, the tool assembles the right prefix and fills the remaining characters at random within the correct length and character set, and you copy the result. Nothing is transmitted, logged, or stored, which matters even for fakes, because the habit of not sending data to a tool is exactly what protects you when the data is real. This is the same client-side principle behind the rest of the Best Answer Hub toolbox: the work happens on your device, using your browser, with no server in the loop.</p>
+        <div class="callout sage"><div class="h">Never paste a real key to "test" a tool</div><p>The watchTowr findings exist because people pasted live secrets into online utilities to format or check them. If you need a key for a demo, generate a fake one here. If you have a real key, keep it in a git-ignored <code>.env</code> and never hand it to a website, including this one.</p></div>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is this different from a random string generator?</h2>
+        <p>The difference is that a generic random string does not look like an API key, so it is a poor placeholder, while this tool produces the exact provider shapes that read as authentic in documentation. You can make a random blob with a UUID generator or a faker library, but a UUID looks nothing like <code>sk_live_</code> or <code>AKIA</code>, and a faker library is a code dependency to install and configure rather than a paste-ready value. Plenty of simple placeholder generators exist, so this is not the only option, but the combination here is the useful one: provider-accurate formats across six major services, generated entirely client-side so nothing is transmitted, and framed around the safety practice of never exposing a real key.</p>
+        <table>
+          <thead><tr><th>What you want</th><th>Best Answer Hub</th><th>A random string or UUID</th></tr></thead>
+          <tbody>
+            <tr><td>Looks like a real provider key</td><td class="band">Yes, per provider</td><td>No, obviously random</td></tr>
+            <tr><td>Ready to paste, no setup</td><td class="band">Yes</td><td>Faker libraries need installing</td></tr>
+            <tr><td>Runs client-side, nothing sent</td><td class="band">Yes</td><td>Varies by tool</td></tr>
+            <tr><td>Actually valid or usable</td><td class="band">No, by design</td><td>No</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolbox</div><p>The Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> has the neighbors you reach for next: a <a href="/tools/password-generator/">Password Generator</a> for real, strong secrets you keep private, and a <a href="/tools/json-formatter/">JSON Formatter</a> that, unlike the sites in the watchTowr report, runs in your browser and uploads nothing. Each one keeps your data on your device.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Generate one now</span>
+          <h3>Open the Mock API Key Generator</h3>
+          <p>Free, no signup, and generated entirely in your browser. Pick a provider, copy a realistic placeholder that unlocks nothing, and keep your real keys out of your docs, tests, and screenshots.</p>
+          <a class="btn" href="/developer-toolbox/mock-api-key-generator/">Generate a mock key</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about mock API keys</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/password-generator/">Password Generator, Nothing Sent Anywhere</a></b> How to make real secrets strong, and why length beats symbols.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools, Nothing Uploaded</a></b> The Developer Toolbox guide, all client-side.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>GitGuardian, <a href="https://www.gitguardian.com/state-of-secrets-sprawl-report-2026" target="_blank" rel="noopener noreferrer">State of Secrets Sprawl 2026</a> (more than 28 million secrets detected in public GitHub in 2025, up 34 percent year over year).</li>
+          <li>watchTowr Labs and <a href="https://www.bleepingcomputer.com/news/security/code-formatters-expose-thousands-of-secrets-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">BleepingComputer</a> (November 2025: 80,000+ pastes, 5GB, exposed via online formatter tools; honeypot keys tested after the link expired).</li>
+          <li>The Twelve-Factor App, <a href="https://12factor.net/config" target="_blank" rel="noopener noreferrer">Config</a> (store config in the environment; the codebase could be open-sourced without compromising credentials).</li>
+          <li>MITRE, <a href="https://cwe.mitre.org/data/definitions/798.html" target="_blank" rel="noopener noreferrer">CWE-798</a> (Use of Hard-coded Credentials).</li>
+          <li>OWASP, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">Secrets Management Cheat Sheet</a> (revoke and rotate an exposed key immediately).</li>
+          <li>GitHub, <a href="https://docs.github.com/en/code-security/concepts/secret-security/push-protection" target="_blank" rel="noopener noreferrer">Push protection</a> and <a href="https://docs.github.com/en/code-security/reference/secret-security/supported-secret-scanning-patterns" target="_blank" rel="noopener noreferrer">supported secret scanning patterns</a> (free secret scanning on public repositories; known key formats).</li>
+          <li>Provider key formats: <a href="https://docs.stripe.com/keys" target="_blank" rel="noopener noreferrer">Stripe</a>, <a href="https://github.blog/engineering/platform-security/behind-githubs-new-authentication-token-formats/" target="_blank" rel="noopener noreferrer">GitHub token formats</a>, <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html" target="_blank" rel="noopener noreferrer">AWS access keys</a>, <a href="https://docs.slack.dev/authentication/tokens/" target="_blank" rel="noopener noreferrer">Slack tokens</a>.</li>
+        </ul>
+        <p style="margin-top:28px;padding-top:18px;border-top:1px solid var(--border);font-size:.85rem;color:var(--muted)">Jump into the tools: <a href="/developer-toolbox/mock-api-key-generator/">Mock API Key Generator</a>, <a href="/tools/password-generator/">Password Generator</a>, <a href="/developer-toolbox/">Developer Toolbox</a>, and <a href="/tools/">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .notaffil{margin-top:14px;font-size:.76rem;color:var(--muted);max-width:44em;font-weight:600}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:24px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+
+</script>

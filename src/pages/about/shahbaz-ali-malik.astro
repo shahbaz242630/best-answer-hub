@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+const baseUrl = 'https://www.bestanswerhub.com';
+
+const books = [
+  {
+    title: 'Stop Mental Masturbation',
+    subtitle: 'How to Break Free from Overthinking, Stop Planning to Death, and Finally Take Real Action',
+    blurb: 'A brutally honest guide to ending analysis paralysis, turning endless planning and overthinking into decisive, real-world action.',
+    cover: '/founder/stop-mental-masturbation.jpg',
+    amazon: 'https://www.amazon.com/dp/B0FHL2GKQM',
+  },
+  {
+    title: 'Money Mindset Reset',
+    subtitle: 'How to Save Smarter, Earn More, and Think Wealthy',
+    blurb: 'A practical, no-nonsense guide to rewiring your relationship with money, built on real lessons from a career in banking and finance.',
+    cover: '/founder/money-mindset-reset.jpg',
+    amazon: 'https://www.amazon.com/dp/B0F994NS6F',
+  },
+];
+
+const expertise = [
+  'Business Development', 'Strategic Partnerships', 'B2B Sales', 'Leadership',
+  'AI Mentoring', 'AI Agents & Automation', 'No-code Tools',
+];
+
+const personId = `${baseUrl}/about/shahbaz-ali-malik/#person`;
+const schemaGraph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: 'Shahbaz Ali Malik',
+      alternateName: 'Shahbaz Malik',
+      url: `${baseUrl}/about/shahbaz-ali-malik/`,
+      image: `${baseUrl}/founder/shahbaz-malik.jpg`,
+      jobTitle: 'Founder, Best Answer Hub',
+      description: 'Founder of Best Answer Hub. A banking and insurance leader with 20+ years of experience, published author, and creator of free browser-based tools and AI automation.',
+      worksFor: { '@id': `${baseUrl}/#organization` },
+      knowsAbout: expertise,
+      sameAs: [
+        'https://www.linkedin.com/in/shahbaz-malik/',
+        'https://onestepfixit.ae/',
+        'https://www.amazon.com/dp/B0FHL2GKQM',
+        'https://www.amazon.com/dp/B0F994NS6F',
+      ],
+    },
+    ...books.map((b) => ({
+      '@type': 'Book',
+      name: `${b.title}: ${b.subtitle}`,
+      author: { '@id': personId },
+      url: b.amazon,
+      image: `${baseUrl}${b.cover}`,
+      inLanguage: 'en',
+    })),
+  ],
+};
+
+const seo = {
+  title: 'Shahbaz Ali Malik — Founder of Best Answer Hub',
+  description: 'Shahbaz Ali Malik, founder of Best Answer Hub: a banking and insurance leader with 20+ years\' experience, author of two books, and creator of free web tools.',
+  url: '/about/shahbaz-ali-malik/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'About', url: '/about/' },
+    { name: 'Shahbaz Ali Malik', url: '/about/shahbaz-ali-malik/' },
+  ],
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(schemaGraph)} />
+  </Fragment>
+
+  <div class="py-12 md:py-16">
+    <div class="container max-w-content mx-auto px-6">
+
+      <!-- Hero -->
+      <header class="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10">
+        <img
+          src="/founder/shahbaz-malik.jpg"
+          alt="Shahbaz Ali Malik, founder of Best Answer Hub"
+          width="128"
+          height="128"
+          loading="eager"
+          class="w-28 h-28 rounded-full object-cover border border-bae-border shadow-bae shrink-0"
+        />
+        <div>
+          <span class="inline-block text-xs font-semibold uppercase tracking-wider text-bae-primary mb-2">Founder</span>
+          <h1 class="font-serif text-3xl md:text-4xl font-bold text-bae-ink leading-tight mb-2">Shahbaz Ali Malik</h1>
+          <p class="text-lg text-bae-muted">Founder of Best Answer Hub · Finance &amp; insurance leader · Published author · Entrepreneur</p>
+        </div>
+      </header>
+
+      <div class="prose prose-lg max-w-none">
+        <p>Hi, I'm <strong>Shahbaz Ali Malik</strong>, the founder of Best Answer Hub. I've spent <strong>20+ years in banking and insurance</strong>, and alongside that I build tools, write, and help people make sharper decisions about money and momentum.</p>
+
+        <p>In my corporate career I've <strong>led teams across the UK, UAE, and GCC</strong> and structured complex, high-value <strong>B2B deals</strong> for large corporates and financial institutions. I hold a <strong>Master's in Finance</strong>.</p>
+
+        <p>Outside the corporate world, I'm an entrepreneur. I'm the founder of <a href="https://onestepfixit.ae/" target="_blank" rel="noopener noreferrer">OneStepFixit</a>, a Dubai-based home-services company, and I spend much of my time building <strong>AI agents, automation, and no-code tools</strong>. Best Answer Hub grew directly out of that: a belief that genuinely useful tools shouldn't be locked behind signups, paywalls, or data harvesting. So I build them to run entirely in your browser, free, with nothing stored.</p>
+
+        <p>I'm also a <strong>published author</strong>. My books distill hard-won lessons on money and mindset into direct, practical guides. No fluff, no filler.</p>
+
+        <h2>What I work with</h2>
+        <div class="not-prose flex flex-wrap gap-2 my-4">
+          {expertise.map((tag) => (
+            <span class="text-xs font-medium px-3 py-1.5 rounded-full bg-bae-primary-soft text-bae-primary">{tag}</span>
+          ))}
+        </div>
+      </div>
+
+      <!-- Books -->
+      <section class="mt-12 pt-10 border-t border-bae-border" aria-label="Books by Shahbaz Ali Malik">
+        <h2 class="font-serif text-2xl font-bold text-bae-ink mb-2">My books</h2>
+        <p class="text-sm text-bae-muted mb-6">Both available on Amazon. Click a cover to view.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {books.map((b) => (
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5 flex gap-5">
+              <a href={b.amazon} target="_blank" rel="noopener noreferrer" class="shrink-0" aria-label={`View "${b.title}" on Amazon`}>
+                <img
+                  src={b.cover}
+                  alt={`Cover of "${b.title}" by Shahbaz Ali Malik`}
+                  width="110"
+                  height="165"
+                  loading="lazy"
+                  class="w-[110px] h-auto rounded-bae-sm border border-bae-border shadow-bae transition-transform hover:-translate-y-1"
+                />
+              </a>
+              <div class="min-w-0">
+                <h3 class="text-base font-semibold text-bae-ink mb-1">{b.title}</h3>
+                <p class="text-xs text-bae-muted mb-2">{b.subtitle}</p>
+                <p class="text-sm text-bae-muted mb-3">{b.blurb}</p>
+                <a href={b.amazon} target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-bae-primary hover:underline">View on Amazon →</a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Connect -->
+      <section class="mt-12 pt-10 border-t border-bae-border">
+        <h2 class="font-serif text-2xl font-bold text-bae-ink mb-4">Connect</h2>
+        <div class="flex flex-wrap gap-4">
+          <a href="https://www.linkedin.com/in/shahbaz-malik/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-bae-primary hover:underline">LinkedIn →</a>
+          <a href="mailto:admin@bestanswerhub.com" class="inline-flex items-center gap-2 text-sm font-semibold text-bae-primary hover:underline">admin@bestanswerhub.com</a>
+          <a href="/about/" class="inline-flex items-center gap-2 text-sm font-semibold text-bae-ink hover:underline">About Best Answer Hub →</a>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</BaseLayout>

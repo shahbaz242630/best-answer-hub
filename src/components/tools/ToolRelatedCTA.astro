@@ -1,0 +1,69 @@
+---
+import { allTools } from '../../data/tools';
+
+interface RelatedLink { name: string; url: string; }
+interface Props {
+  // Pass the current page's href to auto-derive its suite siblings from
+  // tools.ts (the single source of truth). Adding/removing a suite tool keeps
+  // these links correct with no manual edits.
+  currentHref?: string;
+  // Or pass an explicit list to override the auto-derived links.
+  related?: RelatedLink[];
+  title?: string;
+  description?: string;
+  browseHref?: string;
+  browseLabel?: string;
+}
+
+const { currentHref, related, title, description, browseHref, browseLabel } = Astro.props;
+
+// Resolve related links — explicit `related` wins, otherwise derive the other
+// tools in the same /calculators/<suite>/ as currentHref.
+let links: RelatedLink[] = related && related.length ? related : [];
+let suiteRoot = '';
+let suiteTitle = '';
+
+if (!links.length && currentHref) {
+  const m = currentHref.match(/^(\/calculators\/[^/]+\/)/);
+  if (m && currentHref !== m[1]) {
+    suiteRoot = m[1];
+    const suiteTool = allTools.find((t) => t.href === suiteRoot);
+    suiteTitle = suiteTool ? suiteTool.title : '';
+    links = allTools
+      .filter((t) =>
+        t.href.startsWith(suiteRoot) &&
+        t.href !== suiteRoot &&
+        t.href !== currentHref &&
+        t.live !== false,
+      )
+      .map((t) => ({ name: t.title, url: t.href }));
+  }
+}
+
+const hasLinks = links.length > 0;
+const heading = title ?? (suiteTitle ? `Explore the rest of the ${suiteTitle}` : 'Explore more free tools');
+const blurb = description ?? 'Calculators, converters, generators, and checkers, all running in your browser.';
+const ctaHref = browseHref ?? (suiteRoot || '/tools/');
+const ctaLabel = browseLabel ?? (suiteTitle ? `Browse ${suiteTitle} →` : 'Browse all tools →');
+---
+
+<section class="py-10 md:py-14 border-t border-bae-border">
+  <div class="container max-w-page mx-auto px-6">
+    <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">{heading}</h3>
+        {hasLinks ? (
+          <p class="text-sm text-bae-muted">
+            Also try{' '}
+            {links.map((l, i) => (<Fragment>{i > 0 ? (i === links.length - 1 ? ', and ' : ', ') : ''}<a href={l.url} class="text-bae-primary hover:underline">{l.name}</a></Fragment>))}.
+          </p>
+        ) : (
+          <p class="text-sm text-bae-muted">{blurb}</p>
+        )}
+      </div>
+      <a href={ctaHref} class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+        {ctaLabel}
+      </a>
+    </div>
+  </div>
+</section>

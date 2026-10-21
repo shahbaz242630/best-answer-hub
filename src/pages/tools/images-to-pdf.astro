@@ -1,0 +1,754 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Images to PDF Converter?',
+    a: 'The Best Answer Hub Images to PDF Converter is a free browser-based tool that turns JPG, PNG, and WebP images into a single PDF document. You drag and drop your images, reorder them by dragging, choose page size, orientation, margins, and image fit, then click Create PDF. The tool uses the pdf-lib library to embed every image into a new PDF at full resolution. Everything runs locally in your browser. No files are uploaded to any server. Updated May 2026.',
+  },
+  {
+    q: 'Is the tool free and safe to use for sensitive images like IDs and receipts?',
+    a: 'Yes. The Best Answer Hub Images to PDF Converter is completely free with no signup required and no watermarks on output. The privacy model is stronger than most tools: all processing runs locally inside your browser: images are never uploaded to any server, stored in a database, or seen by anyone else. Disconnect from the internet after loading the page and the converter still works. This makes it safe for sensitive documents such as passport scans, ID cards, medical records, receipts, and confidential design files.',
+  },
+  {
+    q: 'How do I convert images to PDF with this tool?',
+    a: 'First, drag and drop one or more image files into the upload area, or click to browse. Each image appears as a card showing a thumbnail preview and filename. Drag the cards up or down to set the page order. Choose your page settings (size, orientation, margins, and image fit) then click the "Create PDF" button. The Best Answer Hub Images to PDF Converter embeds every image into a new PDF. Download the result with one click.',
+  },
+  {
+    q: 'What image formats are supported, does it accept HEIC from iPhones?',
+    a: 'The Best Answer Hub Images to PDF Converter supports JPEG (.jpg, .jpeg), PNG (.png), and WebP (.webp) files. HEIC (the default photo format on iPhones and iPads) is not currently supported because browser-level HEIC decoding is inconsistent across platforms. To use iPhone photos, go to Settings → Camera → Formats and choose Most Compatible so new photos save as JPEG. For existing HEIC files, run them through a free HEIC-to-JPEG converter first. Once in JPEG format, the tool accepts them without any issues.',
+  },
+  {
+    q: 'Can I reorder images before creating the PDF?',
+    a: 'Yes. After you upload your images to the Best Answer Hub Images to PDF Converter, each file appears as a draggable card with a thumbnail preview. You can drag and drop cards to rearrange the page order. You can also remove individual images if you change your mind. The final PDF follows the order shown on screen from top to bottom.',
+  },
+  {
+    q: 'What page size and image fit options are available?',
+    a: 'Page size: <strong>A4</strong> (international standard), <strong>Letter</strong> (US standard), or <strong>Original</strong> (page dimensions auto-match the largest image). Orientation: Portrait or Landscape. Margins: None, Small, Medium, or Large. Image fit: <strong>Fit to page</strong> scales the image as large as possible while preserving proportions; <strong>Original size</strong> places the image at 1:1 pixel size; <strong>Stretch to fill</strong> expands the image to cover the full page area. Combine these settings to control whether images have white borders or fill the page edge to edge.',
+  },
+  {
+    q: 'Does converting images to PDF reduce quality?',
+    a: 'No, not in most cases. PNG images are embedded losslessly without any re-encoding. JPEG images are embedded directly whenever possible. WebP images are converted to PNG, which preserves all visual data. The only scenario where quality could change is if you set the quality slider below 100% and the tool needs to re-encode a JPEG. For maximum fidelity, keep the quality slider at 100% and use "Fit to page" or "Original size" mode.',
+  },
+  {
+    q: 'Why is my converted PDF so much larger than the original images?',
+    a: 'A converted PDF is often larger than source images because PDFs embed each image in a structured container with format overhead. JPEG images can also expand when re-encoded at high quality settings. To reduce output size, lower the quality slider to 75–85% before clicking Create PDF. This typically cuts file size by 30–50% on JPEG-heavy batches with minimal visible quality loss. PNG images are always embedded losslessly and cannot be compressed at this stage; run the resulting PDF through the Best Answer Hub PDF Compressor for additional size reduction.',
+  },
+  {
+    q: 'My photo comes out sideways in the PDF, how do I fix the orientation?',
+    a: 'Sideways photos in PDF are usually caused by EXIF orientation metadata embedded by a phone camera. The image is stored rotated at the pixel level, but the phone gallery reads the EXIF tag and displays it upright. When embedded into a PDF, the EXIF tag is ignored and the raw rotated pixel data is used instead. The fix: after converting, open the PDF in the Best Answer Hub PDF Rotator and rotate the affected pages 90° clockwise or anticlockwise. Alternatively, open the original photos in your phone\'s built-in editor, apply the rotation, and save before converting. This bakes the correction into the pixel data.',
+  },
+  {
+    q: 'How do I make images fill the whole page without white borders?',
+    a: 'In the Best Answer Hub Images to PDF Converter, set Margins to <strong>None</strong> and Image Fit to <strong>Stretch to fill</strong>. This expands each image to cover the entire page, ideal for full-bleed prints or design assets. To fill the page without distortion, choose <strong>Fit to page</strong> with Margins set to None: the image scales as large as possible while preserving proportions, which may leave narrow bars on two sides if the aspect ratios differ. To match the page size exactly to each image, select <strong>Original</strong> as the page size. Every page will be exactly as wide and tall as the image it contains.',
+  },
+  {
+    q: 'Can I use the Images to PDF converter on iPhone without installing an app?',
+    a: 'Yes. The Best Answer Hub Images to PDF Converter runs in mobile Safari and Chrome on iPhone and iPad, no app download needed. Open the page in your browser, tap the upload area to select photos from your camera roll, arrange them in order, and download the PDF. Note: iPhones save photos in HEIC format by default, which the tool does not support. To fix this, go to Settings → Camera → Formats → Most Compatible before shooting, or convert existing HEIC photos to JPEG using a dedicated converter before uploading.',
+  },
+  {
+    q: 'Does the quality slider affect my images?',
+    a: 'The quality slider (50–100%) only affects images that need re-encoding during conversion. PNG images are always embedded losslessly, so the slider does not affect them. JPEG images may be re-encoded if the tool needs to adjust them for the selected fit mode. WebP images are converted to PNG, which is lossless. In practice, most users should leave the slider at 100% for best results. Lower values are available if you specifically need a smaller output file and are working with JPEG source images.',
+  },
+  {
+    q: 'Is there a file size or image count limit?',
+    a: 'No hard limits are enforced. The Best Answer Hub Images to PDF Converter accepts images of any file size and processes any number of images in a single session. Performance depends on the device. Most users can comfortably convert 20–50 images at once on a modern desktop browser. For very large batches, processing in smaller groups of 50–100 is faster and more reliable. There are no signup walls, paywalls, or daily usage caps.',
+  },
+  {
+    q: 'How does this compare to Smallpdf and iLovePDF image converters?',
+    a: 'Smallpdf limits free users to two tasks per day and uploads your files to their servers. iLovePDF caps free web uploads and also processes files server-side. Both require an internet connection and create privacy exposure for sensitive images. The Best Answer Hub Images to PDF Converter is unlimited, requires no signup, processes everything locally in your browser, and offers drag-and-drop reordering, custom page sizes, and margin controls that many free competitors lack.',
+  },
+  {
+    q: 'Which browsers are supported?',
+    a: 'All modern browsers are supported: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, and Opera 76+. The tool uses standard Web APIs: File API, Canvas API, and TypedArrays. Internet Explorer is not supported. For the best performance when converting large images or large batches, Chrome or Edge on desktop offer the fastest processing speeds and highest memory limits.',
+  },
+];
+
+const steps = [
+  { title: 'Upload your images', description: 'Drag and drop JPG, PNG, or WebP files into the upload area, or click to browse. Each file stays on your device. Nothing is uploaded to any server. Thumbnail previews appear instantly.' },
+  { title: 'Arrange & configure', description: 'Drag and drop image cards to set the page order. Remove any image you do not want. Choose page size, orientation, margins, image fit, and quality to match your needs.' },
+  { title: 'Download PDF', description: 'Click "Create PDF." The tool builds a single PDF with one page per image. Review the stats and download instantly with one click.' },
+];
+
+const seo = {
+  title: 'Free Images to PDF — JPG, PNG & WebP to PDF (2026)',
+  description: 'Convert JPG, PNG, and WebP images to a single PDF for free. Reorder, set page size, margins, and image fit. No uploads, no signup, no watermarks.',
+  url: '/tools/images-to-pdf/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Images to PDF', url: '/tools/images-to-pdf/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Upload to Servers"
+    title="Images to PDF:"
+    accentText="Convert photos in seconds"
+    description="Turn JPG, PNG, and WebP images into a single PDF for free. Reorder pages by dragging, set page size and margins, and choose how images fit. No signup, no watermarks, no daily limits. Your files never leave your device."
+    backLink="/pdf-toolkit/"
+    backLabel="← PDF Toolkit"
+  />
+
+  <!-- Converter Interface -->
+  <section class="py-6 md:py-8" aria-label="Images to PDF converter">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-4">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1">Drop your images here</p>
+          <p class="text-xs text-bae-muted">or click to browse: JPG, PNG, WebP</p>
+          <input type="file" id="file-input" class="hidden" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple />
+        </div>
+
+        <!-- Add More Button -->
+        <div class="text-center mb-4">
+          <button type="button" id="add-more-btn" class="hidden text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors">
+            + Add more images
+          </button>
+        </div>
+
+        <!-- Image Count -->
+        <p id="image-count" class="hidden text-xs text-bae-muted mb-2 text-center"></p>
+
+        <!-- Image List -->
+        <div id="image-list" class="hidden mb-4 space-y-2"></div>
+
+        <!-- Size Warning -->
+        <div id="size-warning" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-3 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <p class="text-xs text-amber-700">One or more images are large. Processing may take 30+ seconds and your browser may become temporarily unresponsive.</p>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-area" class="hidden mb-4 bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="text-sm font-bold text-bae-ink mb-4">Page Settings</h3>
+
+          <!-- Page Size -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Page Size</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto">
+              <button type="button" data-page-size="A4" class="page-size-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">A4</button>
+              <button type="button" data-page-size="Letter" class="page-size-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Letter</button>
+              <button type="button" data-page-size="Original" class="page-size-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Original</button>
+            </div>
+          </div>
+
+          <!-- Orientation -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Orientation</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto">
+              <button type="button" data-orientation="Portrait" class="orientation-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">Portrait</button>
+              <button type="button" data-orientation="Landscape" class="orientation-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Landscape</button>
+            </div>
+          </div>
+
+          <!-- Margins -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Margins</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto">
+              <button type="button" data-margin="0" class="margin-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">None</button>
+              <button type="button" data-margin="10" class="margin-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Small</button>
+              <button type="button" data-margin="36" class="margin-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Medium</button>
+              <button type="button" data-margin="72" class="margin-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Large</button>
+            </div>
+          </div>
+
+          <!-- Image Fit -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Image Fit</label>
+            <div class="inline-flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden w-full sm:w-auto">
+              <button type="button" data-fit="fit" class="fit-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium bg-bae-primary text-white transition-colors">Fit to page</button>
+              <button type="button" data-fit="original" class="fit-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Original size</button>
+              <button type="button" data-fit="stretch" class="fit-btn flex-1 sm:flex-none px-4 py-2 text-xs font-medium text-bae-muted hover:text-bae-ink transition-colors">Stretch to fill</button>
+            </div>
+          </div>
+
+          <!-- Quality Slider -->
+          <div class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-medium text-bae-muted">Quality</label>
+              <span class="text-xs font-semibold text-bae-primary" id="quality-value">100%</span>
+            </div>
+            <input type="range" id="quality-slider" min="50" max="100" value="100" class="w-full h-2 bg-bae-bg rounded-lg appearance-none cursor-pointer accent-bae-primary" />
+            <div class="flex justify-between text-[10px] text-bae-muted mt-1">
+              <span>Smaller file</span>
+              <span>Best quality</span>
+            </div>
+          </div>
+
+          <button type="button" id="create-btn" class="w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+            Create PDF
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Processing...</p>
+            <p class="text-xs text-bae-muted mt-1">Processing locally in your browser</p>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-bae-ink">PDF Created</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Ready</span>
+            </div>
+            <div class="grid grid-cols-3 gap-3 mb-4">
+              <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                <p class="text-[10px] text-bae-muted uppercase tracking-wider mb-1">Images</p>
+                <p id="result-images" class="text-sm font-medium text-bae-ink">—</p>
+              </div>
+              <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                <p class="text-[10px] text-bae-muted uppercase tracking-wider mb-1">Total Pages</p>
+                <p id="result-pages" class="text-sm font-medium text-bae-ink">—</p>
+              </div>
+              <div class="bg-emerald-50 rounded-bae-sm p-3 text-center border border-emerald-100">
+                <p class="text-[10px] text-emerald-600 uppercase tracking-wider mb-1">Est. File Size</p>
+                <p id="result-size" class="text-sm font-medium text-emerald-700">—</p>
+              </div>
+            </div>
+            <a id="download-btn" href="#" download class="block w-full text-center bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm hover:bg-bae-accent transition-colors no-underline">
+              Download PDF
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What this tool cannot do</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>Vector graphics:</strong> This tool embeds raster images only. It does not convert SVG or other vector formats.</li>
+              <li><strong>Advanced layout:</strong> Each image becomes one full page. Multi-image collage layouts are not supported.</li>
+              <li><strong>Text recognition (OCR):</strong> Scanned images remain as images inside the PDF. Text is not made selectable.</li>
+              <li><strong>Animated images:</strong> Animated WebP or GIF files are not supported; only the first frame would be captured.</li>
+              <li><strong>Password protection:</strong> The output PDF is not encrypted or password-protected.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people convert with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people convert with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from job seekers, professionals, and everyday users.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Job Applications</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Supporting documents & signatures</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">One PDF under 5 MB for portal uploads</p>
+          <p class="text-sm text-bae-muted">Combine a scanned ID, proof of address, and signed form into a single submission-ready PDF that meets portal file size and format requirements, no app or account needed.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Phone Photos & Receipts</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Camera roll to PDF in the browser</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">No app download, works in Safari & Chrome</p>
+          <p class="text-sm text-bae-muted">Turn screenshots, expense receipts, and camera photos into a single shareable PDF directly in your phone's browser. Nothing installed, nothing uploaded to any server.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Portfolios & Presentations</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Design mockups and product photography</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">20+ images merged into one printable PDF</p>
+          <p class="text-sm text-bae-muted">Combine artwork, screenshots, product shots, or design frames into a single PDF portfolio. Drag to reorder pages and choose your preferred page size before downloading.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Sensitive Documents</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Passports, IDs, and medical scans</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">100% private, files never leave your device</p>
+          <p class="text-sm text-bae-muted">Convert scans of identity documents and confidential records into PDF without uploading anything to a server. Disconnect from the internet after page load. The tool still works.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more PDF tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/pdf-compressor/" class="text-bae-primary hover:underline">PDF Compressor</a>, <a href="/tools/pdf-merger/" class="text-bae-primary hover:underline">PDF Merger</a>, <a href="/tools/pdf-splitter/" class="text-bae-primary hover:underline">PDF Splitter</a>, <a href="/tools/pdf-rotator/" class="text-bae-primary hover:underline">PDF Rotator</a>, <a href="/tools/pdf-to-images/" class="text-bae-primary hover:underline">PDF to Images</a>, and <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>, all free, no signup.</p>
+        </div>
+        <a href="/pdf-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse PDF Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const imageList = document.getElementById('image-list');
+      const imageCount = document.getElementById('image-count');
+      const addMoreBtn = document.getElementById('add-more-btn');
+      const settingsArea = document.getElementById('settings-area');
+      const progressArea = document.getElementById('progress-area');
+      const resultArea = document.getElementById('result-area');
+      const progressText = document.getElementById('progress-text');
+      const sizeWarning = document.getElementById('size-warning');
+      const createBtn = document.getElementById('create-btn');
+      const downloadBtn = document.getElementById('download-btn');
+      const resultImages = document.getElementById('result-images');
+      const resultPages = document.getElementById('result-pages');
+      const resultSize = document.getElementById('result-size');
+      const qualitySlider = document.getElementById('quality-slider');
+      const qualityValue = document.getElementById('quality-value');
+
+      let items = [];
+      let PDFLib = null;
+      let pageSize = 'A4';
+      let orientation = 'Portrait';
+      let margin = 0;
+      let fitMode = 'fit';
+
+      async function loadPdfLib() {
+        if (PDFLib) return;
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = '/pdf-lib.min.js';
+          s.onload = () => { PDFLib = window.PDFLib; resolve(); };
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+
+      function formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function isValidImage(file) {
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        const validExts = ['.jpg', '.jpeg', '.png', '.webp'];
+        const name = file.name.toLowerCase();
+        const hasExt = validExts.some(ext => name.endsWith(ext));
+        const hasMime = validTypes.includes(file.type);
+        return hasExt && hasMime;
+      }
+
+      function getPageDimensions() {
+        const A4_W = 595.28;
+        const A4_H = 841.89;
+        const LETTER_W = 612;
+        const LETTER_H = 792;
+
+        if (pageSize === 'Original') {
+          let maxW = 0;
+          let maxH = 0;
+          items.forEach(item => {
+            if (item.width > maxW) maxW = item.width;
+            if (item.height > maxH) maxH = item.height;
+          });
+          const w = maxW + margin * 2;
+          const h = maxH + margin * 2;
+          return orientation === 'Landscape' ? [h, w] : [w, h];
+        }
+
+        let w, h;
+        if (pageSize === 'A4') {
+          w = A4_W;
+          h = A4_H;
+        } else {
+          w = LETTER_W;
+          h = LETTER_H;
+        }
+        return orientation === 'Landscape' ? [h, w] : [w, h];
+      }
+
+      function setActiveButton(group, value) {
+        document.querySelectorAll(group).forEach(btn => {
+          if (btn.dataset[Object.keys(btn.dataset)[0]] === value ||
+              (group === '.page-size-btn' && btn.dataset.pageSize === value) ||
+              (group === '.orientation-btn' && btn.dataset.orientation === value) ||
+              (group === '.margin-btn' && btn.dataset.margin === String(value)) ||
+              (group === '.fit-btn' && btn.dataset.fit === value)) {
+            btn.classList.add('bg-bae-primary', 'text-white');
+            btn.classList.remove('text-bae-muted');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('text-bae-muted');
+          }
+        });
+      }
+
+      document.querySelectorAll('.page-size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          pageSize = btn.dataset.pageSize;
+          setActiveButton('.page-size-btn', pageSize);
+        });
+      });
+
+      document.querySelectorAll('.orientation-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          orientation = btn.dataset.orientation;
+          setActiveButton('.orientation-btn', orientation);
+        });
+      });
+
+      document.querySelectorAll('.margin-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          margin = parseInt(btn.dataset.margin, 10);
+          setActiveButton('.margin-btn', String(margin));
+        });
+      });
+
+      document.querySelectorAll('.fit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          fitMode = btn.dataset.fit;
+          setActiveButton('.fit-btn', fitMode);
+        });
+      });
+
+      qualitySlider.addEventListener('input', (e) => {
+        qualityValue.textContent = e.target.value + '%';
+      });
+
+      function renderList() {
+        imageList.innerHTML = '';
+        if (items.length === 0) {
+          imageList.classList.add('hidden');
+          imageCount.classList.add('hidden');
+          settingsArea.classList.add('hidden');
+          addMoreBtn.classList.add('hidden');
+          sizeWarning.classList.add('hidden');
+          resultArea.classList.add('hidden');
+          return;
+        }
+
+        imageList.classList.remove('hidden');
+        imageCount.classList.remove('hidden');
+        settingsArea.classList.remove('hidden');
+        addMoreBtn.classList.remove('hidden');
+        imageCount.textContent = items.length + ' image' + (items.length !== 1 ? 's' : '') + ' selected';
+
+        let hasLarge = false;
+        items.forEach((item, index) => {
+          if (item.file.size > 100 * 1024 * 1024) hasLarge = true;
+
+          const card = document.createElement('div');
+          card.className = 'bg-bae-card border border-bae-border rounded-bae p-3 flex items-center gap-3 cursor-move';
+          card.draggable = true;
+          card.dataset.index = index;
+
+          card.innerHTML = `
+            <svg class="w-4 h-4 text-bae-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
+            <img src="${item.thumbUrl}" alt="" class="w-12 h-12 object-cover rounded-bae-sm shrink-0 bg-bae-bg" />
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-bae-ink truncate">${escapeHtml(item.name)}</p>
+              <p class="text-xs text-bae-muted">${item.width}×${item.height} px · ${formatBytes(item.file.size)}</p>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <button type="button" data-up="${index}" class="up-btn p-1.5 text-bae-muted hover:text-bae-ink disabled:opacity-30" ${index === 0 ? 'disabled' : ''} aria-label="Move up">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+              </button>
+              <button type="button" data-down="${index}" class="down-btn p-1.5 text-bae-muted hover:text-bae-ink disabled:opacity-30" ${index === items.length - 1 ? 'disabled' : ''} aria-label="Move down">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <button type="button" data-remove="${index}" class="remove-btn p-1.5 text-bae-muted hover:text-red-500" aria-label="Remove image">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+          `;
+
+          card.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', index);
+            card.classList.add('opacity-50');
+          });
+          card.addEventListener('dragend', () => {
+            card.classList.remove('opacity-50');
+            document.querySelectorAll('#image-list > div').forEach(d => d.classList.remove('border-bae-primary', 'bg-bae-primary-soft/20'));
+          });
+          card.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            card.classList.add('border-bae-primary', 'bg-bae-primary-soft/20');
+          });
+          card.addEventListener('dragleave', () => {
+            card.classList.remove('border-bae-primary', 'bg-bae-primary-soft/20');
+          });
+          card.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+            const toIndex = parseInt(card.dataset.index, 10);
+            if (fromIndex === toIndex) return;
+            const moved = items.splice(fromIndex, 1)[0];
+            items.splice(toIndex, 0, moved);
+            renderList();
+          });
+
+          imageList.appendChild(card);
+        });
+
+        imageList.querySelectorAll('.up-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const i = parseInt(btn.dataset.up, 10);
+            if (i > 0) {
+              [items[i], items[i-1]] = [items[i-1], items[i]];
+              renderList();
+            }
+          });
+        });
+        imageList.querySelectorAll('.down-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const i = parseInt(btn.dataset.down, 10);
+            if (i < items.length - 1) {
+              [items[i], items[i+1]] = [items[i+1], items[i]];
+              renderList();
+            }
+          });
+        });
+        imageList.querySelectorAll('.remove-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const i = parseInt(btn.dataset.remove, 10);
+            URL.revokeObjectURL(items[i].thumbUrl);
+            items.splice(i, 1);
+            renderList();
+          });
+        });
+
+        sizeWarning.classList.toggle('hidden', !hasLarge);
+      }
+
+      async function addFiles(fileList) {
+        const MAX_IMAGES = 100;
+        if (items.length >= MAX_IMAGES) {
+          alert('Maximum ' + MAX_IMAGES + ' images allowed.');
+          return;
+        }
+        const MAX_FILE_SIZE = 20 * 1024 * 1024 * 1024;
+        let added = 0;
+        for (const file of fileList) {
+          if (items.length + added >= MAX_IMAGES) {
+            alert('Maximum ' + MAX_IMAGES + ' images reached. Extra files skipped.');
+            break;
+          }
+          if (file.size > MAX_FILE_SIZE) {
+            alert('"' + file.name + '" is too large. Maximum size is 20 GB.');
+            continue;
+          }
+          if (!isValidImage(file)) continue;
+          let blobUrl = null;
+          try {
+            const img = await new Promise((resolve, reject) => {
+              const image = new Image();
+              blobUrl = URL.createObjectURL(file);
+              image.onload = () => resolve(image);
+              image.onerror = () => { URL.revokeObjectURL(blobUrl); blobUrl = null; reject(new Error('Load failed')); };
+              image.src = blobUrl;
+            });
+            items.push({
+              file,
+              name: file.name,
+              width: img.naturalWidth,
+              height: img.naturalHeight,
+              thumbUrl: img.src,
+            });
+          } catch (err) {
+            if (blobUrl) URL.revokeObjectURL(blobUrl);
+            console.error('Failed to load image:', file.name, err);
+            alert('Could not read "' + file.name + '". It may be corrupted or in an unsupported format.');
+          }
+        }
+        renderList();
+      }
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50');
+        if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+      });
+      fileInput.addEventListener('change', (e) => { if (e.target.files.length) addFiles(e.target.files); });
+      addMoreBtn.addEventListener('click', () => fileInput.click());
+
+      async function webpToPngBytes(file) {
+        const bitmap = await createImageBitmap(file);
+        let w = bitmap.width;
+        let h = bitmap.height;
+        const MAX_CANVAS_DIM = 8192;
+        if (w > MAX_CANVAS_DIM || h > MAX_CANVAS_DIM) {
+          const scale = Math.min(MAX_CANVAS_DIM / w, MAX_CANVAS_DIM / h);
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(bitmap, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/png');
+        const base64 = dataUrl.split(',')[1];
+        return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+      }
+
+      async function jpegToReencodedBytes(file, quality) {
+        const bitmap = await createImageBitmap(file);
+        let w = bitmap.width;
+        let h = bitmap.height;
+        const MAX_CANVAS_DIM = 8192;
+        if (w > MAX_CANVAS_DIM || h > MAX_CANVAS_DIM) {
+          const scale = Math.min(MAX_CANVAS_DIM / w, MAX_CANVAS_DIM / h);
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(bitmap, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        const base64 = dataUrl.split(',')[1];
+        return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+      }
+
+      createBtn.addEventListener('click', async () => {
+        if (items.length === 0) return;
+        resultArea.classList.add('hidden');
+        progressArea.classList.remove('hidden');
+        progressText.textContent = 'Loading PDF library...';
+
+        try {
+          await loadPdfLib();
+          const pdf = await PDFLib.PDFDocument.create();
+          const quality = parseInt(qualitySlider.value, 10) / 100;
+          const [pageW, pageH] = getPageDimensions();
+
+          for (let i = 0; i < items.length; i++) {
+            progressText.textContent = 'Processing image ' + (i + 1) + ' of ' + items.length + '...';
+            const item = items[i];
+            const file = item.file;
+            const ext = file.name.toLowerCase().split('.').pop();
+
+            let embedImage;
+            let imgW = item.width;
+            let imgH = item.height;
+
+            if (ext === 'webp') {
+              const pngBytes = await webpToPngBytes(file);
+              embedImage = await pdf.embedPng(pngBytes);
+            } else if (ext === 'png') {
+              const arrayBuffer = await file.arrayBuffer();
+              const bytes = new Uint8Array(arrayBuffer);
+              embedImage = await pdf.embedPng(bytes);
+            } else {
+              if (quality < 1) {
+                const jpgBytes = await jpegToReencodedBytes(file, quality);
+                embedImage = await pdf.embedJpg(jpgBytes);
+              } else {
+                const arrayBuffer = await file.arrayBuffer();
+                const bytes = new Uint8Array(arrayBuffer);
+                embedImage = await pdf.embedJpg(bytes);
+              }
+            }
+
+            let pw = pageW;
+            let ph = pageH;
+            if (pageSize === 'Original') {
+              // Recalculate per-image if Original, since margins already included in getPageDimensions
+              pw = pageW;
+              ph = pageH;
+            }
+
+            const page = pdf.addPage([pw, ph]);
+            const availW = pw - margin * 2;
+            const availH = ph - margin * 2;
+
+            let drawW, drawH, drawX, drawY;
+
+            if (fitMode === 'fit') {
+              const scale = Math.min(availW / imgW, availH / imgH, 1);
+              drawW = imgW * scale;
+              drawH = imgH * scale;
+              drawX = margin + (availW - drawW) / 2;
+              drawY = margin + (availH - drawH) / 2;
+            } else if (fitMode === 'original') {
+              drawW = imgW;
+              drawH = imgH;
+              drawX = margin + (availW - drawW) / 2;
+              drawY = margin + (availH - drawH) / 2;
+            } else {
+              // stretch
+              drawW = availW;
+              drawH = availH;
+              drawX = margin;
+              drawY = margin;
+            }
+
+            page.drawImage(embedImage, {
+              x: drawX,
+              y: drawY,
+              width: drawW,
+              height: drawH,
+            });
+          }
+
+          progressText.textContent = 'Saving PDF...';
+          const bytes = await pdf.save();
+          const blob = new Blob([bytes], { type: 'application/pdf' });
+          if (downloadBtn._objUrl) URL.revokeObjectURL(downloadBtn._objUrl);
+          const url = URL.createObjectURL(blob);
+          downloadBtn._objUrl = url;
+
+          resultImages.textContent = items.length + ' image' + (items.length !== 1 ? 's' : '');
+          resultPages.textContent = items.length + ' page' + (items.length !== 1 ? 's' : '');
+          resultSize.textContent = formatBytes(blob.size);
+          downloadBtn.href = url;
+          downloadBtn.download = 'images.pdf';
+
+          progressArea.classList.add('hidden');
+          resultArea.classList.remove('hidden');
+          resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+          console.error(err);
+          progressText.textContent = 'PDF creation failed: ' + (err.message || 'Unknown error. Try fewer or smaller images.');
+        }
+      });
+    })();
+  </script>
+</BaseLayout>

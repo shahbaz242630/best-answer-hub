@@ -1,0 +1,378 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Z-Score Calculator?', a: 'The Best Answer Hub Z-Score Calculator is a free, browser-based statistics tool that converts a raw value into a standard score and back. Enter a score, mean, and standard deviation, and it returns the z-score, percentile, step-by-step work, and a shaded bell curve. It solves for any variable, with no signup and nothing uploaded.' },
+  { q: 'What is a z-score?', a: 'A z-score is the number of standard deviations a value sits from the mean of its dataset. A z-score of +1.5 is one and a half standard deviations above average, and a z-score of &minus;2 is two below. The Best Answer Hub Z-Score Calculator computes it and explains the result in plain language.' },
+  { q: 'What is the z-score formula?', a: 'The formula is z = (x &minus; &mu;) / &sigma;, where x is the raw value, &mu; is the mean, and &sigma; is the standard deviation. The Best Answer Hub Z-Score Calculator also reverses it to find the raw score with x = &mu; + z&sigma;, or to solve for the mean or the standard deviation.' },
+  { q: 'Can the calculator solve for the raw score or the mean?', a: 'Yes. The Best Answer Hub Z-Score Calculator has a mode for each quantity in the formula. Choose whether to find the z-score, the raw score, the mean, or the standard deviation, enter what you know, and it returns the missing value with the working shown.' },
+  { q: 'What does a negative z-score mean?', a: 'A negative z-score means the value falls below the mean, and it is not an error. A z-score of &minus;1 sits one standard deviation below average, near the 16th percentile. The Best Answer Hub Z-Score Calculator displays negative results clearly with the matching percentile and a plain-English reading.' },
+  { q: 'Do I use population or sample standard deviation?', a: 'Use the population standard deviation when your data covers the whole group, and the sample standard deviation when it is a subset. The sample version divides by n minus 1. The Best Answer Hub Z-Score Calculator has a toggle that selects the right mode and adjusts the notation for you.' },
+  { q: 'How do you convert a z-score to a percentile?', a: 'Pass the z-score through the standard normal cumulative distribution function, which gives the share of values below it. A z-score of 1.0 sits at about the 84th percentile. The Best Answer Hub Z-Score Calculator does this automatically and shades the area to the left of your score on the bell curve.' },
+  { q: 'What is the z-score for the 95th percentile?', a: 'The z-score for the 95th percentile is about 1.645. For a two-tailed 95% confidence interval, the critical values are &plusmn;1.96. The Best Answer Hub Z-Score Calculator includes quick-reference chips for these, along with 90% at &plusmn;1.645 and 99% at &plusmn;2.576.' },
+  { q: 'What does a z-score of 0 mean?', a: 'A z-score of 0 means the value equals the mean exactly, which corresponds to the 50th percentile in a normal distribution. The Best Answer Hub Z-Score Calculator highlights this result and notes that the value sits at the center of the distribution.' },
+  { q: 'Is a z-score above 3 or below minus 3 possible?', a: 'Yes. Values beyond &plusmn;3 are rare, about 0.3% of a normal distribution, but they are mathematically valid rather than mistakes. The Best Answer Hub Z-Score Calculator handles extreme z-scores and flags them as likely outliers, with an interpretation attached to the result.' },
+  { q: 'How do you find a z-score for a sample mean?', a: 'Use z = (x&#772; &minus; &mu;) / (&sigma;/&radic;n), where the standard error &sigma; divided by the square root of n replaces the standard deviation. This is standard for hypothesis testing and sampling problems. The Best Answer Hub Z-Score Calculator has a sample-mean option that applies the standard error once you enter n.' },
+  { q: 'Does a z-score assume a normal distribution?', a: 'The z-score itself can be calculated for any data, but reading it as a percentile or probability assumes an approximately normal distribution. The Best Answer Hub Z-Score Calculator shows a normality reminder with the result, so a percentile from skewed data is not taken at face value.' },
+  { q: 'Is the Altman Z-score the same as a statistical z-score?', a: 'No. The Altman Z-score, built by Edward Altman in 1968, is a weighted formula that predicts corporate bankruptcy, not a count of standard deviations. The Best Answer Hub Z-Score Calculator computes the statistical z-score, which measures how far a value sits from the mean in standard-deviation units.' },
+  { q: 'Does standardizing my data make it normal?', a: 'No. Converting values to z-scores shifts the mean to 0 and the standard deviation to 1, but it does not change the shape of the distribution. Skewed data stays skewed. The Best Answer Hub Z-Score Calculator computes the standard score while its normality reminder keeps this distinction clear.' },
+  { q: 'Is the Best Answer Hub Z-Score Calculator free and private?', a: 'Yes. It is completely free with no usage limits, no watermarks, and no signup. Every calculation runs in your browser, so nothing you enter is uploaded. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so it carries no ads.' },
+];
+
+const seo = {
+  title: 'How to Calculate and Read a Z-Score',
+  description: 'How to calculate a z-score, convert it to a percentile, and know when to trust it. Population vs sample, the outlier rule, and worked examples.',
+  url: '/playbooks/z-score-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Z-Score Calculator', url: '/playbooks/z-score-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+  <div class="hero">
+    <span class="glow"></span>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div class="masthead">
+          <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+          <span class="word">Best Answer Hub<i>.</i></span>
+        </div>
+        <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+      </div>
+      <span class="eyebrow">Best Answer Hub Playbooks &middot; Statistics</span>
+      <div class="cav">One number, any scale</div>
+      <h1>How to Calculate and Read a <em>Z-Score</em></h1>
+      <p class="dek">A z-score says how many standard deviations a value sits from the mean, which turns scores measured on completely different scales into numbers you can compare directly. The arithmetic is a single line. The part worth getting right is what the number means, and when the percentile it implies can be trusted.</p>
+      <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Statistics</span><span>No signup</span></div>
+      <div class="bandstrip">
+        <div class="seg b1">Standardize<small>subtract mean, divide by SD</small></div>
+        <div class="seg b2">Compare<small>across different scales</small></div>
+        <div class="seg b3">Interpret<small>percentile, outliers</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n">z = (x&minus;&mu;)/&sigma;</div><div class="l">the entire z-score formula</div><div class="src">OpenStax</div></div>
+    <div class="stat"><div class="n">84th</div><div class="l">percentile of a z-score of 1.0</div><div class="src">NIST</div></div>
+    <div class="stat"><div class="n">&plusmn;1.96</div><div class="l">critical z for a 95% confidence interval</div><div class="src">OpenStax / NIST</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">computed in your browser, nothing uploaded</div><div class="src">no upload</div></div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="On this page">
+      <div class="t">On this page</div>
+      <a href="#what">What it is</a>
+      <a href="#how">How it is calculated</a>
+      <a href="#sample">Population vs sample</a>
+      <a href="#percentile">Turning z into a percentile</a>
+      <a href="#outliers">Outliers and the &plusmn;3 rule</a>
+      <a href="#myth">The "several Z-scores" mix-up</a>
+      <a href="#different">Why this tool</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <article>
+      <p class="lead"><strong>A z-score, or standard score, is the number of standard deviations a value sits from the mean of its dataset, found with z = (x &minus; &mu;) / &sigma;.</strong> A z-score of +1.5 means the value is one and a half standard deviations above the mean; a z-score of &minus;2 is two below it. Because it removes the original units, a z-score lets you compare a result from one test directly against a result from another. The Best Answer Hub <a href="/calculators/statistics-suite/z-score-calculator/">Z-Score Calculator</a> computes it, solves for any variable in the formula, converts the result to a percentile, and plots it on a live bell curve, all in your browser.</p>
+
+      <p>This guide covers how a z-score is calculated, when to use the population versus the sample standard deviation, how a z-score becomes a percentile, why values beyond three standard deviations are treated as outliers, and how a statistical z-score differs from the other things people call a "Z-score." The tool sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> statistics suite, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+      <div class="cav">Start here</div>
+      <h2 id="what">What is the Best Answer Hub Z-Score Calculator?</h2>
+      <p>The Best Answer Hub Z-Score Calculator is a free, browser-based statistics tool that turns a raw value into a standard score and back again. Enter a raw score, mean, and standard deviation, and it returns the z-score, the matching percentile, a plain-English reading, and a shaded bell curve. It solves for any of the four quantities in the formula, toggles between population and sample standard deviation, shows the arithmetic step by step, and exports to PDF, with no signup and nothing uploaded.</p>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">1</span><div><b>Solves in four directions.</b> Find the z-score, or reverse it to find the raw score, the mean, or the standard deviation.</div></li>
+          <li><span class="dot">2</span><div><b>Reads the result for you.</b> A percentile, a plain-English interpretation, and a live bell curve with the area to the left shaded.</div></li>
+          <li><span class="dot">3</span><div><b>Shows every step.</b> The subtraction, the division, and the rounding are all visible for homework, exams, or a sanity check.</div></li>
+        </ul>
+      </div>
+
+      <div class="cav">The method</div>
+      <h2 id="how">How do you calculate a z-score?</h2>
+      <p>Subtract the mean from the value, then divide by the standard deviation. That is the whole formula, z = (x &minus; &mu;) / &sigma;, where x is the raw value, &mu; is the mean, and &sigma; is the standard deviation (<a href="https://openstax.org/books/introductory-statistics-2e/pages/6-1-the-standard-normal-distribution" target="_blank" rel="noopener noreferrer">OpenStax, Introductory Statistics 2e</a>). A student who scores 78 on a test with a mean of 72 and a standard deviation of 6 has a z-score of exactly 1.0, meaning one standard deviation above average.</p>
+      <div class="codebox">
+        <div class="dt">A test score, worked out</div>
+        <div class="codelines">x = 78, &mu; = 72, &sigma; = 6
+
+  z = (x &minus; &mu;) / &sigma;
+    = (78 &minus; 72) / 6
+    = 6 / 6
+    = 1.0   &rarr; one SD above the mean</div>
+        <p class="codenote">Reverse it with x = &mu; + z&sigma; to recover the raw score. Source: OpenStax, Introductory Statistics 2e, section 6.1.</p>
+      </div>
+      <p>The same identity rearranges to solve for whatever you are missing: the raw score is x = &mu; + z&sigma;, the mean is &mu; = x &minus; z&sigma;, and the standard deviation is &sigma; = (x &minus; &mu;) / z. The Best Answer Hub Z-Score Calculator has a mode for each, so you are never rewriting the formula by hand.</p>
+
+      <div class="cav">Which spread</div>
+      <h2 id="sample">Population or sample standard deviation?</h2>
+      <p>Use the population standard deviation (&sigma;) when your data covers every member of the group, and the sample standard deviation (s) when it is a sample standing in for a larger population. The difference is the denominator: the population version divides by N, while the sample version divides by n &minus; 1, a correction that keeps the estimate from running too small (<a href="https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Introductory_Statistics_(Shafer_and_Zhang)/02%3A_Descriptive_Statistics/2.03%3A_Measures_of_Variability" target="_blank" rel="noopener noreferrer">LibreTexts, Shafer and Zhang</a>). Most real datasets are samples, so the sample version is the common default.</p>
+      <p>There is a second case that trips people up: a z-score for a <em>sample mean</em> rather than a single value. Because averages vary less than individual readings, you divide by the standard error &sigma;/&radic;n instead of &sigma;, giving z = (x&#772; &minus; &mu;) / (&sigma;/&radic;n). This follows from the Central Limit Theorem, which says sample means tend toward a normal distribution as n grows (<a href="https://openstax.org/books/introductory-statistics-2e/pages/7-1-the-central-limit-theorem-for-sample-means-averages" target="_blank" rel="noopener noreferrer">OpenStax, section 7.1</a>). The Best Answer Hub Z-Score Calculator has a sample-mean option that applies the standard error automatically once you enter n.</p>
+      <table>
+        <thead><tr><th>You are working with</th><th>Divide by</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td class="band">A whole population</td><td>N</td><td>z = (x &minus; &mu;) / &sigma;</td></tr>
+          <tr><td class="band">A sample</td><td>n &minus; 1 (for s)</td><td>z = (x &minus; x&#772;) / s</td></tr>
+          <tr><td class="band">A sample mean</td><td>&sigma;/&radic;n (standard error)</td><td>z = (x&#772; &minus; &mu;) / (&sigma;/&radic;n)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cav">Where do I rank</div>
+      <h2 id="percentile">How do you turn a z-score into a percentile?</h2>
+      <p>Feed the z-score through the standard normal cumulative distribution function, which returns the share of values that fall below it. A z-score of 0 lands at the 50th percentile, 1.0 at about the 84th, 1.645 at the 95th, and 1.96 at about the 97.5th (<a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda3671.htm" target="_blank" rel="noopener noreferrer">NIST e-Handbook</a>). This is the step that answers the real question behind most z-score lookups: not "what is my z" but "where do I rank." The Best Answer Hub Z-Score Calculator does the conversion and shades the area on the curve so the percentile is something you can see.</p>
+      <figure class="chart">
+        <figcaption class="chart-title">A z-score of 1.0 sits at the 84th percentile</figcaption>
+        <svg viewBox="0 0 600 224" role="img" aria-label="A bell curve with the area to the left of a z-score of 1.0 shaded, representing the 84th percentile."><polygon points="62.4,171.8 63.7,171.8 65.0,171.8 66.4,171.8 67.7,171.7 69.0,171.7 70.3,171.7 71.6,171.7 73.0,171.7 74.3,171.6 75.6,171.6 76.9,171.6 78.2,171.5 79.6,171.5 80.9,171.5 82.2,171.4 83.5,171.4 84.8,171.4 86.2,171.3 87.5,171.3 88.8,171.2 90.1,171.2 91.4,171.1 92.8,171.1 94.1,171.0 95.4,171.0 96.7,170.9 98.0,170.8 99.4,170.7 100.7,170.7 102.0,170.6 103.3,170.5 104.6,170.4 106.0,170.3 107.3,170.2 108.6,170.1 109.9,170.0 111.2,169.9 112.6,169.7 113.9,169.6 115.2,169.5 116.5,169.3 117.8,169.2 119.2,169.0 120.5,168.8 121.8,168.7 123.1,168.5 124.4,168.3 125.8,168.1 127.1,167.9 128.4,167.6 129.7,167.4 131.0,167.2 132.4,166.9 133.7,166.7 135.0,166.4 136.3,166.1 137.6,165.8 139.0,165.5 140.3,165.2 141.6,164.8 142.9,164.5 144.2,164.1 145.6,163.7 146.9,163.3 148.2,162.9 149.5,162.5 150.8,162.0 152.2,161.6 153.5,161.1 154.8,160.6 156.1,160.1 157.4,159.6 158.8,159.0 160.1,158.5 161.4,157.9 162.7,157.3 164.0,156.7 165.4,156.0 166.7,155.4 168.0,154.7 169.3,154.0 170.6,153.2 172.0,152.5 173.3,151.7 174.6,150.9 175.9,150.1 177.2,149.3 178.6,148.4 179.9,147.6 181.2,146.7 182.5,145.7 183.8,144.8 185.2,143.8 186.5,142.8 187.8,141.8 189.1,140.8 190.4,139.7 191.8,138.6 193.1,137.5 194.4,136.4 195.7,135.3 197.0,134.1 198.4,132.9 199.7,131.7 201.0,130.4 202.3,129.2 203.6,127.9 205.0,126.6 206.3,125.3 207.6,124.0 208.9,122.6 210.2,121.2 211.6,119.8 212.9,118.4 214.2,117.0 215.5,115.6 216.8,114.1 218.2,112.7 219.5,111.2 220.8,109.7 222.1,108.2 223.4,106.7 224.8,105.2 226.1,103.6 227.4,102.1 228.7,100.6 230.0,99.0 231.4,97.5 232.7,95.9 234.0,94.4 235.3,92.8 236.6,91.3 238.0,89.7 239.3,88.2 240.6,86.6 241.9,85.1 243.2,83.6 244.6,82.1 245.9,80.5 247.2,79.1 248.5,77.6 249.8,76.1 251.2,74.7 252.5,73.2 253.8,71.8 255.1,70.4 256.4,69.1 257.8,67.7 259.1,66.4 260.4,65.1 261.7,63.8 263.0,62.6 264.4,61.4 265.7,60.2 267.0,59.0 268.3,57.9 269.6,56.9 271.0,55.8 272.3,54.8 273.6,53.8 274.9,52.9 276.2,52.0 277.6,51.2 278.9,50.4 280.2,49.6 281.5,48.9 282.8,48.3 284.2,47.6 285.5,47.1 286.8,46.5 288.1,46.1 289.4,45.6 290.8,45.2 292.1,44.9 293.4,44.6 294.7,44.4 296.0,44.2 297.4,44.1 298.7,44.0 300.0,44.0 301.3,44.0 302.6,44.1 304.0,44.2 305.3,44.4 306.6,44.6 307.9,44.9 309.2,45.2 310.6,45.6 311.9,46.1 313.2,46.5 314.5,47.1 315.8,47.6 317.2,48.3 318.5,48.9 319.8,49.6 321.1,50.4 322.4,51.2 323.8,52.0 325.1,52.9 326.4,53.8 327.7,54.8 329.0,55.8 330.4,56.9 331.7,57.9 333.0,59.0 334.3,60.2 335.6,61.4 337.0,62.6 338.3,63.8 339.6,65.1 340.9,66.4 342.2,67.7 343.6,69.1 344.9,70.4 346.2,71.8 347.5,73.2 348.8,74.7 350.2,76.1 351.5,77.6 352.8,79.1 354.1,80.5 355.4,82.1 356.8,83.6 358.1,85.1 359.4,86.6 360.7,88.2 362.0,89.7 363.4,91.3 364.7,92.8 366.0,94.4 366.0,172.0 62.4,172.0" fill="#C6603F" fill-opacity="0.24"/><polyline points="62.4,171.8 65.0,171.8 67.7,171.7 70.3,171.7 73.0,171.7 75.6,171.6 78.2,171.5 80.9,171.5 83.5,171.4 86.2,171.3 88.8,171.2 91.4,171.1 94.1,171.0 96.7,170.9 99.4,170.7 102.0,170.6 104.6,170.4 107.3,170.2 109.9,170.0 112.6,169.7 115.2,169.5 117.8,169.2 120.5,168.8 123.1,168.5 125.8,168.1 128.4,167.6 131.0,167.2 133.7,166.7 136.3,166.1 139.0,165.5 141.6,164.8 144.2,164.1 146.9,163.3 149.5,162.5 152.2,161.6 154.8,160.6 157.4,159.6 160.1,158.5 162.7,157.3 165.4,156.0 168.0,154.7 170.6,153.2 173.3,151.7 175.9,150.1 178.6,148.4 181.2,146.7 183.8,144.8 186.5,142.8 189.1,140.8 191.8,138.6 194.4,136.4 197.0,134.1 199.7,131.7 202.3,129.2 205.0,126.6 207.6,124.0 210.2,121.2 212.9,118.4 215.5,115.6 218.2,112.7 220.8,109.7 223.4,106.7 226.1,103.6 228.7,100.6 231.4,97.5 234.0,94.4 236.6,91.3 239.3,88.2 241.9,85.1 244.6,82.1 247.2,79.1 249.8,76.1 252.5,73.2 255.1,70.4 257.8,67.7 260.4,65.1 263.0,62.6 265.7,60.2 268.3,57.9 271.0,55.8 273.6,53.8 276.2,52.0 278.9,50.4 281.5,48.9 284.2,47.6 286.8,46.5 289.4,45.6 292.1,44.9 294.7,44.4 297.4,44.1 300.0,44.0 302.6,44.1 305.3,44.4 307.9,44.9 310.6,45.6 313.2,46.5 315.8,47.6 318.5,48.9 321.1,50.4 323.8,52.0 326.4,53.8 329.0,55.8 331.7,57.9 334.3,60.2 337.0,62.6 339.6,65.1 342.2,67.7 344.9,70.4 347.5,73.2 350.2,76.1 352.8,79.1 355.4,82.1 358.1,85.1 360.7,88.2 363.4,91.3 366.0,94.4 368.6,97.5 371.3,100.6 373.9,103.6 376.6,106.7 379.2,109.7 381.8,112.7 384.5,115.6 387.1,118.4 389.8,121.2 392.4,124.0 395.0,126.6 397.7,129.2 400.3,131.7 403.0,134.1 405.6,136.4 408.2,138.6 410.9,140.8 413.5,142.8 416.2,144.8 418.8,146.7 421.4,148.4 424.1,150.1 426.7,151.7 429.4,153.2 432.0,154.7 434.6,156.0 437.3,157.3 439.9,158.5 442.6,159.6 445.2,160.6 447.8,161.6 450.5,162.5 453.1,163.3 455.8,164.1 458.4,164.8 461.0,165.5 463.7,166.1 466.3,166.7 469.0,167.2 471.6,167.6 474.2,168.1 476.9,168.5 479.5,168.8 482.2,169.2 484.8,169.5 487.4,169.7 490.1,170.0 492.7,170.2 495.4,170.4 498.0,170.6 500.6,170.7 503.3,170.9 505.9,171.0 508.6,171.1 511.2,171.2 513.8,171.3 516.5,171.4 519.1,171.5 521.8,171.5 524.4,171.6 527.0,171.7 529.7,171.7 532.3,171.7 535.0,171.8 537.6,171.8" fill="none" stroke="#C6603F" stroke-width="2.5"/><line x1="60" y1="172.0" x2="540" y2="172.0" stroke="#E1D4be" stroke-width="2"/><line x1="366.0" y1="94.4" x2="366.0" y2="172.0" stroke="#8a4429" stroke-width="1.5" stroke-dasharray="3 3"/><text x="263.7" y="118" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="22" font-weight="800" fill="#8a4429">84%</text><text x="263.7" y="136" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#847B6B">area to the left</text><text x="366.0" y="34" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="12.5" font-weight="800" fill="#33302A">z = 1.0</text><text x="102.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-3σ</text><text x="168.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-2σ</text><text x="234.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-1σ</text><text x="300.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">0</text><text x="366.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">+1σ</text><text x="432.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">+2σ</text><text x="498.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">+3σ</text></svg>
+        <p class="chart-src">The percentile is the shaded area to the left of the z-score under the standard normal curve. Reference values from the NIST standard normal table.</p>
+      </figure>
+      <p>One caution makes this tool honest where many are not. You can compute a z-score for <em>any</em> dataset, but reading it as a percentile assumes the data is approximately normal, because the percentages come from the normal curve (<a href="https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Statistics%3A_Open_for_Everyone_(Peter)/05%3A_The_Normal_Curve_z-Scores_and_Probability/5.04%3A_Finding_Probabilities" target="_blank" rel="noopener noreferrer">LibreTexts</a>). On badly skewed data, the z-score is still valid arithmetic, but the percentile it implies is not. The Best Answer Hub Z-Score Calculator shows a normality reminder alongside the result for exactly this reason.</p>
+      <table>
+        <thead><tr><th>Z-score</th><th>Percentile</th><th>Common use</th></tr></thead>
+        <tbody>
+          <tr><td class="band">0</td><td>50th</td><td>Exactly average</td></tr>
+          <tr><td class="band">1.0</td><td>~84th</td><td>One SD above the mean</td></tr>
+          <tr><td class="band">1.645</td><td>95th</td><td>One-tailed 95%, 90% interval bound</td></tr>
+          <tr><td class="band">1.96</td><td>~97.5th</td><td>Two-tailed 95% confidence interval</td></tr>
+          <tr><td class="band">2.576</td><td>~99.5th</td><td>Two-tailed 99% confidence interval</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cav">Too far out</div>
+      <h2 id="outliers">When is a z-score an outlier?</h2>
+      <p>A common rule flags any value beyond three standard deviations, and the reason is the empirical rule. In a normal distribution, about 68% of values fall within one standard deviation of the mean, about 95% within two, and about 99.7% within three, or more precisely 68.26%, 95.44%, and 99.73% (<a href="https://www.itl.nist.gov/div898/handbook/prc/section2/prc261.htm" target="_blank" rel="noopener noreferrer">NIST e-Handbook</a>). That leaves only about 0.3% of data beyond a z-score of &plusmn;3, roughly 0.15% in each tail, which is why a z past &plusmn;3 is rare enough to treat as an outlier worth a second look.</p>
+      <figure class="chart">
+        <figcaption class="chart-title">The 68-95-99.7 rule, in z-score units</figcaption>
+        <svg viewBox="0 0 600 224" role="img" aria-label="A normal bell curve showing 68 percent of data within one standard deviation, 95 percent within two, and 99.7 percent within three."><polygon points="102.0,170.6 103.3,170.5 104.6,170.4 106.0,170.3 107.3,170.2 108.6,170.1 109.9,170.0 111.2,169.9 112.6,169.7 113.9,169.6 115.2,169.5 116.5,169.3 117.8,169.2 119.2,169.0 120.5,168.8 121.8,168.7 123.1,168.5 124.4,168.3 125.8,168.1 127.1,167.9 128.4,167.6 129.7,167.4 131.0,167.2 132.4,166.9 133.7,166.7 135.0,166.4 136.3,166.1 137.6,165.8 139.0,165.5 140.3,165.2 141.6,164.8 142.9,164.5 144.2,164.1 145.6,163.7 146.9,163.3 148.2,162.9 149.5,162.5 150.8,162.0 152.2,161.6 153.5,161.1 154.8,160.6 156.1,160.1 157.4,159.6 158.8,159.0 160.1,158.5 161.4,157.9 162.7,157.3 164.0,156.7 165.4,156.0 166.7,155.4 168.0,154.7 169.3,154.0 170.6,153.2 172.0,152.5 173.3,151.7 174.6,150.9 175.9,150.1 177.2,149.3 178.6,148.4 179.9,147.6 181.2,146.7 182.5,145.7 183.8,144.8 185.2,143.8 186.5,142.8 187.8,141.8 189.1,140.8 190.4,139.7 191.8,138.6 193.1,137.5 194.4,136.4 195.7,135.3 197.0,134.1 198.4,132.9 199.7,131.7 201.0,130.4 202.3,129.2 203.6,127.9 205.0,126.6 206.3,125.3 207.6,124.0 208.9,122.6 210.2,121.2 211.6,119.8 212.9,118.4 214.2,117.0 215.5,115.6 216.8,114.1 218.2,112.7 219.5,111.2 220.8,109.7 222.1,108.2 223.4,106.7 224.8,105.2 226.1,103.6 227.4,102.1 228.7,100.6 230.0,99.0 231.4,97.5 232.7,95.9 234.0,94.4 235.3,92.8 236.6,91.3 238.0,89.7 239.3,88.2 240.6,86.6 241.9,85.1 243.2,83.6 244.6,82.1 245.9,80.5 247.2,79.1 248.5,77.6 249.8,76.1 251.2,74.7 252.5,73.2 253.8,71.8 255.1,70.4 256.4,69.1 257.8,67.7 259.1,66.4 260.4,65.1 261.7,63.8 263.0,62.6 264.4,61.4 265.7,60.2 267.0,59.0 268.3,57.9 269.6,56.9 271.0,55.8 272.3,54.8 273.6,53.8 274.9,52.9 276.2,52.0 277.6,51.2 278.9,50.4 280.2,49.6 281.5,48.9 282.8,48.3 284.2,47.6 285.5,47.1 286.8,46.5 288.1,46.1 289.4,45.6 290.8,45.2 292.1,44.9 293.4,44.6 294.7,44.4 296.0,44.2 297.4,44.1 298.7,44.0 300.0,44.0 301.3,44.0 302.6,44.1 304.0,44.2 305.3,44.4 306.6,44.6 307.9,44.9 309.2,45.2 310.6,45.6 311.9,46.1 313.2,46.5 314.5,47.1 315.8,47.6 317.2,48.3 318.5,48.9 319.8,49.6 321.1,50.4 322.4,51.2 323.8,52.0 325.1,52.9 326.4,53.8 327.7,54.8 329.0,55.8 330.4,56.9 331.7,57.9 333.0,59.0 334.3,60.2 335.6,61.4 337.0,62.6 338.3,63.8 339.6,65.1 340.9,66.4 342.2,67.7 343.6,69.1 344.9,70.4 346.2,71.8 347.5,73.2 348.8,74.7 350.2,76.1 351.5,77.6 352.8,79.1 354.1,80.5 355.4,82.1 356.8,83.6 358.1,85.1 359.4,86.6 360.7,88.2 362.0,89.7 363.4,91.3 364.7,92.8 366.0,94.4 367.3,95.9 368.6,97.5 370.0,99.0 371.3,100.6 372.6,102.1 373.9,103.6 375.2,105.2 376.6,106.7 377.9,108.2 379.2,109.7 380.5,111.2 381.8,112.7 383.2,114.1 384.5,115.6 385.8,117.0 387.1,118.4 388.4,119.8 389.8,121.2 391.1,122.6 392.4,124.0 393.7,125.3 395.0,126.6 396.4,127.9 397.7,129.2 399.0,130.4 400.3,131.7 401.6,132.9 403.0,134.1 404.3,135.3 405.6,136.4 406.9,137.5 408.2,138.6 409.6,139.7 410.9,140.8 412.2,141.8 413.5,142.8 414.8,143.8 416.2,144.8 417.5,145.7 418.8,146.7 420.1,147.6 421.4,148.4 422.8,149.3 424.1,150.1 425.4,150.9 426.7,151.7 428.0,152.5 429.4,153.2 430.7,154.0 432.0,154.7 433.3,155.4 434.6,156.0 436.0,156.7 437.3,157.3 438.6,157.9 439.9,158.5 441.2,159.0 442.6,159.6 443.9,160.1 445.2,160.6 446.5,161.1 447.8,161.6 449.2,162.0 450.5,162.5 451.8,162.9 453.1,163.3 454.4,163.7 455.8,164.1 457.1,164.5 458.4,164.8 459.7,165.2 461.0,165.5 462.4,165.8 463.7,166.1 465.0,166.4 466.3,166.7 467.6,166.9 469.0,167.2 470.3,167.4 471.6,167.6 472.9,167.9 474.2,168.1 475.6,168.3 476.9,168.5 478.2,168.7 479.5,168.8 480.8,169.0 482.2,169.2 483.5,169.3 484.8,169.5 486.1,169.6 487.4,169.7 488.8,169.9 490.1,170.0 491.4,170.1 492.7,170.2 494.0,170.3 495.4,170.4 496.7,170.5 498.0,170.6 498.0,172.0 102.0,172.0" fill="#E4EADD"/><polygon points="168.0,154.7 169.3,154.0 170.6,153.2 172.0,152.5 173.3,151.7 174.6,150.9 175.9,150.1 177.2,149.3 178.6,148.4 179.9,147.6 181.2,146.7 182.5,145.7 183.8,144.8 185.2,143.8 186.5,142.8 187.8,141.8 189.1,140.8 190.4,139.7 191.8,138.6 193.1,137.5 194.4,136.4 195.7,135.3 197.0,134.1 198.4,132.9 199.7,131.7 201.0,130.4 202.3,129.2 203.6,127.9 205.0,126.6 206.3,125.3 207.6,124.0 208.9,122.6 210.2,121.2 211.6,119.8 212.9,118.4 214.2,117.0 215.5,115.6 216.8,114.1 218.2,112.7 219.5,111.2 220.8,109.7 222.1,108.2 223.4,106.7 224.8,105.2 226.1,103.6 227.4,102.1 228.7,100.6 230.0,99.0 231.4,97.5 232.7,95.9 234.0,94.4 235.3,92.8 236.6,91.3 238.0,89.7 239.3,88.2 240.6,86.6 241.9,85.1 243.2,83.6 244.6,82.1 245.9,80.5 247.2,79.1 248.5,77.6 249.8,76.1 251.2,74.7 252.5,73.2 253.8,71.8 255.1,70.4 256.4,69.1 257.8,67.7 259.1,66.4 260.4,65.1 261.7,63.8 263.0,62.6 264.4,61.4 265.7,60.2 267.0,59.0 268.3,57.9 269.6,56.9 271.0,55.8 272.3,54.8 273.6,53.8 274.9,52.9 276.2,52.0 277.6,51.2 278.9,50.4 280.2,49.6 281.5,48.9 282.8,48.3 284.2,47.6 285.5,47.1 286.8,46.5 288.1,46.1 289.4,45.6 290.8,45.2 292.1,44.9 293.4,44.6 294.7,44.4 296.0,44.2 297.4,44.1 298.7,44.0 300.0,44.0 301.3,44.0 302.6,44.1 304.0,44.2 305.3,44.4 306.6,44.6 307.9,44.9 309.2,45.2 310.6,45.6 311.9,46.1 313.2,46.5 314.5,47.1 315.8,47.6 317.2,48.3 318.5,48.9 319.8,49.6 321.1,50.4 322.4,51.2 323.8,52.0 325.1,52.9 326.4,53.8 327.7,54.8 329.0,55.8 330.4,56.9 331.7,57.9 333.0,59.0 334.3,60.2 335.6,61.4 337.0,62.6 338.3,63.8 339.6,65.1 340.9,66.4 342.2,67.7 343.6,69.1 344.9,70.4 346.2,71.8 347.5,73.2 348.8,74.7 350.2,76.1 351.5,77.6 352.8,79.1 354.1,80.5 355.4,82.1 356.8,83.6 358.1,85.1 359.4,86.6 360.7,88.2 362.0,89.7 363.4,91.3 364.7,92.8 366.0,94.4 367.3,95.9 368.6,97.5 370.0,99.0 371.3,100.6 372.6,102.1 373.9,103.6 375.2,105.2 376.6,106.7 377.9,108.2 379.2,109.7 380.5,111.2 381.8,112.7 383.2,114.1 384.5,115.6 385.8,117.0 387.1,118.4 388.4,119.8 389.8,121.2 391.1,122.6 392.4,124.0 393.7,125.3 395.0,126.6 396.4,127.9 397.7,129.2 399.0,130.4 400.3,131.7 401.6,132.9 403.0,134.1 404.3,135.3 405.6,136.4 406.9,137.5 408.2,138.6 409.6,139.7 410.9,140.8 412.2,141.8 413.5,142.8 414.8,143.8 416.2,144.8 417.5,145.7 418.8,146.7 420.1,147.6 421.4,148.4 422.8,149.3 424.1,150.1 425.4,150.9 426.7,151.7 428.0,152.5 429.4,153.2 430.7,154.0 432.0,154.7 432.0,172.0 168.0,172.0" fill="#F3E2D6"/><polygon points="234.0,94.4 235.3,92.8 236.6,91.3 238.0,89.7 239.3,88.2 240.6,86.6 241.9,85.1 243.2,83.6 244.6,82.1 245.9,80.5 247.2,79.1 248.5,77.6 249.8,76.1 251.2,74.7 252.5,73.2 253.8,71.8 255.1,70.4 256.4,69.1 257.8,67.7 259.1,66.4 260.4,65.1 261.7,63.8 263.0,62.6 264.4,61.4 265.7,60.2 267.0,59.0 268.3,57.9 269.6,56.9 271.0,55.8 272.3,54.8 273.6,53.8 274.9,52.9 276.2,52.0 277.6,51.2 278.9,50.4 280.2,49.6 281.5,48.9 282.8,48.3 284.2,47.6 285.5,47.1 286.8,46.5 288.1,46.1 289.4,45.6 290.8,45.2 292.1,44.9 293.4,44.6 294.7,44.4 296.0,44.2 297.4,44.1 298.7,44.0 300.0,44.0 301.3,44.0 302.6,44.1 304.0,44.2 305.3,44.4 306.6,44.6 307.9,44.9 309.2,45.2 310.6,45.6 311.9,46.1 313.2,46.5 314.5,47.1 315.8,47.6 317.2,48.3 318.5,48.9 319.8,49.6 321.1,50.4 322.4,51.2 323.8,52.0 325.1,52.9 326.4,53.8 327.7,54.8 329.0,55.8 330.4,56.9 331.7,57.9 333.0,59.0 334.3,60.2 335.6,61.4 337.0,62.6 338.3,63.8 339.6,65.1 340.9,66.4 342.2,67.7 343.6,69.1 344.9,70.4 346.2,71.8 347.5,73.2 348.8,74.7 350.2,76.1 351.5,77.6 352.8,79.1 354.1,80.5 355.4,82.1 356.8,83.6 358.1,85.1 359.4,86.6 360.7,88.2 362.0,89.7 363.4,91.3 364.7,92.8 366.0,94.4 366.0,172.0 234.0,172.0" fill="#C6603F" fill-opacity="0.34"/><polyline points="62.4,171.8 65.0,171.8 67.7,171.7 70.3,171.7 73.0,171.7 75.6,171.6 78.2,171.5 80.9,171.5 83.5,171.4 86.2,171.3 88.8,171.2 91.4,171.1 94.1,171.0 96.7,170.9 99.4,170.7 102.0,170.6 104.6,170.4 107.3,170.2 109.9,170.0 112.6,169.7 115.2,169.5 117.8,169.2 120.5,168.8 123.1,168.5 125.8,168.1 128.4,167.6 131.0,167.2 133.7,166.7 136.3,166.1 139.0,165.5 141.6,164.8 144.2,164.1 146.9,163.3 149.5,162.5 152.2,161.6 154.8,160.6 157.4,159.6 160.1,158.5 162.7,157.3 165.4,156.0 168.0,154.7 170.6,153.2 173.3,151.7 175.9,150.1 178.6,148.4 181.2,146.7 183.8,144.8 186.5,142.8 189.1,140.8 191.8,138.6 194.4,136.4 197.0,134.1 199.7,131.7 202.3,129.2 205.0,126.6 207.6,124.0 210.2,121.2 212.9,118.4 215.5,115.6 218.2,112.7 220.8,109.7 223.4,106.7 226.1,103.6 228.7,100.6 231.4,97.5 234.0,94.4 236.6,91.3 239.3,88.2 241.9,85.1 244.6,82.1 247.2,79.1 249.8,76.1 252.5,73.2 255.1,70.4 257.8,67.7 260.4,65.1 263.0,62.6 265.7,60.2 268.3,57.9 271.0,55.8 273.6,53.8 276.2,52.0 278.9,50.4 281.5,48.9 284.2,47.6 286.8,46.5 289.4,45.6 292.1,44.9 294.7,44.4 297.4,44.1 300.0,44.0 302.6,44.1 305.3,44.4 307.9,44.9 310.6,45.6 313.2,46.5 315.8,47.6 318.5,48.9 321.1,50.4 323.8,52.0 326.4,53.8 329.0,55.8 331.7,57.9 334.3,60.2 337.0,62.6 339.6,65.1 342.2,67.7 344.9,70.4 347.5,73.2 350.2,76.1 352.8,79.1 355.4,82.1 358.1,85.1 360.7,88.2 363.4,91.3 366.0,94.4 368.6,97.5 371.3,100.6 373.9,103.6 376.6,106.7 379.2,109.7 381.8,112.7 384.5,115.6 387.1,118.4 389.8,121.2 392.4,124.0 395.0,126.6 397.7,129.2 400.3,131.7 403.0,134.1 405.6,136.4 408.2,138.6 410.9,140.8 413.5,142.8 416.2,144.8 418.8,146.7 421.4,148.4 424.1,150.1 426.7,151.7 429.4,153.2 432.0,154.7 434.6,156.0 437.3,157.3 439.9,158.5 442.6,159.6 445.2,160.6 447.8,161.6 450.5,162.5 453.1,163.3 455.8,164.1 458.4,164.8 461.0,165.5 463.7,166.1 466.3,166.7 469.0,167.2 471.6,167.6 474.2,168.1 476.9,168.5 479.5,168.8 482.2,169.2 484.8,169.5 487.4,169.7 490.1,170.0 492.7,170.2 495.4,170.4 498.0,170.6 500.6,170.7 503.3,170.9 505.9,171.0 508.6,171.1 511.2,171.2 513.8,171.3 516.5,171.4 519.1,171.5 521.8,171.5 524.4,171.6 527.0,171.7 529.7,171.7 532.3,171.7 535.0,171.8 537.6,171.8" fill="none" stroke="#C6603F" stroke-width="2.5"/><line x1="60" y1="172.0" x2="540" y2="172.0" stroke="#E1D4be" stroke-width="2"/><line x1="102.0" y1="170.6" x2="102.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="168.0" y1="154.7" x2="168.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="234.0" y1="94.4" x2="234.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="366.0" y1="94.4" x2="366.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="432.0" y1="154.7" x2="432.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="498.0" y1="170.6" x2="498.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><text x="300" y="150" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="800" fill="#8a4429">68%</text><text x="102.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-3σ</text><text x="168.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-2σ</text><text x="234.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-1σ</text><text x="300.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">0</text><text x="366.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">+1σ</text><text x="432.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">+2σ</text><text x="498.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">+3σ</text><rect x="92" y="195" width="13" height="13" rx="3" fill="#C6603F"/><text x="111" y="205" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#4f4940">68% (±1 SD)</text><rect x="212" y="195" width="13" height="13" rx="3" fill="#F3E2D6"/><text x="231" y="205" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#4f4940">95% (±2 SD)</text><rect x="332" y="195" width="13" height="13" rx="3" fill="#E4EADD"/><text x="351" y="205" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#4f4940">99.7% (±3 SD)</text></svg>
+        <p class="chart-src">Percentages of a normal distribution within 1, 2, and 3 standard deviations of the mean. Beyond &plusmn;3 SD lies about 0.3% of the data. Source: NIST e-Handbook, section 7.2.6.1.</p>
+      </figure>
+      <p>The Best Answer Hub Z-Score Calculator handles extreme scores without breaking and flags a z beyond &plusmn;3 as a likely outlier, with the interpretation attached. Extreme z-scores are mathematically valid, not errors; they are simply unusual under a normal model.</p>
+
+      <div class="cav">Not the same Z</div>
+      <h2 id="myth">Is every "Z-score" the same thing?</h2>
+      <p>No, and conflating them is a genuine trap. The statistical z-score here measures standard deviations from a mean. The Altman Z-score, built by <a href="https://en.wikipedia.org/wiki/Altman_Z-score" target="_blank" rel="noopener noreferrer">Edward Altman at NYU in 1968</a>, is a weighted composite that predicts corporate bankruptcy, where above 2.99 is "safe" and below 1.81 is "distress." A Six Sigma sigma level counts how many standard deviations fit between a process mean and its nearest limit, with a six-sigma process targeting <a href="https://www.moresteam.com/toolbox/six-sigma-conversion-table" target="_blank" rel="noopener noreferrer">3.4 defects per million</a>. The <a href="https://www.who.int/tools/child-growth-standards/standards/weight-for-age" target="_blank" rel="noopener noreferrer">WHO child growth standards</a> report a child's measurements as z-scores against a reference population. Same word, different machinery.</p>
+      <div class="callout sage"><div class="h">A stubborn myth</div><p>Standardizing data does not make it normal. Converting values to z-scores is a linear shift and rescale that sets the mean to 0 and the standard deviation to 1, but it leaves the shape of the distribution exactly as it was. A skewed dataset is still skewed after you standardize it, which is why the percentile caution above matters.</p></div>
+      <table>
+        <thead><tr><th>Name</th><th>What it measures</th><th>Typical scale</th></tr></thead>
+        <tbody>
+          <tr><td class="band">Statistical z-score</td><td>Standard deviations from the mean</td><td>Usually &minus;3 to +3</td></tr>
+          <tr><td class="band">Altman Z-score</td><td>Bankruptcy risk (weighted composite)</td><td>Distress below 1.81, safe above 2.99</td></tr>
+          <tr><td class="band">Six Sigma level</td><td>Process capability</td><td>Higher sigma, fewer defects</td></tr>
+          <tr><td class="band">WHO growth z-score</td><td>Child size vs a reference population</td><td>Usually &minus;3 to +3</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cav">Why this one</div>
+      <h2 id="different">How is Best Answer Hub different from other z-score calculators?</h2>
+      <p>The difference is that it solves in every direction and shows the result on a curve. Many free calculators only compute z from a raw value; some back-solve, but none of the common ones plot your own z on a live, shaded bell curve with the percentile and the steps beside it. The Best Answer Hub Z-Score Calculator solves for z, x, &mu;, or &sigma;, toggles population versus sample, converts to a percentile, and runs entirely in your browser with no signup.</p>
+      <table>
+        <thead><tr><th>Feature</th><th>Best Answer Hub</th><th>Typical calculator</th></tr></thead>
+        <tbody>
+          <tr><td>Solves for z, x, mean, and SD</td><td class="band">All four</td><td>Often z only</td></tr>
+          <tr><td>Interactive bell curve on your input</td><td class="band">Yes</td><td>Rarely</td></tr>
+          <tr><td>Percentile and step-by-step work</td><td class="band">Both</td><td>Sometimes</td></tr>
+          <tr><td>Population vs sample toggle</td><td class="band">Yes</td><td>Varies</td></tr>
+          <tr><td>Signup or upload</td><td class="band">Neither</td><td>Some gate features</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cta">
+        <span class="kicker">Standardize any score in seconds</span>
+        <h3>Try the free Z-Score Calculator</h3>
+        <p>Enter a raw score, mean, and standard deviation to get the z-score, percentile, step-by-step work, and a shaded bell curve. Solve for any variable. No signup, in your browser.</p>
+        <a class="btn" href="/calculators/statistics-suite/z-score-calculator/">Open the Z-Score Calculator</a>
+      </div>
+
+      <div class="cav">Good questions</div>
+      <h2 id="faq">Frequently asked questions about z-scores</h2>
+      <div class="faq">
+        {faqs.map((f) => (
+          <div class="qa">
+            <div class="q" set:html={f.q}></div>
+            <div class="a" set:html={f.a}></div>
+          </div>
+        ))}
+      </div>
+
+      <div class="cav">People also read</div>
+      <h2>Keep going</h2>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/normal-distribution-calculator/">How to Read Normal Distribution Probabilities</a></b> The companion piece: turning z-scores into areas and probabilities.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/p-value-and-confidence-interval/">P-Values and Confidence Intervals, Read Correctly</a></b> Where critical z-values like 1.96 actually get used.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, Nothing Uploaded</a></b> The Calculators hub guide, every tool client-side.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/ai-knowledge-test/">The Free AI Knowledge Test</a></b> A no-signup check of how well you really understand AI.</div></li>
+        </ul>
+      </div>
+
+      <h2>Sources</h2>
+      <ul class="sources">
+        <li>OpenStax, <a href="https://openstax.org/books/introductory-statistics-2e/pages/6-1-the-standard-normal-distribution" target="_blank" rel="noopener noreferrer">Introductory Statistics 2e, section 6.1</a>, 2023 (z-score definition and formula, x = &mu; + z&sigma;).</li>
+        <li>OpenStax, <a href="https://openstax.org/books/introductory-statistics-2e/pages/7-1-the-central-limit-theorem-for-sample-means-averages" target="_blank" rel="noopener noreferrer">Introductory Statistics 2e, section 7.1</a>, 2023 (standard error and the Central Limit Theorem).</li>
+        <li>LibreTexts (Shafer and Zhang), <a href="https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Introductory_Statistics_(Shafer_and_Zhang)/02%3A_Descriptive_Statistics/2.03%3A_Measures_of_Variability" target="_blank" rel="noopener noreferrer">Measures of Variability</a> (population vs sample standard deviation).</li>
+        <li>NIST/SEMATECH, <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda3671.htm" target="_blank" rel="noopener noreferrer">Cumulative Distribution Function of the Standard Normal</a> (z-to-percentile reference values).</li>
+        <li>NIST/SEMATECH, <a href="https://www.itl.nist.gov/div898/handbook/prc/section2/prc261.htm" target="_blank" rel="noopener noreferrer">Intervals that contain most of the population</a> (68.26 / 95.44 / 99.73 percent).</li>
+        <li>Edward Altman, <a href="https://en.wikipedia.org/wiki/Altman_Z-score" target="_blank" rel="noopener noreferrer">Altman Z-score</a>, 1968 (a different "Z" for bankruptcy prediction).</li>
+        <li>World Health Organization, <a href="https://www.who.int/tools/child-growth-standards/standards/weight-for-age" target="_blank" rel="noopener noreferrer">Child Growth Standards</a> (growth reported as z-scores).</li>
+      </ul>
+      <p class="foot">More free calculators: <a href="/calculators/">Calculators hub</a>, <a href="/calculators/stem-suite/normal-distribution-calculator/">Normal Distribution Calculator</a>, <a href="/calculators/statistics-suite/p-value-calculator/">P-Value Calculator</a>, and <a href="/tools/">all free tools</a>.</p>
+    </article>
+  </div>
+</div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.7rem;color:var(--clay);line-height:1}
+  .pb .stat .n sup{font-size:.6em}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  .pb .foot{max-width:1080px;margin:0 auto;padding:0 24px 50px;font-size:.85rem;color:var(--muted)}
+  .pb .foot a{color:var(--clay-deep)}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

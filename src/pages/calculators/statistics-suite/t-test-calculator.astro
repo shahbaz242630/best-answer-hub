@@ -1,0 +1,1245 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ToolHero from '../../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub T-Test Calculator?',
+    a: 'The Best Answer Hub T-Test Calculator is a free browser-based tool that performs one-sample, independent (two-sample), and paired t-tests from summary statistics. It calculates the t-statistic, degrees of freedom, one-tailed and two-tailed p-values, and Cohen\'s d effect size. Every result includes step-by-step work, a plain-English interpretation, and an interactive t-distribution visual. All calculations run locally, with no data sent to any server.',
+  },
+  {
+    q: 'What is the difference between a one-sample, independent, and paired t-test?',
+    a: 'A one-sample t-test compares the mean of a single sample to a known or hypothesised population mean. An independent t-test compares the means of two separate, unrelated groups. A paired t-test compares measurements from the same subjects at two different times or under two different conditions. The Best Answer Hub T-Test Calculator offers separate input panels for each design with labelled fields so users select the correct test for their data structure.',
+  },
+  {
+    q: 'When should I use a t-test instead of a z-test?',
+    a: 'Use a t-test when the population standard deviation is unknown and must be estimated from sample data, or when the sample size is small, typically below 30 observations. Use a z-test when the population standard deviation is known and the sample size is large. The Best Answer Hub T-Test Calculator is designed for the far more common real-world scenario where sigma is unknown and only sample statistics are available.',
+  },
+  {
+    q: 'How do I know if I need a paired or independent t-test?',
+    a: 'Use a paired t-test when each observation in one group is directly linked to exactly one observation in the other group, such as before-and-after measurements on the same patients or matched pairs in an experiment. Use an independent t-test when the two groups contain entirely different subjects with no natural pairing. The Best Answer Hub T-Test Calculator shows a decision hint next to each mode selector to help users choose correctly.',
+  },
+  {
+    q: 'Should I use a one-tailed or two-tailed t-test?',
+    a: 'Use a two-tailed test when you want to detect any difference between groups, regardless of direction. This is the standard in most scientific research and is required when the direction of the effect is not predicted in advance. Use a one-tailed test only when you have a strong, pre-registered directional hypothesis and would not care about an effect in the opposite direction. The Best Answer Hub T-Test Calculator defaults to two-tailed and clearly labels the tail type in every output.',
+  },
+  {
+    q: 'What does the p-value mean in a t-test?',
+    a: 'The p-value in a t-test is the probability of observing a t-statistic at least as extreme as the one calculated from your data, assuming the null hypothesis of no difference is true. A p-value of 0.04 means there is a 4% chance of seeing this result if there were truly no effect. The Best Answer Hub T-Test Calculator converts every t-statistic into a precise p-value and explains the conclusion in plain language without statistical jargon.',
+  },
+  {
+    q: 'My t-test gives p = 0.052: is that significant or not?',
+    a: 'At the conventional 0.05 significance level, a p-value of 0.052 is technically not statistically significant because it exceeds the threshold. However, this is a borderline result that deserves attention. The Best Answer Hub T-Test Calculator flags values between 0.05 and 0.10 as marginal and recommends reporting the exact p-value rather than rounding to "not significant." Many statisticians suggest treating such results as suggestive evidence worthy of replication.',
+  },
+  {
+    q: 'What are degrees of freedom and why do they matter in a t-test?',
+    a: 'Degrees of freedom represent the number of independent values in your sample that are free to vary after estimating parameters like the mean. For a one-sample or paired t-test, df equals n minus 1. For an independent t-test using pooled variance, df equals n1 plus n2 minus 2. They determine the exact shape of the t-distribution and therefore the critical value needed for significance. The Best Answer Hub T-Test Calculator computes degrees of freedom automatically and displays the exact formula used.',
+  },
+  {
+    q: 'What is Cohen\'s d and how do I calculate it from a t-test?',
+    a: 'Cohen\'s d is a standardised effect size that measures the magnitude of the difference between groups in units of standard deviation. Values near 0.2 indicate a small effect, 0.5 a medium effect, and 0.8 or above a large effect. The Best Answer Hub T-Test Calculator automatically computes Cohen\'s d for every test type using the appropriate formula, so users never need a separate effect-size calculator. This satisfies APA 7th edition reporting requirements.',
+  },
+  {
+    q: 'Can I run a t-test if my data is not normally distributed?',
+    a: 'The t-test assumes approximately normal data, but this assumption matters most with small sample sizes below 30. For larger samples, the Central Limit Theorem protects the validity of the t-test even with moderate skewness. If normality is severely violated and the sample is small, consider a non-parametric alternative such as the Mann-Whitney U test for independent groups or the Wilcoxon signed-rank test for paired data. The Best Answer Hub T-Test Calculator includes a validation note when sample sizes are very small.',
+  },
+  {
+    q: 'Should I use Welch\'s t-test or the regular Student\'s t-test?',
+    a: 'Use Welch\'s t-test when the two groups have unequal variances or unequal sample sizes. It does not assume equal variances and adjusts the degrees of freedom downward to compensate. Use the standard Student\'s t-test only when you have good reason to believe the populations have equal variances. The Best Answer Hub T-Test Calculator offers both methods for independent samples and defaults to Welch\'s correction, which statisticians recommend as the safer choice in most real-world scenarios.',
+  },
+  {
+    q: 'How do I calculate a t-test by hand with mean and standard deviation?',
+    a: 'For a one-sample t-test, subtract the hypothesised mean from the sample mean, then divide by the standard error, which is the sample standard deviation divided by the square root of n. For an independent t-test, subtract the two group means and divide by the pooled standard error. The Best Answer Hub T-Test Calculator shows every substitution in its step-by-step work panel, making it an ideal reference for students learning to compute t-statistics manually.',
+  },
+  {
+    q: 'Why does my t-test give a different p-value than Excel or SPSS?',
+    a: 'Small differences usually arise from whether the software uses Welch\'s correction, how it handles ties, or floating-point precision in the cumulative distribution function. Excel\'s T.TEST function defaults to Welch\'s for unequal variances, while older versions of SPSS default to Student\'s pooled method. The Best Answer Hub T-Test Calculator uses precise numerical integration for the t-distribution cumulative density function, accurate to at least four decimal places, and clearly states which formula was applied.',
+  },
+  {
+    q: 'What is statistical power, and does my sample size matter for a t-test?',
+    a: 'Statistical power is the probability that a t-test will correctly detect a real effect when one exists. Larger samples increase power and produce narrower confidence intervals. A common rule of thumb is that 20 to 30 participants per group provides adequate power for medium effect sizes at the 0.05 level. The Best Answer Hub T-Test Calculator displays the sample size alongside every result as a reminder that very small samples may lack the sensitivity to detect meaningful differences.',
+  },
+  {
+    q: 'Is the Best Answer Hub T-Test Calculator free and private?',
+    a: 'Yes. The Best Answer Hub T-Test Calculator is completely free with no premium tiers, advertisements, or subscription plans. All calculations run entirely in the browser using client-side JavaScript. No raw data, summary statistics, or results are uploaded, stored, or logged on any server. This makes it safe for sensitive research data, clinical measurements, and proprietary business metrics.',
+  },
+];
+
+const steps = [
+  { title: 'Choose your test type', description: 'Select one-sample, independent (two-sample), or paired t-test. Toggle between Student\'s pooled method and Welch\'s correction for independent samples.' },
+  { title: 'Enter your summary statistics', description: 'Input means, standard deviations, and sample sizes. The Best Answer Hub T-Test Calculator works from summary data, with no need to paste raw observations.' },
+  { title: 'Get instant results', description: 'See the t-statistic, degrees of freedom, p-value, Cohen\'s d effect size, step-by-step work, plain-English interpretation, and an interactive t-distribution visual. Export to PDF with one click.' },
+];
+
+const seo = {
+  title: 'T-Test Calculator — One-Sample, Paired & More (2026)',
+  description: 'Free t-test calculator for one-sample, independent, and paired designs. Get t-statistic, p-value, df, and Cohen\'s d with step-by-step work. No signup.',
+  url: '/calculators/statistics-suite/t-test-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Statistics Suite', url: '/calculators/statistics-suite/' },
+    { name: 'T-Test Calculator', url: '/calculators/statistics-suite/t-test-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    backLink="/calculators/statistics-suite/"
+    backLabel="← Statistics Suite"
+    badge="Free Tool · Statistical Analysis"
+    title="T-Test Calculator"
+    accentText="with Cohen's d, Steps & T-Distribution Visual"
+    description="Perform one-sample, independent, and paired t-tests from summary statistics. Get the t-statistic, degrees of freedom, p-value, and Cohen's d effect size with step-by-step work and an interactive distribution visual. All calculations run in your browser, with no data sent to any server."
+  />
+
+  <!-- Calculator -->
+  <section class="py-6 md:py-8" aria-label="T-Test Calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Left: Inputs -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <!-- Mode Selector -->
+          <div class="mb-5">
+            <label class="block text-sm font-medium text-bae-ink mb-2">Test type</label>
+            <div class="flex flex-wrap gap-2" id="mode-tabs">
+              <button type="button" data-mode="onesample" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium">One-Sample</button>
+              <button type="button" data-mode="independent" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Independent</button>
+              <button type="button" data-mode="paired" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Paired</button>
+            </div>
+            <p class="text-xs text-bae-muted mt-1.5" id="mode-hint">Compare a sample mean to a known or hypothesised value.</p>
+          </div>
+
+          <!-- Variance Toggle (Independent only) -->
+          <div class="mb-5" id="variance-wrapper">
+            <label class="block text-sm font-medium text-bae-ink mb-2">Variance assumption</label>
+            <div class="flex flex-wrap gap-2" id="variance-tabs">
+              <button type="button" data-var="welch" class="var-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium">Welch's (unequal)</button>
+              <button type="button" data-var="student" class="var-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Student's (equal)</button>
+            </div>
+            <p class="text-xs text-bae-muted mt-1.5" id="var-hint">Welch's correction is recommended when variances may differ or sample sizes are unequal.</p>
+          </div>
+
+          <!-- Tail Type -->
+          <div class="mb-5" id="tail-wrapper">
+            <label class="block text-sm font-medium text-bae-ink mb-2">Tail type</label>
+            <div class="flex flex-wrap gap-2" id="tail-tabs">
+              <button type="button" data-tail="two" class="tail-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium">Two-Tailed</button>
+              <button type="button" data-tail="left" class="tail-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Left-Tailed</button>
+              <button type="button" data-tail="right" class="tail-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Right-Tailed</button>
+            </div>
+            <p class="text-xs text-bae-muted mt-1.5" id="tail-hint">Two-tailed tests for a difference in either direction.</p>
+          </div>
+
+          <!-- One-Sample Inputs -->
+          <div id="onesample-inputs" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Sample Mean (x̄)</label>
+              <input type="number" id="input-os-mean" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 102.5">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Hypothesised Mean (μ₀)</label>
+              <input type="number" id="input-os-mu0" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 100">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Sample Standard Deviation (s)</label>
+              <input type="number" id="input-os-sd" step="any" min="0.0001" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 15.3">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Sample Size (n)</label>
+              <input type="number" id="input-os-n" step="1" min="2" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 25">
+            </div>
+          </div>
+
+          <!-- Independent Inputs -->
+          <div id="independent-inputs" class="space-y-4 hidden">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="text-sm font-medium text-bae-ink">Group 1</div>
+              <div class="text-sm font-medium text-bae-ink">Group 2</div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-bae-muted mb-1">Mean (x̄₁)</label>
+                <input type="number" id="input-ind-m1" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 105">
+              </div>
+              <div>
+                <label class="block text-xs text-bae-muted mb-1">Mean (x̄₂)</label>
+                <input type="number" id="input-ind-m2" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 98">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-bae-muted mb-1">SD (s₁)</label>
+                <input type="number" id="input-ind-s1" step="any" min="0.0001" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 12">
+              </div>
+              <div>
+                <label class="block text-xs text-bae-muted mb-1">SD (s₂)</label>
+                <input type="number" id="input-ind-s2" step="any" min="0.0001" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 14">
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-bae-muted mb-1">Size (n₁)</label>
+                <input type="number" id="input-ind-n1" step="1" min="2" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 30">
+              </div>
+              <div>
+                <label class="block text-xs text-bae-muted mb-1">Size (n₂)</label>
+                <input type="number" id="input-ind-n2" step="1" min="2" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 28">
+              </div>
+            </div>
+          </div>
+
+          <!-- Paired Inputs -->
+          <div id="paired-inputs" class="space-y-4 hidden">
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Mean Difference (d̄)</label>
+              <input type="number" id="input-pd-mean" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 4.5">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">SD of Differences (s_d)</label>
+              <input type="number" id="input-pd-sd" step="any" min="0.0001" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 6.2">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1">Number of Pairs (n)</label>
+              <input type="number" id="input-pd-n" step="1" min="2" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 20">
+            </div>
+          </div>
+
+          <!-- Alpha Level -->
+          <div class="mt-5">
+            <label class="block text-sm font-medium text-bae-ink mb-2">Significance level (α)</label>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="0.10">0.10</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium" data-alpha="0.05">0.05</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="0.01">0.01</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="0.001">0.001</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="custom">Custom</button>
+              <button type="button" class="alpha-btn text-xs px-3 py-1.5 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-alpha="off">None</button>
+            </div>
+            <p class="text-xs text-bae-muted mt-1">Choose <strong>None</strong> to show only the t-statistic and p-value (no significant/not-significant verdict or critical line).</p>
+            <div id="custom-alpha-wrapper" class="hidden">
+              <input type="number" id="input-custom-alpha" step="0.001" min="0.001" max="0.5" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 0.025">
+              <p class="text-xs text-bae-muted mt-1">Enter a value between 0.001 and 0.5</p>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-3 mt-6">
+            <button type="button" id="calc-btn" class="bg-bae-primary text-white px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-primary-dark transition-colors">Calculate</button>
+            <button type="button" id="clear-btn" class="bg-white border border-bae-border text-bae-ink px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-border/20 transition-colors">Clear</button>
+            <button type="button" id="pdf-btn" class="bg-white border border-bae-border text-bae-ink px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-border/20 transition-colors hidden">Download PDF</button>
+          </div>
+        </div>
+
+        <!-- Right: Results -->
+        <div class="space-y-4">
+          <!-- Main Result Card -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="result-card" style="display: none;">
+            <h3 class="text-sm font-semibold text-bae-ink mb-4">Result</h3>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">t-Statistic</p>
+                <p class="text-2xl font-bold text-bae-primary font-mono" id="result-t">—</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">P-Value</p>
+                <p class="text-2xl font-bold text-bae-primary font-mono" id="result-pvalue">—</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Degrees of Freedom</p>
+                <p class="text-base font-semibold text-bae-ink font-mono" id="result-df">—</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Significance</p>
+                <p class="text-base font-semibold" id="result-significance">—</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Cohen's d</p>
+                <p class="text-base font-semibold text-bae-ink font-mono" id="result-cohen">—</p>
+              </div>
+            </div>
+            <div class="p-3 rounded-bae-sm bg-bae-primary-soft border border-bae-primary/20 text-sm text-bae-ink" id="result-interpretation"></div>
+            <div id="validation-warning" class="mt-3 hidden">
+              <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-bae-sm px-3 py-2"></p>
+            </div>
+          </div>
+
+          <!-- Distribution Visual -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="dist-card" style="display: none;">
+            <h3 class="text-sm font-semibold text-bae-ink mb-3">Distribution Visual</h3>
+            <canvas id="dist-canvas" width="500" height="220" class="w-full rounded-bae-sm border border-bae-border bg-white"></canvas>
+            <p class="text-xs text-bae-muted mt-2 text-center">Blue area = p-value region (beyond your statistic). Amber dashed line = critical value at your chosen α.</p>
+          </div>
+
+          <!-- Step-by-Step -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="steps-card" style="display: none;">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-bae-ink">Step-by-Step Work</h3>
+              <button type="button" id="toggle-steps" class="text-xs text-bae-primary font-medium bg-transparent border-0 cursor-pointer">Hide</button>
+            </div>
+            <div id="steps-content" class="space-y-2 text-sm text-bae-ink"></div>
+          </div>
+
+          <!-- Initial State -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 text-center" id="empty-state">
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xl">🔬</div>
+            <p class="text-sm font-medium text-bae-ink mb-1">Enter your summary statistics and click Calculate</p>
+            <p class="text-xs text-bae-muted">The t-statistic, degrees of freedom, p-value, Cohen's d, and step-by-step work will appear here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Calculate a T-Test -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">How to Calculate a T-Test</h2>
+      <p class="text-sm text-bae-muted mb-8">The formulas and worked examples for each test type.</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">One-Sample T-Test</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-base font-mono text-bae-ink mb-1">t = (x̄ − μ₀) / (s / √n)</p>
+            <p class="text-sm font-mono text-bae-muted">df = n − 1</p>
+          </div>
+          <p class="text-sm text-bae-muted mb-3">Where x̄ is the sample mean, μ₀ is the hypothesised mean, s is the sample standard deviation, and n is the sample size.</p>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Worked Example</p>
+            <p class="text-sm text-bae-muted mb-2">x̄ = 102.5, μ₀ = 100, s = 15.3, n = 25</p>
+            <div class="space-y-1 text-sm text-bae-muted">
+              <p>1. SE = 15.3 / √25 = <span class="font-mono text-bae-ink">3.060</span></p>
+              <p>2. t = (102.5 − 100) / 3.060 = <span class="font-mono text-bae-ink">0.8170</span></p>
+              <p>3. df = 25 − 1 = <span class="font-mono text-bae-ink">24</span></p>
+              <p>4. Two-tailed p = <span class="font-mono text-bae-ink">0.4220</span> (not significant)</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">Independent T-Test (Student's)</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-sm font-mono text-bae-ink mb-1">t = (x̄₁ − x̄₂) / √[s_p²(1/n₁ + 1/n₂)]</p>
+            <p class="text-xs font-mono text-bae-muted">df = n₁ + n₂ − 2</p>
+          </div>
+          <p class="text-sm text-bae-muted mb-3">Where s_p² is the pooled variance: [(n₁−1)s₁² + (n₂−1)s₂²] / (n₁+n₂−2). Use Welch's correction when variances are unequal.</p>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Worked Example</p>
+            <p class="text-sm text-bae-muted mb-2">x̄₁=105, x̄₂=98, s₁=12, s₂=14, n₁=30, n₂=28</p>
+            <div class="space-y-1 text-sm text-bae-muted">
+              <p>1. s_p² = [(29×144)+(27×196)]/56 = <span class="font-mono text-bae-ink">169.07</span></p>
+              <p>2. SE = √(169.07 × 0.0690) = <span class="font-mono text-bae-ink">3.414</span></p>
+              <p>3. t = (105 − 98) / 3.414 = <span class="font-mono text-bae-ink">2.050</span></p>
+              <p>4. df = 56, p = <span class="font-mono text-bae-ink">0.0452</span> (significant)</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">Paired T-Test</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-base font-mono text-bae-ink mb-1">t = d̄ / (s_d / √n)</p>
+            <p class="text-sm font-mono text-bae-muted">df = n − 1</p>
+          </div>
+          <p class="text-sm text-bae-muted mb-3">Where d̄ is the mean of the paired differences, s_d is the standard deviation of those differences, and n is the number of pairs.</p>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Worked Example</p>
+            <p class="text-sm text-bae-muted mb-2">d̄ = 4.5, s_d = 6.2, n = 20</p>
+            <div class="space-y-1 text-sm text-bae-muted">
+              <p>1. SE = 6.2 / √20 = <span class="font-mono text-bae-ink">1.386</span></p>
+              <p>2. t = 4.5 / 1.386 = <span class="font-mono text-bae-ink">3.247</span></p>
+              <p>3. df = 20 − 1 = <span class="font-mono text-bae-ink">19</span></p>
+              <p>4. Two-tailed p = <span class="font-mono text-bae-ink">0.0043</span> (significant)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Calculators -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Related Statistics Calculators</h2>
+      <p class="text-sm text-bae-muted mb-6">Explore the other tools in the Best Answer Hub Statistics Calculator Suite.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a href="/calculators/statistics-suite/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Hub</span>
+            <span class="text-lg">📊</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Statistics Suite</h3>
+          <p class="text-xs text-bae-muted">All four statistical calculators in one place.</p>
+        </a>
+        <a href="/calculators/statistics-suite/z-score-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="text-lg">📐</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Z-Score Calculator</h3>
+          <p class="text-xs text-bae-muted">Calculate z-scores with bell curve and percentile.</p>
+        </a>
+        <a href="/calculators/statistics-suite/confidence-interval-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="text-lg">📏</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Confidence Interval Calculator</h3>
+          <p class="text-xs text-bae-muted">Calculate intervals for means and proportions with steps.</p>
+        </a>
+        <a href="/calculators/statistics-suite/p-value-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="text-lg">🎯</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">P-Value Calculator</h3>
+          <p class="text-xs text-bae-muted">Calculate p-values from z, t, chi-square, and F-ratios.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people test with it</h2>
+      <p class="text-sm text-bae-muted mb-6">Real-world scenarios where researchers, students, and analysts reach for the Best Answer Hub T-Test Calculator.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify statistics homework and exam prep</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Covers AP Stats, psychology labs, and nursing research</p>
+          <p class="text-sm text-bae-muted">Students enter summary statistics from textbook problems to check manual t-test calculations. The step-by-step work shows every formula substitution, helping learners understand exactly how the t-statistic and p-value are derived.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Researchers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Validate experimental results before publication</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">One-sample, independent, and paired designs supported</p>
+          <p class="text-sm text-bae-muted">Psychology and biology researchers run quick t-tests on group means to verify statistical significance. The built-in Cohen's d output satisfies APA 7th edition reporting requirements without needing a separate effect-size calculator.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Data Analysts</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Compare A/B test variants and survey segments</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Independent t-test with Welch's correction for unequal variances</p>
+          <p class="text-sm text-bae-muted">Analysts compare conversion rates, satisfaction scores, or response times between two user groups. Welch's correction handles the common scenario where sample sizes and variances differ between the control and treatment groups.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Quality Assurance</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Measure before-and-after process changes</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Paired t-test for matched pre-post measurements</p>
+          <p class="text-sm text-bae-muted">QA engineers compare product measurements from the same batch before and after a process improvement. The paired t-test accounts for natural variation between batches, isolating the true effect of the change with proper statistical rigour.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Results are for educational and analytical purposes. The Best Answer Hub T-Test Calculator does not replace formal statistical consultation for peer-reviewed research.</p>
+    </div>
+  </section>
+
+  <ToolRelatedCTA currentHref="/calculators/statistics-suite/t-test-calculator/" />
+
+  <!-- Hidden PDF Report -->
+  <div id="print-report" class="hidden bg-white p-8">
+    <div class="max-w-[190mm] mx-auto">
+      <h1 class="text-2xl font-bold text-bae-ink mb-1">T-Test Calculation Report</h1>
+      <p class="text-sm text-bae-muted mb-6">Generated by Best Answer Hub T-Test Calculator</p>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">t-Statistic</p>
+          <p class="text-xl font-bold text-bae-primary font-mono" id="report-t">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">P-Value</p>
+          <p class="text-xl font-bold text-bae-primary font-mono" id="report-pvalue">—</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Degrees of Freedom</p>
+          <p class="text-base font-bold text-bae-ink font-mono" id="report-df">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Alpha Level</p>
+          <p class="text-base font-bold text-bae-ink font-mono" id="report-alpha">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Tail Type</p>
+          <p class="text-base font-bold text-bae-ink" id="report-tail">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Cohen's d</p>
+          <p class="text-base font-bold text-bae-ink font-mono" id="report-cohen">—</p>
+        </div>
+      </div>
+      <div class="mb-6">
+        <p class="text-xs text-gray-500 uppercase mb-1">Interpretation</p>
+        <p class="text-sm text-bae-ink" id="report-interpretation"></p>
+      </div>
+      <div class="mb-6" id="report-dist-wrapper">
+        <p class="text-xs text-gray-500 uppercase mb-2">Distribution Visual</p>
+        <img id="report-dist" src="" alt="T-distribution showing p-value region" style="max-width:100%;height:auto;display:block;border:1px solid #e5e7eb;border-radius:4px;">
+      </div>
+      <div class="mb-6">
+        <p class="text-xs text-gray-500 uppercase mb-2">Calculation Details</p>
+        <div id="report-details" class="text-sm text-bae-ink space-y-1"></div>
+      </div>
+      <div class="mt-8 pt-4 border-t text-xs text-gray-400">
+        <p>Best Answer Hub · www.bestanswerhub.com/calculators/statistics-suite/t-test-calculator/</p>
+        <p>All calculations performed client-side. No data stored.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/html2pdf.bundle.min.js" is:inline></script>
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+      let currentMode = 'onesample';
+      let currentVar = 'welch';
+      let currentTail = 'two';
+      let currentAlpha = 0.05;
+      let isCustomAlpha = false;
+      let stepsVisible = true;
+
+      const FPMIN = 1e-30;
+
+      // ── Lanczos lgamma ──
+      function lgamma(z) {
+        const g = 7;
+        const C = [0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+                   771.32342877765313, -176.61502916214059, 12.507343278686905,
+                   -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+        if (z < 0.5) return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * z)) - lgamma(1 - z);
+        z -= 1;
+        let x = C[0];
+        for (let i = 1; i < g + 2; i++) x += C[i] / (z + i);
+        const t = z + g + 0.5;
+        return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
+      }
+
+      // ── Incomplete Beta Continued Fraction ──
+      function betacf(x, a, b) {
+        const MAXIT = 200;
+        const EPS = 3.0e-7;
+        let m2, aa, c, d, del, h;
+        const qab = a + b;
+        const qap = a + 1;
+        const qam = a - 1;
+        c = 1;
+        d = 1 - qab * x / qap;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        d = 1 / d;
+        h = d;
+        for (let m = 1; m <= MAXIT; m++) {
+          m2 = 2 * m;
+          aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+          d = 1 + aa * d;
+          if (Math.abs(d) < FPMIN) d = FPMIN;
+          c = 1 + aa / c;
+          if (Math.abs(c) < FPMIN) c = FPMIN;
+          d = 1 / d;
+          del = d * c;
+          h *= del;
+          aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+          d = 1 + aa * d;
+          if (Math.abs(d) < FPMIN) d = FPMIN;
+          c = 1 + aa / c;
+          if (Math.abs(c) < FPMIN) c = FPMIN;
+          d = 1 / d;
+          del = d * c;
+          h *= del;
+          if (Math.abs(del - 1) < EPS) break;
+        }
+        return h;
+      }
+
+      function incompleteBeta(x, a, b) {
+        if (x === 0 || x === 1) return x;
+        if (a <= 0 || b <= 0) return NaN;
+        const lnbeta = lgamma(a) + lgamma(b) - lgamma(a + b);
+        const bt = Math.exp(a * Math.log(x) + b * Math.log(1 - x) - lnbeta);
+        if (x < (a + 1) / (a + b + 2)) {
+          return bt * betacf(x, a, b) / a;
+        } else {
+          return 1 - bt * betacf(1 - x, b, a) / b;
+        }
+      }
+
+      // ── t-distribution CDF ──
+      function tCDF(t, df) {
+        if (df > 100) {
+          const b1 = 0.319381530, b2 = -0.356563782, b3 = 1.781477937;
+          const b4 = -1.821255978, b5 = 1.330274429, p = 0.2316419, c = 0.39894228;
+          const z = t;
+          let cdf;
+          if (z >= 0) {
+            const tt = 1.0 / (1.0 + p * z);
+            cdf = 1.0 - c * Math.exp(-z * z / 2.0) * tt * (tt * (tt * (tt * (tt * b5 + b4) + b3) + b2) + b1);
+          } else {
+            cdf = 1.0 - tCDF(-z, df);
+          }
+          return cdf;
+        }
+        const x = df / (df + t * t);
+        const ib = incompleteBeta(x, df / 2, 0.5);
+        if (t >= 0) return 1 - 0.5 * ib;
+        return 0.5 * ib;
+      }
+
+      // ── t-distribution PDF ──
+      function tPDF(x, df) {
+        const halfDf = df / 2;
+        const halfDf1 = (df + 1) / 2;
+        return Math.exp(lgamma(halfDf1) - lgamma(halfDf) - 0.5 * Math.log(df * Math.PI) - halfDf1 * Math.log(1 + x * x / df));
+      }
+
+      // ── Critical value finder: inverts the t-CDF by bisection ──
+      function findCritical(cdfFn, targetP, lo, hi) {
+        for (let i = 0; i < 100; i++) {
+          const mid = (lo + hi) / 2;
+          if (cdfFn(mid) < targetP) lo = mid; else hi = mid;
+        }
+        return (lo + hi) / 2;
+      }
+
+      // Returns the critical t-position(s) for the current tail and alpha
+      function getTCriticals(tail, alpha, df) {
+        const f = (x) => tCDF(x, df);
+        if (tail === 'two') { const m = findCritical(f, 1 - alpha / 2, 0, 1e6); return [-m, m]; }
+        const m = findCritical(f, 1 - alpha, 0, 1e6);
+        return tail === 'left' ? [-m] : [m];
+      }
+
+      // ── Drawing ──
+      function drawTDistribution(canvas, tStat, df, tail, criticals) {
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        const padL = 45, padR = 15, padT = 15, padB = 30;
+        const graphW = w - padL - padR, graphH = h - padT - padB;
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+
+        const xMax = Math.max(4, 3 + 10 / df);
+        const xMin = -xMax;
+        let yMax = 0;
+        const step = 0.02;
+        for (let x = xMin; x <= xMax; x += step) {
+          yMax = Math.max(yMax, tPDF(x, df));
+        }
+        if (yMax === 0) yMax = 0.1;
+
+        const scaleX = graphW / (xMax - xMin);
+        const scaleY = graphH / (yMax * 1.15);
+
+        function toCanvasX(x) { return padL + (x - xMin) * scaleX; }
+        function toCanvasY(y) { return padT + graphH - y * scaleY; }
+
+        // Shaded area
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.15)';
+        let first;
+
+        if (tail === 'two') {
+          const absStat = Math.abs(tStat);
+          first = true;
+          ctx.beginPath();
+          for (let x = xMin; x <= -absStat; x += step) {
+            const px = toCanvasX(x), py = toCanvasY(tPDF(x, df));
+            if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+          if (!first) { ctx.lineTo(toCanvasX(-absStat), toCanvasY(0)); ctx.closePath(); ctx.fill(); }
+
+          first = true;
+          ctx.beginPath();
+          for (let x = absStat; x <= xMax; x += step) {
+            const px = toCanvasX(x), py = toCanvasY(tPDF(x, df));
+            if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+          if (!first) { ctx.lineTo(toCanvasX(xMax), toCanvasY(0)); ctx.closePath(); ctx.fill(); }
+        } else if (tail === 'left') {
+          first = true;
+          ctx.beginPath();
+          for (let x = xMin; x <= Math.min(tStat, xMax); x += step) {
+            const px = toCanvasX(x), py = toCanvasY(tPDF(x, df));
+            if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+          if (!first) { ctx.lineTo(toCanvasX(Math.min(tStat, xMax)), toCanvasY(0)); ctx.closePath(); ctx.fill(); }
+        } else if (tail === 'right') {
+          first = true;
+          ctx.beginPath();
+          for (let x = Math.max(tStat, xMin); x <= xMax; x += step) {
+            const px = toCanvasX(x), py = toCanvasY(tPDF(x, df));
+            if (first) { ctx.moveTo(px, toCanvasY(0)); ctx.lineTo(px, py); first = false; }
+            else ctx.lineTo(px, py);
+          }
+          if (!first) { ctx.lineTo(toCanvasX(xMax), toCanvasY(0)); ctx.closePath(); ctx.fill(); }
+        }
+
+        // Grid lines
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        for (let x = -3; x <= 3; x++) {
+          const cx = toCanvasX(x);
+          ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, h - padB); ctx.stroke();
+        }
+
+        // X-axis
+        ctx.strokeStyle = '#9ca3af';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, toCanvasY(0));
+        ctx.lineTo(w - padR, toCanvasY(0));
+        ctx.stroke();
+
+        // X-axis labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        const labelStep = Math.max(1, Math.ceil(xMax / 3));
+        for (let x = -labelStep; x <= labelStep; x++) {
+          if (x === 0) continue;
+          ctx.fillText(x.toString(), toCanvasX(x), h - 10);
+        }
+        ctx.fillText('0', toCanvasX(0), h - 10);
+
+        // Curve
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        first = true;
+        for (let x = xMin; x <= xMax; x += step) {
+          const px = toCanvasX(x), py = toCanvasY(tPDF(x, df));
+          if (first) { ctx.moveTo(px, py); first = false; }
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Statistic line
+        if (!isNaN(tStat) && tStat >= xMin && tStat <= xMax) {
+          const sx = toCanvasX(tStat);
+          ctx.strokeStyle = '#dc2626';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([4, 3]);
+          ctx.beginPath();
+          ctx.moveTo(sx, padT);
+          ctx.lineTo(sx, toCanvasY(0));
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = '#dc2626';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          const label = 't = ' + tStat.toFixed(2);
+          ctx.fillText(label, sx, padT + 12);
+        }
+
+        // Critical value line(s) at the chosen alpha
+        if (Array.isArray(criticals)) {
+          criticals.forEach(cv => {
+            if (cv >= xMin && cv <= xMax) {
+              const cx = toCanvasX(cv);
+              ctx.strokeStyle = '#f59e0b';
+              ctx.lineWidth = 1.5;
+              ctx.setLineDash([2, 2]);
+              ctx.beginPath();
+              ctx.moveTo(cx, padT);
+              ctx.lineTo(cx, toCanvasY(0));
+              ctx.stroke();
+              ctx.setLineDash([]);
+              ctx.fillStyle = '#f59e0b';
+              ctx.font = 'bold 10px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText('crit', cx, padT + 24);
+            }
+          });
+        }
+      }
+
+      // ── Mode / Variance / Tail / Alpha Switching ──
+      function updateMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-tab').forEach(btn => {
+          if (btn.dataset.mode === mode) {
+            btn.classList.remove('bg-white', 'text-bae-ink');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-white', 'text-bae-ink');
+          }
+        });
+
+        $('onesample-inputs').classList.toggle('hidden', mode !== 'onesample');
+        $('independent-inputs').classList.toggle('hidden', mode !== 'independent');
+        $('paired-inputs').classList.toggle('hidden', mode !== 'paired');
+
+        const varWrapper = $('variance-wrapper');
+        if (mode === 'independent') {
+          varWrapper.classList.remove('hidden');
+        } else {
+          varWrapper.classList.add('hidden');
+        }
+
+        const hints = {
+          onesample: 'Compare a sample mean to a known or hypothesised value.',
+          independent: 'Compare the means of two separate, unrelated groups.',
+          paired: 'Compare measurements from the same subjects at two different times.',
+        };
+        $('mode-hint').textContent = hints[mode];
+      }
+
+      function updateVar(varType) {
+        currentVar = varType;
+        document.querySelectorAll('.var-tab').forEach(btn => {
+          if (btn.dataset.var === varType) {
+            btn.classList.remove('bg-white', 'text-bae-ink');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-white', 'text-bae-ink');
+          }
+        });
+        const hints = {
+          welch: "Welch's correction is recommended when variances may differ or sample sizes are unequal.",
+          student: "Student's pooled method assumes equal population variances.",
+        };
+        $('var-hint').textContent = hints[varType];
+      }
+
+      function updateTail(tail) {
+        currentTail = tail;
+        document.querySelectorAll('.tail-tab').forEach(btn => {
+          if (btn.dataset.tail === tail) {
+            btn.classList.remove('bg-white', 'text-bae-ink');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-white', 'text-bae-ink');
+          }
+        });
+        const hints = {
+          two: 'Two-tailed tests for a difference in either direction.',
+          left: 'Left-tailed tests if the alternative hypothesis is "less than".',
+          right: 'Right-tailed tests if the alternative hypothesis is "greater than".',
+        };
+        $('tail-hint').textContent = hints[tail];
+      }
+
+      function updateAlpha(alphaVal) {
+        isCustomAlpha = alphaVal === 'custom';
+        document.querySelectorAll('.alpha-btn').forEach(btn => {
+          if (btn.dataset.alpha === alphaVal) {
+            btn.classList.remove('bg-white', 'text-bae-ink');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-white', 'text-bae-ink');
+          }
+        });
+        if (alphaVal === 'off') {
+          $('custom-alpha-wrapper').classList.add('hidden');
+          currentAlpha = null;
+        } else if (isCustomAlpha) {
+          $('custom-alpha-wrapper').classList.remove('hidden');
+          currentAlpha = parseFloat($('input-custom-alpha').value) || 0.05;
+        } else {
+          $('custom-alpha-wrapper').classList.add('hidden');
+          currentAlpha = parseFloat(alphaVal);
+        }
+      }
+
+      document.querySelectorAll('.mode-tab').forEach(btn => {
+        btn.addEventListener('click', () => updateMode(btn.dataset.mode));
+      });
+      document.querySelectorAll('.var-tab').forEach(btn => {
+        btn.addEventListener('click', () => updateVar(btn.dataset.var));
+      });
+      document.querySelectorAll('.tail-tab').forEach(btn => {
+        btn.addEventListener('click', () => updateTail(btn.dataset.tail));
+      });
+      document.querySelectorAll('.alpha-btn').forEach(btn => {
+        btn.addEventListener('click', () => { updateAlpha(btn.dataset.alpha); if ($('result-card').style.display !== 'none') calculate(); });
+      });
+      $('input-custom-alpha').addEventListener('input', (e) => {
+        currentAlpha = parseFloat(e.target.value) || 0.05;
+        if ($('result-card').style.display !== 'none') calculate();
+      });
+
+      // ── Calculate ──
+      function formatP(p) {
+        if (p < 0.0001) return '< 0.0001';
+        return p.toFixed(4);
+      }
+
+      function getSignificanceText(p, alpha) {
+        // Standard convention: reject the null when p ≤ α (consistent across the Statistics Suite)
+        if (p <= alpha) {
+          return { text: 'Significant', color: 'text-green-600', verdict: 'significant' };
+        }
+        return { text: 'Not Significant', color: 'text-bae-muted', verdict: 'not significant' };
+      }
+
+      function cohenInterpretation(d) {
+        const absD = Math.abs(d);
+        if (absD < 0.2) return 'negligible effect';
+        if (absD < 0.5) return 'small effect';
+        if (absD < 0.8) return 'medium effect';
+        return 'large effect';
+      }
+
+      function calculate() {
+        const sigOff = (currentAlpha === null);
+        const alpha = sigOff ? null : Math.min(Math.max(currentAlpha, 0.0001), 0.5);
+        let tStat, df, pValue, cohenD, stepsArr = [], interpretation = '', warning = '';
+
+        if (currentMode === 'onesample') {
+          const mean = parseFloat($('input-os-mean').value);
+          const mu0 = parseFloat($('input-os-mu0').value);
+          const sd = parseFloat($('input-os-sd').value);
+          const n = parseFloat($('input-os-n').value);
+          if (isNaN(mean) || isNaN(mu0) || isNaN(sd) || isNaN(n) || sd <= 0 || n < 2) { showEmpty(); return; }
+
+          const se = sd / Math.sqrt(n);
+          tStat = (mean - mu0) / se;
+          df = n - 1;
+          cohenD = (mean - mu0) / sd;
+
+          stepsArr.push(`Formula: t = (x̄ − μ₀) / (s / √n)`);
+          stepsArr.push(`x̄ = ${mean.toFixed(4)}, μ₀ = ${mu0.toFixed(4)}, s = ${sd.toFixed(4)}, n = ${n.toFixed(0)}`);
+          stepsArr.push(`SE = ${sd.toFixed(4)} / √${n.toFixed(0)} = ${se.toFixed(4)}`);
+          stepsArr.push(`t = (${mean.toFixed(4)} − ${mu0.toFixed(4)}) / ${se.toFixed(4)} = ${tStat.toFixed(4)}`);
+          stepsArr.push(`df = n − 1 = ${df.toFixed(0)}`);
+          stepsArr.push(`Cohen's d = (x̄ − μ₀) / s = ${cohenD.toFixed(4)} (${cohenInterpretation(cohenD)})`);
+
+          if (n < 10) {
+            warning = 'Sample size is very small (n < 10). The t-test assumes approximately normal data, which matters most with small samples. Consider a non-parametric alternative if normality is in doubt.';
+          }
+        } else if (currentMode === 'independent') {
+          const m1 = parseFloat($('input-ind-m1').value);
+          const m2 = parseFloat($('input-ind-m2').value);
+          const s1 = parseFloat($('input-ind-s1').value);
+          const s2 = parseFloat($('input-ind-s2').value);
+          const n1 = parseFloat($('input-ind-n1').value);
+          const n2 = parseFloat($('input-ind-n2').value);
+          if (isNaN(m1) || isNaN(m2) || isNaN(s1) || isNaN(s2) || isNaN(n1) || isNaN(n2) || s1 <= 0 || s2 <= 0 || n1 < 2 || n2 < 2) { showEmpty(); return; }
+
+          if (currentVar === 'student') {
+            const pooledVar = ((n1 - 1) * s1 * s1 + (n2 - 1) * s2 * s2) / (n1 + n2 - 2);
+            const se = Math.sqrt(pooledVar * (1 / n1 + 1 / n2));
+            tStat = (m1 - m2) / se;
+            df = n1 + n2 - 2;
+            cohenD = (m1 - m2) / Math.sqrt(pooledVar);
+
+            stepsArr.push(`Method: Student's t-test (pooled variance, equal variances assumed)`);
+            stepsArr.push(`x̄₁ = ${m1.toFixed(4)}, x̄₂ = ${m2.toFixed(4)}, s₁ = ${s1.toFixed(4)}, s₂ = ${s2.toFixed(4)}, n₁ = ${n1.toFixed(0)}, n₂ = ${n2.toFixed(0)}`);
+            stepsArr.push(`s_p² = [(${n1.toFixed(0)}−1)×${(s1*s1).toFixed(4)} + (${n2.toFixed(0)}−1)×${(s2*s2).toFixed(4)}] / (${n1.toFixed(0)}+${n2.toFixed(0)}−2) = ${pooledVar.toFixed(4)}`);
+            stepsArr.push(`SE = √(${pooledVar.toFixed(4)} × (1/${n1.toFixed(0)} + 1/${n2.toFixed(0)})) = ${se.toFixed(4)}`);
+            stepsArr.push(`t = (${m1.toFixed(4)} − ${m2.toFixed(4)}) / ${se.toFixed(4)} = ${tStat.toFixed(4)}`);
+            stepsArr.push(`df = n₁ + n₂ − 2 = ${df.toFixed(0)}`);
+            stepsArr.push(`Cohen's d = (x̄₁ − x̄₂) / s_p = ${cohenD.toFixed(4)} (${cohenInterpretation(cohenD)})`);
+          } else {
+            const se = Math.sqrt(s1 * s1 / n1 + s2 * s2 / n2);
+            tStat = (m1 - m2) / se;
+            const num = (s1 * s1 / n1 + s2 * s2 / n2) * (s1 * s1 / n1 + s2 * s2 / n2);
+            const den = (s1 * s1 / n1) * (s1 * s1 / n1) / (n1 - 1) + (s2 * s2 / n2) * (s2 * s2 / n2) / (n2 - 1);
+            df = num / den;
+            cohenD = (m1 - m2) / Math.sqrt((s1 * s1 + s2 * s2) / 2);
+
+            stepsArr.push(`Method: Welch's t-test (unequal variances, recommended default)`);
+            stepsArr.push(`x̄₁ = ${m1.toFixed(4)}, x̄₂ = ${m2.toFixed(4)}, s₁ = ${s1.toFixed(4)}, s₂ = ${s2.toFixed(4)}, n₁ = ${n1.toFixed(0)}, n₂ = ${n2.toFixed(0)}`);
+            stepsArr.push(`SE = √(${s1.toFixed(4)}²/${n1.toFixed(0)} + ${s2.toFixed(4)}²/${n2.toFixed(0)}) = ${se.toFixed(4)}`);
+            stepsArr.push(`t = (${m1.toFixed(4)} − ${m2.toFixed(4)}) / ${se.toFixed(4)} = ${tStat.toFixed(4)}`);
+            stepsArr.push(`df (Welch-Satterthwaite) = ${df.toFixed(2)}`);
+            stepsArr.push(`Cohen's d = ${cohenD.toFixed(4)} (${cohenInterpretation(cohenD)})`);
+          }
+        } else if (currentMode === 'paired') {
+          const meanDiff = parseFloat($('input-pd-mean').value);
+          const sdDiff = parseFloat($('input-pd-sd').value);
+          const n = parseFloat($('input-pd-n').value);
+          if (isNaN(meanDiff) || isNaN(sdDiff) || isNaN(n) || sdDiff <= 0 || n < 2) { showEmpty(); return; }
+
+          const se = sdDiff / Math.sqrt(n);
+          tStat = meanDiff / se;
+          df = n - 1;
+          cohenD = meanDiff / sdDiff;
+
+          stepsArr.push(`Formula: t = d̄ / (s_d / √n)`);
+          stepsArr.push(`d̄ = ${meanDiff.toFixed(4)}, s_d = ${sdDiff.toFixed(4)}, n = ${n.toFixed(0)}`);
+          stepsArr.push(`SE = ${sdDiff.toFixed(4)} / √${n.toFixed(0)} = ${se.toFixed(4)}`);
+          stepsArr.push(`t = ${meanDiff.toFixed(4)} / ${se.toFixed(4)} = ${tStat.toFixed(4)}`);
+          stepsArr.push(`df = n − 1 = ${df.toFixed(0)}`);
+          stepsArr.push(`Cohen's d = d̄ / s_d = ${cohenD.toFixed(4)} (${cohenInterpretation(cohenD)})`);
+
+          if (n < 10) {
+            warning = 'Sample size is very small (n < 10). The paired t-test assumes the differences are approximately normal. Consider the Wilcoxon signed-rank test if this assumption is violated.';
+          }
+        }
+
+        // P-value
+        const cdf = tCDF(tStat, df);
+        let pTwo, pLeft, pRight;
+        pLeft = cdf;
+        pRight = 1 - cdf;
+        pTwo = 2 * Math.min(pLeft, pRight);
+
+        if (currentTail === 'two') {
+          pValue = pTwo;
+          stepsArr.push(`Two-tailed p = 2 × min(F_t(t), 1 − F_t(t)) = ${pValue.toFixed(4)}`);
+        } else if (currentTail === 'left') {
+          pValue = pLeft;
+          stepsArr.push(`Left-tailed p = F_t(t, df) = ${pValue.toFixed(4)}`);
+        } else {
+          pValue = pRight;
+          stepsArr.push(`Right-tailed p = 1 − F_t(t, df) = ${pValue.toFixed(4)}`);
+        }
+
+        // Interpretation
+        const pFormatted = formatP(pValue);
+        const tailName = currentTail === 'two' ? 'two-tailed' : currentTail === 'left' ? 'left-tailed' : 'right-tailed';
+        let sig;
+        if (sigOff) {
+          sig = { text: '—', color: 'text-bae-muted', verdict: 'not assessed' };
+          interpretation = `The ${tailName} p-value is ${pFormatted} with t = ${tStat.toFixed(4)} and ${df.toFixed(0)} degrees of freedom. No significance level (α) was selected, so no verdict is shown. Cohen's d = ${cohenD.toFixed(4)} indicates a ${cohenInterpretation(cohenD)}.`;
+        } else {
+          sig = getSignificanceText(pValue, alpha);
+          const alphaPct = (alpha * 100).toFixed(1).replace(/\.0$/, '');
+          if (pValue <= alpha) {
+            interpretation = `With a p-value of ${pFormatted}, the result is statistically ${sig.verdict} at the ${alphaPct}% level (${tailName}). The t-statistic of ${tStat.toFixed(4)} exceeds the critical threshold for ${df.toFixed(0)} degrees of freedom. Cohen's d = ${cohenD.toFixed(4)} indicates a ${cohenInterpretation(cohenD)}.`;
+          } else {
+            interpretation = `With a p-value of ${pFormatted}, the result is ${sig.verdict} at the ${alphaPct}% level (${tailName}). The t-statistic of ${tStat.toFixed(4)} does not exceed the critical threshold for ${df.toFixed(0)} degrees of freedom. Cohen's d = ${cohenD.toFixed(4)} indicates a ${cohenInterpretation(cohenD)}.`;
+          }
+          if (Math.abs(pValue - alpha) < 0.005 && pValue >= alpha) {
+            interpretation += ' This is a borderline result. Replication is advisable.';
+          }
+        }
+
+        // Show results
+        $('empty-state').style.display = 'none';
+        $('result-card').style.display = 'block';
+        $('dist-card').style.display = 'block';
+        $('steps-card').style.display = 'block';
+        $('pdf-btn').classList.remove('hidden');
+
+        $('result-t').textContent = tStat.toFixed(4);
+        $('result-pvalue').textContent = pFormatted;
+        $('result-df').textContent = Number.isInteger(df) ? df.toFixed(0) : df.toFixed(2);
+        const sigEl = $('result-significance');
+        sigEl.textContent = sig.text;
+        sigEl.className = 'text-base font-semibold ' + sig.color;
+        $('result-cohen').textContent = cohenD.toFixed(4);
+        $('result-interpretation').textContent = interpretation;
+
+        const warnEl = $('validation-warning');
+        if (warning) {
+          warnEl.classList.remove('hidden');
+          warnEl.querySelector('p').textContent = warning;
+        } else {
+          warnEl.classList.add('hidden');
+        }
+
+        $('steps-content').innerHTML = stepsArr.map(s => '<p class="font-mono text-xs bg-white border border-bae-border rounded-bae-sm px-3 py-2">' + s + '</p>').join('');
+
+        // Draw distribution
+        const canvas = $('dist-canvas');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = 220 * 2;
+        const criticals = sigOff ? [] : getTCriticals(currentTail, alpha, df);
+        drawTDistribution(canvas, tStat, df, currentTail, criticals);
+
+        // PDF report
+        $('report-t').textContent = tStat.toFixed(4);
+        $('report-pvalue').textContent = pFormatted;
+        $('report-df').textContent = Number.isInteger(df) ? df.toFixed(0) : df.toFixed(2);
+        $('report-alpha').textContent = sigOff ? 'Not set' : alpha.toFixed(4);
+        $('report-tail').textContent = tailName.charAt(0).toUpperCase() + tailName.slice(1);
+        $('report-cohen').textContent = cohenD.toFixed(4);
+        $('report-interpretation').textContent = interpretation;
+        $('report-details').innerHTML = stepsArr.map(s => '<p>' + s + '</p>').join('');
+        $('report-dist').src = canvas.toDataURL('image/png');
+        $('report-dist-wrapper').style.display = 'block';
+
+        updateURL();
+      }
+
+      function showEmpty() {
+        $('empty-state').style.display = 'block';
+        $('result-card').style.display = 'none';
+        $('dist-card').style.display = 'none';
+        $('steps-card').style.display = 'none';
+        $('pdf-btn').classList.add('hidden');
+      }
+
+      $('calc-btn').addEventListener('click', calculate);
+      $('clear-btn').addEventListener('click', () => {
+        $('input-os-mean').value = '';
+        $('input-os-mu0').value = '';
+        $('input-os-sd').value = '';
+        $('input-os-n').value = '';
+        $('input-ind-m1').value = '';
+        $('input-ind-m2').value = '';
+        $('input-ind-s1').value = '';
+        $('input-ind-s2').value = '';
+        $('input-ind-n1').value = '';
+        $('input-ind-n2').value = '';
+        $('input-pd-mean').value = '';
+        $('input-pd-sd').value = '';
+        $('input-pd-n').value = '';
+        $('input-custom-alpha').value = '';
+        updateAlpha('0.05');
+        showEmpty();
+        updateURL();
+      });
+
+      // Toggle steps
+      $('toggle-steps').addEventListener('click', () => {
+        stepsVisible = !stepsVisible;
+        $('steps-content').style.display = stepsVisible ? 'block' : 'none';
+        $('toggle-steps').textContent = stepsVisible ? 'Hide' : 'Show';
+      });
+
+      // PDF generation
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating...';
+        btn.disabled = true;
+
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '210mm';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.style.margin = '0';
+
+        const report = $('print-report').cloneNode(true);
+        report.removeAttribute('id');
+        report.classList.remove('hidden');
+        wrapper.appendChild(report);
+        document.body.appendChild(wrapper);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 't-test-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, .bg-gray-50, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(wrapper).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (wrapper.parentNode) document.body.removeChild(wrapper);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // URL sharing
+      function updateURL() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('mode', currentMode);
+        url.searchParams.set('tail', currentTail);
+        url.searchParams.set('alpha', currentAlpha === null ? 'off' : currentAlpha);
+        if (currentMode === 'independent') {
+          url.searchParams.set('var', currentVar);
+        } else {
+          url.searchParams.delete('var');
+        }
+
+        if (currentMode === 'onesample') {
+          if ($('input-os-mean').value) url.searchParams.set('m', $('input-os-mean').value); else url.searchParams.delete('m');
+          if ($('input-os-mu0').value) url.searchParams.set('mu0', $('input-os-mu0').value); else url.searchParams.delete('mu0');
+          if ($('input-os-sd').value) url.searchParams.set('s', $('input-os-sd').value); else url.searchParams.delete('s');
+          if ($('input-os-n').value) url.searchParams.set('n', $('input-os-n').value); else url.searchParams.delete('n');
+          url.searchParams.delete('m1'); url.searchParams.delete('m2'); url.searchParams.delete('s1'); url.searchParams.delete('s2');
+          url.searchParams.delete('n1'); url.searchParams.delete('n2'); url.searchParams.delete('dm'); url.searchParams.delete('ds');
+        } else if (currentMode === 'independent') {
+          if ($('input-ind-m1').value) url.searchParams.set('m1', $('input-ind-m1').value); else url.searchParams.delete('m1');
+          if ($('input-ind-m2').value) url.searchParams.set('m2', $('input-ind-m2').value); else url.searchParams.delete('m2');
+          if ($('input-ind-s1').value) url.searchParams.set('s1', $('input-ind-s1').value); else url.searchParams.delete('s1');
+          if ($('input-ind-s2').value) url.searchParams.set('s2', $('input-ind-s2').value); else url.searchParams.delete('s2');
+          if ($('input-ind-n1').value) url.searchParams.set('n1', $('input-ind-n1').value); else url.searchParams.delete('n1');
+          if ($('input-ind-n2').value) url.searchParams.set('n2', $('input-ind-n2').value); else url.searchParams.delete('n2');
+          url.searchParams.delete('m'); url.searchParams.delete('mu0'); url.searchParams.delete('s'); url.searchParams.delete('n');
+          url.searchParams.delete('dm'); url.searchParams.delete('ds');
+        } else if (currentMode === 'paired') {
+          if ($('input-pd-mean').value) url.searchParams.set('dm', $('input-pd-mean').value); else url.searchParams.delete('dm');
+          if ($('input-pd-sd').value) url.searchParams.set('ds', $('input-pd-sd').value); else url.searchParams.delete('ds');
+          if ($('input-pd-n').value) url.searchParams.set('n', $('input-pd-n').value); else url.searchParams.delete('n');
+          url.searchParams.delete('m'); url.searchParams.delete('mu0'); url.searchParams.delete('s');
+          url.searchParams.delete('m1'); url.searchParams.delete('m2'); url.searchParams.delete('s1'); url.searchParams.delete('s2');
+          url.searchParams.delete('n1'); url.searchParams.delete('n2');
+        }
+        window.history.replaceState({}, '', url);
+      }
+
+      function readURL() {
+        const url = new URL(window.location.href);
+        const mode = url.searchParams.get('mode');
+        if (mode && ['onesample', 'independent', 'paired'].includes(mode)) {
+          updateMode(mode);
+        }
+        const tail = url.searchParams.get('tail');
+        if (tail && ['two', 'left', 'right'].includes(tail)) {
+          updateTail(tail);
+        }
+        const alpha = url.searchParams.get('alpha');
+        if (alpha === 'off') {
+          updateAlpha('off');
+        } else if (alpha) {
+          const a = parseFloat(alpha);
+          if ([0.10, 0.05, 0.01, 0.001].includes(a)) {
+            updateAlpha(a.toString());
+          } else {
+            updateAlpha('custom');
+            $('input-custom-alpha').value = a;
+            currentAlpha = a;
+          }
+        }
+        const v = url.searchParams.get('var');
+        if (v && ['welch', 'student'].includes(v)) {
+          updateVar(v);
+        }
+
+        if (mode === 'onesample') {
+          if (url.searchParams.has('m')) $('input-os-mean').value = url.searchParams.get('m');
+          if (url.searchParams.has('mu0')) $('input-os-mu0').value = url.searchParams.get('mu0');
+          if (url.searchParams.has('s')) $('input-os-sd').value = url.searchParams.get('s');
+          if (url.searchParams.has('n')) $('input-os-n').value = url.searchParams.get('n');
+        } else if (mode === 'independent') {
+          if (url.searchParams.has('m1')) $('input-ind-m1').value = url.searchParams.get('m1');
+          if (url.searchParams.has('m2')) $('input-ind-m2').value = url.searchParams.get('m2');
+          if (url.searchParams.has('s1')) $('input-ind-s1').value = url.searchParams.get('s1');
+          if (url.searchParams.has('s2')) $('input-ind-s2').value = url.searchParams.get('s2');
+          if (url.searchParams.has('n1')) $('input-ind-n1').value = url.searchParams.get('n1');
+          if (url.searchParams.has('n2')) $('input-ind-n2').value = url.searchParams.get('n2');
+        } else if (mode === 'paired') {
+          if (url.searchParams.has('dm')) $('input-pd-mean').value = url.searchParams.get('dm');
+          if (url.searchParams.has('ds')) $('input-pd-sd').value = url.searchParams.get('ds');
+          if (url.searchParams.has('n')) $('input-pd-n').value = url.searchParams.get('n');
+        }
+
+        const hasInput = $('input-os-mean').value || $('input-ind-m1').value || $('input-pd-mean').value;
+        if (hasInput) {
+          calculate();
+        }
+      }
+
+      readURL();
+    })();
+  </script>
+</BaseLayout>

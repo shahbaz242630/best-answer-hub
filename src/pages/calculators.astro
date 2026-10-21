@@ -1,0 +1,185 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolHero from '../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../components/tools/ToolRelatedCTA.astro';
+import ToolHubValueProp from '../components/tools/ToolHubValueProp.astro';
+import { calculatorTools } from '../data/tools';
+
+const today = '2026-06-30T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Calculators suite?',
+    a: `The Best Answer Hub Calculators suite is a free collection of ${calculatorTools.length} browser-based financial, mathematical, statistical, STEM, and utility calculators. It includes an <a href="/tools/ai-cost-calculator/">AI Cost Calculator</a>, <a href="/calculators/cooking-converter/">Cooking Converter</a>, <a href="/calculators/data-storage-converter/">Data Storage Converter</a>, <a href="/calculators/unit-currency-converter/">Unit & Currency Converter</a>, <a href="/calculators/gpa-calculator/">GPA Calculator</a>, and <a href="/calculators/cloud-cost-calculator/">Cloud Cost Calculator</a>. Every calculator runs entirely in the browser, and no data is sent to any server.`,
+  },
+  {
+    q: 'Are the Best Answer Hub Calculators free to use?',
+    a: 'Yes. Every calculator in the suite is completely free with no usage limits, no signup, and no email capture required to see results. Unlike many lead-generation calculator sites that gate output behind an email submission form, the Best Answer Hub Calculators display all results immediately with no account required.',
+  },
+  {
+    q: 'Is my financial data stored or sent to a server?',
+    a: 'No. Every number entered into a Best Answer Hub Calculator stays entirely in the browser. All calculations run locally using JavaScript. Nothing is uploaded, logged, or transmitted to any server. This is a technical architecture decision, not just a policy. To verify it, disconnect from the internet after loading any calculator page: the tool will continue working perfectly.',
+  },
+  {
+    q: 'What is the difference between a weighted and an unweighted GPA?',
+    a: 'An unweighted GPA scores every course on the same scale, usually capped at 4.0. A weighted GPA adds extra points for harder courses such as Honors, AP, or IB, commonly on a 5.0 scale, so it can rise above 4.0. Exact weighting varies by school. The <a href="/calculators/gpa-calculator/">Best Answer Hub GPA Calculator</a> handles both across eight grading scales.',
+  },
+  {
+    q: 'How do I work out what I need on my final exam to hit a target grade?',
+    a: 'Use this formula: needed = (target - current × (1 - final weight)) ÷ final weight, with each weight as a decimal. For example, an 85% current grade, a 90% target, and a final worth 40% needs 97.5%. A result above 100% means the goal needs extra credit. The <a href="/calculators/finals-grade-calculator/">Best Answer Hub Finals Grade Calculator</a> solves it instantly.',
+  },
+  {
+    q: 'When should I use a z-score instead of a t-test?',
+    a: 'Use a z-score when the population standard deviation is known, or when the sample is large, commonly 30 or more. Use a t-test when the standard deviation is estimated from a smaller sample, because the t-distribution has heavier tails that allow for that added uncertainty. The <a href="/calculators/statistics-suite/">Best Answer Hub Statistics Calculator Suite</a> runs both.',
+  },
+  {
+    q: 'How do I read a 4-band resistor color code?',
+    a: 'On a 4-band resistor, the first two bands are significant digits, the third is the multiplier as a power of ten, and the fourth is the tolerance. Colors run black 0, brown 1, red 2, and on to white 9. For example, brown-black-red-gold is 1 kΩ at ±5%. The <a href="/calculators/stem-suite/resistor-color-code-calculator/">Best Answer Hub Resistor Color Code Calculator</a> decodes any band.',
+  },
+  {
+    q: 'Are graduate student stipends and fellowships taxable?',
+    a: 'Often yes. Assistantship pay reported on a W-2 is taxable, and fellowship or scholarship money beyond tuition and required fees is taxable income, while amounts that cover tuition and required fees can be tax-free. Fellowship income with no tax withheld may need quarterly estimated payments. The <a href="/calculators/grad-student-tax-calculator/">Best Answer Hub Grad Student Tax Calculator</a> estimates it.',
+  },
+  {
+    q: 'How do I compare cloud hosting costs fairly across AWS, Azure, and budget providers?',
+    a: 'The key challenge is that AWS and Azure use on-demand per-hour pricing while Hetzner, DigitalOcean, and Vultr advertise flat monthly rates. Bandwidth costs, reserved instance discounts, and egress fees make direct comparisons misleading. The <a href="/calculators/cloud-cost-calculator/">Best Answer Hub Cloud Cost Calculator</a> normalises pricing across 8 providers (AWS, Azure, GCP, DigitalOcean, Vultr, Linode, Hetzner, and Render) for like-for-like comparison.',
+  },
+  {
+    q: 'Why does 1 TB of storage show as only 931 GB on my computer?',
+    a: 'Hard drive manufacturers use the decimal definition: 1 TB = 1,000,000,000,000 bytes. Operating systems use binary: 1 TiB = 1,099,511,627,776 bytes. The 931 figure is correct. It is 1 TB expressed as tebibytes (TiB). The <a href="/calculators/data-storage-converter/">Best Answer Hub Data Storage Converter</a> converts between decimal (GB, TB) and binary (GiB, TiB) units with clear labelling of which standard applies.',
+  },
+  {
+    q: 'Why does converting cups to grams depend on the ingredient?',
+    a: 'Volume measures a space; grams measure mass. Different ingredients have different densities: 1 cup of water is 237g, 1 cup of all-purpose flour is 120g, and 1 cup of honey is 340g. A converter that returns a flat number regardless of ingredient is wrong for most cooking scenarios. The <a href="/calculators/cooking-converter/">Best Answer Hub Cooking Converter</a> uses ingredient-specific density tables for accurate cup-to-gram results.',
+  },
+  {
+    q: 'How do I estimate the monthly cost of AI tools for my team?',
+    a: 'AI tool costs vary significantly by plan and usage volume. ChatGPT Plus costs $20/user/month, Claude Pro $20/user/month, GitHub Copilot $19/user/month, and Cursor Pro $20/user/month, before API or enterprise add-ons. The <a href="/tools/ai-cost-calculator/">Best Answer Hub AI Cost Calculator</a> estimates monthly spend across ChatGPT, Claude, Cursor, Copilot, OpenAI API, DeepSeek, and Kimi for any team size.',
+  },
+  {
+    q: 'Is there one place with all these calculators so I do not have to use a different site for each?',
+    a: `Yes. The Best Answer Hub Calculators suite gathers ${calculatorTools.length} calculators in one place so you do not have to find a separate website for GPA, another for statistics, another for unit conversions, and another for cloud costs. Every calculator is free, runs entirely in your browser, and requires no signup or email, so you bookmark one hub instead of a dozen single-purpose sites. It is built to be the one-stop shop for academic, statistics, STEM, and everyday conversions: open the page, pick a calculator, and get your result instantly.`,
+  },
+  {
+    q: 'Can I use the Best Answer Hub Calculators offline?',
+    a: 'Yes. After loading any calculator page once, it works without an internet connection. Every tool runs on client-side JavaScript with no external API calls, no cloud processing, and no server dependencies for the core math. This makes the calculators reliable on trains, flights, or anywhere with limited connectivity.',
+  },
+  {
+    q: 'Do I need to create an account to use these calculators?',
+    a: `No account, email address, or signup is required for any calculator in the suite. Open any tool, enter numbers, and see results immediately. There are no paywalls, no premium tiers, and no feature gates. All ${calculatorTools.length} calculators are fully functional from the first visit with zero friction.`,
+  },
+  {
+    q: 'Which browsers are supported?',
+    a: 'All modern browsers are fully supported: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, and Opera 76+. The calculators use standard Web APIs and JavaScript math operations that have been universally supported for over a decade. All tools work on both desktop and mobile browsers. Internet Explorer is not supported.',
+  },
+];
+
+const steps = [
+  { title: 'Pick a calculator', description: 'Choose from academic, statistics, STEM, utility, and cost calculators. Each has its own dedicated page optimized for mobile and desktop.' },
+  { title: 'Enter your numbers', description: 'Fill in grades, data sets, measurements, or usage figures. Everything happens instantly in your browser with no uploads to any server.' },
+  { title: 'Get instant results', description: 'See grade outcomes, statistical results, unit conversions, or cost estimates immediately. Copy or print your results with one click.' },
+];
+
+const seo = {
+  title: 'Free Online Calculators: GPA, Statistics, STEM & More (2026)',
+  description: 'Free browser-based calculators: GPA, finals grade, statistics, STEM, unit and currency conversion, plus AI and cloud cost. No signup, no data stored.',
+  url: '/calculators/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tools · Academic, STEM & Utility Calculators"
+    title="Calculators:"
+    accentText="Fast, private, and precise"
+    description="Free browser-based calculators for GPA and grades, statistics and STEM problems, unit and currency conversion, cooking and data-storage conversions, social media engagement, and AI and cloud costs. Your data never leaves your device, with no uploads, no watermarks, and no daily limits."
+  />
+
+  <!-- Tool Cards -->
+  <section class="py-6 md:py-8" aria-label="Calculator tools">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="calculator-tools-grid">
+        {calculatorTools.map((tool) => (
+          tool.live ? (
+            <a href={tool.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{tool.badge}</span>
+                <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{tool.icon}</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink mb-2">{tool.title}</h2>
+              <p class="text-sm text-bae-muted line-clamp-2">{tool.description}</p>
+              <p class="text-xs text-bae-muted mt-3 font-medium">{tool.meta}</p>
+            </a>
+          ) : (
+            <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{tool.badge}</span>
+                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink/70 mb-2">{tool.title}</h2>
+              <p class="text-sm text-bae-muted/70 line-clamp-2">{tool.description}</p>
+              <p class="text-xs text-bae-muted/60 mt-3 font-medium">{tool.meta}</p>
+            </div>
+          )
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolHubValueProp
+    hubName="Calculators suite"
+    count={calculatorTools.length}
+    noun="calculators"
+    replaces="finding a separate website for mortgages, tax, ROI, and unit conversions"
+  />
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people calculate with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people calculate with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from students, researchers, developers, and content creators.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Students & Graduates</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Track your GPA and plan the grade you need</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">8 GPA scales + finals target solver</p>
+          <p class="text-sm text-bae-muted">Use the GPA Calculator to track weighted and cumulative GPA across eight grading scales, then run the Finals Grade Calculator to find the exact score you need on a final to reach a target grade. The Semester Schedule Builder rounds it out by mapping classes, study blocks, and work shifts into one timetable.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Researchers & STEM Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Run statistics and STEM problems with steps</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Z-score, t-test, matrices, resistor codes</p>
+          <p class="text-sm text-bae-muted">Open the Statistics Calculator Suite for z-scores, confidence intervals, p-values, and t-tests with step-by-step working, or the STEM Calculator Suite for matrix operations, resistor color codes, and molecular weight. Each shows its method, so they double as a way to check homework, not just produce an answer.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Developers & Tech Teams</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">AI tooling costs + cloud hosting comparison</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Monthly spend across 8 cloud providers and 7 AI tools</p>
+          <p class="text-sm text-bae-muted">Use the AI Cost Calculator to estimate monthly spend across ChatGPT, Claude, Cursor, and Copilot for any team size, then run the Cloud Cost Calculator to compare normalised server costs across AWS, GCP, Azure, Hetzner, DigitalOcean, and Vultr. Essential for engineering budget sign-off.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Cooks & Recipe Creators</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Accurate cup-to-gram conversions by ingredient</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Ingredient-aware density, not a flat multiplier</p>
+          <p class="text-sm text-bae-muted">The Cooking Converter uses ingredient-specific density tables so 1 cup of flour, honey, and butter each return their correct gram weight, not a single flat number. Ideal for scaling recipes, converting US cup measurements for UK and European audiences, or standardising ingredients for a food blog.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+</BaseLayout>

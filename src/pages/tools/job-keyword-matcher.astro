@@ -1,0 +1,566 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Job Keyword Matcher?',
+    a: 'The Best Answer Hub Job Keyword Matcher is a free, browser-based tool that compares any job description against your resume to surface missing keywords instantly. Paste the job posting and your resume text, click Analyse, and the tool shows your match score, which keywords you have, and which ones are absent. Everything runs in your browser. No account, no signup, and your resume text is never sent to any server.',
+  },
+  {
+    q: 'Is the "75% of resumes are rejected by ATS" statistic actually true?',
+    a: 'No, this widely repeated stat traces back to a defunct 2013 startup\'s sales pitch with no disclosed methodology and has never been independently verified. What is true: average first-submission match scores hover around 48 out of 100, and keyword gap (not mass auto-rejection) is the real problem. A 2025 Enhancv study of 25 recruiters found only 8% enable content auto-rejection; 92% rely on human review after initial filtering.',
+  },
+  {
+    q: 'What is a good ATS keyword match score, and what percentage do I need to reach a recruiter?',
+    a: 'Aim for 75–80% or higher. Resumes scoring below 60% are frequently filtered out early, while those at 80%+ are significantly more likely to reach a recruiter. The average resume contains only 48% of the keywords present in the target job description, which is why most applicants benefit from tailoring before submitting. The Best Answer Hub Job Keyword Matcher shows your score instantly so you know exactly where you stand before you apply.',
+  },
+  {
+    q: 'Does ATS software require exact keyword matches, or does it understand synonyms?',
+    a: 'Most ATS platforms (including Taleo, Workday, and Greenhouse) favour exact phrase matches and do not reliably recognise synonyms or paraphrases. "Project coordination" will not score the same as "project management" if the posting uses the latter. Always mirror the exact wording from the job description in your resume rather than rewording it, even if you consider the terms equivalent.',
+  },
+  {
+    q: 'Which keywords in a job description are most important to include on my resume?',
+    a: 'Prioritise in this order: (1) keywords that appear in the Required Qualifications section (these are non-negotiable filters), (2) terms that appear more than once anywhere in the full posting, (3) the exact job title and any named tools or certifications. Preferred skills are worth adding if you genuinely have them, but they carry lower ATS weighting than required terms and should not push out stronger content.',
+  },
+  {
+    q: 'How many keywords should a resume have to pass ATS without keyword stuffing?',
+    a: 'Most HR professionals recommend 15–25 targeted keywords on a standard resume, aiming for roughly 2–3% keyword density. At 500 words that means 10–15 keyword instances across your summary, skills section, and experience bullets. Including a key term naturally 2–3 times is the sweet spot: enough for the ATS to register, not so many that the resume reads as a phrase list to a human reviewer.',
+  },
+  {
+    q: 'Is keyword stuffing on a resume detectable, and what happens if a recruiter spots it?',
+    a: 'Yes, modern ATS systems flag keyword density above roughly 3% as suspicious, and experienced recruiters instantly recognise a resume padded with buzzwords rather than written as a professional narrative. Resumes with unnaturally high keyword repetition score lower on recruiter-facing ranking screens. The Best Answer Hub Job Keyword Matcher shows your keyword distribution alongside your match score so you can optimise without crossing into stuffing territory.',
+  },
+  {
+    q: 'Why does my resume pass a keyword checker but I still get an automated rejection?',
+    a: 'Keyword checkers measure match rate. They do not replicate the full scoring logic of a specific company\'s ATS configuration. Your match rate could be 82% while the role has a minimum threshold of 85%, or the system may apply hard filters for a specific certification that keyword percentage does not capture. Some companies also use ATS to screen for criteria that never appear in the public job description, such as minimum years in a specific role.',
+  },
+  {
+    q: 'Does Workday, Greenhouse, or Taleo handle keywords and abbreviations differently?',
+    a: 'Yes, significantly. Workday focuses on exact phrase matching and does not reliably handle verb tense variations or plurals. Greenhouse does not recognise common abbreviations: "RN" alone will not match "Registered Nurse" in the posting. Taleo applies the same rigid exact-match logic to all certifications and software names. The safest approach across all three: include both the abbreviation and the full form for every certification, job title, and tool name.',
+  },
+  {
+    q: 'What is the difference between hard skills and soft skills for ATS keyword scanning?',
+    a: 'ATS systems are built primarily to detect hard skills: exact, verifiable terms like "Python," "Salesforce CRM," or "GAAP" that appear directly in job postings. Soft skills like "strong communicator" or "team player" are largely invisible to parsers and carry minimal ATS weight. Demonstrate soft skills through quantified bullet points in your experience section rather than listing them in a standalone skills block where they add no ATS value.',
+  },
+  {
+    q: 'Do small businesses and startups actually use ATS keyword filtering?',
+    a: 'Most small businesses and startups below 50 employees do not use dedicated ATS software: a founder or hiring manager reviews applications manually, making keyword optimisation less critical. ATS filtering is most consequential at mid-size and enterprise companies, healthcare networks, and government employers. If the company\'s careers page routes you through Greenhouse, Lever, Workday, or Taleo, ATS optimisation is essential. A generic email address usually indicates manual review.',
+  },
+  {
+    q: 'Can I use the same tailored resume for multiple similar job postings?',
+    a: 'For roles with nearly identical descriptions at the same seniority level (three "Senior Data Analyst" postings using comparable language, for example), one tailored version covers most of the gap. Where job titles, required tools, or industry context differ meaningfully, a fresh tailoring pass is worth the time. Keyword gaps average 52% when comparing a generic resume to a specific posting, so even a light tailoring pass meaningfully improves your score. Re-run the Best Answer Hub Job Keyword Matcher after each edit to track your progress.',
+  },
+  {
+    q: 'Does a free ATS keyword checker upload and store my personal data?',
+    a: 'It depends entirely on the tool. Most web-based tools (including Jobscan and Resume Worded) process your resume on their servers and retain it under their own privacy policies, sometimes for years. The Best Answer Hub Job Keyword Matcher runs entirely in your browser: your resume text and job description are never transmitted to any server, never stored, and never visible to anyone outside your own device. You can verify this by going offline after loading the page. It keeps working.',
+  },
+  {
+    q: 'How do I tailor my resume when the job description is vague or lists 40+ requirements?',
+    a: 'Focus on three to five requirements that appear multiple times or sit specifically under Required Qualifications: these are the terms the recruiter will search for. Ignore generic filler phrases like "strong work ethic" or "results-oriented." Paste the full description into the Best Answer Hub Job Keyword Matcher: it strips the noise, surfaces high-frequency terms, and shows exactly which ones are missing from your resume so you know where to focus your edits.',
+  },
+  {
+    q: 'Is it worth paying $50 a month for Jobscan, or are there free alternatives?',
+    a: 'For most job seekers, free tools cover the core need: identifying which keywords from a job description are missing from your resume. Jobscan\'s premium value is in deeper recruiter simulation and ATS platform-specific scoring, worth it for volume applicants in highly competitive fields. The Best Answer Hub Job Keyword Matcher is completely free with no scan limits, requires no account, and processes everything locally in your browser so no personal data ever leaves your device.',
+  },
+];
+
+const steps = [
+  { title: 'Paste job description', description: 'Copy the full job posting from the company\'s careers page and paste it into the Job Description box on the left.' },
+  { title: 'Paste your resume', description: 'Paste your resume text into the Resume box on the right. Or click Import to pull it automatically from the Best Answer Hub Resume Builder.' },
+  { title: 'Analyze & improve', description: 'Click Analyze to see your match score, matched keywords, and missing keywords. Add the missing terms to your resume and re-analyze.' },
+];
+
+const seo = {
+  title: 'Free Job Keyword Matcher — Match Resume to Jobs (2026)',
+  description: 'Compare any job description against your resume to find missing keywords. Improve your ATS match score instantly. 100% client-side, no signup, no data stored.',
+  url: '/tools/job-keyword-matcher/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Job Keyword Matcher', url: '/tools/job-keyword-matcher/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Stored on Servers"
+    title="Job Keyword Matcher:"
+    accentText="Find the keywords you're missing"
+    description="Paste any job description and your resume to see which keywords are missing. Improve your ATS match score and land more interviews. No signup, no uploads, no data stored."
+    backLink="/career-toolkit/"
+    backLabel="← Career Toolkit"
+  />
+
+  <section class="py-6 md:py-8" aria-label="Job keyword matcher">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <!-- Job Description -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold text-bae-ink">Job Description</h2>
+            <button type="button" id="clear-job" class="text-xs text-bae-muted hover:text-bae-ink transition-colors">Clear</button>
+          </div>
+          <textarea id="job-text" rows="12" placeholder="Paste the full job description here..." spellcheck="true" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+          <p class="text-[11px] text-bae-muted mt-2" id="job-stats">0 words</p>
+        </div>
+
+        <!-- Resume -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold text-bae-ink">Your Resume</h2>
+            <div class="flex gap-2">
+              <button type="button" id="import-resume-btn" class="text-xs text-bae-primary hover:text-bae-accent transition-colors hidden">Import from Resume Builder</button>
+              <button type="button" id="clear-resume" class="text-xs text-bae-muted hover:text-bae-ink transition-colors">Clear</button>
+            </div>
+          </div>
+          <textarea id="resume-text" rows="12" placeholder="Paste your resume text here..." spellcheck="true" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+          <p class="text-[11px] text-bae-muted mt-2" id="resume-stats">0 words</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-wrap gap-3 mb-6">
+        <button type="button" id="analyze-btn" class="bg-bae-primary text-white font-semibold text-sm px-6 py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+          Analyze Keywords
+        </button>
+        <button type="button" id="copy-missing-btn" class="bg-bae-card border border-bae-border text-bae-ink font-semibold text-sm px-6 py-3 rounded-bae-sm hover:border-bae-primary transition-colors" disabled>
+          Copy Missing Keywords
+        </button>
+        <button type="button" id="download-pdf-btn" class="bg-bae-card border border-bae-border text-bae-ink font-semibold text-sm px-6 py-3 rounded-bae-sm hover:border-bae-primary transition-colors" disabled>
+          Download PDF Report
+        </button>
+      </div>
+
+      <!-- Results -->
+      <div id="results-panel" class="hidden">
+        <!-- Score -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 mb-4">
+          <div class="flex flex-col sm:flex-row items-center gap-4">
+            <div class="w-20 h-20 rounded-full border-4 border-bae-primary flex items-center justify-center shrink-0">
+              <span id="match-score" class="text-xl font-bold text-bae-primary">0%</span>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-bae-ink mb-1">Keyword Match Score</h3>
+              <p class="text-sm text-bae-muted" id="match-message">Paste a job description and your resume, then click Analyze.</p>
+            </div>
+            <div class="sm:ml-auto flex gap-4 text-center">
+              <div>
+                <p id="matched-count" class="text-lg font-bold text-green-600">0</p>
+                <p class="text-[11px] text-bae-muted">Matched</p>
+              </div>
+              <div>
+                <p id="missing-count" class="text-lg font-bold text-red-500">0</p>
+                <p class="text-[11px] text-bae-muted">Missing</p>
+              </div>
+              <div>
+                <p id="total-count" class="text-lg font-bold text-bae-ink">0</p>
+                <p class="text-[11px] text-bae-muted">Total</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Matched -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 mb-4">
+          <h3 class="text-sm font-bold text-bae-ink mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">✓</span>
+            Matched Keywords
+          </h3>
+          <div id="matched-keywords" class="flex flex-wrap gap-2">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Missing -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 mb-4">
+          <h3 class="text-sm font-bold text-bae-ink mb-3 flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-red-100 text-red-500 flex items-center justify-center text-xs font-bold">!</span>
+            Missing Keywords
+          </h3>
+          <div id="missing-keywords" class="flex flex-wrap gap-2">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PDF Export Content (outside results-panel so html2pdf captures correctly) -->
+      <div id="pdf-report-content" class="hidden">
+        <!-- Populated by JS for PDF capture -->
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What People Analyse -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What people analyse with it</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Software engineer, 5 years experience, Workday portal</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Generic resume, strong candidate</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">48% → 81% after one tailoring pass</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Identified 14 missing keywords, mostly exact tool names and methodology phrases. Added them naturally to three existing bullets. Recruiter call came within 72 hours of resubmitting.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Registered nurse applying to hospital network, Epic ATS</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Healthcare credential mismatch</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Passed ATS after adding full credential forms</div>
+          <p class="text-sm text-bae-muted leading-relaxed">The tool surfaced that "Registered Nurse" wasn't in the resume, only "RN" was. Added both the full form and the abbreviation for every certification. Got through the automated screen on the next application.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Marketing manager pivoting from print to digital</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Industry language gap</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">12 missing digital keywords found in 60 seconds</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Resume had strong experience but used traditional marketing language. Identified missing terms like "conversion rate optimisation," "Google Analytics 4," and "paid social." Tailored three job descriptions in under 20 minutes.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Finance grad, first job, 40-requirement job description</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Overwhelmed by a dense posting</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">8 critical keywords identified from 40 requirements</div>
+          <p class="text-sm text-bae-muted leading-relaxed">The job posting listed 40 bullet points. The tool surfaced the 8 high-frequency terms from the Required Qualifications section. Focused edits on those alone and secured a first interview within the week.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by role, industry, and ATS configuration.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more career tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/resume-builder/" class="text-bae-primary hover:underline">Resume Builder</a>, <a href="/tools/cover-letter-builder/" class="text-bae-primary hover:underline">Cover Letter Builder</a>, <a href="/career-toolkit/" class="text-bae-primary hover:underline">Career Toolkit</a>, and <a href="/tools/seo-score-checker/" class="text-bae-primary hover:underline">SEO Checker</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/html2pdf.bundle.min.js" is:inline></script>
+
+  <script is:inline>
+    (function() {
+      'use strict';
+
+      const STOP_WORDS = new Set([
+        'a','an','the','and','or','but','in','on','at','to','for','of','with','by','from','as','is','was','are','were','be','been','being','have','has','had','do','does','did','will','would','shall','should','may','might','must','can','could','need','dare','ought','used','shall','should','may','might','must','can','could','need','dare','ought','used','about','above','across','after','against','along','among','around','at','before','behind','below','beneath','beside','between','beyond','by','down','during','except','for','from','in','inside','into','like','near','of','off','on','onto','out','outside','over','past','since','through','throughout','till','to','toward','under','underneath','until','up','upon','with','within','without','i','me','my','myself','we','our','ours','ourselves','you','your','yours','yourself','yourselves','he','him','his','himself','she','her','hers','herself','it','its','itself','they','them','their','theirs','themselves','what','which','who','whom','this','that','these','those','am','was','were','being','have','has','had','do','does','did','will','would','shall','should','may','might','must','can','could','need','dare','ought','used','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such','no','nor','not','only','own','same','so','than','too','very','just','now','then','once','upon','also','back','even','still','yet','already','always','never','sometimes','often','usually','perhaps','maybe','however','therefore','thus','hence','moreover','furthermore','nevertheless','nonetheless','otherwise','instead','meanwhile','besides','accordingly','consequently','according','regarding','concerning','including','excluding','following','preceding','pending','during','barring','considering','notwithstanding','despite','excepting','save','touching','respecting','amid','amidst','amongst','beside','circa','cum','mid','midst','minus','plus','qua','sans','versus','via','vis-a-vis','per','pro','re','than','till','unto','versus','vs','etc','ie','eg','viz','et','al','ibid','op','cit','loc','cit','passim','sic','stat','supra','infra','a','an','the','and','or','but','if','then','else','when','while','because','since','until','although','though','unless','whether','before','after','once','than','as','that','which','who','whom','whose','what','whatever','whoever','whomever','whichever','where','wherever','when','whenever','why','how','however','whatever','whenever','wherever','whoever','whomever','whichever'
+      ]);
+
+      const SKILL_TERMS = new Set([
+        'javascript','python','java','react','angular','vue','node','sql','aws','azure','gcp','docker','kubernetes','agile','scrum','leadership','management','marketing','sales','analytics','data','cloud','devops','frontend','backend','fullstack','ui','ux','design','testing','automation','machine','learning','ai','blockchain','security','network','database','api','rest','graphql','mobile','ios','android','swift','kotlin','php','ruby','go','rust','cplusplus','csharp','dotnet','spring','django','flask','laravel','wordpress','shopify','magento','seo','sem','ppc','crm','erp','sap','salesforce','hubspot','zendesk','jira','confluence','git','github','gitlab','jenkins','ci','cd','terraform','ansible','puppet','chef','nginx','apache','linux','windows','macos','bash','powershell','excel','powerpoint','word','outlook','teams','slack','zoom','figma','sketch','adobe','photoshop','illustrator','indesign','premiere','after','effects','blender','maya','unity','unreal','tableau','powerbi','looker','snowflake','redshift','bigquery','hadoop','spark','kafka','elasticsearch','mongodb','postgres','mysql','oracle','sqlite','redis','memcached','rabbitmq','celery','airflow','dbt','segment','amplitude','mixpanel','google','facebook','instagram','twitter','linkedin','tiktok','youtube','content','strategy','product','project','program','operations','finance','accounting','hr','recruiting','talent','customer','support','success','business','development','partnerships','legal','compliance','risk','quality','assurance','healthcare','clinical','research','pharma','biotech','education','teaching','curriculum','instructional','mechanical','electrical','civil','structural','chemical','biomedical','aerospace','automotive','manufacturing','supply','chain','logistics','warehouse','retail','hospitality','food','beverage','realestate','construction','architecture','interior','landscape','graphic','visual','motion','video','photo','audio','music','sound','copywriting','editing','proofreading','translation','interpreting','event','planning','coordination','fundraising','grant','writing','social','media','community','public','relations','communications','journalism','broadcasting','podcasting','streaming','esports','gaming','sports','fitness','wellness','nutrition','coaching','counseling','therapy','psychology','socialwork','nonprofit','volunteer','government','policy','advocacy','environmental','sustainability','energy','renewable','oil','gas','mining','agriculture','farming','veterinary','animal','marine','aviation','pilot','flight','dispatch','transportation','trucking','shipping','maritime','rail','transit','law','enforcement','security','firefighter','emergency','medical','paramedic','nursing','dental','pharmacy','optometry','physical','occupational','speech','radiology','sonography','surgical','anesthesia','pathology','laboratory','epidemiology','biostatistics','bioinformatics','genomics','proteomics','immunology','microbiology','neuroscience','psychiatry','cardiology','oncology','orthopedics','pediatrics','obgyn','dermatology','gastroenterology','nephrology','pulmonology','endocrinology','rheumatology','allergy','infectious','disease','publichealth','globalhealth','telehealth','digitalhealth','healthinformatics','clinicaltrial','regulatory','affairs','medicalwriting','pharmacovigilance','drug','safety','toxicology','pharmacology','analytical','chemistry','organic','chemistry','physical','chemistry','materials','science','nanotechnology','optics','photonics','semiconductor','microelectronics','telecommunications','wireless','rf','5g','satellite','defense','intelligence','cryptography','cybersecurity','penetration','testing','forensics','incident','response','threat','intelligence','vulnerability','management','identity','access','management','iam','zerotrust','siem','soar','gdpr','ccpa','hipaa','sox','pci','dss','nist','iso','27001','itil','cobit','togaf','lean','six','sigma','kaizen','tpm','5s','kanban','value','stream','mapping','root','cause','analysis','failure','mode','effects','analysis','fmea','statistical','process','control','spc','design','experiments','doe','reliability','engineering','systems','engineering','requirements','engineering','model','based','systems','engineering','mbse','digital','twin','simulation','finite','element','analysis','fea','computational','fluid','dynamics','cfd','multibody','dynamics','controls','robotics','automation','plc','scada','hmi','motion','control','cnc','additive','manufacturing','3d','printing','injection','molding','composite','materials','welding','fabrication','metrology','calibration','ndt','destructive','testing','corrosion','engineering','pipeline','engineering','subsea','engineering','offshore','engineering','wind','energy','solar','energy','battery','technology','fuel','cell','hydrogen','energy','carbon','capture','ccs','geothermal','nuclear','energy','fusion','energy','smart','grid','microgrid','demand','response','energy','storage','power','electronics','motor','design','transformer','switchgear','protection','relaying','arc','flash','hazard','analysis','electromagnetic','compatibility','emc','signal','integrity','power','integrity','pcb','design','fpga','asic','verilog','vhdl','systemverilog','uvm','formal','verification','static','timing','analysis','physical','design','layout','parasitic','extraction','drc','lvs','calibre','assura','ic','validator','custom','ic','design','analog','mixed','signal','rfic','mmwave','terahertz','quantum','computing','quantum','communication','quantum','sensing','quantum','cryptography','superconducting','photonic','quantum','trapped','ion','neutral','atom','quantum','dot','topological','quantum','error','correction','quantum','algorithm','quantum','machine','learning','quantum','optimization','quantum','simulation','quantum','chemistry','quantum','finance','quantum','ai','stakeholder','engagement','crossfunctional','collaboration','teamwork','communication','interpersonal','negotiation','conflict','resolution','time','management','prioritization','multitasking','adaptability','flexibility','creativity','innovation','problemsolving','critical','thinking','decision','making','analytical','thinking','attention','detail','organization','planning','forecasting','budgeting','forecasting','reporting','presentation','public','speaking','mentoring','coaching','training','onboarding','talent','development','performance','management','succession','planning','change','management','process','improvement','workflow','optimization','strategic','planning','market','research','competitive','analysis','customer','journey','user','experience','conversion','optimization','growth','hacking','demand','generation','lead','generation','account','management','key','account','management','channel','management','distribution','management','vendor','management','procurement','sourcing','contract','negotiation','category','management','inventory','management','demand','planning','production','planning','master','scheduling','material','requirements','planning','mrp','enterprise','resource','planning','erp','manufacturing','execution','system','mes','quality','management','system','qms','product','lifecycle','management','plm','customer','relationship','management','crm','learning','management','system','lms','human','capital','management','hcm','applicant','tracking','system','ats','business','intelligence','bi','data','warehousing','etl','elt','data','integration','data','migration','data','governance','data','quality','master','data','management','mdm','reference','data','management','metadata','management','data','lineage','data','catalog','data','masking','data','encryption','data','privacy','data','protection','information','security','access','control','audit','logging','vulnerability','assessment','penetration','testing','ethical','hacking','red','teaming','blue','teaming','purple','teaming','security','operations','soc','incident','management','disaster','recovery','business','continuity','crisis','management','risk','assessment','risk','mitigation','compliance','monitoring','regulatory','reporting','internal','audit','external','audit','financial','reporting','management','accounting','cost','accounting','tax','accounting','forensic','accounting','valuation','modeling','financial','modeling','investment','analysis','portfolio','management','wealth','management','asset','management','hedge','funds','private','equity','venture','capital','investment','banking','corporate','finance','treasury','management','cash','management','working','capital','management','credit','analysis','underwriting','claims','management','actuarial','science','reinsurance','insurance','brokerage','mortgage','brokerage','real','estate','brokerage','property','management','facility','management','construction','management','general','contracting','subcontracting','estimating','bidding','project','controls','scheduling','primavera','ms','project','scheduling','cost','control','earned','value','management','evm','building','information','modeling','bim','autocad','revit','archicad','sketchup','rhino','grasshopper','parametric','design','computational','design','sustainable','design','green','building','leed','well','building','passive','house','net','zero','energy','building','smart','building','iot','sensors','building','automation','hvac','design','plumbing','design','fire','protection','design','electrical','design','lighting','design','acoustics','design','audiovisual','design','security','design','wayfinding','design','signage','design','exhibition','design','retail','design','hospitality','design','healthcare','design','educational','design','workplace','design','residential','design','landscape','design','urban','design','master','planning','site','planning','transportation','planning','environmental','planning','regional','planning','economic','development','community','development','affordable','housing','historic','preservation','heritage','conservation','archaeology','paleontology','museum','studies','art','history','visual','culture','media','studies','film','studies','television','studies','game','studies','interactive','media','virtual','reality','augmented','reality','mixed','reality','extended','reality','spatial','computing','ambient','computing','ubiquitous','computing','pervasive','computing','human','computer','interaction','hci','user','interface','design','interaction','design','service','design','design','thinking','systems','thinking','complexity','thinking','futures','thinking','speculative','design','critical','design','social','design','transition','design','regenerative','design','circular','design','biomimicry','cradle','to','cradle','life','cycle','assessment','lca','environmental','product','declaration','epd','carbon','footprinting','water','footprinting','ecological','footprinting','social','impact','assessment','impact','investing','esg','reporting','sustainability','reporting','integrated','reporting','triple','bottom','line','shared','value','creating','shared','value','csv','conscious','capitalism','stakeholder','capitalism','b','corporation','benefit','corporation','social','enterprise','cooperative','mutual','organization','employee','ownership','trust','foundation','endowment','donor','advised','fund','impact','bond','social','impact','bond','development','impact','bond','green','bond','social','bond','sustainability','bond','blue','bond','transition','bond','catastrophe','bond','pandemic','bond','climate','finance','carbon','trading','carbon','offsets','carbon','credits','renewable','energy','credits','recs','green','certificates','power','purchase','agreement','ppa','virtual','ppa','sleeved','ppa','behind','the','meter','front','of','the','meter','distributed','energy','resource','der','microgrid','controller','energy','management','system','ems','building','energy','management','system','bems','home','energy','management','system','hems','industrial','energy','management','system','iem','demand','side','management','load','shifting','peak','shaving','frequency','response','ancillary','services','capacity','market','energy','market','electricity','market','gas','market','water','market','carbon','market','commodity','market','derivatives','market','foreign','exchange','market','fx','market','money','market','capital','market','debt','market','equity','market','private','market','secondary','market','over','the','counter','otc','market','exchange','traded','futures','market','options','market','swaps','market','repo','market','securities','lending','collateral','management','margin','management','clearing','settlement','custody','asset','servicing','fund','administration','transfer','agency','registry','services','corporate','actions','proxy','voting','shareholder','services','investor','relations','public','relations','media','relations','internal','communications','change','communications','crisis','communications','issue','management','reputation','management','brand','management','corporate','identity','visual','identity','brand','strategy','brand','positioning','brand','architecture','brand','extension','brand','licensing','co','branding','private','label','white','label','original','equipment','manufacturer','oem','original','design','manufacturer','odm','contract','manufacturer','electronic','manufacturing','services','ems','original','brand','manufacturer','obm','value','added','reseller','var','system','integrator','si','managed','service','provider','msp','independent','software','vendor','isv','software','as','a','service','saas','platform','as','a','service','paas','infrastructure','as','a','service','iaas','desktop','as','a','service','daas','backup','as','a','service','baas','disaster','recovery','as','a','service','draas','network','as','a','service','naas','security','as','a','service','secaa','communication','platform','as','a','service','cpaas','contact','center','as','a','service','ccaas','unified','communications','as','a','service','ucaas','video','conferencing','as','a','service','vcaas','meeting','software','event','management','software','webinar','software','virtual','event','platform','hybrid','event','platform','in','person','event','platform','ticketing','software','registration','software','scheduling','software','appointment','booking','software','reservation','system','table','management','system','queue','management','system','visitor','management','system','access','control','system','parking','management','system','fleet','management','system','telematics','gps','tracking','route','optimization','last','mile','delivery','same','day','delivery','next','day','delivery','two','day','delivery','subscription','box','fulfillment','dropshipping','print','on','demand','white','glove','delivery','reverse','logistics','returns','management','exchanges','management','refurbishment','remanufacturing','recycling','e','waste','management','hazardous','waste','management','medical','waste','management','food','waste','management','organic','waste','management','construction','waste','management','demolition','waste','management','municipal','solid','waste','management','wastewater','treatment','water','treatment','desalination','water','reuse','rainwater','harvesting','stormwater','management','flood','management','drought','management','irrigation','management','precision','agriculture','vertical','farming','controlled','environment','agriculture','cea','aquaculture','mariculture','algaculture','sericulture','apiculture','horticulture','arboriculture','viticulture','oenology','brewing','distilling','food','science','food','technology','food','engineering','food','safety','food','quality','sensory','science','consumer','science','market','research','consumer','insights','shopper','insights','brand','health','tracking','ad','effectiveness','measurement','media','measurement','attribution','modeling','marketing','mix','modeling','mmm','multi','touch','attribution','mta','incrementality','testing','lift','testing','a','b','testing','multivariate','testing','bandit','testing','personalization','recommendation','engines','churn','prediction','lifetime','value','prediction','ltv','prediction','customer','acquisition','cost','optimization','cac','optimization','return','on','ad','spend','optimization','roas','optimization','marketing','automation','email','marketing','marketing','sms','marketing','push','notification','marketing','in','app','marketing','mobile','marketing','affiliate','marketing','influencer','marketing','partner','marketing','co','marketing','referral','marketing','loyalty','marketing','retention','marketing','win','back','marketing','upsell','marketing','cross','sell','marketing','product','led','growth','plg','sales','led','growth','slg','community','led','growth','clg','event','led','growth','elg','content','led','growth','account','based','marketing','abm','account','based','experience','abx','demand','generation','lead','nurturing','sales','enablement','sales','operations','revenue','operations','revops','marketing','operations','mops','customer','operations','partner','operations','business','operations','bizops','finance','operations','fintech','operations','legal','operations','people','operations','procurement','operations','real','estate','operations'
+      ]);
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function countWords(text) {
+        return text.trim().split(/\s+/).filter(w => w.length > 0).length;
+      }
+
+      function cleanText(text) {
+        return text.toLowerCase()
+          .replace(/[^\w\s]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function extractKeywords(text) {
+        const clean = cleanText(text);
+        const words = clean.split(' ').filter(w => w.length > 2 && !STOP_WORDS.has(w));
+
+        const freq = {};
+        words.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+
+        // Bigrams
+        const rawWords = clean.split(' ').filter(w => w.length > 0);
+        const bigramFreq = {};
+        for (let i = 0; i < rawWords.length - 1; i++) {
+          if (!STOP_WORDS.has(rawWords[i]) && !STOP_WORDS.has(rawWords[i+1])) {
+            const bg = rawWords[i] + ' ' + rawWords[i+1];
+            bigramFreq[bg] = (bigramFreq[bg] || 0) + 1;
+          }
+        }
+
+        // Trigrams
+        const trigramFreq = {};
+        for (let i = 0; i < rawWords.length - 2; i++) {
+          if (!STOP_WORDS.has(rawWords[i]) && !STOP_WORDS.has(rawWords[i+1]) && !STOP_WORDS.has(rawWords[i+2])) {
+            const tg = rawWords[i] + ' ' + rawWords[i+1] + ' ' + rawWords[i+2];
+            trigramFreq[tg] = (trigramFreq[tg] || 0) + 1;
+          }
+        }
+
+        const keywords = [];
+        Object.entries(freq).forEach(([word, count]) => {
+          if (count >= 2 || word.length > 5 || SKILL_TERMS.has(word)) {
+            keywords.push(word);
+          }
+        });
+        Object.entries(bigramFreq).forEach(([phrase, count]) => {
+          if (count >= 2 || SKILL_TERMS.has(phrase.replace(/\s/g,''))) {
+            keywords.push(phrase);
+          }
+        });
+        Object.entries(trigramFreq).forEach(([phrase, count]) => {
+          if (count >= 2) {
+            keywords.push(phrase);
+          }
+        });
+
+        return [...new Set(keywords)];
+      }
+
+      function analyze() {
+        const jobText = document.getElementById('job-text').value;
+        const resumeText = document.getElementById('resume-text').value;
+
+        if (!jobText.trim() || !resumeText.trim()) {
+          alert('Please paste both a job description and your resume text.');
+          return;
+        }
+
+        const jobKeywords = extractKeywords(jobText);
+        const resumeClean = cleanText(resumeText);
+
+        // Whole-word / whole-phrase match. cleanText() reduces both sides to
+        // word-chars + single spaces, so a \b…\b regex is exact and safe — this
+        // mirrors how real ATS systems match (exact terms, not substrings),
+        // avoiding false positives like "java" matching "javascript".
+        function resumeHasKeyword(kw) {
+          const re = new RegExp('\\b' + kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b');
+          return re.test(resumeClean);
+        }
+
+        const matched = [];
+        const missing = [];
+
+        jobKeywords.forEach(kw => {
+          if (resumeHasKeyword(kw)) matched.push(kw); else missing.push(kw);
+        });
+
+        const total = jobKeywords.length;
+        const score = total > 0 ? Math.round((matched.length / total) * 100) : 0;
+
+        // Update UI
+        document.getElementById('match-score').textContent = score + '%';
+        document.getElementById('matched-count').textContent = matched.length;
+        document.getElementById('missing-count').textContent = missing.length;
+        document.getElementById('total-count').textContent = total;
+
+        let msg = '';
+        if (score >= 80) msg = 'Strong alignment. Your resume covers most of the key terms from this job description.';
+        else if (score >= 60) msg = 'Decent match. Consider adding some of the missing keywords to improve your chances.';
+        else if (score >= 40) msg = 'Weak match. Your resume may be filtered out by ATS before a human sees it. Add more relevant keywords.';
+        else msg = 'Very low match. This role uses very different language from your resume. Consider tailoring significantly or applying to roles that better align with your experience.';
+        document.getElementById('match-message').textContent = msg;
+
+        // Render matched
+        const matchedContainer = document.getElementById('matched-keywords');
+        matchedContainer.innerHTML = matched.length ? matched.map(k => `<span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-green-100 text-green-700 border border-green-200">${escapeHtml(k)}</span>`).join('') : '<span class="text-xs text-bae-muted">No matched keywords found.</span>';
+
+        // Render missing
+        const missingContainer = document.getElementById('missing-keywords');
+        missingContainer.innerHTML = missing.length ? missing.map(k => `<span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-red-100 text-red-700 border border-red-200">${escapeHtml(k)}</span>`).join('') : '<span class="text-xs text-bae-muted">No missing keywords. Great job!</span>';
+
+        // Show results
+        document.getElementById('results-panel').classList.remove('hidden');
+        document.getElementById('copy-missing-btn').disabled = missing.length === 0;
+        document.getElementById('download-pdf-btn').disabled = false;
+
+        // Build PDF content
+        const pdfContent = document.getElementById('pdf-report-content');
+        let pdfHtml = '<div style="padding: 40px 48px; font-family: Arial, Helvetica, sans-serif; font-size: 13px; color: #1f2937; line-height: 1.6;">';
+        pdfHtml += '<h1 style="font-size: 20px; font-weight: 700; margin: 0 0 16px 0;">Job Keyword Matcher Report</h1>';
+        pdfHtml += '<p style="margin: 0 0 12px 0;"><strong>Match Score:</strong> ' + score + '%</p>';
+        pdfHtml += '<p style="margin: 0 0 12px 0;"><strong>Matched:</strong> ' + matched.length + ' &nbsp;|&nbsp; <strong>Missing:</strong> ' + missing.length + ' &nbsp;|&nbsp; <strong>Total:</strong> ' + total + '</p>';
+        pdfHtml += '<p style="margin: 0 0 24px 0; color: #4b5563;">' + escapeHtml(msg) + '</p>';
+
+        if (matched.length) {
+          pdfHtml += '<h2 style="font-size: 14px; font-weight: 700; margin: 0 0 8px 0; color: #15803d;">Matched Keywords</h2>';
+          pdfHtml += '<p style="margin: 0 0 16px 0;">' + matched.map(k => escapeHtml(k)).join(', ') + '</p>';
+        }
+        if (missing.length) {
+          pdfHtml += '<h2 style="font-size: 14px; font-weight: 700; margin: 0 0 8px 0; color: #b91c1c;">Missing Keywords</h2>';
+          pdfHtml += '<p style="margin: 0 0 16px 0;">' + missing.map(k => escapeHtml(k)).join(', ') + '</p>';
+        }
+        pdfHtml += '</div>';
+        pdfContent.innerHTML = pdfHtml;
+
+        // Scroll to results
+        document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Word count updates
+      document.getElementById('job-text')?.addEventListener('input', (e) => {
+        document.getElementById('job-stats').textContent = countWords(e.target.value) + ' words';
+      });
+      document.getElementById('resume-text')?.addEventListener('input', (e) => {
+        document.getElementById('resume-stats').textContent = countWords(e.target.value) + ' words';
+      });
+
+      // Buttons
+      document.getElementById('analyze-btn')?.addEventListener('click', analyze);
+      document.getElementById('clear-job')?.addEventListener('click', () => {
+        document.getElementById('job-text').value = '';
+        document.getElementById('job-stats').textContent = '0 words';
+      });
+      document.getElementById('clear-resume')?.addEventListener('click', () => {
+        document.getElementById('resume-text').value = '';
+        document.getElementById('resume-stats').textContent = '0 words';
+      });
+
+      function copyToClipboard(text, btnId, successLabel) {
+        if (!text) return;
+        const btn = document.getElementById(btnId);
+        const original = btn ? btn.textContent : '';
+
+        function onSuccess() {
+          if (btn) {
+            btn.textContent = successLabel || 'Copied!';
+            setTimeout(() => btn.textContent = original, 1500);
+          }
+        }
+
+        function fallbackCopy() {
+          try {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            const ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            if (ok) onSuccess();
+            else alert('Copy failed. Please copy manually.');
+          } catch (e) {
+            alert('Copy failed. Please copy manually.');
+          }
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(onSuccess).catch(fallbackCopy);
+        } else {
+          fallbackCopy();
+        }
+      }
+
+      document.getElementById('copy-missing-btn')?.addEventListener('click', () => {
+        const missingContainer = document.getElementById('missing-keywords');
+        if (!missingContainer) return;
+        const badges = missingContainer.querySelectorAll('span');
+        const text = Array.from(badges).map(b => b.textContent).join(', ');
+        copyToClipboard(text, 'copy-missing-btn', 'Copied!');
+      });
+
+      document.getElementById('download-pdf-btn')?.addEventListener('click', async () => {
+        const btn = document.getElementById('download-pdf-btn');
+        const pdfContainer = document.getElementById('pdf-report-content');
+        const content = pdfContainer.firstElementChild;
+        if (!content) { alert('Please run the analysis first.'); return; }
+
+        btn.textContent = 'Generating...';
+        btn.disabled = true;
+
+        const clone = content.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        try {
+          await html2pdf().set({
+            margin: 0,
+            filename: 'keyword-match-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+          alert('PDF generation failed. Please try again.');
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = 'Download PDF Report';
+          btn.disabled = false;
+        }
+      });
+
+      // Import from Resume Builder
+      function tryImportResume() {
+        try {
+          const raw = localStorage.getItem('resume-builder-data-v1');
+          if (!raw) return;
+          const data = JSON.parse(raw);
+          const parts = [];
+          if (data.summary) parts.push(data.summary);
+          if (Array.isArray(data.experience)) {
+            data.experience.forEach(job => {
+              if (job.role) parts.push(job.role);
+              if (job.company) parts.push(job.company);
+              if (Array.isArray(job.bullets)) parts.push(job.bullets.join(' '));
+            });
+          }
+          if (Array.isArray(data.education)) {
+            data.education.forEach(edu => {
+              if (edu.school) parts.push(edu.school);
+              if (edu.degree) parts.push(edu.degree);
+              if (edu.field) parts.push(edu.field);
+            });
+          }
+          if (data.skills) parts.push(data.skills);
+          if (Array.isArray(data.projects)) {
+            data.projects.forEach(proj => {
+              if (proj.name) parts.push(proj.name);
+              if (Array.isArray(proj.bullets)) parts.push(proj.bullets.join(' '));
+            });
+          }
+          if (Array.isArray(data.certifications)) {
+            data.certifications.forEach(cert => {
+              if (cert.name) parts.push(cert.name);
+              if (cert.issuer) parts.push(cert.issuer);
+            });
+          }
+          const fullText = parts.join('\n\n');
+          if (!fullText.trim()) return;
+
+          const importBtn = document.getElementById('import-resume-btn');
+          importBtn.classList.remove('hidden');
+          importBtn.addEventListener('click', () => {
+            document.getElementById('resume-text').value = fullText;
+            document.getElementById('resume-stats').textContent = countWords(fullText) + ' words';
+          });
+        } catch (e) {}
+      }
+
+      tryImportResume();
+    })();
+  </script>
+</BaseLayout>

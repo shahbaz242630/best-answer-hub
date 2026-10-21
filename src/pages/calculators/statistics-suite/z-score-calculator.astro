@@ -1,0 +1,757 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ToolHero from '../../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is a z-score and why is it useful?',
+    a: 'A z-score (standard score) measures how many standard deviations a data point is from the mean. It standardises values across different scales, making it possible to compare results from different tests, datasets, or measurements. For example, a z-score of +1.5 means the value is 1.5 standard deviations above the mean, regardless of the original units.',
+  },
+  {
+    q: 'How does the Best Answer Hub Z-Score Calculator work?',
+    a: 'Enter the raw score, mean, and standard deviation into the Best Answer Hub Z-Score Calculator. Select whether you are using population or sample standard deviation. The calculator instantly returns the z-score, corresponding percentile, and a plain-English interpretation. A step-by-step breakdown and interactive bell curve visualisation are also provided.',
+  },
+  {
+    q: 'What is the z-score formula?',
+    a: 'The standard z-score formula is <strong>z = (x − μ) / σ</strong>, where x is the raw score, μ is the mean, and σ is the standard deviation. The Best Answer Hub Z-Score Calculator also supports reverse-solving: find the raw score from a z-score (x = μ + zσ), find the mean from a z-score (μ = x − zσ), or find the standard deviation from a z-score (σ = (x − μ) / z).',
+  },
+  {
+    q: 'Can the Best Answer Hub Z-Score Calculator handle negative z-scores?',
+    a: 'Yes. A negative z-score simply means the data point falls below the mean. It is not an error. The Best Answer Hub Z-Score Calculator displays negative results clearly and explains them in plain language, including the corresponding percentile and what it means in context.',
+  },
+  {
+    q: 'How do I know whether to use population or sample standard deviation?',
+    a: 'Use population standard deviation (σ) when the dataset includes every member of the group being studied. Use sample standard deviation (s) when working with a subset that estimates a larger population. The Best Answer Hub Z-Score Calculator includes a toggle to select the correct mode and automatically adjusts the formula notation.',
+  },
+  {
+    q: 'Does the Best Answer Hub Z-Score Calculator show step-by-step work?',
+    a: 'Yes. The Best Answer Hub Z-Score Calculator includes a "Show step-by-step" option that breaks down every arithmetic operation (subtraction of the mean, division by standard deviation, and rounding) so the entire process is visible for homework or exam review.',
+  },
+  {
+    q: 'Can I see a bell curve visual of my z-score?',
+    a: 'Yes. The Best Answer Hub Z-Score Calculator generates an interactive bell curve that shows the position of the calculated z-score on the normal distribution. The area to the left of the score is shaded, making it easy to visualise percentiles, tail probabilities, and how far a score is from the average.',
+  },
+  {
+    q: 'How do I convert a z-score to a percentile?',
+    a: 'Enter the raw score, mean, and standard deviation into the Best Answer Hub Z-Score Calculator. The tool automatically computes the z-score and converts it to a percentile using the standard normal cumulative distribution function. For example, a z-score of 1.0 corresponds to approximately the 84th percentile, meaning about 84% of values fall below this score.',
+  },
+  {
+    q: 'What is the z-score for the 95th percentile?',
+    a: 'The z-score for the 95th percentile is approximately <strong>1.645</strong>. For a two-tailed 95% confidence interval, the critical z-values are <strong>±1.96</strong>. The Best Answer Hub Z-Score Calculator includes quick-reference chips for these common critical values, as well as 90% (±1.645) and 99% (±2.576) confidence levels.',
+  },
+  {
+    q: 'Can the Best Answer Hub Z-Score Calculator find the raw score from a z-score?',
+    a: 'Yes. Switch to "Find Raw Score" mode, enter the z-score, mean, and standard deviation, and the Best Answer Hub Z-Score Calculator computes the original raw score using the formula <strong>x = μ + zσ</strong>. Step-by-step work and interpretation are provided just like in the standard z-score mode.',
+  },
+  {
+    q: 'What does a z-score of 0 mean?',
+    a: 'A z-score of 0 means the data point is exactly equal to the mean. In a normal distribution, this corresponds to the 50th percentile. The Best Answer Hub Z-Score Calculator highlights this result and notes that the value sits at the centre of the distribution.',
+  },
+  {
+    q: 'Is a z-score above 3 or below −3 possible?',
+    a: 'Yes. While values beyond ±3 are rare in a normal distribution (about 0.3% of data), they are mathematically valid. The Best Answer Hub Z-Score Calculator handles extreme z-scores and flags them as potential outliers when relevant, with an appropriate interpretation.',
+  },
+  {
+    q: 'Can I calculate the z-score for a sample mean instead of a single value?',
+    a: 'Yes. The Best Answer Hub Z-Score Calculator includes a "Sample Mean" option that uses the standard error formula <strong>z = (x̄ − μ) / (σ / √n)</strong>, where n is the sample size. This is essential for hypothesis testing and sampling distribution problems.',
+  },
+  {
+    q: 'Can I print or export the calculation steps?',
+    a: 'Yes. The Best Answer Hub Z-Score Calculator offers a PDF export feature that captures the input values, formula, step-by-step work, bell curve graphic, and interpretation. No account or signup is required.',
+  },
+  {
+    q: 'Does the z-score assume a normal distribution?',
+    a: 'The z-score itself can be calculated for any dataset, but percentile and probability interpretations assume an approximately normal (bell-shaped) distribution. The Best Answer Hub Z-Score Calculator displays a normality reminder when results are generated, helping users avoid misinterpreting skewed data.',
+  },
+];
+
+const steps = [
+  { title: 'Choose your mode', description: 'Select whether to find the z-score, raw score, mean, or standard deviation. Toggle between population and sample standard deviation as needed.' },
+  { title: 'Enter your values', description: 'Input the known values: raw score, mean, and standard deviation. The calculator validates inputs and warns about common mistakes.' },
+  { title: 'Get instant results', description: 'See the z-score, percentile, step-by-step work, plain-English interpretation, and an interactive bell curve. Export to PDF with one click.' },
+];
+
+const seo = {
+  title: 'Z-Score Calculator with Steps & Percentile (2026)',
+  description: 'Free z-score calculator with step-by-step work, percentile conversion, and an interactive bell curve. Solve for any variable. No signup.',
+  url: '/calculators/statistics-suite/z-score-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Statistics Suite', url: '/calculators/statistics-suite/' },
+    { name: 'Z-Score Calculator', url: '/calculators/statistics-suite/z-score-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    backLink="/calculators/statistics-suite/"
+    backLabel="← Statistics Suite"
+    badge="Free Tool · Statistical Analysis"
+    title="Z-Score Calculator"
+    accentText="with Steps, Percentile & Bell Curve"
+    description="Calculate z-scores instantly with step-by-step work, percentile conversion, and an interactive bell curve. Solve for z-score, raw score, mean, or standard deviation. All calculations run in your browser, with no data sent to any server."
+  />
+
+  <!-- Calculator -->
+  <section class="py-6 md:py-8" aria-label="Z-Score Calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Left: Inputs -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <!-- Mode Selector -->
+          <div class="mb-5">
+            <label class="block text-sm font-medium text-bae-ink mb-2">What do you want to find?</label>
+            <div class="flex flex-wrap gap-2" id="mode-tabs">
+              <button type="button" data-mode="zscore" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-bae-primary text-white font-medium">Z-Score</button>
+              <button type="button" data-mode="raw" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Raw Score</button>
+              <button type="button" data-mode="mean" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Mean</button>
+              <button type="button" data-mode="sd" class="mode-tab px-3 py-1.5 text-sm rounded-bae-sm border border-bae-border bg-white text-bae-ink">Standard Deviation</button>
+            </div>
+          </div>
+
+          <!-- Population / Sample Toggle -->
+          <div class="mb-5">
+            <label class="block text-sm font-medium text-bae-ink mb-2">Standard deviation type</label>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 text-sm text-bae-ink cursor-pointer">
+                <input type="radio" name="sd-type" value="population" checked class="accent-bae-primary">
+                Population (σ)
+              </label>
+              <label class="flex items-center gap-2 text-sm text-bae-ink cursor-pointer">
+                <input type="radio" name="sd-type" value="sample" class="accent-bae-primary">
+                Sample (s)
+              </label>
+            </div>
+          </div>
+
+          <!-- Inputs -->
+          <div class="space-y-4" id="input-fields">
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1" id="label-x">Raw Score (x)</label>
+              <input type="number" id="input-x" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 85">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1" id="label-mu">Mean (μ)</label>
+              <input type="number" id="input-mu" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 70">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-bae-ink mb-1" id="label-sigma">Standard Deviation (σ)</label>
+              <input type="number" id="input-sigma" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 10">
+            </div>
+          </div>
+
+          <!-- Sample Size (hidden by default) -->
+          <div class="mt-4 hidden" id="sample-size-field">
+            <label class="flex items-center gap-2 text-sm text-bae-ink cursor-pointer mb-2">
+              <input type="checkbox" id="use-sample-mean" class="accent-bae-primary">
+              Calculate z-score for a sample mean (use standard error)
+            </label>
+            <div id="sample-size-input-wrapper" class="hidden">
+              <label class="block text-sm font-medium text-bae-ink mb-1">Sample Size (n)</label>
+              <input type="number" id="input-n" min="1" step="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" placeholder="e.g. 30">
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-3 mt-6">
+            <button type="button" id="calc-btn" class="bg-bae-primary text-white px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-primary-dark transition-colors">Calculate</button>
+            <button type="button" id="clear-btn" class="bg-white border border-bae-border text-bae-ink px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-border/20 transition-colors">Clear</button>
+            <button type="button" id="pdf-btn" class="bg-white border border-bae-border text-bae-ink px-5 py-2.5 rounded-bae-sm text-sm font-medium hover:bg-bae-border/20 transition-colors hidden">Download PDF</button>
+          </div>
+
+          <!-- Critical Values Quick Pick -->
+          <div class="mt-5 pt-4 border-t border-bae-border-light">
+            <p class="text-xs font-medium text-bae-muted mb-2">Quick reference: Common critical z-values</p>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="critical-btn text-xs px-2.5 py-1 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-z="1.645">90%: ±1.645</button>
+              <button type="button" class="critical-btn text-xs px-2.5 py-1 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-z="1.96">95%: ±1.96</button>
+              <button type="button" class="critical-btn text-xs px-2.5 py-1 rounded-bae-sm border border-bae-border bg-white text-bae-ink hover:bg-bae-primary-soft" data-z="2.576">99%: ±2.576</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Results -->
+        <div class="space-y-4">
+          <!-- Main Result Card -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="result-card" style="display: none;">
+            <h3 class="text-sm font-semibold text-bae-ink mb-4">Result</h3>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1" id="result-label-1">Z-Score</p>
+                <p class="text-2xl font-bold text-bae-primary" id="result-z">—</p>
+              </div>
+              <div>
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Percentile</p>
+                <p class="text-2xl font-bold text-bae-primary" id="result-percentile">—</p>
+              </div>
+            </div>
+            <div class="p-3 rounded-bae-sm bg-bae-primary-soft border border-bae-primary/20 text-sm text-bae-ink" id="result-interpretation"></div>
+            <p class="text-xs text-bae-muted mt-3 flex gap-1.5"><span aria-hidden="true">ℹ️</span><span>Percentile and probability values assume an approximately normal (bell-shaped) distribution. For skewed data, interpret these figures with caution.</span></p>
+          </div>
+
+          <!-- Bell Curve -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="bell-curve-card" style="display: none;">
+            <h3 class="text-sm font-semibold text-bae-ink mb-3">Normal Distribution</h3>
+            <canvas id="bell-curve" width="500" height="220" class="w-full rounded-bae-sm border border-bae-border bg-white"></canvas>
+            <p class="text-xs text-bae-muted mt-2 text-center">Shaded area represents the percentile (area to the left of the z-score)</p>
+          </div>
+
+          <!-- Step-by-Step -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6" id="steps-card" style="display: none;">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-bae-ink">Step-by-Step Work</h3>
+              <button type="button" id="toggle-steps" class="text-xs text-bae-primary font-medium bg-transparent border-0 cursor-pointer">Hide</button>
+            </div>
+            <div id="steps-content" class="space-y-2 text-sm text-bae-ink"></div>
+          </div>
+
+          <!-- Initial State -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 text-center" id="empty-state">
+            <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xl">📐</div>
+            <p class="text-sm font-medium text-bae-ink mb-1">Enter your values and click Calculate</p>
+            <p class="text-xs text-bae-muted">The z-score, percentile, bell curve, and step-by-step work will appear here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Calculate Z-Score -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">How to Calculate Z-Score</h2>
+      <p class="text-sm text-bae-muted mb-8">The z-score formula and a worked example.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">The Formula</h3>
+          <div class="bg-white border border-bae-border rounded-bae-sm p-4 mb-4 text-center">
+            <p class="text-lg font-mono text-bae-ink">z = <span class="inline-block border-b-2 border-bae-ink px-2">x − μ</span> / σ</p>
+          </div>
+          <ul class="text-sm text-bae-muted space-y-2">
+            <li><strong class="text-bae-ink">z</strong> = z-score (standard score)</li>
+            <li><strong class="text-bae-ink">x</strong> = raw score (the value being standardised)</li>
+            <li><strong class="text-bae-ink">μ</strong> = population mean (average of the dataset)</li>
+            <li><strong class="text-bae-ink">σ</strong> = population standard deviation</li>
+          </ul>
+          <div class="mt-4 pt-4 border-t border-bae-border-light">
+            <p class="text-sm text-bae-ink font-medium mb-1">Reverse formulas:</p>
+            <ul class="text-sm text-bae-muted space-y-1">
+              <li>Raw Score: <span class="font-mono">x = μ + zσ</span></li>
+              <li>Mean: <span class="font-mono">μ = x − zσ</span></li>
+              <li>Standard Deviation: <span class="font-mono">σ = (x − μ) / z</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <h3 class="text-base font-semibold text-bae-ink mb-3">Worked Example</h3>
+          <p class="text-sm text-bae-muted mb-4">A student scored 85 on a test where the class mean was 70 and the standard deviation was 10.</p>
+          <div class="space-y-3 text-sm">
+            <div class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">1</span>
+              <p class="text-bae-muted">Write the formula: <span class="font-mono text-bae-ink">z = (x − μ) / σ</span></p>
+            </div>
+            <div class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">2</span>
+              <p class="text-bae-muted">Substitute values: <span class="font-mono text-bae-ink">z = (85 − 70) / 10</span></p>
+            </div>
+            <div class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">3</span>
+              <p class="text-bae-muted">Subtract: <span class="font-mono text-bae-ink">z = 15 / 10</span></p>
+            </div>
+            <div class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">4</span>
+              <p class="text-bae-muted">Divide: <span class="font-mono text-bae-ink">z = 1.50</span></p>
+            </div>
+            <div class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">5</span>
+              <p class="text-bae-muted">Interpret: The score is <strong class="text-bae-ink">1.5 standard deviations above the mean</strong>, approximately the <strong class="text-bae-ink">93rd percentile</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Z-Score Table -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Z-Score Table Reference</h2>
+      <p class="text-sm text-bae-muted mb-6">Common z-scores and their corresponding percentiles and confidence levels.</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border border-bae-border rounded-bae">
+          <thead>
+            <tr class="bg-bae-card border-b border-bae-border">
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Z-Score</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Percentile</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Left-Tail Probability</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Right-Tail Probability</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Context</th>
+            </tr>
+          </thead>
+          <tbody class="text-bae-muted">
+            <tr class="border-b border-bae-border/50"><td class="px-4 py-2.5 font-mono">−3.00</td><td class="px-4 py-2.5">0.13%</td><td class="px-4 py-2.5">0.0013</td><td class="px-4 py-2.5">0.9987</td><td class="px-4 py-2.5">Extreme outlier</td></tr>
+            <tr class="border-b border-bae-border/50"><td class="px-4 py-2.5 font-mono">−2.00</td><td class="px-4 py-2.5">2.28%</td><td class="px-4 py-2.5">0.0228</td><td class="px-4 py-2.5">0.9772</td><td class="px-4 py-2.5">Very low</td></tr>
+            <tr class="border-b border-bae-border/50"><td class="px-4 py-2.5 font-mono">−1.645</td><td class="px-4 py-2.5">5.00%</td><td class="px-4 py-2.5">0.0500</td><td class="px-4 py-2.5">0.9500</td><td class="px-4 py-2.5">90% CI lower bound</td></tr>
+            <tr class="border-b border-bae-border/50"><td class="px-4 py-2.5 font-mono">−1.00</td><td class="px-4 py-2.5">15.87%</td><td class="px-4 py-2.5">0.1587</td><td class="px-4 py-2.5">0.8413</td><td class="px-4 py-2.5">Below average</td></tr>
+            <tr class="border-b border-bae-border/50 bg-bae-primary-soft/30"><td class="px-4 py-2.5 font-mono font-bold text-bae-primary">0.00</td><td class="px-4 py-2.5 font-bold text-bae-primary">50.00%</td><td class="px-4 py-2.5 font-bold text-bae-primary">0.5000</td><td class="px-4 py-2.5 font-bold text-bae-primary">0.5000</td><td class="px-4 py-2.5 font-bold text-bae-primary">Exactly average</td></tr>
+            <tr class="border-b border-bae-border/50"><td class="px-4 py-2.5 font-mono">+1.00</td><td class="px-4 py-2.5">84.13%</td><td class="px-4 py-2.5">0.8413</td><td class="px-4 py-2.5">0.1587</td><td class="px-4 py-2.5">Above average</td></tr>
+            <tr class="border-b border-bae-border/50"><td class="px-4 py-2.5 font-mono">+1.645</td><td class="px-4 py-2.5">95.00%</td><td class="px-4 py-2.5">0.9500</td><td class="px-4 py-2.5">0.0500</td><td class="px-4 py-2.5">90% CI upper bound</td></tr>
+            <tr class="border-b border-bae-border/50"><td class="px-4 py-2.5 font-mono">+1.96</td><td class="px-4 py-2.5">97.50%</td><td class="px-4 py-2.5">0.9750</td><td class="px-4 py-2.5">0.0250</td><td class="px-4 py-2.5">95% CI upper bound</td></tr>
+            <tr class="border-b border-bae-border/50"><td class="px-4 py-2.5 font-mono">+2.00</td><td class="px-4 py-2.5">97.72%</td><td class="px-4 py-2.5">0.9772</td><td class="px-4 py-2.5">0.0228</td><td class="px-4 py-2.5">Very high</td></tr>
+            <tr class="border-b border-bae-border/50"><td class="px-4 py-2.5 font-mono">+2.576</td><td class="px-4 py-2.5">99.50%</td><td class="px-4 py-2.5">0.9950</td><td class="px-4 py-2.5">0.0050</td><td class="px-4 py-2.5">99% CI upper bound</td></tr>
+            <tr><td class="px-4 py-2.5 font-mono">+3.00</td><td class="px-4 py-2.5">99.87%</td><td class="px-4 py-2.5">0.9987</td><td class="px-4 py-2.5">0.0013</td><td class="px-4 py-2.5">Extreme outlier</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-bae-muted mt-3">Values are approximate. The Best Answer Hub Z-Score Calculator computes exact percentiles using the standard normal cumulative distribution function.</p>
+    </div>
+  </section>
+
+  <!-- Related Calculators -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Related Statistics Calculators</h2>
+      <p class="text-sm text-bae-muted mb-6">Explore the other tools in the Best Answer Hub Statistics Calculator Suite.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a href="/calculators/statistics-suite/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Hub</span>
+            <span class="text-lg">📊</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Statistics Suite</h3>
+          <p class="text-xs text-bae-muted">All four statistical calculators in one place.</p>
+        </a>
+        <a href="/calculators/statistics-suite/confidence-interval-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="text-lg">📊</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Confidence Interval Calculator</h3>
+          <p class="text-xs text-bae-muted">Calculate intervals for means and proportions with step-by-step work.</p>
+        </a>
+        <a href="/calculators/statistics-suite/p-value-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-5 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Academic</span>
+            <span class="text-lg">🎯</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">P-Value Calculator</h3>
+          <p class="text-xs text-bae-muted">Convert z-scores, t-scores, chi-square, and F-ratios to p-values.</p>
+        </a>
+        <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-5 text-inherit cursor-not-allowed">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">Academic</span>
+            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+          </div>
+          <h3 class="text-sm font-semibold text-bae-ink/70 mb-1">T-Test Calculator</h3>
+          <p class="text-xs text-bae-muted/70">One-sample, independent, and paired t-tests.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <ToolRelatedCTA currentHref="/calculators/statistics-suite/z-score-calculator/" />
+
+  <!-- Hidden PDF Report -->
+  <div id="print-report" class="hidden bg-white p-8">
+    <div class="max-w-[190mm] mx-auto">
+      <h1 class="text-2xl font-bold text-bae-ink mb-1">Z-Score Calculation Report</h1>
+      <p class="text-sm text-bae-muted mb-6">Generated by Best Answer Hub Z-Score Calculator</p>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Z-Score</p>
+          <p class="text-xl font-bold text-bae-primary" id="report-z">—</p>
+        </div>
+        <div class="bg-gray-50 rounded p-3">
+          <p class="text-xs text-gray-500 uppercase">Percentile</p>
+          <p class="text-xl font-bold text-bae-primary" id="report-percentile">—</p>
+        </div>
+      </div>
+      <div class="mb-6">
+        <p class="text-xs text-gray-500 uppercase mb-1">Interpretation</p>
+        <p class="text-sm text-bae-ink" id="report-interpretation"></p>
+        <p class="text-xs text-gray-400 mt-2">Percentile and probability values assume an approximately normal (bell-shaped) distribution. For skewed data, interpret with caution.</p>
+      </div>
+      <div class="mb-6" id="report-bell-curve-wrapper">
+        <p class="text-xs text-gray-500 uppercase mb-2">Normal Distribution</p>
+        <img id="report-bell-curve" src="" alt="Bell curve showing z-score position" style="max-width:100%;height:auto;display:block;border:1px solid #e5e7eb;border-radius:4px;">
+      </div>
+      <div class="mb-6">
+        <p class="text-xs text-gray-500 uppercase mb-2">Calculation Details</p>
+        <div id="report-details" class="text-sm text-bae-ink space-y-1"></div>
+      </div>
+      <div class="mt-8 pt-4 border-t text-xs text-gray-400">
+        <p>Best Answer Hub · www.bestanswerhub.com/calculators/statistics-suite/z-score-calculator/</p>
+        <p>All calculations performed client-side. No data stored.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/html2pdf.bundle.min.js" is:inline></script>
+  <script>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+      let currentMode = 'zscore';
+
+      function normalCDF(z) {
+        // Abramowitz and Stegun approximation
+        const b1 = 0.319381530, b2 = -0.356563782, b3 = 1.781477937;
+        const b4 = -1.821255978, b5 = 1.330274429, p = 0.2316419, c = 0.39894228;
+        if (z >= 0) {
+          const t = 1.0 / (1.0 + p * z);
+          return 1.0 - c * Math.exp(-z * z / 2.0) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1);
+        }
+        return 1.0 - normalCDF(-z);
+      }
+
+      function getInterpretation(z) {
+        const absZ = Math.abs(z);
+        if (absZ === 0) return 'The score is exactly equal to the mean (50th percentile).';
+        const dir = z > 0 ? 'above' : 'below';
+        const pct = (normalCDF(z) * 100).toFixed(2);
+        let level = '';
+        if (absZ > 3) level = 'an extreme outlier';
+        else if (absZ > 2) level = 'very unusual';
+        else if (absZ > 1) level = 'unusual';
+        else level = 'typical';
+        return `The score is ${absZ.toFixed(2)} standard deviations ${dir} the mean (${pct}th percentile). This is considered ${level} in a normal distribution.`;
+      }
+
+      function drawBellCurve(canvas, zScore) {
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        const padL = 45, padR = 15, padT = 15, padB = 30;
+        const graphW = w - padL - padR, graphH = h - padT - padB;
+        ctx.clearRect(0, 0, w, h);
+
+        // Background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+
+        // Normal PDF
+        function pdf(x) {
+          return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * x * x);
+        }
+
+        const xMin = -3.5, xMax = 3.5, yMax = pdf(0);
+        const scaleX = graphW / (xMax - xMin);
+        const scaleY = graphH / (yMax * 1.15);
+
+        function toCanvasX(x) { return padL + (x - xMin) * scaleX; }
+        function toCanvasY(y) { return padT + graphH - y * scaleY; }
+
+        // Shaded area under curve (left of zScore)
+        if (!isNaN(zScore)) {
+          ctx.fillStyle = 'rgba(59, 130, 246, 0.15)';
+          ctx.beginPath();
+          ctx.moveTo(toCanvasX(xMin), toCanvasY(0));
+          const step = 0.02;
+          for (let x = xMin; x <= Math.min(zScore, xMax); x += step) {
+            ctx.lineTo(toCanvasX(x), toCanvasY(pdf(x)));
+          }
+          ctx.lineTo(toCanvasX(Math.min(zScore, xMax)), toCanvasY(0));
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Grid lines
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        for (let x = -3; x <= 3; x++) {
+          const cx = toCanvasX(x);
+          ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, h - padB); ctx.stroke();
+        }
+
+        // X-axis
+        ctx.strokeStyle = '#9ca3af';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, toCanvasY(0));
+        ctx.lineTo(w - padR, toCanvasY(0));
+        ctx.stroke();
+
+        // X-axis labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        for (let x = -3; x <= 3; x++) {
+          ctx.fillText(x === 0 ? 'μ' : x.toString(), toCanvasX(x), h - 10);
+        }
+
+        // Curve
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let x = xMin; x <= xMax; x += 0.02) {
+          const px = toCanvasX(x), py = toCanvasY(pdf(x));
+          if (x === xMin) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Z-score line
+        if (!isNaN(zScore) && zScore >= xMin && zScore <= xMax) {
+          const zx = toCanvasX(zScore);
+          ctx.strokeStyle = '#dc2626';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([4, 3]);
+          ctx.beginPath();
+          ctx.moveTo(zx, padT);
+          ctx.lineTo(zx, toCanvasY(0));
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Label
+          ctx.fillStyle = '#dc2626';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('z = ' + zScore.toFixed(2), zx, padT + 12);
+        }
+      }
+
+      function updateMode(mode) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-tab').forEach(btn => {
+          if (btn.dataset.mode === mode) {
+            btn.classList.remove('bg-white', 'text-bae-ink');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-white', 'text-bae-ink');
+          }
+        });
+
+        const labels = {
+          zscore: { x: 'Raw Score (x)', mu: 'Mean (μ)', sigma: 'Standard Deviation (σ)', res: 'Z-Score' },
+          raw: { x: 'Z-Score (z)', mu: 'Mean (μ)', sigma: 'Standard Deviation (σ)', res: 'Raw Score' },
+          mean: { x: 'Raw Score (x)', mu: 'Z-Score (z)', sigma: 'Standard Deviation (σ)', res: 'Mean' },
+          sd: { x: 'Raw Score (x)', mu: 'Mean (μ)', sigma: 'Z-Score (z)', res: 'Standard Deviation' },
+        };
+        $('label-x').textContent = labels[mode].x;
+        $('label-mu').textContent = labels[mode].mu;
+        $('label-sigma').textContent = labels[mode].sigma;
+        $('result-label-1').textContent = labels[mode].res;
+
+        // Show/hide sample mean option
+        $('sample-size-field').classList.toggle('hidden', mode !== 'zscore');
+      }
+
+      document.querySelectorAll('.mode-tab').forEach(btn => {
+        btn.addEventListener('click', () => updateMode(btn.dataset.mode));
+      });
+
+      $('use-sample-mean').addEventListener('change', (e) => {
+        $('sample-size-input-wrapper').classList.toggle('hidden', !e.target.checked);
+      });
+
+      document.querySelectorAll('.critical-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          updateMode('raw');
+          $('input-x').value = btn.dataset.z;
+          calculate();
+        });
+      });
+
+      function calculate() {
+        const x = parseFloat($('input-x').value);
+        const mu = parseFloat($('input-mu').value);
+        const sigma = parseFloat($('input-sigma').value);
+        const useSampleMean = $('use-sample-mean').checked;
+        const n = useSampleMean ? (parseInt($('input-n').value) || 1) : 1;
+        const sdType = document.querySelector('input[name="sd-type"]:checked').value;
+        const sigmaLabel = sdType === 'population' ? 'σ' : 's';
+
+        if (isNaN(x) || isNaN(mu) || isNaN(sigma) || sigma === 0) {
+          $('empty-state').style.display = 'block';
+          $('result-card').style.display = 'none';
+          $('bell-curve-card').style.display = 'none';
+          $('steps-card').style.display = 'none';
+          $('pdf-btn').classList.add('hidden');
+          return;
+        }
+
+        let result, zScore, steps = [];
+        const effectiveSigma = useSampleMean ? sigma / Math.sqrt(n) : sigma;
+
+        switch (currentMode) {
+          case 'zscore':
+            result = (x - mu) / effectiveSigma;
+            zScore = result;
+            steps.push(`Formula: z = (x − μ) / ${useSampleMean ? '(σ / √n)' : sigmaLabel}`);
+            steps.push(`Substitute: z = (${x} − ${mu}) / ${useSampleMean ? '(' + sigma + ' / √' + n + ')' : sigma}`);
+            if (useSampleMean) {
+              steps.push(`Standard Error = ${sigma} / √${n} = ${effectiveSigma.toFixed(4)}`);
+              steps.push(`Simplify: z = ${(x - mu).toFixed(4)} / ${effectiveSigma.toFixed(4)}`);
+            } else {
+              steps.push(`Simplify: z = ${(x - mu).toFixed(4)} / ${sigma}`);
+            }
+            steps.push(`Result: z = ${result.toFixed(4)}`);
+            break;
+          case 'raw':
+            result = mu + x * sigma;
+            zScore = x;
+            steps.push(`Formula: x = μ + z${sigmaLabel}`);
+            steps.push(`Substitute: x = ${mu} + ${x} × ${sigma}`);
+            steps.push(`Multiply: ${x} × ${sigma} = ${(x * sigma).toFixed(4)}`);
+            steps.push(`Add: ${mu} + ${(x * sigma).toFixed(4)} = ${result.toFixed(4)}`);
+            steps.push(`Result: x = ${result.toFixed(4)}`);
+            break;
+          case 'mean':
+            result = x - mu * sigma;
+            zScore = mu;
+            steps.push(`Formula: μ = x − z${sigmaLabel}`);
+            steps.push(`Substitute: μ = ${x} − ${mu} × ${sigma}`);
+            steps.push(`Multiply: ${mu} × ${sigma} = ${(mu * sigma).toFixed(4)}`);
+            steps.push(`Subtract: ${x} − ${(mu * sigma).toFixed(4)} = ${result.toFixed(4)}`);
+            steps.push(`Result: μ = ${result.toFixed(4)}`);
+            break;
+          case 'sd':
+            result = (x - mu) / sigma;
+            zScore = sigma;
+            steps.push(`Formula: ${sigmaLabel} = (x − μ) / z`);
+            steps.push(`Substitute: ${sigmaLabel} = (${x} − ${mu}) / ${sigma}`);
+            steps.push(`Subtract: ${x} − ${mu} = ${(x - mu).toFixed(4)}`);
+            steps.push(`Divide: ${(x - mu).toFixed(4)} / ${sigma} = ${result.toFixed(4)}`);
+            steps.push(`Result: ${sigmaLabel} = ${result.toFixed(4)}`);
+            break;
+        }
+
+        const percentile = normalCDF(zScore) * 100;
+
+        $('empty-state').style.display = 'none';
+        $('result-card').style.display = 'block';
+        $('bell-curve-card').style.display = 'block';
+        $('steps-card').style.display = 'block';
+        $('pdf-btn').classList.remove('hidden');
+
+        $('result-z').textContent = result.toFixed(4);
+        $('result-percentile').textContent = percentile.toFixed(2) + '%';
+        $('result-interpretation').textContent = getInterpretation(zScore);
+
+        // Steps
+        $('steps-content').innerHTML = steps.map(s => '<p class="font-mono text-xs bg-white border border-bae-border rounded-bae-sm px-3 py-2">' + s + '</p>').join('');
+
+        // Bell curve
+        const canvas = $('bell-curve');
+        canvas.width = canvas.offsetWidth * 2;
+        canvas.height = 220 * 2;
+        drawBellCurve(canvas, zScore);
+
+        // PDF report
+        $('report-z').textContent = result.toFixed(4);
+        $('report-percentile').textContent = percentile.toFixed(2) + '%';
+        $('report-interpretation').textContent = getInterpretation(zScore);
+        $('report-details').innerHTML = steps.map(s => '<p>' + s + '</p>').join('');
+        $('report-bell-curve').src = canvas.toDataURL('image/png');
+        $('report-bell-curve-wrapper').style.display = (!isNaN(zScore)) ? 'block' : 'none';
+
+        updateURL();
+      }
+
+      $('calc-btn').addEventListener('click', calculate);
+      $('clear-btn').addEventListener('click', () => {
+        $('input-x').value = '';
+        $('input-mu').value = '';
+        $('input-sigma').value = '';
+        $('input-n').value = '';
+        $('use-sample-mean').checked = false;
+        $('sample-size-input-wrapper').classList.add('hidden');
+        $('empty-state').style.display = 'block';
+        $('result-card').style.display = 'none';
+        $('bell-curve-card').style.display = 'none';
+        $('steps-card').style.display = 'none';
+        $('pdf-btn').classList.add('hidden');
+      });
+
+      // PDF generation
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating...';
+        btn.disabled = true;
+
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '210mm';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.style.margin = '0';
+
+        const report = $('print-report').cloneNode(true);
+        report.removeAttribute('id');
+        report.classList.remove('hidden');
+        wrapper.appendChild(report);
+        document.body.appendChild(wrapper);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'z-score-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(wrapper).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (wrapper.parentNode) document.body.removeChild(wrapper);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // URL sharing
+      function updateURL() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('m', currentMode);
+        url.searchParams.set('x', $('input-x').value);
+        url.searchParams.set('mu', $('input-mu').value);
+        url.searchParams.set('s', $('input-sigma').value);
+        const sdType = document.querySelector('input[name="sd-type"]:checked').value;
+        url.searchParams.set('sd', sdType);
+        window.history.replaceState({}, '', url);
+      }
+
+      function readURL() {
+        const url = new URL(window.location.href);
+        const mode = url.searchParams.get('m');
+        if (mode && ['zscore', 'raw', 'mean', 'sd'].includes(mode)) {
+          updateMode(mode);
+        }
+        if (url.searchParams.has('x')) $('input-x').value = url.searchParams.get('x');
+        if (url.searchParams.has('mu')) $('input-mu').value = url.searchParams.get('mu');
+        if (url.searchParams.has('s')) $('input-sigma').value = url.searchParams.get('s');
+        const sd = url.searchParams.get('sd');
+        if (sd) {
+          document.querySelectorAll('input[name="sd-type"]').forEach(r => r.checked = r.value === sd);
+        }
+        if ($('input-x').value && $('input-mu').value && $('input-sigma').value) {
+          calculate();
+        }
+      }
+
+      // Toggle steps
+      let stepsVisible = true;
+      $('toggle-steps').addEventListener('click', () => {
+        stepsVisible = !stepsVisible;
+        $('steps-content').style.display = stepsVisible ? 'block' : 'none';
+        $('toggle-steps').textContent = stepsVisible ? 'Hide' : 'Show';
+      });
+
+      readURL();
+    })();
+  </script>
+</BaseLayout>

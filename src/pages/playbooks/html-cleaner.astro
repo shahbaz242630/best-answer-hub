@@ -1,0 +1,364 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: "What is the Best Answer Hub HTML Cleaner and Text Stripper?", a: "The Best Answer Hub HTML Cleaner and Text Stripper is a free, browser-based tool that turns messy HTML from Word, Google Docs, and CMS exports into clean semantic markup, and strips invisible Unicode characters from plain text. It runs client-side, with no signup, no ads, and nothing uploaded." },
+  { q: "Why is HTML from Word so messy?", a: "Word attaches proprietary code to every copy: a MsoNormal class, mso- inline styles, empty o:p tags, and conditional comments for old Outlook. None of it belongs on a web page. The Best Answer Hub HTML Cleaner rewrites it as the semantic elements a page actually needs." },
+  { q: "What are invisible characters?", a: "They are real Unicode code points with no visible width, such as the zero-width space (U+200B) and the byte order mark (U+FEFF), plus look-alikes like the non-breaking space (U+00A0). The Best Answer Hub Text Stripper removes them so text is exactly what it appears to be." },
+  { q: "Why do smart quotes break my code?", a: "Word and Docs autocorrect straight quotes into curly ones (U+201C and U+2018), and curly quotes are not valid in code, so pasting them into Python throws a SyntaxError. The Best Answer Hub Text Stripper converts them back to straight quotes so the code runs." },
+  { q: "What is a non-breaking space and why does it matter?", a: "A non-breaking space (U+00A0) looks identical to a normal space but is a different character, so \"a b\" written with each will not compare as equal. It breaks string matching, CSS classes, and parsing. The Best Answer Hub Text Stripper replaces it with a normal space." },
+  { q: "What is the byte order mark?", a: "The byte order mark (U+FEFF) is an invisible character some programs place at the start of a file, and it can break JSON parsing or show up as a stray character in the first field. The Best Answer Hub Text Stripper removes a leading byte order mark cleanly." },
+  { q: "Does ChatGPT hide invisible characters in its text?", a: "Not as a proven watermark. OpenAI's text watermark biases word choice rather than inserting invisible characters. However, invisible Unicode can be used to smuggle hidden instructions, so the Best Answer Hub Text Stripper is useful for cleaning pasted text, though it is not an AI detector." },
+  { q: "What is semantic HTML?", a: "Semantic HTML uses elements chosen for meaning, like headings, paragraphs, lists, and strong emphasis, rather than presentational tags and inline styles. It is better for accessibility and search. The Best Answer Hub HTML Cleaner rebuilds pasted markup into these semantic elements." },
+  { q: "Why does my apostrophe show up as garbled characters?", a: "That is mojibake: a curly apostrophe read with the wrong text encoding renders as several wrong characters. It is an encoding mismatch, not a font problem. Stripping the smart character at the source, which the Best Answer Hub Text Stripper does, prevents it." },
+  { q: "Can invisible characters be a security risk?", a: "Yes. Invisible Unicode can hide instructions inside text pasted into an AI system or hide data in its output, a documented attack technique. Removing non-standard characters before you trust or reuse text, which the Best Answer Hub Text Stripper does, reduces that risk." },
+  { q: "Does the Best Answer Hub HTML Cleaner upload my content?", a: "No. It runs entirely in your browser, so pasted HTML and text are never sent to a server or stored. That is a deliberate contrast with cleaners that upload documents, which is why the Best Answer Hub tool is safer for sensitive content." },
+  { q: "How is it different from wordtohtml.net or html-cleaner.com?", a: "Those rivals either upload documents and retain them for a day, or cap the free tier and charge to remove ads, and neither strips invisible characters. The Best Answer Hub HTML Cleaner and Text Stripper does both jobs in the browser with no cap and no ads." },
+  { q: "Will it strip zero-width spaces from copied text?", a: "Yes. Zero-width spaces (U+200B) and related zero-width characters are exactly what the text stripper targets, since they are invisible yet break search, equality, and parsing. The Best Answer Hub Text Stripper removes them so the text behaves as it looks." },
+  { q: "Is it safe to clean sensitive text online?", a: "Only if the tool does not upload it. Because the Best Answer Hub HTML Cleaner and Text Stripper processes everything in your browser and never transmits your text, there is no server copy to retain or leak, which follows the data-minimization principle regulators recommend." },
+  { q: "Is the Best Answer Hub HTML Cleaner and Text Stripper free?", a: "Yes, completely free with no signup and no word cap. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so the tool carries no ads and never needs your text in exchange for using it." }
+];
+
+const seo = {
+  title: "How to Clean Word HTML and Invisible Characters",
+  description: "How to clean messy HTML from Word and Google Docs and strip invisible Unicode: zero-width spaces, smart quotes, and the nbsp that breaks code, in your browser.",
+  url: '/playbooks/html-cleaner/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: "HTML Cleaner", url: '/playbooks/html-cleaner/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+  <div class="hero">
+    <span class="glow"></span>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div class="masthead">
+          <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+          <span class="word">Best Answer Hub<i>.</i></span>
+        </div>
+        <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+      </div>
+      <span class="eyebrow">Best Answer Hub Playbooks &middot; Developer</span>
+      <div class="cav">Strip the invisible junk</div>
+      <h1>How to Clean <em>Word HTML &amp; Hidden Characters</em></h1>
+      <p class="dek">Paste from Word or Google Docs and you carry two kinds of mess: visible tag soup that bloats your page, and invisible characters you cannot see at all. Both break layouts, code, and search in ways that are maddening to debug. Here is what that hidden junk is, why it breaks things, and how to strip it cleanly.</p>
+      <div class="byline"><span><b>Best Answer Hub</b></span><span>~10 min read</span><span>Developer</span><span>No upload</span></div>
+      <div class="bandstrip">
+        <div class="seg b1">Paste from anywhere<small>Word, Docs, CMS</small></div>
+        <div class="seg b2">Strip the junk<small>tags and hidden chars</small></div>
+        <div class="seg b3">Copy clean<small>semantic and plain</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n">U+200B</div><div class="l">the zero-width space you cannot see</div><div class="src">Unicode</div></div>
+    <div class="stat"><div class="n">U+201C</div><div class="l">the smart quote that breaks code</div><div class="src">Python error</div></div>
+    <div class="stat"><div class="n">24h</div><div class="l">a top rival keeps your uploaded file</div><div class="src">wordtohtml.net</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">cleaned in your browser, no upload</div><div class="src">no upload</div></div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="On this page">
+      <div class="t">On this page</div>
+      <a href="#what">What it is</a>
+      <a href="#word">Word's tag soup</a>
+      <a href="#invisible">Invisible characters</a>
+      <a href="#break">Why they break things</a>
+      <a href="#ai">The AI-text question</a>
+      <a href="#safe">Is it safe to paste</a>
+      <a href="#different">Why this tool</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <article>
+      <p class="lead"><strong>An HTML cleaner strips the junk that document editors leave behind, and a text stripper removes invisible Unicode characters that look like nothing but change how text behaves.</strong> Word, Google Docs, and CMS editors inject proprietary tags and hidden code points into anything you copy, and both survive a paste even though you cannot see them. The Best Answer Hub <a href="/developer-toolbox/html-cleaner/">HTML Cleaner &amp; Text Stripper</a> does two jobs at once: it turns messy pasted HTML into clean semantic markup, and it strips invisible characters like zero-width spaces and non-breaking spaces from plain text, all in your browser.</p>
+
+      <p>This guide covers what Word actually injects, what the invisible characters are and where they come from, why they break code, search, and layouts, the honest truth about AI-generated text and hidden characters, and why a cleaner that never uploads your text is the safer choice. The Best Answer Hub HTML Cleaner &amp; Text Stripper sits in the <a href="/developer-toolbox/">Developer Toolbox</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+      <div class="cav">Start here</div>
+      <h2 id="what">What is the Best Answer Hub HTML Cleaner and Text Stripper?</h2>
+      <p>The Best Answer Hub HTML Cleaner and Text Stripper is a free, browser-based tool with two modes. The cleaner takes HTML pasted from Word, Google Docs, or a CMS export and rewrites it as clean, semantic markup, dropping the proprietary styling and empty tags those editors add. The text stripper removes invisible and look-alike Unicode characters, such as zero-width spaces, non-breaking spaces, and smart quotes, from plain text. Everything runs client-side, so nothing is uploaded, there is no account, and there are no ads.</p>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">1</span><div><b>Cleans document HTML.</b> Word and Docs markup becomes semantic HTML, not span-and-style soup.</div></li>
+          <li><span class="dot">2</span><div><b>Strips invisible characters.</b> Zero-width spaces, non-breaking spaces, and smart quotes are removed from plain text.</div></li>
+          <li><span class="dot">3</span><div><b>Runs in your browser.</b> The Best Answer Hub HTML Cleaner and Text Stripper never sends your text to a server.</div></li>
+        </ul>
+      </div>
+
+      <div class="cav">The visible mess</div>
+      <h2 id="word">Why is HTML pasted from Word so messy?</h2>
+      <p>Because Microsoft Word stores far more than your words, and it all comes along when you copy. A single pasted paragraph often arrives wrapped in a class like MsoNormal, dozens of proprietary mso- inline styles, empty Office namespace tags such as the o:p tag, and conditional comments meant only for Internet Explorer and Outlook. None of it means anything on a normal web page, but it bloats the markup, fights your own CSS, and strips the meaning out of your content. The Best Answer Hub HTML Cleaner rebuilds it as the semantic elements a page actually needs.</p>
+      <p>The fix is to keep meaning and drop decoration. Semantic HTML uses elements chosen for what they mean, such as a heading, a paragraph, a list, or a strong emphasis, which is what <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/strong" target="_blank" rel="noopener noreferrer">MDN</a> recommends over the presentational tags and inline styles Word leaves behind. The deprecated font tag and a wall of inline style attributes are exactly what a cleaner should remove.</p>
+      <table>
+        <thead><tr><th>What Word injects</th><th>What it is</th><th>Clean result</th></tr></thead>
+        <tbody>
+          <tr><td class="band">class="MsoNormal"</td><td>Word's default paragraph class</td><td>A plain paragraph</td></tr>
+          <tr><td class="band">mso- styles</td><td>Proprietary Office inline styling</td><td>Removed, styled by your CSS</td></tr>
+          <tr><td class="band">o:p tags</td><td>Empty Office namespace tags</td><td>Removed</td></tr>
+          <tr><td class="band">Conditional comments</td><td>Code for old Outlook and IE</td><td>Removed</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cav">The invisible mess</div>
+      <h2 id="invisible">What are invisible characters?</h2>
+      <p>Invisible characters are real Unicode code points that take up no visible width, so text looks clean while carrying data you cannot see. The most common are the zero-width space (U+200B), the zero-width non-joiner (U+200C), the word joiner (U+2060), and the byte order mark (U+FEFF), which the Unicode Standard classifies as format characters. Alongside them sits the non-breaking space (U+00A0), which does have width but is a different character from a normal space, plus smart quotes like U+201C and U+201D that replace straight quotes. The Best Answer Hub Text Stripper finds and removes these so what you paste is exactly what you see.</p>
+      <figure class="chart">
+        <figcaption class="chart-title">The invisible offenders</figcaption>
+        <svg viewBox="0 0 600 232" role="img" aria-label="A table of invisible and look-alike characters: zero-width space U+200B, non-breaking space U+00A0, and curly quote U+201C, with where each comes from and what it breaks.">
+          <rect x="20" y="12" width="560" height="34" rx="8" fill="#F3E2D6"/>
+          <text x="34" y="34" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#8a4429">Character</text>
+          <text x="200" y="34" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#8a4429">Code point</text>
+          <text x="330" y="34" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#8a4429">Comes from</text>
+          <text x="470" y="34" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#8a4429">Breaks</text>
+          <g font-family="Karla, sans-serif" font-size="12" fill="#4f4940">
+            <text x="34" y="72">Zero-width space</text><text x="200" y="72" font-family="ui-monospace,monospace" fill="#8a4429">U+200B</text><text x="330" y="72">copy tools</text><text x="470" y="72">search, equality</text>
+            <text x="34" y="106">Word joiner</text><text x="200" y="106" font-family="ui-monospace,monospace" fill="#8a4429">U+2060</text><text x="330" y="106">line-break control</text><text x="470" y="106">parsing, diffs</text>
+            <text x="34" y="140">Byte order mark</text><text x="200" y="140" font-family="ui-monospace,monospace" fill="#8a4429">U+FEFF</text><text x="330" y="140">file exports</text><text x="470" y="140">JSON parsing</text>
+            <text x="34" y="174">No-break space</text><text x="200" y="174" font-family="ui-monospace,monospace" fill="#8a4429">U+00A0</text><text x="330" y="174">Word, nbsp</text><text x="470" y="174">equality, CSS</text>
+            <text x="34" y="208">Curly quote</text><text x="200" y="208" font-family="ui-monospace,monospace" fill="#8a4429">U+201C</text><text x="330" y="208">autocorrect</text><text x="470" y="208">code, JSON</text>
+          </g>
+          <line x1="20" y1="86" x2="580" y2="86" stroke="#E8DECE"/>
+          <line x1="20" y1="120" x2="580" y2="120" stroke="#E8DECE"/>
+          <line x1="20" y1="154" x2="580" y2="154" stroke="#E8DECE"/>
+          <line x1="20" y1="188" x2="580" y2="188" stroke="#E8DECE"/>
+        </svg>
+        <p class="chart-src">Code points and names from the Unicode Standard 16.0.0 (2024).</p>
+      </figure>
+
+      <div class="cav">The damage</div>
+      <h2 id="break">Why do these characters break things?</h2>
+      <p>Because a computer compares bytes, not looks, so two characters that appear identical are treated as different. The clearest case is the smart quote. Word and Docs autocorrect a straight quote into a curly one, and curly quotes are not valid in code, so pasting them into Python produces the error "SyntaxError: invalid character (U+201C)" (<a href="https://adamj.eu/tech/2022/01/14/how-to-fix-python-syntaxerror-invalid-character/" target="_blank" rel="noopener noreferrer">Adam Johnson, 2022</a>). The same class of failure hits shells, JSON, and YAML. The Best Answer Hub Text Stripper converts these back to straight quotes so pasted code runs.</p>
+      <p>The non-breaking space is sneakier still. It looks exactly like a normal space but is the different code point U+00A0, and MDN notes that the browser whitespace rules that collapse ordinary spaces do "not include non-breaking spaces," so "these characters don't trigger any collapsing" (<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_text/Whitespace" target="_blank" rel="noopener noreferrer">MDN</a>). That single difference silently breaks string equality, CSS class matching, and CSV or JSON parsing, because "a b" with a normal space is simply not equal to the same words joined by U+00A0.</p>
+      <div class="callout peach"><div class="h">The mojibake trail</div><p>A related mess is the garbled â&euro;&trade; you sometimes see where an apostrophe should be. The curly apostrophe U+2019 is the three UTF-8 bytes E2 80 99, and when software reads those bytes as Windows-1252 instead of UTF-8 they render as three wrong characters. It is an encoding mismatch, not a font bug, and stripping the smart character at the source is the cleanest way to avoid it (<a href="https://en.wikipedia.org/wiki/Mojibake" target="_blank" rel="noopener noreferrer">Wikipedia, Mojibake</a>).</p></div>
+
+      <div class="cav">The honest answer</div>
+      <h2 id="ai">Does AI-generated text contain hidden characters?</h2>
+      <p>Sometimes, but not in the way most viral posts claim, and the distinction matters. The most documented risk is real: invisible Unicode can be used to smuggle instructions or data into and out of AI systems. Security researcher Johann Rehberger has shown how characters in the Unicode Tags block render invisibly to humans while a model still reads them, enabling hidden prompt injection (<a href="https://embracethered.com/blog/posts/2024/hiding-and-finding-text-with-unicode-tags/" target="_blank" rel="noopener noreferrer">Embrace The Red, 2024</a>). Stripping non-standard characters before you paste text into a model, or before you trust text a model produced, is a sensible precaution, and the Best Answer Hub Text Stripper does exactly that.</p>
+      <p>What is not established is the popular claim that ChatGPT hides zero-width characters in its output as a watermark. OpenAI has said it built a text-watermarking method, but it works by subtly biasing which words the model picks, not by inserting invisible characters, and OpenAI has flagged its "susceptibility to circumvention by bad actors" (<a href="https://techcrunch.com/2024/08/04/openai-built-a-tool-that-could-detect-text-written-by-chatgpt-but-wont-release-it/" target="_blank" rel="noopener noreferrer">TechCrunch, 2024</a>). So a text stripper is genuinely useful for removing smuggled or copy-paste characters, but it is not a reliable "AI detector." Best Answer Hub states this plainly rather than overselling it.</p>
+
+      <div class="cav">The real risk</div>
+      <h2 id="safe">Is it safe to paste sensitive text into an online cleaner?</h2>
+      <p>It depends entirely on whether the cleaner uploads your text, and several popular ones do. wordtohtml.net processes document conversions on its servers and states in its own words that "our system will delete all files after 24h, so please make a copy of any converted documents," which confirms your file is uploaded and stored for a day. Its full tool also requires a login and limits the free tier to one cleanup per day, with an unlimited plan "from $15" per month. That is a lot of exposure and friction for cleaning a paragraph of text.</p>
+      <p>Other rivals gate the tool differently. html-cleaner.com runs in the browser but caps the free tier at 300 words with ads, and charges roughly $9 per month to remove "ads and limitations." Across the popular cleaners, stripping invisible Unicode is rarely offered at all; most only tidy Word tags. The Best Answer Hub HTML Cleaner and Text Stripper does both, with no upload, no word cap, and no ads, which is also the safest arrangement for sensitive text.</p>
+      <blockquote>Don't collect personal information you don't need. Hold on to information only as long as you have a legitimate business need.<span class="cite">FTC, Start with Security: A Guide for Business.</span></blockquote>
+      <p>That guidance is the whole argument for a client-side tool. Because the Best Answer Hub HTML Cleaner and Text Stripper never transmits your text, there is no uploaded file to retain, index, or leak, so the safest place to clean sensitive content is a tool that never sees it.</p>
+
+      <div class="cav">Why this one</div>
+      <h2 id="different">How is Best Answer Hub different from other cleaners?</h2>
+      <p>The difference is that it does both jobs and keeps your text on your machine. Most online cleaners tidy Word HTML but ignore invisible characters, and the ones that handle documents tend to upload them. The Best Answer Hub HTML Cleaner and Text Stripper cleans document markup and strips hidden Unicode in the same tool, with nothing uploaded, no word cap, and no ads.</p>
+      <table>
+        <thead><tr><th>Cleaner</th><th>Runs in browser</th><th>Strips invisible chars</th><th>Free cap</th></tr></thead>
+        <tbody>
+          <tr><td class="band">Best Answer Hub</td><td>Yes, fully</td><td>Yes</td><td>None</td></tr>
+          <tr><td>wordtohtml.net</td><td>Uploads documents</td><td>No</td><td>1/day, then from $15/mo</td></tr>
+          <tr><td>html-cleaner.com</td><td>Yes</td><td>No</td><td>300 words, ads</td></tr>
+          <tr><td>wordhtml.com</td><td>Not disclosed</td><td>No</td><td>Free</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cta">
+        <span class="kicker">Clean text in seconds</span>
+        <h3>Try the free HTML Cleaner and Text Stripper</h3>
+        <p>Turn messy Word and Google Docs HTML into clean semantic markup, and strip invisible characters like zero-width and non-breaking spaces from plain text. Runs in your browser. No signup, no word cap, no ads.</p>
+        <a class="btn" href="/developer-toolbox/html-cleaner/">Open the HTML Cleaner</a>
+      </div>
+
+      <div class="cav">Good questions</div>
+      <h2 id="faq">Frequently asked questions about cleaning HTML and text</h2>
+      <div class="faq">
+        {faqs.map((f) => (
+          <div class="qa">
+            <div class="q" set:html={f.q}></div>
+            <div class="a" set:html={f.a}></div>
+          </div>
+        ))}
+      </div>
+
+      <div class="cav">People also read</div>
+      <h2>Keep going</h2>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/case-converter/">Every Text Case, Explained</a></b> The other everyday text tool, from Title Case to snake_case.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/markdown-editor/">Write in Markdown, Export Clean</a></b> A cleaner way to produce simple HTML in the first place.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools, Nothing Uploaded</a></b> The whole Developer Toolbox, all client-side.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, No Signup</a></b> The entire Best Answer Hub toolkit.</div></li>
+        </ul>
+      </div>
+
+      <h2>Sources</h2>
+      <ul class="sources">
+        <li>The Unicode Consortium, <a href="https://www.unicode.org/charts/PDF/U2000.pdf" target="_blank" rel="noopener noreferrer">General Punctuation code chart</a> (U+200B, U+200C, U+2060, U+201C, U+2019 code points and names).</li>
+        <li>MDN, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_text/Whitespace" target="_blank" rel="noopener noreferrer">Handling whitespace</a> (non-breaking spaces do not collapse) and <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/strong" target="_blank" rel="noopener noreferrer">semantic elements</a>.</li>
+        <li>Adam Johnson, <a href="https://adamj.eu/tech/2022/01/14/how-to-fix-python-syntaxerror-invalid-character/" target="_blank" rel="noopener noreferrer">How to fix a Python SyntaxError from a curly quote</a> (2022).</li>
+        <li>Johann Rehberger, <a href="https://embracethered.com/blog/posts/2024/hiding-and-finding-text-with-unicode-tags/" target="_blank" rel="noopener noreferrer">Hiding and finding text with Unicode Tags</a> (invisible prompt injection, 2024).</li>
+        <li>TechCrunch, <a href="https://techcrunch.com/2024/08/04/openai-built-a-tool-that-could-detect-text-written-by-chatgpt-but-wont-release-it/" target="_blank" rel="noopener noreferrer">OpenAI's text watermarking method</a> (biases word choice, not invisible characters, 2024).</li>
+        <li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Mojibake" target="_blank" rel="noopener noreferrer">Mojibake</a> (the UTF-8 vs Windows-1252 encoding mismatch).</li>
+        <li>FTC, <a href="https://www.ftc.gov/business-guidance/resources/start-security-guide-business" target="_blank" rel="noopener noreferrer">Start with Security: A Guide for Business</a> (do not collect data you do not need).</li>
+      </ul>
+      <p class="foot">More free tools: <a href="/developer-toolbox/">Developer Toolbox</a>, <a href="/tools/case-converter/">Case Converter</a>, <a href="/developer-toolbox/markdown-editor/">Markdown Editor</a>, and <a href="/tools/">all free tools</a>.</p>
+    </article>
+  </div>
+</div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.7rem;color:var(--clay);line-height:1}
+  .pb .stat .n sup{font-size:.6em}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote .cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-size:.82rem;color:var(--label);margin-top:10px;letter-spacing:0}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  .pb .foot{max-width:1080px;margin:0 auto;padding:0 24px 50px;font-size:.85rem;color:var(--muted)}
+  .pb .foot a{color:var(--clay-deep)}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

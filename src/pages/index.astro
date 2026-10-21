@@ -1,0 +1,180 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/content/Hero.astro';
+import TrustBar from '../components/layout/TrustBar.astro';
+import StatsSection from '../components/content/StatsSection.astro';
+
+import FAQSection from '../components/content/FAQSection.astro';
+import { toolCountLabel } from '../data/tools';
+
+const today = '2026-06-19T00:00:00+00:00';
+
+const featuredTools = [
+  {
+    href: '/tools/ai-cost-calculator/',
+    badge: 'Calculator',
+    title: 'AI Cost Calculator',
+    description: 'Estimate your monthly AI stack spend across ChatGPT, Claude, Cursor, Copilot, OpenAI, DeepSeek, Kimi and more.',
+    meta: '11 tools • 20+ models • USD/EUR/GBP',
+  },
+  {
+    href: '/tools/seo-score-checker/',
+    badge: 'Checker',
+    title: 'SEO Score Checker',
+    description: 'Audit title tags, meta descriptions, headings, images, links, schema, and semantic HTML. Get a grade and fix list.',
+    meta: '25+ factors • 4 categories • CORS-aware',
+  },
+  {
+    href: '/tools/website-speed-test/',
+    badge: 'Checker',
+    title: 'Website Speed Test',
+    description: 'Measure load time, TTFB, compression, caching, and SSL for any website. Get a grade and actionable fixes.',
+    meta: 'Grade A-F • 6 metrics • CORS-aware',
+  },
+  {
+    href: '/tools/image-compressor/',
+    badge: 'Converter',
+    title: 'Image Compressor',
+    description: 'Shrink JPEG, PNG and WebP images by 50–80% without visible quality loss. No uploads to servers.',
+    meta: 'Client-side • Instant • WebP / JPEG / PNG',
+  },
+  {
+    href: '/tools/invoice-generator/',
+    badge: 'Generator',
+    title: 'Invoice Generator',
+    description: 'Create professional PDF invoices with logo, line items, tax, and discounts. Auto-calculated totals. No signup.',
+    meta: 'Logo upload • 8 currencies • PDF export',
+  },
+  {
+    href: '/tools/password-generator/',
+    badge: 'Generator',
+    title: 'Password Generator',
+    description: '4 password types: Random, Memorable Passphrase, Enterprise-Grade, and Pronounceable. Copy with one click.',
+    meta: '4 modes • Copy button • Entropy display',
+  },
+];
+
+const faqs = [
+  {
+    q: 'What is Best Answer Hub?',
+    a: 'Best Answer Hub is a free browser-based tool site and independent software recommendation platform. It offers ' + toolCountLabel + ' client-side utilities across five hubs (Career Toolkit, Calculators, PDF Toolkit, Developer Toolbox, and SEO tools), all running entirely inside your browser with no signup, no file uploads, and no data stored on any server. Best Answer Hub also publishes use-case guides recommending the best paid software for specific needs. <a href="/about/" class="text-bae-accent underline underline-offset-2 hover:text-bae-ink transition-colors">Learn more about Best Answer Hub</a>.',
+  },
+  {
+    q: 'What free tools does Best Answer Hub offer?',
+    a: 'Best Answer Hub offers ' + toolCountLabel + ' free tools across five hubs. The <a href="/career-toolkit/" class="text-bae-accent underline underline-offset-2 hover:text-bae-ink transition-colors">Career Toolkit</a> includes a Resume Builder, Cover Letter Builder, Job Keyword Matcher, Word Counter, Case Converter, and Reading Time Calculator. The <a href="/pdf-toolkit/" class="text-bae-accent underline underline-offset-2 hover:text-bae-ink transition-colors">PDF Toolkit</a> covers merging, splitting, compressing, and converting. The <a href="/calculators/" class="text-bae-accent underline underline-offset-2 hover:text-bae-ink transition-colors">Calculators Hub</a> handles mortgages, salary, tax, compound interest, ROI, cloud hosting costs, data storage conversions, and AI costs. The <a href="/developer-toolbox/" class="text-bae-accent underline underline-offset-2 hover:text-bae-ink transition-colors">Developer Toolbox</a> covers JSON, Base64, hashing, passwords, regex, and QR codes. <a href="/tools/" class="text-bae-accent underline underline-offset-2 hover:text-bae-ink transition-colors">Browse all tools →</a>',
+  },
+  {
+    q: "Are Best Answer Hub's tools really free, with no signup or paywalls?",
+    a: "Yes. All " + toolCountLabel + " tools on Best Answer Hub are permanently free with no signup, no paywalls, and no premium tiers. There are no day-limits, watermarks, or features locked behind a subscription. Best Answer Hub funds its development through affiliate commissions on its recommendation and comparison pages, which keeps every tool free for users indefinitely.",
+  },
+  {
+    q: 'Does Best Answer Hub store data from files I upload or text I paste?',
+    a: 'No. Every Best Answer Hub tool processes data entirely in your browser using JavaScript. Text pasted into the Word Counter, Resume Builder, or Case Converter never leaves your device. Files processed by the PDF Merger, PDF Compressor, or Image Compressor are handled locally and are never transmitted to or stored on any Best Answer Hub server.',
+  },
+  {
+    q: 'What does "client-side processing" mean, and do my files actually stay on my device?',
+    a: 'Client-side processing means the tool code runs inside your browser, not on a remote server. When you use a Best Answer Hub tool, your text and files never leave your computer or phone. The easiest way to verify this: disconnect from the internet after the page loads and the tool keeps working perfectly, because the processing happens entirely on your own device.',
+  },
+  {
+    q: 'Are Best Answer Hub PDF tools safe to use with confidential work documents?',
+    a: 'Yes. All Best Answer Hub PDF tools (PDF Merger, PDF Splitter, PDF Compressor, PDF to Word Converter, and Images to PDF) process files entirely in the browser using client-side JavaScript. Documents are never uploaded to Best Answer Hub servers, never stored, and never accessible to anyone outside your own device. They are safe for use with confidential, legal, HR, and client documents.',
+  },
+  {
+    q: 'What free tools does Best Answer Hub offer for job seekers?',
+    a: 'Best Answer Hub\'s <a href="/career-toolkit/" class="text-bae-accent underline underline-offset-2 hover:text-bae-ink transition-colors">Career Toolkit</a> includes six free tools for job seekers: the Resume Builder creates ATS-compatible resumes with no watermark; the Cover Letter Builder structures tailored cover letters; the Job Keyword Matcher scores your resume against any job description and surfaces missing ATS keywords. The Word Counter, Case Converter, and Reading Time Calculator support writing and formatting throughout the application process.',
+  },
+  {
+    q: 'How does Best Answer Hub make money if the tools are free?',
+    a: 'Best Answer Hub earns affiliate commissions when readers click through to paid products on its recommendation and comparison pages. The tools themselves generate no direct revenue. They exist to help users and demonstrate expertise in every category Best Answer Hub covers. This model keeps every utility free while funding ongoing development. The full structure is disclosed in the <a href="/affiliate-disclosure/" class="text-bae-accent underline underline-offset-2 hover:text-bae-ink transition-colors">Best Answer Hub affiliate disclosure</a>.',
+  },
+  {
+    q: "Are Best Answer Hub's software recommendations unbiased, or are they paid placements?",
+    a: "Best Answer Hub's editorial policy prohibits pay-for-placement rankings. Every software recommendation is evaluated on five criteria: use-case fit, pricing transparency, ease of setup, feature depth, and real user feedback from Reddit, G2, and Trustpilot. Affiliate commissions are disclosed on every page that contains them, and the best product for a use case is recommended even when it carries no affiliate programme.",
+  },
+  {
+    q: 'How is Best Answer Hub different from Capterra, G2, and Wirecutter?',
+    a: "Capterra and G2 charge software vendors for prominent placement. Their top-rated lists reflect payment as much as performance. Wirecutter focuses on physical products. Best Answer Hub builds its own free tools in every category it covers, so its software recommendations come from first-hand understanding of the problem space. Every affiliate relationship is disclosed on the relevant page, and products without affiliate programmes are recommended whenever they are the best fit.",
+  },
+  {
+    q: "Are Best Answer Hub's password generator and developer tools safe to use?",
+    a: 'Yes. The Best Answer Hub Password Generator, Hash Generator, Base64 Encoder, and all Developer Toolbox utilities run entirely in your browser, and no input is ever transmitted to any server. Passwords and hash values are generated locally using your browser\'s built-in cryptography libraries. To verify: open the browser Network tab while using any Best Answer Hub developer tool and confirm that no outbound requests are sent when results are generated.',
+  },
+  {
+    q: 'Can I use Best Answer Hub tools for commercial or work projects?',
+    a: 'Yes. All Best Answer Hub tools are free for personal and commercial use with no restrictions. The Invoice Generator, Password Generator, QR Code Generator, Image Compressor, PDF Toolkit, and Career Toolkit tools are used regularly by freelancers, agencies, developers, and small businesses for client and production work.',
+  },
+];
+
+const seo = {
+  title: 'Best Answer Hub — Free Tools & Honest Recommendations',
+  description: 'Free browser-based tools with no signup: AI Cost Calculator, SEO Checker, Speed Test, Invoice Generator, and more. Honest software recommendations.',
+  url: '/',
+  type: 'WebPage' as const,
+  datePublished: '2026-01-15T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [{ name: 'Home', url: '/' }],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <p style="position:absolute;left:-9999px;top:0;opacity:0;">Impact-Site-Verification: bbdc0852-f801-4773-84c1-6c51be61c559</p>
+  <Hero />
+  <TrustBar />
+  <StatsSection />
+
+  <!-- Featured Tools Section -->
+  <section class="py-14 relative z-[1]" aria-labelledby="tools-title">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 id="tools-title" class="font-serif text-2xl md:text-[1.6rem] font-bold tracking-tight mb-7 text-bae-ink">Browse by tools</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {featuredTools.map((tool) => (
+          <a href={tool.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{tool.badge}</span>
+              <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-primary-soft text-bae-primary">Free Tool</span>
+            </div>
+            <h3 class="text-base font-semibold text-bae-ink mb-2">{tool.title}</h3>
+            <p class="text-sm text-bae-muted line-clamp-2">{tool.description}</p>
+            <p class="text-xs text-bae-muted mt-3 font-medium">{tool.meta}</p>
+          </a>
+        ))}
+      </div>
+      <div class="mt-8 text-center">
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-6 py-3 rounded-bae-sm font-semibold text-sm shadow-[0_4px_14px_rgba(15,15,26,0.15)] hover:bg-bae-primary hover:-translate-y-0.5 transition-all">
+          More tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* Join Community CTA hidden 2026-06-18 (brand X/social accounts blocked, restore once resolved):
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-bae-sm bg-bae-primary text-white flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Join the Best Answer Hub Community</h3>
+            <p class="text-sm text-bae-muted">Get help with tools, share feature requests, and connect with other users on X.</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 shrink-0">
+          <a href="https://x.com/BestAnswerHub" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-bae-ink text-white px-4 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            X
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  */}
+
+  <FAQSection faqs={faqs} />
+</BaseLayout>

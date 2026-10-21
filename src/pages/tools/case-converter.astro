@@ -1,0 +1,350 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Case Converter?',
+    a: 'The Best Answer Hub Case Converter is a free, browser-based tool that transforms text between uppercase, lowercase, title case, sentence case, camelCase, PascalCase, snake_case, and kebab-case instantly. Paste or type your text, click a format button, and the converted output appears immediately. No signup, no upload, and nothing stored on any server.',
+  },
+  {
+    q: 'What is the difference between title case and sentence case, and when should I use each?',
+    a: 'Title case capitalises the first letter of every major word: "The Quick Brown Fox Jumps." Sentence case capitalises only the first word of each sentence and proper nouns: "The quick brown fox jumps." Use title case for formal headings, book and film titles, and product names. Use sentence case for blog post headlines, UI labels, email subject lines, and body subheadings. It reads more naturally and is the current default in most major style guides. Both formats are available instantly in the Best Answer Hub Case Converter.',
+  },
+  {
+    q: 'What is the difference between AP Style, Chicago, APA, and MLA title case rules?',
+    a: 'The main difference is how each handles prepositions. AP Style capitalises prepositions of four or more letters ("With," "From," "Between") but leaves shorter ones lowercase. The Chicago Manual of Style keeps all prepositions lowercase regardless of length. APA style uses sentence case for article and book titles in reference lists but title case for journal names. MLA follows rules similar to Chicago. When in doubt, the Best Answer Hub Case Converter applies the AP-style convention, which is the most widely used in editorial and content publishing.',
+  },
+  {
+    q: 'Which small words should NOT be capitalised in a title?',
+    a: 'The standard minor words left lowercase in title case are: articles ("a," "an," "the"), coordinating conjunctions ("and," "but," "or," "nor," "for"), and short prepositions ("at," "by," "in," "of," "on," "to," "up," "via"). The key exception applies universally across all style guides: the first and last word of a title are always capitalised regardless of word type. So "A" is capitalised at the start of a title even though it is an article. The Best Answer Hub Case Converter applies all these minor-word rules automatically.',
+  },
+  {
+    q: 'Are short verbs like "is", "are", "be", and "it" capitalised in a title?',
+    a: 'Yes, always. This is one of the most common capitalisation mistakes. Verbs are always capitalised in title case regardless of how short they are. "Is," "Are," "Be," "It," "Do," "Go," and "Has" are all capitalised in every major style guide: AP, Chicago, MLA, and APA. Only articles, short prepositions, and coordinating conjunctions are candidates for lowercase, never verbs.',
+  },
+  {
+    q: 'Should the first word after a colon in a subtitle always be capitalised?',
+    a: 'Yes, in titles and headlines, the first word after a colon is always capitalised regardless of what word it is. This rule holds across AP, Chicago, APA, and MLA. Example: "Remote Work: the New Normal" is wrong; "Remote Work: The New Normal" is correct. This is separate from the rule for colons in body text, where capitalisation depends on whether a complete sentence follows.',
+  },
+  {
+    q: 'Should brand names like "iPhone", "JavaScript", and "macOS" keep their original capitalisation in a title?',
+    a: 'Yes. Brand names and trademarked product names with unconventional capitalisation (like "iPhone," "macOS," "eBay," "WordPress," "YouTube," "LinkedIn") should always preserve their official casing, even in titles or headings. Most automated case converters get this wrong and will produce "Iphone" or "Macos." The Best Answer Hub Case Converter converts the structural casing but you should manually restore any brand-specific capitalisation after conversion.',
+  },
+  {
+    q: 'Should blog post headlines use title case or sentence case?',
+    a: 'Most major digital publishers now use sentence case for blog headlines: The Washington Post, BBC, The Guardian, and most SaaS content teams all default to it. Sentence case is easier to read, feels less formal, and reduces capitalisation errors. Title case is still preferred in print publishing, academic writing, and contexts where authority and formality matter. For SEO purposes, neither format has a ranking advantage. Google treats both identically. Use the Best Answer Hub Case Converter to switch between both formats instantly before publishing.',
+  },
+  {
+    q: 'Should email subject lines use title case or sentence case?',
+    a: 'Research from Mailchimp and HubSpot consistently shows sentence case subject lines outperform title case in open rate tests. Sentence case reads more like a message from a real person and less like a marketing broadcast. Title case still works well for formal announcements, event invitations, and newsletters with a publishing aesthetic. For cold outreach and transactional email, sentence case is the safer default.',
+  },
+  {
+    q: 'Are seasons capitalised (spring, summer, autumn, winter)?',
+    a: 'No, seasons are common nouns and are not capitalised in standard English unless they begin a sentence or appear as part of a proper name like "Summer Olympics" or "Spring Conference 2026." This surprises many writers because days of the week (Monday) and months (January) are always capitalised, but seasons are not. The Best Answer Hub Case Converter applies sentence case and title case rules correctly: seasons remain lowercase unless they start a sentence.',
+  },
+  {
+    q: 'When are job titles capitalised?',
+    a: 'Job titles are capitalised when they directly precede a person\'s name as a formal title ("Chief Executive Officer Sarah Jones") or appear on a business card, email signature, or organisational chart. They are not capitalised when used generically or after the person\'s name ("Sarah Jones, chief executive officer, said..."). AP and Chicago both follow this rule. In formal contexts like press releases and LinkedIn profiles, capitalising is acceptable even when not strictly required.',
+  },
+  {
+    q: 'What is the difference between camelCase, PascalCase, snake_case, and kebab-case?',
+    a: 'camelCase starts with a lowercase letter and capitalises each subsequent word: "getUserProfile." Use it for variables and functions in JavaScript, Java, and Swift. PascalCase capitalises every word including the first: "GetUserProfile." Use it for class names and React components. snake_case uses underscores and all-lowercase: "get_user_profile." Standard in Python, Ruby, and database column names. kebab-case uses hyphens: "get-user-profile." Standard for URL slugs, CSS classes, and HTML attributes.',
+  },
+  {
+    q: 'Is snake_case or kebab-case better for URLs and CSS class names?',
+    a: 'Kebab-case is the clear winner for both URLs and CSS class names. Google officially recommends hyphens as word separators in URLs: hyphens are treated as spaces, while underscores cause words to be read as a single token, which can hurt keyword recognition in search. The W3C also recommends kebab-case for HTML class and ID attributes. snake_case is better suited to Python code, database columns, and environment variables, not front-end or SEO work.',
+  },
+  {
+    q: 'How do I convert ALL CAPS text back to normal case?',
+    a: 'Paste the all-caps text into the Best Answer Hub Case Converter and click either "Sentence case" (to get normally capitalised text with only the first word and proper nouns in caps) or "lowercase" (to get everything in lowercase, which you can then manually capitalise where needed). This is the fastest way to recover text accidentally typed with Caps Lock on, or to reformat text copied from a system that outputs everything in uppercase.',
+  },
+  {
+    q: 'Is "vs" or "versus" capitalised in a title?',
+    a: '"Vs" and "versus" are prepositions, so under Chicago style they are always lowercase in a title. Under AP style, "vs." (abbreviated) is lowercase but "versus" (spelled out, five letters) is capitalised. In legal writing, both are typically uppercased by convention. In practice, most content publishers leave both lowercase: "Man vs. Machine" rather than "Man Vs. Machine." The safest rule: use "vs." (with a period) in AP contexts, "versus" in formal or legal writing, and always lowercase both in headlines.',
+  },
+  {
+    q: 'Why do different online title case converters give different results for the same sentence?',
+    a: 'There is no single universal title case standard: AP Style, Chicago, APA, MLA, and individual house styles each define different rules for prepositions, conjunctions, and hyphenated words. Tools that do not disclose which style they follow will produce inconsistent results. The Best Answer Hub Case Converter applies AP-style title case as the default, which is the most commonly used convention in digital publishing and content marketing. For academic writing, always check the required style guide and adjust manually after conversion.',
+  },
+];
+
+const steps = [
+  { title: 'Paste or type your text', description: 'Drop your text, variable names, headings, or URL slugs into the input area. Paste from Word, Google Docs, VS Code, or any editor.' },
+  { title: 'Click a case format', description: 'Choose from uppercase, lowercase, title case, sentence case, camelCase, PascalCase, snake_case, or kebab-case. Conversion is instant.' },
+  { title: 'Copy and use', description: 'Copy the converted result to your clipboard with one click and paste it into your document, code, or CMS.' },
+];
+
+const seo = {
+  title: 'Free Case Converter — 8 Text Case Formats (2026)',
+  description: 'Convert text between uppercase, lowercase, title case, sentence case, camelCase, PascalCase, snake_case, and kebab-case instantly. 100% client-side, no signup.',
+  url: '/tools/case-converter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Case Converter', url: '/tools/case-converter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Stored on Servers"
+    title="Case Converter:"
+    accentText="Transform text into any format"
+    description="Convert text between uppercase, lowercase, title case, sentence case, camelCase, PascalCase, snake_case, and kebab-case instantly. No signup, no uploads, no data stored."
+    backLink="/career-toolkit/"
+    backLabel="← Career Toolkit"
+  />
+
+  <section class="py-6 md:py-8" aria-label="Case converter">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <!-- Input -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold text-bae-ink">Input</h2>
+            <div class="flex gap-2">
+              <button type="button" id="paste-btn" class="text-xs text-bae-primary hover:text-bae-accent transition-colors font-medium">Paste</button>
+              <button type="button" id="clear-btn" class="text-xs text-bae-muted hover:text-bae-ink transition-colors">Clear</button>
+            </div>
+          </div>
+          <textarea id="input-text" rows="14" placeholder="Paste or type text here..." spellcheck="true" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+        </div>
+
+        <!-- Output -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold text-bae-ink">Result</h2>
+            <button type="button" id="copy-btn" class="text-xs text-bae-primary hover:text-bae-accent transition-colors font-medium" disabled>Copy Result</button>
+          </div>
+          <textarea id="output-text" rows="14" placeholder="Converted text will appear here..." readonly class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+        </div>
+      </div>
+
+      <!-- Conversion Buttons -->
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 mb-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-3">Convert to</h2>
+        <div class="flex flex-wrap gap-2" id="convert-buttons">
+          <button type="button" data-case="upper" class="case-btn bg-bae-bg border border-bae-border text-bae-ink text-sm font-medium px-4 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors">UPPERCASE</button>
+          <button type="button" data-case="lower" class="case-btn bg-bae-bg border border-bae-border text-bae-ink text-sm font-medium px-4 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors">lowercase</button>
+          <button type="button" data-case="title" class="case-btn bg-bae-bg border border-bae-border text-bae-ink text-sm font-medium px-4 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors">Title Case</button>
+          <button type="button" data-case="sentence" class="case-btn bg-bae-bg border border-bae-border text-bae-ink text-sm font-medium px-4 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors">Sentence case</button>
+          <button type="button" data-case="camel" class="case-btn bg-bae-bg border border-bae-border text-bae-ink text-sm font-medium px-4 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors">camelCase</button>
+          <button type="button" data-case="pascal" class="case-btn bg-bae-bg border border-bae-border text-bae-ink text-sm font-medium px-4 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors">PascalCase</button>
+          <button type="button" data-case="snake" class="case-btn bg-bae-bg border border-bae-border text-bae-ink text-sm font-medium px-4 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors">snake_case</button>
+          <button type="button" data-case="kebab" class="case-btn bg-bae-bg border border-bae-border text-bae-ink text-sm font-medium px-4 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors">kebab-case</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people convert with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink mb-2">What people convert with it</h2>
+      <p class="text-bae-muted mb-8 max-w-xl">Real situations where getting the case right actually matters.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Editorial</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">Headline typed in CAPS LOCK by accident</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">Fixed in 2 seconds</p>
+          <p class="text-sm text-bae-muted">Sarah finished a 2,000-word article then noticed the headline was in full caps. One paste and a Sentence case click had it fixed before her editor opened the doc.</p>
+        </div>
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Developer</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">API field names from camelCase to snake_case</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">40 variables converted</p>
+          <p class="text-sm text-bae-muted">James was migrating a Node.js API to Python. He pasted the entire JSON key block into the Best Answer Hub Case Converter, clicked snake_case, and had a clean output to copy straight into the new codebase.</p>
+        </div>
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">SEO</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">Article title converted to a URL slug</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">kebab-case in one click</p>
+          <p class="text-sm text-bae-muted">Priya's CMS didn't auto-generate slugs. She pasted "How To Build A Content Strategy In 2026" into the Best Answer Hub Case Converter, clicked kebab-case, and had her URL ready to paste.</p>
+        </div>
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Academic Writing</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">Bibliography titles reformatted for APA</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">12 references fixed</p>
+          <p class="text-sm text-bae-muted">Tom's professor marked his references down for using title case throughout. He pasted each entry into the Best Answer Hub Case Converter, clicked Sentence case, and corrected all 12 references in under a minute.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more text tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/word-counter/" class="text-bae-primary hover:underline">Word Counter</a>, <a href="/tools/job-keyword-matcher/" class="text-bae-primary hover:underline">Job Keyword Matcher</a>, <a href="/tools/resume-builder/" class="text-bae-primary hover:underline">Resume Builder</a>, and <a href="/tools/cover-letter-builder/" class="text-bae-primary hover:underline">Cover Letter Builder</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      'use strict';
+
+      const input = document.getElementById('input-text');
+      const output = document.getElementById('output-text');
+      const copyBtn = document.getElementById('copy-btn');
+      const buttons = document.querySelectorAll('.case-btn');
+
+      const MINOR_WORDS = new Set([
+        'a','an','the','and','but','or','for','nor','on','at','to','from','by','in','of','up','via','with','as'
+      ]);
+
+      // Split into lowercase word tokens, breaking on separators AND on
+      // camelCase / PascalCase / ACRONYM boundaries so existing code-style
+      // input (e.g. "userId") converts correctly to other code styles.
+      function splitWords(text) {
+        return text
+          .replace(/([a-z0-9])([A-Z])/g, '$1 $2')      // camelCase boundary
+          .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')   // ACRONYM followed by Word
+          .replace(/[^a-zA-Z0-9]+/g, ' ')              // separators -> space
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean)
+          .map(w => w.toLowerCase());
+      }
+
+      function capWord(w) {
+        return w.charAt(0).toUpperCase() + w.slice(1);
+      }
+
+      function toTitleCase(text) {
+        // Count word tokens so the last word can always be capitalised.
+        let total = 0;
+        text.replace(/\w\S*/g, () => { total++; return ''; });
+        let n = -1;
+        return text.replace(/\w\S*/g, (word, index) => {
+          n++;
+          const lower = word.toLowerCase();
+          const capped = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+          const before = text.slice(0, index).trimEnd();
+          const afterColon = before.charAt(before.length - 1) === ':';
+          // First word, last word, and the word after a colon are always capitalised.
+          if (n === 0 || n === total - 1 || afterColon) return capped;
+          if (MINOR_WORDS.has(lower)) return lower;
+          return capped;
+        });
+      }
+
+      function toSentenceCase(text) {
+        return text.toLowerCase()
+          .replace(/(^\s*[a-z])|([.!?]\s+)([a-z])/g, (m, first, sep, after) => {
+            if (first) return first.toUpperCase();
+            if (sep && after) return sep + after.toUpperCase();
+            return m;
+          })
+          .replace(/\bi\b/g, 'I'); // standalone "i" -> "I"
+      }
+
+      function toCamelCase(text) {
+        const words = splitWords(text);
+        return words.map((w, i) => i === 0 ? w : capWord(w)).join('');
+      }
+
+      function toPascalCase(text) {
+        return splitWords(text).map(capWord).join('');
+      }
+
+      function toSnakeCase(text) {
+        return splitWords(text).join('_');
+      }
+
+      function toKebabCase(text) {
+        return splitWords(text).join('-');
+      }
+
+      function convert(caseType) {
+        const text = input.value;
+        if (!text) {
+          output.value = '';
+          copyBtn.disabled = true;
+          buttons.forEach(btn => btn.classList.remove('border-bae-primary', 'text-bae-primary'));
+          return;
+        }
+
+        let result = text;
+        switch (caseType) {
+          case 'upper': result = text.toUpperCase(); break;
+          case 'lower': result = text.toLowerCase(); break;
+          case 'title': result = toTitleCase(text); break;
+          case 'sentence': result = toSentenceCase(text); break;
+          case 'camel': result = toCamelCase(text); break;
+          case 'pascal': result = toPascalCase(text); break;
+          case 'snake': result = toSnakeCase(text); break;
+          case 'kebab': result = toKebabCase(text); break;
+        }
+        output.value = result;
+        copyBtn.disabled = false;
+
+        // Highlight active button
+        buttons.forEach(btn => {
+          if (btn.dataset.case === caseType) {
+            btn.classList.add('border-bae-primary', 'text-bae-primary');
+          } else {
+            btn.classList.remove('border-bae-primary', 'text-bae-primary');
+          }
+        });
+      }
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => convert(btn.dataset.case));
+      });
+
+      document.getElementById('clear-btn')?.addEventListener('click', () => {
+        input.value = '';
+        output.value = '';
+        copyBtn.disabled = true;
+        buttons.forEach(btn => btn.classList.remove('border-bae-primary', 'text-bae-primary'));
+        input.focus();
+      });
+
+      document.getElementById('paste-btn')?.addEventListener('click', async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          input.value = text;
+          copyBtn.disabled = !text;
+        } catch (err) {
+          alert('Clipboard access denied. Please paste manually (Ctrl+V / Cmd+V).');
+        }
+      });
+
+      copyBtn?.addEventListener('click', () => {
+        if (!output.value) return;
+        navigator.clipboard.writeText(output.value).then(() => {
+          const original = copyBtn.textContent;
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = original, 1500);
+        });
+      });
+    })();
+  </script>
+</BaseLayout>

@@ -1,0 +1,99 @@
+---
+/**
+ * Shared resume logic for every Knowledge Center assessment.
+ *
+ * THE BUG THIS EXISTS TO PREVENT (found live on all three assessments, 2026-07-19):
+ * each page's finish() called clearSaved(), so the moment a taker saw their result the saved
+ * session was wiped. Refreshing the results page — or coming back from the Paddle redirect —
+ * dumped them at the intro with 15-20 minutes of answers gone. On a product whose promise is
+ * "no signup, nothing saved, results in your browser", losing the result on a refresh is the
+ * worst failure available, and it hit two products that were already taking money.
+ *
+ * It lives in ONE component so assessment #4 inherits the fix instead of re-implementing it.
+ * Include it ABOVE the page's own inline script (document order = execution order).
+ *
+ * Contract — the page owns its own storage shape; this only decides where a reload lands:
+ *   window.__baeResume.read(key)          -> parsed session object, or null
+ *   window.__baeResume.mode(saved, n)     -> 'intro' | 'quiz' | 'result'
+ *
+ * `n` is the expected answer count. Pass it explicitly for a fixed-length bank (Career Strengths,
+ * SMB); for a served/randomized bank (AI Knowledge Test) pass saved.served.length, because the
+ * served set is what defines the length for that attempt.
+ *
+ * Answer encoding is 0|1|2|3 for the first three assessments — anything else is treated as
+ * unanswered, which is also what each page's own restore() does when it sanitizes.
+ *
+ *   window.__baeResume.mode(saved, n, maxIndex)
+ *
+ * `maxIndex` is the HIGHEST valid answer index, default 3 (a four-option question). The Vibe Coder
+ * check pins a fifth "I don't know" row at index 4 on every question, so it passes 4. Without that,
+ * every IDK answer read as unanswered: a taker who used it would be sent back to the intro with
+ * their session apparently empty, and any sitting containing one could never reach 'result'.
+ * The default keeps the three live pages byte-identical in behavior.
+ *
+ * Guarded by paddle-server/tests/test_assessment_resume.mjs (runs against all four real pages).
+ */
+---
+<script is:inline>
+  window.__baeResume = {
+    read: function (key) {
+      try { var raw = sessionStorage.getItem(key); return raw ? JSON.parse(raw) : null; }
+      catch (e) { return null; }
+    },
+    /* Collapse the page furniture once a result is on screen. The hero headline and intro sell the
+       test to someone who has not taken it; after they have, it is ~250px of scrolling between the
+       taker and their own result. Keeps the back link and right-aligns it to the container edge,
+       which is the same width the result cards use, so the two line up.
+       Runs only AFTER the result renders, so crawlers and first paint still get the full H1 and
+       intro copy - no SEO cost. Idempotent: safe to call on every reveal and on resume. */
+    focusResult: function () {
+      var hero = document.getElementById('as-hero');
+      if (hero && !hero.dataset.baeCollapsed) {
+        hero.dataset.baeCollapsed = '1';
+        var inner = hero.querySelector('.max-w-3xl');
+        if (inner) inner.classList.remove('max-w-3xl');           // widen to the container edge
+        var row = hero.querySelector('.justify-between');
+        if (row) { row.classList.remove('justify-between'); row.classList.add('justify-end'); }
+        var badge = row && row.firstElementChild;
+        if (badge && badge.tagName !== 'A') badge.style.display = 'none';
+        var h1 = hero.querySelector('h1');
+        if (h1) {
+          var desc = h1.nextElementSibling;
+          h1.style.display = 'none';
+          if (desc && desc.tagName === 'P') desc.style.display = 'none';
+        }
+        var sec = hero.querySelector('section');
+        if (sec) { sec.classList.remove('pt-10', 'pb-6', 'md:pt-14', 'md:pb-8'); sec.classList.add('pt-5', 'pb-0'); }
+      }
+      /* The result section's own marketing header goes too; anything else in that block
+         (e.g. the "completed in / questions" stamp) is real result data and stays. */
+      var head = document.getElementById('as-resulthead');
+      if (head && !head.dataset.baeCollapsed) {
+        head.dataset.baeCollapsed = '1';
+        var kill = head.querySelectorAll(':scope > span, :scope > h2');
+        for (var i = 0; i < kill.length; i++) kill[i].style.display = 'none';
+        head.classList.remove('mb-6');
+        head.classList.add('mb-2');
+      }
+    },
+    /* 'result' also covers all-answered-but-not-flagged: someone who answered the last question and
+       reloaded before finish() ran. Their result is fully computable, so sending them back to the
+       quiz would be a worse lie than just showing it. */
+    mode: function (saved, n, maxIndex) {
+      if (!saved || !Array.isArray(saved.answers)) return 'intro';
+      var expected = (typeof n === 'number' && n > 0) ? n : saved.answers.length;
+      if (saved.answers.length !== expected) return 'intro';
+      /* Highest valid answer index. Defaults to 3 so the three original four-option assessments
+         behave exactly as before; the Vibe Coder check passes 4 for its pinned "I don't know" row. */
+      var top = (typeof maxIndex === 'number' && maxIndex >= 0) ? maxIndex : 3;
+      var valid = 0;
+      for (var i = 0; i < saved.answers.length; i++) {
+        var a = saved.answers[i];
+        if (typeof a === 'number' && a === Math.floor(a) && a >= 0 && a <= top) valid++;
+      }
+      if (valid === 0) return 'intro';
+      if (saved.done === true || valid === expected) return 'result';
+      return 'quiz';
+    },
+  };
+</script>

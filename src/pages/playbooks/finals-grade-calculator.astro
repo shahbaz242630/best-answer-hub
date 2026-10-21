@@ -1,0 +1,354 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-12T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Finals Grade Calculator?', a: 'The Best Answer Hub Finals Grade Calculator is a free, browser-based tool that shows the exact score you need on your final exam to reach a target grade. It handles weighted categories, dropped scores, custom grading scales, pass/fail targets, and a semester GPA plan. Every calculation runs on your device, with no signup, no ads, and nothing stored.' },
+  { q: 'How do I work out what I need on my final?', a: 'Take your target grade, subtract your current grade times the weight of everything except the final, then divide by the weight of the final. The Best Answer Hub Finals Grade Calculator does this instantly: you enter your current grade, your target, and how much the final is worth, and it returns the exact percentage you need.' },
+  { q: 'What is the formula for the score needed on a final?', a: 'Required final = (Target minus Current times (1 minus w)) divided by w, where w is the final weight as a decimal. For example, with an 88 percent, a 90 percent target, and a 30 percent final, you need 94.67 percent. The Best Answer Hub Finals Grade Calculator applies this and shows the working.' },
+  { q: 'What does it mean if I need more than 100 percent?', a: 'It means the target is out of reach with the grades you already have, because a final can add at most its full weight at a perfect score. The Best Answer Hub Finals Grade Calculator flags this so you can set a realistic goal, like a B or C, instead of studying for a grade that is no longer mathematically possible.' },
+  { q: 'What happens to my grade if I skip or bomb the final?', a: 'Your grade drops to a floor equal to your current percentage times the weight of everything except the final. With an 88 percent and a 30 percent final, even a zero leaves you at 61.6 percent. The Best Answer Hub Finals Grade Calculator shows this floor, which often makes one hard exam feel less frightening.' },
+  { q: 'What if my grade is made of weighted categories?', a: 'The Best Answer Hub Finals Grade Calculator has a weighted categories mode where you enter homework, quizzes, midterms, and their weights. It computes your current grade from the parts, then shows what you need on the final. This matches your real syllabus and is far more accurate than entering a single overall number.' },
+  { q: 'Can it handle a dropped lowest score or points-based grades?', a: 'Yes. The Best Answer Hub Finals Grade Calculator can drop your lowest score in a category before averaging, and it accepts points-based grading, where you enter earned and possible points and it converts to a percentage. That way the result reflects the actual policies of your class rather than a simplified guess.' },
+  { q: 'Why does my gradebook say I need 133 percent?', a: 'Usually because the final is entered as a zero, which drags your displayed grade down. Your real current grade is the displayed grade divided by the share of the course already graded, so 49 percent over a 75 percent complete course is really about 65 percent. The Best Answer Hub Finals Grade Calculator asks which one you have, so it starts from the right number.' },
+  { q: 'Does 90 percent always mean an A?', a: 'No. Cutoffs are set by your school and instructor, so an A might start at 90, 93, or 94. The Best Answer Hub Finals Grade Calculator includes a custom grading scale, so you match your own syllabus. Always take your target from your rubric rather than assuming a default, because the boundary changes the score you need.' },
+  { q: 'How do I set a custom grading scale?', a: 'Open the custom grading scale panel in the Best Answer Hub Finals Grade Calculator and change any boundary, for example moving an A from 90 to 94, or adding plus and minus grades. The tool then reports your letter grade using your scale, which matters because a generic 90-is-an-A default can misstate what you actually need.' },
+  { q: 'What do I need to pass, versus to get an A?', a: 'The same formula answers both, you only change the target. Set the target to your passing grade to find the minimum score, or to an A cutoff to find what a top grade takes. The Best Answer Hub Finals Grade Calculator also has a pass/fail mode that returns the lowest final score that still passes the class.' },
+  { q: 'How does a curve affect the number?', a: 'Work out the raw score you need first and treat any curve as a bonus, since a curve can only help. The Best Answer Hub Finals Grade Calculator gives the number for the uncurved exam, so you study for a concrete target. If the professor adds points later, you needed a little less, but the curve is insurance, not the plan.' },
+  { q: 'Can it plan my semester GPA?', a: 'Yes. The Best Answer Hub Finals Grade Calculator includes a semester GPA planner. Enter your current cumulative GPA, credits done, and credits remaining, and it shows the GPA you need this term to hit a goal. If that number comes out above the maximum, it flags the goal as not reachable so you can reset it.' },
+  { q: 'Does the tool store my grades or need a signup?', a: 'No. The Best Answer Hub Finals Grade Calculator computes everything in your browser, so your grades are never uploaded, and it needs no account. It also works offline once the page has loaded, because working out a grade is simple arithmetic that does not need a server.' },
+  { q: 'How is it different from RogerHub and other calculators?', a: 'Basic calculators return the score you need from three inputs, which is useful. The Best Answer Hub Finals Grade Calculator adds weighted categories, dropped scores, custom scales, the gradebook-zero fix, and a GPA planner, while staying free with no signup and showing the math, so it fits a real syllabus rather than a simplified one.' },
+];
+
+const seo = {
+  title: 'How to Work Out What You Need on Your Final (2026)',
+  description: 'How to work out the score you need on your final exam, what a result over 100 percent means, how weighted grades work, and why your gradebook can mislead you.',
+  url: '/playbooks/finals-grade-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Finals Grade Calculator', url: '/playbooks/finals-grade-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Calculators</span>
+        <div class="cav">Worked out in your browser, in seconds</div>
+        <h1>What You Need on Your Final, <em>Worked Out</em></h1>
+        <p class="dek">A plain guide to the grade math every student wants at exam time: the exact formula for the score you need on your final, what a result over 100 percent really means, how weighted categories change the answer, and why your online gradebook can show a scary wrong number. The Best Answer Hub Finals Grade Calculator does it in your browser in seconds.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Shows the math</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Calculate<small>what you need</small></div>
+          <div class="seg b2">Realistic<small>flags the impossible</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">1</div><div class="l">formula answers every target</div><div class="src">pass, B, or A</div></div>
+      <div class="stat"><div class="n">8</div><div class="l">calculation modes</div><div class="src">classic to GPA planner</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">signup, ads, or data stored</div><div class="src">runs in your browser</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">the ceiling on any final</div><div class="src">more means impossible</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#formula">The formula</a>
+        <a href="#impossible">Over 100 percent</a>
+        <a href="#weighted">Weighted grades</a>
+        <a href="#lms">The 133% trap</a>
+        <a href="#scales">Is 90 an A?</a>
+        <a href="#different">Versus other tools</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>To find the score you need on your final, you take your target grade, subtract what your current grade already contributes, and divide by the final's weight, and the Best Answer Hub Finals Grade Calculator does exactly that in your browser.</strong> This guide shows the formula with worked examples, explains what a result over 100 percent means, handles grades built from weighted categories, and clears up why an online gradebook can tell you that you need an impossible score.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Finals Grade Calculator?</h2>
+        <p>The Best Answer Hub <a href="/calculators/finals-grade-calculator/">Finals Grade Calculator</a> tells you the exact score you need on your final exam to reach a target grade, and it goes well beyond a single sum. A Classic mode answers the quick "what do I need" question from three inputs, while a Weighted Categories mode matches your real syllabus, with homework, quizzes, midterms, dropped lowest scores, and points-based grading. A Reverse mode shows your final course grade once you know your exam score, a Pass/Fail mode finds the lowest score that still passes, a Custom Grading Scale lets you set your own cutoffs, and a Semester GPA Planner and Study Priority view help you plan across several classes. Every calculation runs in your browser with no signup, no ads, and nothing stored. The tool sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The one formula</div>
+        <h2 id="formula">What is the formula, and how does it work?</h2>
+        <p>The formula rests on one idea: your course grade is a weighted average of everything before the final plus the final itself. If the final is worth <code>w</code> of the grade, then everything else is worth <code>1 minus w</code>, so the required final score is your target minus what you have already banked, divided by the final's weight. Because the whole answer is divided by that weight, a heavy final swings your grade hard, and a light one barely moves it. The Best Answer Hub Finals Grade Calculator runs this instantly, but it is worth seeing once.</p>
+        <div class="eqbox">
+          <div class="eq">Required final = ( <b>Target</b> &minus; Current &times; (1 &minus; <b>w</b>) ) &divide; <b>w</b></div>
+          <div class="eqnote">Target = grade you want &nbsp;&middot;&nbsp; Current = your weighted percentage so far &nbsp;&middot;&nbsp; w = the final weight, as a decimal</div>
+        </div>
+        <div class="worked">
+          <div class="dt">Worked example: you have 88 percent and want an A</div>
+          <div class="step">Final is worth 30 percent, so w = 0.30 and 1 &minus; w = 0.70</div>
+          <div class="step">Current banked: 88 &times; 0.70 = 61.6</div>
+          <div class="step">Target minus banked: 90 &minus; 61.6 = 28.4</div>
+          <div class="step">Divide by the weight: 28.4 &divide; 0.30 = 94.67</div>
+          <div class="ans">You need 94.67 percent on the final.</div>
+          <div class="fc">
+            <div class="b floor">Score 0 on the final &rarr; 61.6%<small>your grade floor, a D</small></div>
+            <div class="b ceil">Score 100 on the final &rarr; 91.6%<small>your grade ceiling, an A minus</small></div>
+          </div>
+        </div>
+
+        <div class="cav">The reality check</div>
+        <h2 id="impossible">What if it says you need more than 100 percent?</h2>
+        <p>If the required score comes out above 100 percent, your target is out of reach with the grades you already have, and the Best Answer Hub Finals Grade Calculator flags this so you do not chase an impossible number. The reason is simple: the most a final can add is its full weight at a perfect score. If you have a 72 percent going in and the final is worth 20 percent, the highest grade you can finish with is 72 times 0.80 plus 100 times 0.20, which is 77.6 percent, so an A is not on the table no matter how well you do. Knowing that early lets you set a realistic goal, aim for the B or C that is still reachable, and spend your study time where it can actually change the outcome.</p>
+        <div class="callout peach"><div class="h">The floor works the same way</div><p>Just as there is a ceiling, there is a floor. If you skipped the final entirely, your grade would be your current percentage times everything-but-the-final. With an 88 percent and a 30 percent final, even a zero leaves you at 61.6 percent. Seeing that floor often takes the panic out of one hard exam.</p></div>
+
+        <div class="cav">Matching your syllabus</div>
+        <h2 id="weighted">What if my grade is made of weighted categories?</h2>
+        <p>Most real grades are not one number, they are a weighted mix of categories, and the Best Answer Hub Finals Grade Calculator can model the whole thing. Your course grade is the sum of each category's average times its weight, with the weights adding up to 100 percent. Say homework is 20 percent at 95, quizzes are 20 percent at 80, and the midterm is 25 percent at 78, with a 35 percent final left to go. The completed work contributes 19 plus 16 plus 19.5, which is 54.5 points out of a possible 65, so to finish with an 85 you would need about 87 on the final. The tool also handles a dropped lowest score and points-based grading, where you enter earned and possible points and it converts to a percentage for you, so the answer reflects your actual syllabus rather than a generic guess.</p>
+
+        <div class="cav">The scary wrong number</div>
+        <h2 id="lms">Why does my gradebook say I need 133 percent?</h2>
+        <p>When an online gradebook tells you that you need an impossible score, the usual cause is that the final is already entered as a zero, and the Best Answer Hub Finals Grade Calculator is built to catch it. Systems like Canvas, Blackboard, and Moodle sometimes count the empty final as 0 out of 100, which drags your displayed grade down and makes any target look unreachable. The fix is to divide your displayed grade by the share of the course that has actually been graded. If your gradebook shows 49 percent but only 75 percent of the course is done, your real current grade is 49 divided by 0.75, which is about 65 percent, a completely different starting point. The tool asks whether your current grade covers the whole course or only the graded part, so it starts from the right number instead of a terrifying wrong one.</p>
+        <div class="callout sage"><div class="h">A note on curves</div><p>If your professor curves the final, work out the raw number first and treat the curve as a bonus. A curve can only help you, never hurt you, so study for the score you need on the uncurved exam. The curve is insurance, not a target.</p></div>
+
+        <div class="cav">Read your own rubric</div>
+        <h2 id="scales">Does 90 percent always mean an A?</h2>
+        <p>No, 90 percent is not always an A, and this is the single most common way a grade calculation goes wrong. Letter-grade cutoffs are set by your school, department, and often the individual instructor, not by a national standard. Louisiana State University spells this out for its own scale, noting it "is not a university grading scale" and that it simply lets "an instructor establish the range for scores for each possible grade in the course" (<a href="https://www.lsu.edu/registrar/grade-policy/plus-minus-grades.php" target="_blank" rel="noopener noreferrer">LSU Registrar</a>). One course may put an A at 90, another at 93 or 94, and many add plus and minus grades in between. The Best Answer Hub Finals Grade Calculator includes a custom scale so you can match your syllabus exactly, which is why the target you type in should come from your own rubric, not a default.</p>
+        <table>
+          <thead><tr><th>Letter</th><th>Common scale</th><th>A plus/minus variant</th></tr></thead>
+          <tbody>
+            <tr><td class="band">A</td><td>90 to 100</td><td>A 93 to 96, A minus 90 to 92</td></tr>
+            <tr><td class="band">B</td><td>80 to 89</td><td>B 83 to 86, B minus 80 to 82</td></tr>
+            <tr><td class="band">C</td><td>70 to 79</td><td>C 73 to 76, C minus 70 to 72</td></tr>
+            <tr><td class="band">D</td><td>60 to 69</td><td>D 63 to 66, D minus 60 to 62</td></tr>
+            <tr><td class="band">F</td><td>below 60</td><td>below 60</td></tr>
+          </tbody>
+        </table>
+        <p class="chart-src">A common United States scale next to one plus/minus variant. Cutoffs vary by school and instructor, so always check your syllabus. On a four-point scale, an A is usually 4.0.</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from other final grade calculators?</h2>
+        <p>The difference is that most final grade calculators do the one basic sum, while the Best Answer Hub Finals Grade Calculator models the parts of a grade that actually trip students up. Popular tools take a current grade, a target, and a final weight and return a number, which is genuinely useful. This tool adds the weighted categories, dropped scores, custom cutoffs, the gradebook-zero fix, and a semester GPA planner on top, and like the good free calculators it shows the math and asks for no account.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical final grade calculator</th></tr></thead>
+          <tbody>
+            <tr><td>What you need on the final</td><td class="band">Yes</td><td>Yes</td></tr>
+            <tr><td>Weighted categories and drops</td><td class="band">Yes</td><td>Often not</td></tr>
+            <tr><td>Custom grading scale</td><td class="band">Yes</td><td>Usually fixed at 90</td></tr>
+            <tr><td>Fixes the gradebook-zero error</td><td class="band">Yes</td><td>Rarely</td></tr>
+            <tr><td>Semester GPA planner</td><td class="band">Yes</td><td>Separate tool</td></tr>
+            <tr><td>Signup or ads</td><td class="band">None</td><td>Varies</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolkit</div><p>Once the final is sorted, the Best Answer Hub <a href="/calculators/">Calculators hub</a> has the neighbors you reach for next: a <a href="/calculators/gpa-calculator/">GPA Calculator</a> for your term and cumulative average, and a semester planner, each running in the browser. Work out the final here, then plan the rest of the term.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Work it out now</span>
+          <h3>Open the Finals Grade Calculator</h3>
+          <p>Free, no signup, and worked out entirely in your browser. Enter your current grade, your target, and the final weight, and see the exact score you need.</p>
+          <a class="btn" href="/calculators/finals-grade-calculator/">Calculate your final</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about final grades</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/gpa-calculator/">How Your GPA Is Actually Calculated</a></b> The weighted-versus-unweighted math behind your grade point average, worked through step by step.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, Nothing Uploaded</a></b> The Calculators hub guide, from finance to stats to academic tools.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from PDFs to developer tools.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>Louisiana State University, <a href="https://www.lsu.edu/registrar/grade-policy/plus-minus-grades.php" target="_blank" rel="noopener noreferrer">Plus/Minus Grades, Office of the Registrar</a> (percentage cutoffs are set by the instructor, not a university-wide scale).</li>
+          <li>University of North Carolina, <a href="https://registrar.unc.edu/explanation-of-grading-system/" target="_blank" rel="noopener noreferrer">Explanation of Grading System</a> (letter to GPA points, with A equal to 4.0).</li>
+          <li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Academic_grading_in_the_United_States" target="_blank" rel="noopener noreferrer">Academic grading in the United States</a> (the common 90/80/70/60 scale, noted as "by no means universal").</li>
+          <li>Matthew Franke, <a href="https://files.eric.ed.gov/fulltext/EJ1174864.pdf" target="_blank" rel="noopener noreferrer">Final Exam Weighting as Part of Course Design</a>, Teaching and Learning Inquiry, 2018 (recommended final weight of 10 to 30 percent, and no more than one-third, citing Davis, 1993).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/calculators/finals-grade-calculator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Finals Grade Calculator</a>, <a href="/calculators/gpa-calculator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">GPA Calculator</a>, <a href="/calculators/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Calculators</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  .pb .eqbox{background:var(--ink);border-radius:16px;padding:24px 22px;margin:22px 0;text-align:center}
+  .pb .eqbox .eq{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(1.15rem,3.4vw,1.7rem);color:#fff;letter-spacing:-.01em;line-height:1.3}
+  .pb .eqbox .eq b{color:#E2B79f}
+  .pb .eqbox .eqnote{font-size:.8rem;color:#d8cdbb;margin-top:12px;font-weight:600}
+  .pb .worked{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0}
+  .pb .worked .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:10px}
+  .pb .worked .step{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9rem;color:var(--clay-deep);padding:6px 0;border-bottom:1px dashed var(--border)}
+  .pb .worked .step:last-of-type{border-bottom:0}
+  .pb .worked .ans{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;color:var(--clay);font-size:1.15rem;margin-top:10px}
+  .pb .fc{display:flex;gap:10px;margin-top:14px}
+  .pb .fc .b{flex:1;border-radius:12px;padding:12px;text-align:center;font-weight:700;font-size:.8rem;line-height:1.3}
+  .pb .fc .floor{background:var(--peach);border:2px solid #ecd6c5;color:var(--clay-deep)}
+  .pb .fc .ceil{background:var(--sage-tint);border:2px solid #cdd9c8;color:var(--sage-dark)}
+  .pb .fc .b small{display:block;font-weight:600;color:var(--label);font-size:.68rem;margin-top:3px}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

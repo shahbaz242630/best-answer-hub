@@ -1,0 +1,51 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import type { SEOProps } from '../types';
+
+interface Props {
+  seo: SEOProps;
+  frontmatter: {
+    name: string;
+    category: string;
+    shortDescription: string;
+    pricingSummary?: string;
+    affiliateAvailable?: boolean;
+    affiliateLinkSlug?: string;
+    pros?: string[];
+    cons?: string[];
+    bestFor?: string[];
+    notBestFor?: string[];
+    rating?: number;
+    website?: string;
+  };
+}
+
+const { seo, frontmatter } = Astro.props;
+---
+
+<BaseLayout seo={seo}>
+  <div class="py-12 md:py-16">
+    <div class="container max-w-content mx-auto px-6">
+      <header class="mb-10">
+        <span class="text-bae-primary text-sm font-semibold mb-2 inline-block">{frontmatter.category}</span>
+        <h1 class="font-serif text-3xl md:text-4xl font-bold text-bae-ink leading-tight mb-4">
+          {frontmatter.name}
+        </h1>
+        <p class="text-lg text-bae-muted leading-relaxed">{frontmatter.shortDescription}</p>
+      </header>
+      
+      <div class="grid gap-8">
+        <slot />
+      </div>
+      
+      {frontmatter.affiliateAvailable && frontmatter.affiliateLinkSlug && (
+        <div class="mt-10 bg-bae-primary-soft border border-bae-border rounded-bae p-6 text-center">
+          <p class="text-bae-muted text-sm mb-3">We may earn a commission at no extra cost to you.</p>
+          <a href={`/go/${frontmatter.affiliateLinkSlug}/`} class="inline-flex items-center gap-2 bg-bae-ink text-white px-6 py-3 rounded-bae-sm font-semibold hover:bg-bae-primary transition-colors">
+            Visit {frontmatter.name} →
+          </a>
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,112 @@
+---
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const programs = await getCollection('affiliate-programs', ({ data }) => data.active);
+  return programs.map((program) => ({
+    params: { slug: program.slug },
+    props: { program },
+  }));
+}
+
+const { program } = Astro.props;
+
+// Open redirect protection — only allow HTTPS URLs to known affiliate / SaaS domains.
+// This list covers the major categories we review. Add new domains as needed.
+const ALLOWED_DOMAINS = new Set([
+  'hubspot.com', 'activecampaign.com', 'getresponse.com', 'mailchimp.com',
+  'aweber.com', 'convertkit.com', 'brevo.com', 'klaviyo.com',
+  'constantcontact.com', 'campaignmonitor.com', 'drip.com', 'moosend.com',
+  'mailerlite.com', 'omnisend.com', 'zoho.com', 'salesforce.com',
+  'pipedrive.com', 'freshworks.com', 'monday.com', 'asana.com',
+  'clickup.com', 'notion.so', 'slack.com', 'zoom.us',
+  'calendly.com', 'typeform.com', 'surveymonkey.com', 'semrush.com',
+  'ahrefs.com', 'moz.com', 'canva.com', 'adobe.com',
+  'figma.com', 'hostinger.com', 'namecheap.com', 'cloudflare.com',
+  'aws.amazon.com', 'digitalocean.com', 'vercel.com', 'netlify.com',
+  'github.com', 'gitlab.com', 'jetbrains.com', 'visualstudio.microsoft.com',
+  'code.visualstudio.com', 'tableau.com', 'powerbi.microsoft.com',
+  'analytics.google.com', 'mixpanel.com', 'amplitude.com', 'hotjar.com',
+  'optimizely.com', 'shopify.com', 'woocommerce.com', 'bigcommerce.com',
+  'magento.com', 'squarespace.com', 'wix.com', 'gohighlevel.com',
+  'kartra.com', 'kajabi.com', 'teachable.com', 'thinkific.com',
+  'patreon.com', 'substack.com', 'ghost.org', 'wordpress.com',
+  'wordpress.org', 'elementor.com', 'elegantthemes.com', 'yoast.com',
+  'rankmath.com', 'wpengine.com', 'kinsta.com', 'siteground.com',
+  'bluehost.com', 'dreamhost.com', 'a2hosting.com', 'liquidweb.com',
+  'cloudways.com', 'heroku.com', 'railway.app', 'render.com',
+  'fly.io', 'coursera.org', 'udemy.com', 'edx.org',
+  'skillshare.com', 'linkedin.com', 'pluralsight.com', 'datacamp.com',
+  'khanacademy.org', 'stripe.com', 'paypal.com', 'squareup.com',
+  'adyen.com', 'checkout.com', 'braintreepayments.com', 'twilio.com',
+  'zendesk.com', 'intercom.com', 'drift.com', 'freshdesk.com',
+  'tawk.to', 'livechat.com', 'tidio.com', 'chatwoot.com',
+  'jitsi.org', 'teams.microsoft.com', 'webex.com',
+  'trustpilot.com', 'bbb.org', 'google.com', 'facebook.com',
+  'twitter.com', 'instagram.com', 'pinterest.com', 'tiktok.com',
+  'youtube.com', 'reddit.com', 'quora.com',
+]);
+
+function isAllowedUrl(url) {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:') return false;
+    const hostname = parsed.hostname.toLowerCase();
+    if (ALLOWED_DOMAINS.has(hostname)) return true;
+    // Also allow subdomains of allowed domains
+    const parts = hostname.split('.');
+    for (let i = 0; i < parts.length - 1; i++) {
+      const domain = parts.slice(i).join('.');
+      if (ALLOWED_DOMAINS.has(domain)) return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+const targetUrl = isAllowedUrl(program.data.programUrl) ? program.data.programUrl : '/';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="refresh" content={`2;url=${targetUrl}`}>
+  <title>Redirecting to {program.data.name}...</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #FAFAF8; color: #1a1a2e; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .card { background: #fff; border: 1px solid #e8e8f0; border-radius: 12px; padding: 40px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .logo { width: 48px; height: 48px; border-radius: 10px; background: #6366f1; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; margin-bottom: 16px; }
+    h1 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+    p { font-size: 0.9rem; color: #6b6b80; margin-bottom: 20px; line-height: 1.6; }
+    .spinner { width: 24px; height: 24px; border: 2px solid #e8e8f0; border-top-color: #6366f1; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    a { color: #6366f1; text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+    .disclosure { font-size: 0.75rem; color: #9a9ab0; margin-top: 20px; padding-top: 16px; border-top: 1px solid #f0f0f6; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">B</div>
+    <div class="spinner"></div>
+    <h1>Redirecting you to {program.data.name}</h1>
+    <p>You will be redirected automatically in a few seconds. If not, <a href={targetUrl} rel="noopener noreferrer">click here</a>.</p>
+    <p class="disclosure">Best Answer Hub may earn a commission from purchases made through this link. This does not affect your price.</p>
+  </div>
+  
+  <script define:vars={{ url: targetUrl }}>
+    setTimeout(() => { window.location.href = url; }, 1500);
+  </script>
+</body>
+</html>

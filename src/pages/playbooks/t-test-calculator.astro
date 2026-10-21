@@ -1,0 +1,362 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub T-Test Calculator?', a: 'The Best Answer Hub T-Test Calculator is a free, browser-based tool that runs one-sample, independent, and paired t-tests from summary statistics. It returns the t-statistic, degrees of freedom, one- and two-tailed p-values, and the Cohen\'s d effect size, with step-by-step work and nothing uploaded.' },
+  { q: 'What is a t-test?', a: 'A t-test checks whether the difference between averages is larger than chance would produce, by comparing the gap between means to the spread in the data. It returns a t-statistic and a p-value. The Best Answer Hub T-Test Calculator computes both and explains the result in plain language.' },
+  { q: 'What is the difference between one-sample, independent, and paired t-tests?', a: 'A one-sample test compares one mean to a known value, an independent test compares two separate groups, and a paired test compares two measurements on the same subjects. The Best Answer Hub T-Test Calculator gives each design its own labeled panel with a hint to help you choose.' },
+  { q: 'When should you use a t-test instead of a z-test?', a: 'Use a t-test when the population standard deviation is unknown and estimated from the sample, which covers most real data, and especially with small samples. A z-test assumes the population standard deviation is known. The Best Answer Hub T-Test Calculator is built for the common case where only sample statistics are available.' },
+  { q: 'How do I choose between a paired and an independent t-test?', a: 'Use a paired test when each value in one group links to exactly one value in the other, such as before-and-after on the same people. Use an independent test when the groups are different subjects. The Best Answer Hub T-Test Calculator shows a decision hint beside each mode to prevent the mix-up.' },
+  { q: 'Should I use a one-tailed or two-tailed test?', a: 'Use a two-tailed test to detect a difference in either direction, which is the standard in research. Use a one-tailed test only for a directional hypothesis set in advance. The Best Answer Hub T-Test Calculator defaults to two-tailed and labels the tail type in every result.' },
+  { q: 'What does the p-value in a t-test mean?', a: 'It is the probability of a result at least as extreme as yours if there were truly no difference. A p of 0.04 does not mean a 4% chance the null is true, and it does not measure effect size. The Best Answer Hub T-Test Calculator reports the exact p-value and flags borderline results.' },
+  { q: 'Is p = 0.052 significant?', a: 'At the conventional 0.05 level it is technically not significant, but it is a borderline result worth reporting exactly rather than rounding to "not significant." The Best Answer Hub T-Test Calculator flags values between 0.05 and 0.10 as marginal and shows the exact p-value.' },
+  { q: 'What are degrees of freedom in a t-test?', a: 'Degrees of freedom are the number of values free to vary after estimating the mean, and they set the shape of the t-distribution. For one-sample and paired tests it is n minus 1. The Best Answer Hub T-Test Calculator computes the degrees of freedom automatically and shows the formula used.' },
+  { q: 'What is Cohen\'s d?', a: 'Cohen\'s d is a standardized effect size that measures the difference between two means in standard-deviation units, with 0.2, 0.5, and 0.8 marking small, medium, and large. The Best Answer Hub T-Test Calculator computes Cohen\'s d for every test, so significance and size sit side by side.' },
+  { q: 'Should I use Welch\'s or Student\'s t-test?', a: 'Use Welch\'s when the two groups have unequal variances or unequal sample sizes, which is the safer default in most real situations. Student\'s pooled test assumes equal variances. The Best Answer Hub T-Test Calculator offers both for independent samples and defaults to Welch\'s correction.' },
+  { q: 'Can I run a t-test if my data is not normal?', a: 'The t-test assumes approximate normality, which matters most for small samples, while larger samples are protected by the Central Limit Theorem. For a small, badly skewed sample, a non-parametric test may fit better. The Best Answer Hub T-Test Calculator adds a note when sample sizes are very small.' },
+  { q: 'Why is the t-test named after "Student"?', a: 'William Sealy Gosset developed it while working at the Guinness brewery in Dublin and published it in 1908 under the pen name "Student," since his employer restricted staff from publishing. The Best Answer Hub T-Test Calculator uses the same Student\'s t-distribution he introduced.' },
+  { q: 'Why does my t-test give a different p-value than Excel or SPSS?', a: 'Usually because of whether Welch\'s correction is applied, or small differences in how the software computes the t-distribution. The Best Answer Hub T-Test Calculator states which method it used and defaults to Welch\'s, so you can see exactly why a result differs from another tool.' },
+  { q: 'Is the Best Answer Hub T-Test Calculator free and private?', a: 'Yes. It is completely free with no premium tiers, no ads, and no signup. Every calculation runs in your browser, so no data or results are uploaded. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.' },
+];
+
+const seo = {
+  title: 'How to Run a T-Test and Read the Result',
+  description: 'How to run a t-test: pick one-sample, paired, or independent, read the p-value and Cohen d effect size honestly, and use Welch by default. No signup.',
+  url: '/playbooks/t-test-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'T-Test Calculator', url: '/playbooks/t-test-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+  <div class="hero">
+    <span class="glow"></span>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div class="masthead">
+          <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+          <span class="word">Best Answer Hub<i>.</i></span>
+        </div>
+        <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+      </div>
+      <span class="eyebrow">Best Answer Hub Playbooks &middot; Statistics</span>
+      <div class="cav">Is the difference real</div>
+      <h1>How to Run a <em>T-Test</em> and Read the Result</h1>
+      <p class="dek">A t-test asks whether a difference between two averages is real or just noise. The hard part is not the arithmetic, it is picking the right test for how your data is shaped, then reading the p-value and the effect size for what they actually say, and not for what people assume they say.</p>
+      <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Statistics</span><span>No signup</span></div>
+      <div class="bandstrip">
+        <div class="seg b1">Pick the test<small>one-sample, paired, two-sample</small></div>
+        <div class="seg b2">Compute t and p<small>with degrees of freedom</small></div>
+        <div class="seg b3">Read it<small>effect size, not just p</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n">1908</div><div class="l">year "Student" published the t-test, from a Guinness brewery</div><div class="src">Biometrika</div></div>
+    <div class="stat"><div class="n">0.2 / 0.5 / 0.8</div><div class="l">Cohen's d for a small, medium, large effect</div><div class="src">Cohen 1988</div></div>
+    <div class="stat"><div class="n">~40%</div><div class="l">chance of a false positive across 10 tests at 0.05</div><div class="src">Duke GHI</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">computed in your browser, nothing uploaded</div><div class="src">no upload</div></div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="On this page">
+      <div class="t">On this page</div>
+      <a href="#what">What it is</a>
+      <a href="#types">Which t-test</a>
+      <a href="#tvz">T-test vs z-test</a>
+      <a href="#pvalue">What the p-value says</a>
+      <a href="#effect">Effect size</a>
+      <a href="#welch">Student's or Welch's</a>
+      <a href="#different">Why this tool</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <article>
+      <p class="lead"><strong>A t-test checks whether the difference between two averages is larger than chance alone would produce, by weighing the gap between the means against the variability in the data.</strong> It returns a t-statistic and a p-value, and the smaller the p-value, the harder it is to explain the difference as luck. The Best Answer Hub <a href="/calculators/statistics-suite/t-test-calculator/">T-Test Calculator</a> runs one-sample, independent, and paired t-tests from summary statistics, and reports the t-statistic, degrees of freedom, one- and two-tailed p-values, and the Cohen's d effect size, with the steps shown, in your browser.</p>
+
+      <p>This guide covers the three test designs and how to choose between them, when a t-test is the right call instead of a z-test, what a p-value does and does not mean, why effect size belongs next to significance, and why Welch's correction is the safer default. The tool sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> statistics suite, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+      <div class="cav">Start here</div>
+      <h2 id="what">What is the Best Answer Hub T-Test Calculator?</h2>
+      <p>The Best Answer Hub T-Test Calculator is a free, browser-based tool that runs a t-test from summary statistics, so you enter means, standard deviations, and sample sizes rather than raw rows. It handles one-sample, independent two-sample, and paired designs, and returns the t-statistic, degrees of freedom, one- and two-tailed p-values, and the Cohen's d effect size. Each result comes with step-by-step work, a plain-English reading, and an interactive t-distribution visual, with no signup and nothing uploaded.</p>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">1</span><div><b>All three designs.</b> One-sample against a target, two independent groups, or paired before-and-after measurements.</div></li>
+          <li><span class="dot">2</span><div><b>More than a p-value.</b> The t-statistic, degrees of freedom, both tail p-values, and the Cohen's d effect size in one result.</div></li>
+          <li><span class="dot">3</span><div><b>Welch by default.</b> The independent test uses Welch's correction unless you choose the pooled method, with the working shown.</div></li>
+        </ul>
+      </div>
+
+      <div class="cav">Match the design</div>
+      <h2 id="types">Which t-test do you need?</h2>
+      <p>Pick the test that matches how your data is structured, because the wrong choice invalidates the p-value before you even read it. A one-sample test compares one group's mean to a known target. An independent test compares two separate, unrelated groups. A paired test compares two measurements on the same subjects, such as before and after. The rule for pairing is direct: if each value in one group is naturally linked to exactly one value in the other, it is paired; if the two groups are different subjects, it is independent.</p>
+      <table>
+        <thead><tr><th>Design</th><th>Compares</th><th>Degrees of freedom</th></tr></thead>
+        <tbody>
+          <tr><td class="band">One-sample</td><td>One mean vs a known value &mu;<sub>0</sub></td><td>n &minus; 1</td></tr>
+          <tr><td class="band">Paired</td><td>Two conditions on the same subjects</td><td>n &minus; 1 (pairs)</td></tr>
+          <tr><td class="band">Independent</td><td>Two separate groups</td><td>n<sub>1</sub> + n<sub>2</sub> &minus; 2, or Welch's</td></tr>
+        </tbody>
+      </table>
+      <div class="codebox">
+        <div class="dt">The one-sample t-statistic</div>
+        <div class="codelines">t = (x&#772; &minus; &mu;<sub>0</sub>) / (s / &radic;n)
+
+  x&#772;  = sample mean
+  &mu;<sub>0</sub>  = the value you are testing against
+  s   = sample standard deviation
+  n   = sample size</div>
+        <p class="codenote">Paired tests apply the same formula to the differences. Source: NIST/SEMATECH e-Handbook, section 1.3.5.2.</p>
+      </div>
+      <p>The Best Answer Hub T-Test Calculator gives each design its own labeled panel with a decision hint, computes the degrees of freedom for you, and shows the substitution, so the choice and the arithmetic are both visible.</p>
+
+      <div class="cav">t or z</div>
+      <h2 id="tvz">When do you use a t-test instead of a z-test?</h2>
+      <p>Use a t-test whenever you estimate the population standard deviation from the sample, which is almost always. A z-test assumes the population standard deviation is known; in practice it rarely is, so you substitute the sample standard deviation s and use Student's t-distribution to account for the extra uncertainty (<a href="https://openstax.org/books/introductory-statistics/pages/8-2-a-single-population-mean-using-the-student-t-distribution" target="_blank" rel="noopener noreferrer">OpenStax</a>). The t-distribution has heavier tails than the normal curve, which widens the margin for small samples, and it converges to the normal curve as the degrees of freedom grow.</p>
+      <figure class="chart">
+        <figcaption class="chart-title">The t-distribution has heavier tails than the normal</figcaption>
+        <svg viewBox="0 0 600 224" role="img" aria-label="Student t-distribution with 3 degrees of freedom overlaid on the standard normal curve, showing a lower peak and heavier tails."><line x1="60" y1="172.0" x2="540" y2="172.0" stroke="#E1D4be" stroke-width="2"/><polyline points="62.4,171.8 65.0,171.8 67.7,171.7 70.3,171.7 73.0,171.7 75.6,171.6 78.2,171.5 80.9,171.5 83.5,171.4 86.2,171.3 88.8,171.2 91.4,171.1 94.1,171.0 96.7,170.9 99.4,170.7 102.0,170.6 104.6,170.4 107.3,170.2 109.9,170.0 112.6,169.7 115.2,169.5 117.8,169.2 120.5,168.8 123.1,168.5 125.8,168.1 128.4,167.6 131.0,167.2 133.7,166.7 136.3,166.1 139.0,165.5 141.6,164.8 144.2,164.1 146.9,163.3 149.5,162.5 152.2,161.6 154.8,160.6 157.4,159.6 160.1,158.5 162.7,157.3 165.4,156.0 168.0,154.7 170.6,153.2 173.3,151.7 175.9,150.1 178.6,148.4 181.2,146.7 183.8,144.8 186.5,142.8 189.1,140.8 191.8,138.6 194.4,136.4 197.0,134.1 199.7,131.7 202.3,129.2 205.0,126.6 207.6,124.0 210.2,121.2 212.9,118.4 215.5,115.6 218.2,112.7 220.8,109.7 223.4,106.7 226.1,103.6 228.7,100.6 231.4,97.5 234.0,94.4 236.6,91.3 239.3,88.2 241.9,85.1 244.6,82.1 247.2,79.1 249.8,76.1 252.5,73.2 255.1,70.4 257.8,67.7 260.4,65.1 263.0,62.6 265.7,60.2 268.3,57.9 271.0,55.8 273.6,53.8 276.2,52.0 278.9,50.4 281.5,48.9 284.2,47.6 286.8,46.5 289.4,45.6 292.1,44.9 294.7,44.4 297.4,44.1 300.0,44.0 302.6,44.1 305.3,44.4 307.9,44.9 310.6,45.6 313.2,46.5 315.8,47.6 318.5,48.9 321.1,50.4 323.8,52.0 326.4,53.8 329.0,55.8 331.7,57.9 334.3,60.2 337.0,62.6 339.6,65.1 342.2,67.7 344.9,70.4 347.5,73.2 350.2,76.1 352.8,79.1 355.4,82.1 358.1,85.1 360.7,88.2 363.4,91.3 366.0,94.4 368.6,97.5 371.3,100.6 373.9,103.6 376.6,106.7 379.2,109.7 381.8,112.7 384.5,115.6 387.1,118.4 389.8,121.2 392.4,124.0 395.0,126.6 397.7,129.2 400.3,131.7 403.0,134.1 405.6,136.4 408.2,138.6 410.9,140.8 413.5,142.8 416.2,144.8 418.8,146.7 421.4,148.4 424.1,150.1 426.7,151.7 429.4,153.2 432.0,154.7 434.6,156.0 437.3,157.3 439.9,158.5 442.6,159.6 445.2,160.6 447.8,161.6 450.5,162.5 453.1,163.3 455.8,164.1 458.4,164.8 461.0,165.5 463.7,166.1 466.3,166.7 469.0,167.2 471.6,167.6 474.2,168.1 476.9,168.5 479.5,168.8 482.2,169.2 484.8,169.5 487.4,169.7 490.1,170.0 492.7,170.2 495.4,170.4 498.0,170.6 500.6,170.7 503.3,170.9 505.9,171.0 508.6,171.1 511.2,171.2 513.8,171.3 516.5,171.4 519.1,171.5 521.8,171.5 524.4,171.6 527.0,171.7 529.7,171.7 532.3,171.7 535.0,171.8 537.6,171.8" fill="none" stroke="#C6603F" stroke-width="2.6"/><polyline points="62.4,167.8 65.0,167.7 67.7,167.5 70.3,167.4 73.0,167.2 75.6,167.0 78.2,166.8 80.9,166.6 83.5,166.4 86.2,166.2 88.8,165.9 91.4,165.7 94.1,165.5 96.7,165.2 99.4,164.9 102.0,164.6 104.6,164.3 107.3,164.0 109.9,163.7 112.6,163.3 115.2,163.0 117.8,162.6 120.5,162.2 123.1,161.8 125.8,161.3 128.4,160.9 131.0,160.4 133.7,159.9 136.3,159.3 139.0,158.8 141.6,158.2 144.2,157.5 146.9,156.9 149.5,156.2 152.2,155.5 154.8,154.7 157.4,153.9 160.1,153.1 162.7,152.2 165.4,151.3 168.0,150.3 170.6,149.3 173.3,148.3 175.9,147.1 178.6,146.0 181.2,144.7 183.8,143.5 186.5,142.1 189.1,140.7 191.8,139.2 194.4,137.7 197.0,136.1 199.7,134.4 202.3,132.6 205.0,130.8 207.6,128.9 210.2,126.9 212.9,124.8 215.5,122.7 218.2,120.5 220.8,118.2 223.4,115.8 226.1,113.4 228.7,110.9 231.4,108.3 234.0,105.7 236.6,103.0 239.3,100.3 241.9,97.5 244.6,94.7 247.2,91.9 249.8,89.1 252.5,86.3 255.1,83.5 257.8,80.7 260.4,78.0 263.0,75.3 265.7,72.8 268.3,70.3 271.0,67.9 273.6,65.7 276.2,63.6 278.9,61.7 281.5,60.0 284.2,58.5 286.8,57.2 289.4,56.1 292.1,55.2 294.7,54.6 297.4,54.2 300.0,54.1 302.6,54.2 305.3,54.6 307.9,55.2 310.6,56.1 313.2,57.2 315.8,58.5 318.5,60.0 321.1,61.7 323.8,63.6 326.4,65.7 329.0,67.9 331.7,70.3 334.3,72.8 337.0,75.3 339.6,78.0 342.2,80.7 344.9,83.5 347.5,86.3 350.2,89.1 352.8,91.9 355.4,94.7 358.1,97.5 360.7,100.3 363.4,103.0 366.0,105.7 368.6,108.3 371.3,110.9 373.9,113.4 376.6,115.8 379.2,118.2 381.8,120.5 384.5,122.7 387.1,124.8 389.8,126.9 392.4,128.9 395.0,130.8 397.7,132.6 400.3,134.4 403.0,136.1 405.6,137.7 408.2,139.2 410.9,140.7 413.5,142.1 416.2,143.5 418.8,144.7 421.4,146.0 424.1,147.1 426.7,148.3 429.4,149.3 432.0,150.3 434.6,151.3 437.3,152.2 439.9,153.1 442.6,153.9 445.2,154.7 447.8,155.5 450.5,156.2 453.1,156.9 455.8,157.5 458.4,158.2 461.0,158.8 463.7,159.3 466.3,159.9 469.0,160.4 471.6,160.9 474.2,161.3 476.9,161.8 479.5,162.2 482.2,162.6 484.8,163.0 487.4,163.3 490.1,163.7 492.7,164.0 495.4,164.3 498.0,164.6 500.6,164.9 503.3,165.2 505.9,165.5 508.6,165.7 511.2,165.9 513.8,166.2 516.5,166.4 519.1,166.6 521.8,166.8 524.4,167.0 527.0,167.2 529.7,167.4 532.3,167.5 535.0,167.7 537.6,167.8" fill="none" stroke="#5a7355" stroke-width="2.4" stroke-dasharray="6 4"/><text x="102.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-3</text><text x="168.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-2</text><text x="234.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-1</text><text x="300.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">0</text><text x="366.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">1</text><text x="432.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">2</text><text x="498.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">3</text><rect x="150" y="196" width="16" height="4" rx="2" fill="#C6603F"/><text x="172" y="201" font-family="Karla, sans-serif" font-size="11.5" font-weight="600" fill="#4f4940">Normal</text><rect x="252" y="196" width="16" height="4" rx="2" fill="#5a7355"/><text x="274" y="201" font-family="Karla, sans-serif" font-size="11.5" font-weight="600" fill="#4f4940">t (df = 3)</text></svg>
+        <p class="chart-src">Student's t-distribution (3 degrees of freedom) against the standard normal. Lower peak, fatter tails, and it approaches the normal curve as degrees of freedom increase. Source: OpenStax, Introductory Statistics, section 8.2.</p>
+      </figure>
+      <blockquote>The t-distribution was named by a brewer who was not allowed to publish under his own name.<span class="cite">William Sealy Gosset devised it while working at the Guinness brewery in Dublin and published it in 1908 under the pen name "Student." Source: OpenStax; Zabell, on Student's 1908 article.</span></blockquote>
+
+      <div class="cav">Read it right</div>
+      <h2 id="pvalue">What does the p-value actually tell you?</h2>
+      <p>A p-value is the probability of seeing a result at least as extreme as yours if the null hypothesis of no difference were true. That is all it is. The American Statistical Association's 2016 statement is blunt about the rest: p-values "do not measure the probability that the studied hypothesis is true," and statistical significance "does not measure the size of an effect or the importance of a result" (<a href="https://sciences.ucf.edu/biology/d4lab/wp-content/uploads/sites/23/2017/03/WassersteinLazar2016.pdf" target="_blank" rel="noopener noreferrer">Wasserstein and Lazar, 2016</a>). The usual decision rule is to reject the null when p is below a significance level &alpha;, commonly 0.05, meaning a true null would be wrongly rejected about 5% of the time (<a href="https://www.itl.nist.gov/div898/handbook/prc/section1/prc131.htm" target="_blank" rel="noopener noreferrer">NIST</a>).</p>
+      <div class="callout"><div class="h">What p is not</div><p>A p-value of 0.04 does not mean there is a 4% chance the null is true, and it does not mean the effect is large or important. It means that if there were truly no effect, data this extreme would show up about 4% of the time. The Best Answer Hub T-Test Calculator reports the exact p-value and, for a borderline result near 0.05, flags it as marginal rather than rounding it to a verdict.</p></div>
+      <p>Use a two-tailed test when you want to detect a difference in either direction, which is the scientific default, and a one-tailed test only for a genuine directional hypothesis set in advance (<a href="https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Introductory_Statistics_(Lane)/11%3A_Logic_of_Hypothesis_Testing/11.04%3A_One-_and_Two-Tailed_Tests" target="_blank" rel="noopener noreferrer">LibreTexts</a>). The Best Answer Hub T-Test Calculator reports both tail p-values and labels which one applies.</p>
+
+      <div class="cav">How big, not just whether</div>
+      <h2 id="effect">Why report effect size too?</h2>
+      <p>Because a small p-value can sit on top of a trivial effect. Significance tells you a difference is unlikely to be pure chance; it says nothing about how large that difference is. Cohen's d fills the gap by expressing the difference between two means in standard-deviation units, with conventional thresholds of 0.2 for small, 0.5 for medium, and 0.8 for large (<a href="https://stats.libretexts.org/Bookshelves/Applied_Statistics/Business_Statistics_(OpenStax)/10%3A_Hypothesis_Testing_with_Two_Samples/10.02%3A_Cohen's_Standards_for_Small_Medium_and_Large_Effect_Sizes" target="_blank" rel="noopener noreferrer">Cohen's standards, via LibreTexts</a>). Reporting both is what APA style expects, and the Best Answer Hub T-Test Calculator computes Cohen's d automatically for every test.</p>
+      <figure class="chart">
+        <figcaption class="chart-title">Cohen's d: small, medium, and large</figcaption>
+        <svg viewBox="0 0 600 168" role="img" aria-label="Cohen d effect size thresholds: 0.2 small, 0.5 medium, 0.8 large."><defs><linearGradient id="cd" x1="0" x2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs><text x="138" y="47" text-anchor="end" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">Small</text><rect x="150" y="26" width="86" height="30" rx="7" fill="url(#cd)"/><text x="246" y="47" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#8a4429">d = 0.2</text><text x="138" y="95" text-anchor="end" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">Medium</text><rect x="150" y="74" width="215" height="30" rx="7" fill="url(#cd)"/><text x="375" y="95" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#8a4429">d = 0.5</text><text x="138" y="143" text-anchor="end" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">Large</text><rect x="150" y="122" width="344" height="30" rx="7" fill="url(#cd)"/><text x="504" y="143" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#8a4429">d = 0.8</text></svg>
+        <p class="chart-src">Conventional effect-size thresholds. A significant p-value with a d near 0.2 is a real but small effect. Source: Cohen 1988, via LibreTexts.</p>
+      </figure>
+      <div class="callout peach"><div class="h">The multiple-comparisons trap</div><p>Run enough tests and something turns up significant by luck. At the 0.05 level, the chance of at least one false positive across 10 independent tests is about 40% (<a href="https://sites.globalhealth.duke.edu/rdac/wp-content/uploads/sites/27/2020/08/Core-Guide_Multiple-Comparisons-Part-I_01-11-18.pdf" target="_blank" rel="noopener noreferrer">Duke Global Health Institute</a>). If you are running many t-tests, correct for it rather than celebrating the one that crossed the line.</p></div>
+
+      <div class="cav">The safer default</div>
+      <h2 id="welch">Student's t-test or Welch's?</h2>
+      <p>Use Welch's by default. The classic pooled Student's t-test assumes the two groups have equal variances, an assumption that often fails, especially with unequal sample sizes. Welch's t-test drops that assumption and adjusts the degrees of freedom to compensate, and it holds up better when variances differ. A widely cited 2017 paper argues the point directly.</p>
+      <blockquote>Welch's t-test should be used as a default strategy.<span class="cite">Delacre, Lakens and Leys, International Review of Social Psychology, 2017.</span></blockquote>
+      <p>The Best Answer Hub T-Test Calculator offers both methods for independent samples and defaults to Welch's correction, so you are not silently assuming equal variances. It also states which method produced the result, which is often the reason a p-value differs from the one Excel or an older copy of SPSS returns.</p>
+
+      <div class="cav">Why this one</div>
+      <h2 id="different">How is Best Answer Hub different from other t-test calculators?</h2>
+      <p>The difference is that it reports the effect size and defaults to the safer test. Most free calculators hand back a t-statistic and a p-value and stop there. Cohen's d is largely absent across them, Welch's correction is rare, and some sites labeled as statistics calculators have no two-sample t-test at all. The Best Answer Hub T-Test Calculator runs all three designs, defaults to Welch's, reports Cohen's d, and shows the steps, in your browser with no signup.</p>
+      <table>
+        <thead><tr><th>Feature</th><th>Best Answer Hub</th><th>Typical calculator</th></tr></thead>
+        <tbody>
+          <tr><td>One-sample, paired, and independent</td><td class="band">All three</td><td>Often split across pages</td></tr>
+          <tr><td>Welch's correction</td><td class="band">Default</td><td>Rare or absent</td></tr>
+          <tr><td>Cohen's d effect size</td><td class="band">Yes</td><td>Almost never</td></tr>
+          <tr><td>Step-by-step working</td><td class="band">Yes</td><td>Usually not</td></tr>
+          <tr><td>Signup or upload</td><td class="band">Neither</td><td>Some carry ads</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cta">
+        <span class="kicker">Test a difference in seconds</span>
+        <h3>Try the free T-Test Calculator</h3>
+        <p>Enter means, standard deviations, and sample sizes for a one-sample, paired, or independent t-test. Get the t-statistic, p-value, degrees of freedom, and Cohen's d with the steps. No signup, in your browser.</p>
+        <a class="btn" href="/calculators/statistics-suite/t-test-calculator/">Open the T-Test Calculator</a>
+      </div>
+
+      <div class="cav">Good questions</div>
+      <h2 id="faq">Frequently asked questions about t-tests</h2>
+      <div class="faq">
+        {faqs.map((f) => (
+          <div class="qa">
+            <div class="q" set:html={f.q}></div>
+            <div class="a" set:html={f.a}></div>
+          </div>
+        ))}
+      </div>
+
+      <div class="cav">People also read</div>
+      <h2>Keep going</h2>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/p-value-and-confidence-interval/">P-Values and Confidence Intervals, Read Correctly</a></b> The companion piece on reading significance without the usual traps.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/z-score-calculator/">How to Calculate and Read a Z-Score</a></b> Standard scores and where critical z-values come from.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/normal-distribution-calculator/">How to Read Normal Distribution Probabilities</a></b> The bell curve the t-distribution approaches.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, Nothing Uploaded</a></b> The Calculators hub guide, every tool client-side.</div></li>
+        </ul>
+      </div>
+
+      <h2>Sources</h2>
+      <ul class="sources">
+        <li>NIST/SEMATECH, <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm" target="_blank" rel="noopener noreferrer">One-sample t-test</a> and <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda353.htm" target="_blank" rel="noopener noreferrer">Two-sample t-test</a> (formulas and degrees of freedom).</li>
+        <li>OpenStax, <a href="https://openstax.org/books/introductory-statistics/pages/8-2-a-single-population-mean-using-the-student-t-distribution" target="_blank" rel="noopener noreferrer">The Student t-Distribution</a> (heavier tails, t vs z, the Gosset story).</li>
+        <li>Wasserstein and Lazar, <a href="https://sciences.ucf.edu/biology/d4lab/wp-content/uploads/sites/23/2017/03/WassersteinLazar2016.pdf" target="_blank" rel="noopener noreferrer">The ASA Statement on p-Values</a>, The American Statistician, 2016.</li>
+        <li>NIST/SEMATECH, <a href="https://www.itl.nist.gov/div898/handbook/prc/section1/prc131.htm" target="_blank" rel="noopener noreferrer">Critical values and significance</a> (the &alpha; = 0.05 decision rule).</li>
+        <li>Cohen's standards, <a href="https://stats.libretexts.org/Bookshelves/Applied_Statistics/Business_Statistics_(OpenStax)/10%3A_Hypothesis_Testing_with_Two_Samples/10.02%3A_Cohen's_Standards_for_Small_Medium_and_Large_Effect_Sizes" target="_blank" rel="noopener noreferrer">Effect-size thresholds</a> (0.2 / 0.5 / 0.8).</li>
+        <li>Delacre, Lakens and Leys, <a href="https://rips-irsp.com/articles/10.5334/irsp.82" target="_blank" rel="noopener noreferrer">Why to use Welch's t-test by default</a>, International Review of Social Psychology, 2017.</li>
+        <li>Duke Global Health Institute, <a href="https://sites.globalhealth.duke.edu/rdac/wp-content/uploads/sites/27/2020/08/Core-Guide_Multiple-Comparisons-Part-I_01-11-18.pdf" target="_blank" rel="noopener noreferrer">Multiple Testing, Part 1</a> (about 40% false-positive rate over 10 tests).</li>
+      </ul>
+      <p class="foot">More free calculators: <a href="/calculators/">Calculators hub</a>, <a href="/calculators/statistics-suite/p-value-calculator/">P-Value Calculator</a>, <a href="/calculators/statistics-suite/z-score-calculator/">Z-Score Calculator</a>, and <a href="/tools/">all free tools</a>.</p>
+    </article>
+  </div>
+</div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.7rem;color:var(--clay);line-height:1}
+  .pb .stat .n sup{font-size:.6em}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote .cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-size:.82rem;color:var(--label);margin-top:10px;letter-spacing:0}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  .pb .foot{max-width:1080px;margin:0 auto;padding:0 24px 50px;font-size:.85rem;color:var(--muted)}
+  .pb .foot a{color:var(--clay-deep)}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

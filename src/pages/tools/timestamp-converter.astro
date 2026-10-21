@@ -1,0 +1,278 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Timestamp Converter?',
+    a: 'The Best Answer Hub Timestamp Converter is a free browser-based tool that converts Unix timestamps, ISO 8601 strings, and human-readable dates into multiple formats instantly. It displays Unix seconds, Unix milliseconds, ISO 8601, local time, UTC time, and relative time. Everything runs locally in your browser. No data is uploaded.',
+  },
+  {
+    q: 'Is the Timestamp Converter free and safe?',
+    a: 'Yes, the Best Answer Hub Timestamp Converter is completely free with no usage limits and no signup required. All conversions happen locally inside your browser using native JavaScript <code>Date</code> methods. Your timestamp data is never sent to a server, stored in a database, or logged anywhere. Disconnect from the internet after loading the page and the tool continues to work perfectly.',
+  },
+  {
+    q: 'What is a Unix timestamp?',
+    a: 'A Unix timestamp is a way to represent a specific point in time as a single integer: the number of seconds elapsed since the Unix epoch at midnight UTC on January 1, 1970. It is the standard time format used in Linux systems, MySQL databases, PHP applications, and API responses from platforms like Stripe and GitHub. The Best Answer Hub Timestamp Converter accepts any Unix value and displays it in six readable formats instantly.',
+  },
+  {
+    q: 'How do I convert a Unix timestamp to a readable date?',
+    a: 'Paste the Unix timestamp into the input field of the Best Answer Hub Timestamp Converter and it instantly converts it to a human-readable date. The tool automatically detects whether your value is in seconds or milliseconds and displays the result in ISO 8601, your local timezone, and UTC. No configuration or manual calculation is needed.',
+  },
+  {
+    q: 'What date formats does this tool output?',
+    a: 'The Best Answer Hub Timestamp Converter outputs six formats simultaneously: Unix timestamp in seconds, Unix timestamp in milliseconds, ISO 8601 string like <code>2026-05-19T12:00:00.000Z</code>, your local system time, UTC time in RFC 7231 format, and a relative expression like "2 days" or "5 minutes". This covers every common developer and debugging need in a single view.',
+  },
+  {
+    q: 'Can I convert a human-readable date to a Unix timestamp?',
+    a: 'Yes. Paste any human-readable date string (such as "May 19, 2026" or "2026-05-19T12:00:00Z") into the Best Answer Hub Timestamp Converter and it instantly calculates the corresponding Unix timestamp in both seconds and milliseconds. The tool uses the JavaScript <code>Date</code> parser, which understands formats from RFC 2822, ISO 8601, and most locale conventions.',
+  },
+  {
+    q: 'What is the difference between seconds and milliseconds?',
+    a: 'A Unix timestamp in seconds counts the number of whole seconds since the epoch. A timestamp in milliseconds is simply the seconds value multiplied by one thousand. Most modern APIs and JavaScript\'s <code>Date.now()</code> return milliseconds, while legacy systems, Linux commands like <code>date +%s</code>, and PHP\'s <code>time()</code> function use seconds. The Best Answer Hub Timestamp Converter auto-detects the scale and handles both.',
+  },
+  {
+    q: 'Can I use the Timestamp Converter offline?',
+    a: 'Yes. After you load the page once, the Best Answer Hub Timestamp Converter works without an internet connection. It is built entirely with vanilla JavaScript and uses only browser-native <code>Date</code> APIs: no external library downloads, no CDN dependencies, and no server-side processing. This makes it ideal for working in restricted or air-gapped environments.',
+  },
+  {
+    q: 'What is ISO 8601 format?',
+    a: 'ISO 8601 is an international standard for representing dates and times as text. The format looks like <code>2026-05-19T12:00:00.000Z</code>, where the <code>T</code> separates the date from the time and the <code>Z</code> indicates UTC. It is the default format used by JavaScript\'s <code>toISOString()</code>, JSON APIs, MongoDB, PostgreSQL, and cloud platforms like AWS and Azure. The Best Answer Hub Timestamp Converter outputs ISO 8601 alongside every other format.',
+  },
+  {
+    q: 'How does the relative time feature work?',
+    a: 'The Best Answer Hub Timestamp Converter compares the converted date to the current moment and shows a human-readable difference like "3 hours ago" or "in 2 months". It calculates the offset in milliseconds between the input date and now, then rounds to the nearest second, minute, hour, day, month, or year. Past dates read like "3 hours ago" while future dates read like "in 3 hours", so the direction is always clear.',
+  },
+  {
+    q: 'What is the Unix epoch?',
+    a: 'The Unix epoch is the reference point from which Unix timestamps are counted: midnight UTC on January 1, 1970. A Unix timestamp of zero represents exactly that moment. The epoch was chosen by the original Unix developers at Bell Labs because it predated most computer systems and avoided negative numbers for early dates. The Best Answer Hub Timestamp Converter can display any timestamp relative to this origin.',
+  },
+  {
+    q: 'Is my timestamp data sent to a server?',
+    a: 'No. Your timestamp input never leaves your browser when using the Best Answer Hub Timestamp Converter. The tool uses only client-side JavaScript to parse and format dates: there are no network requests, no analytics pings containing your data, and no cloud processing. You can verify this by opening the Network tab in Developer Tools and confirming zero outgoing requests when you convert timestamps.',
+  },
+  {
+    q: 'Why does my timestamp show a date in 1970 or 2050?',
+    a: 'A date in 1970 usually means your timestamp is very small, possibly interpreted as milliseconds when it should be seconds. A date in 2050 suggests a value that is too large, possibly seconds when it should be milliseconds. The Best Answer Hub Timestamp Converter auto-detects the scale for values over 9,999,999,999, but for smaller values it assumes seconds. Double-check your input unit if the result looks unexpected.',
+  },
+  {
+    q: 'How does this compare to epochconverter.com?',
+    a: 'EpochConverter.com is a popular timestamp utility, but the Best Answer Hub Timestamp Converter offers a cleaner interface, instant conversion without page reloads, and outputs six formats simultaneously instead of one at a time. It also works offline, requires no ads or accounts, and integrates with the <a href="/developer-toolbox/">Best Answer Hub Developer Toolbox</a> alongside Base64, JWT, and JSON utilities.',
+  },
+  {
+    q: 'What is the JavaScript Temporal API, and does it replace Unix timestamps?',
+    a: 'The Temporal API does not replace Unix timestamps. It replaces JavaScript\'s error-prone <code>Date</code> object. Temporal reached TC39 Stage 4 in March 2026 and is part of ES2026, now shipping natively in Chrome 144, Firefox 139, and Node.js 26. It introduces immutable types like <code>Temporal.Instant</code> (nanosecond-precision point on the Unix epoch), <code>Temporal.ZonedDateTime</code> (DST-safe scheduling), and <code>Temporal.PlainDateTime</code> (calendar date without a timezone). Under the hood, <code>Temporal.Now.instant().epochSeconds</code> still returns a Unix integer, the epoch convention is unchanged. The <code>@js-temporal/polyfill</code> package backfills support for older runtimes, and the Best Answer Hub Timestamp Converter remains fully compatible with Temporal output values.',
+  },
+];
+
+const steps = [
+  { title: 'Paste your timestamp or date', description: 'Enter a Unix timestamp, an ISO 8601 string, or any human-readable date into the input field. The tool accepts seconds, milliseconds, and standard date formats.' },
+  { title: 'View all formats instantly', description: 'The tool automatically converts your input and displays Unix seconds, Unix milliseconds, ISO 8601, local time, UTC time, and relative time in real time.' },
+  { title: 'Copy or compare results', description: 'Use the output values in your code, API calls, database queries, or debugging sessions. Click "Now" to reset to the current time, or "Clear" to start over.' },
+];
+
+const seo = {
+  title: 'Free Timestamp Converter — Unix, ISO 8601 & UTC (2026)',
+  description: 'Convert Unix timestamps, ISO 8601 dates, and local time instantly. Free browser-based tool with seconds, milliseconds, UTC, and relative output. No signup.',
+  url: '/tools/timestamp-converter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Timestamp Converter', url: '/tools/timestamp-converter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Timestamp Converter:"
+    accentText="Unix, ISO 8601, UTC & local"
+    description="Convert Unix timestamps and date strings into seconds, milliseconds, ISO 8601, local time, UTC, and relative time. All processing happens instantly in your browser."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- Timestamp Converter Interface -->
+  <section class="py-6 md:py-8" aria-label="Timestamp converter">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Timestamp Converter</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <input
+            type="text"
+            id="time-input"
+            class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary"
+            placeholder="1716052800 or 2026-05-18T12:00:00Z"
+          />
+          <div class="flex gap-2">
+            <button
+              type="button"
+              id="time-now"
+              class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors"
+            >
+              Now
+            </button>
+            <button
+              type="button"
+              id="time-clear"
+              class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3">
+            <div class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Unix Timestamp</div>
+            <div id="time-unix-s" class="text-sm font-mono text-bae-ink break-all">—</div>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3">
+            <div class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Unix (ms)</div>
+            <div id="time-unix-ms" class="text-sm font-mono text-bae-ink break-all">—</div>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3">
+            <div class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">ISO 8601</div>
+            <div id="time-iso" class="text-sm font-mono text-bae-ink break-all">—</div>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3">
+            <div class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Local Time</div>
+            <div id="time-local" class="text-sm font-mono text-bae-ink break-all">—</div>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3">
+            <div class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">UTC Time</div>
+            <div id="time-utc" class="text-sm font-mono text-bae-ink break-all">—</div>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3">
+            <div class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Relative</div>
+            <div id="time-relative" class="text-sm font-mono text-bae-ink break-all">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">When developers reach for this tool</h2>
+      <p class="text-sm text-bae-muted mb-8">From debugging API payloads to scheduling cron jobs, here are the four situations where the Best Answer Hub Timestamp Converter saves the most time.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">API Debugging</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Debugging API responses</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Instant human-readable dates</p>
+          <p class="text-sm text-bae-muted">When a Stripe event, GitHub webhook, or AWS CloudTrail log returns a raw Unix timestamp, paste it here to instantly see the human-readable date and confirm it matches the expected time window. No mental arithmetic required.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Database Inspection</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Inspecting database records</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Verify created-at &amp; TTL values</p>
+          <p class="text-sm text-bae-muted">PostgreSQL <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">EXTRACT(EPOCH FROM ...)</code>, MySQL <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">UNIX_TIMESTAMP()</code>, and Redis <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">EXPIREAT</code> all deal in Unix seconds. Convert the raw integer to confirm created-at, updated-at, or TTL values are set correctly before a production release.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Job Scheduling</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Writing cron schedules</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Calculate exact Unix timestamps</p>
+          <p class="text-sm text-bae-muted">Calculate the exact Unix timestamp for a scheduled job or cache expiry. Enter the target date and time in plain English, grab the millisecond output, and paste it directly into AWS EventBridge, Vercel Cron, or a <code class="text-xs bg-bae-bg px-1 py-0.5 rounded">setTimeout</code> call.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Log Analysis</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Reading log files</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Correlate errors with events</p>
+          <p class="text-sm text-bae-muted">Nginx, Apache, and application logs often include Unix timestamps in error lines. Convert them to local time to correlate a spike in errors with a deployment, a traffic event, or a third-party outage reported in a status page.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, and <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, all free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const timeInput = document.getElementById('time-input');
+      const timeUnixS = document.getElementById('time-unix-s');
+      const timeUnixMs = document.getElementById('time-unix-ms');
+      const timeIso = document.getElementById('time-iso');
+      const timeLocal = document.getElementById('time-local');
+      const timeUtc = document.getElementById('time-utc');
+      const timeRelative = document.getElementById('time-relative');
+      function formatRelative(ms) {
+        // ms = inputDate - now. Positive => future ("in X"); negative => past ("X ago").
+        const future = ms > 0;
+        const abs = Math.abs(ms);
+        const s = Math.round(abs / 1000);
+        let value, unit;
+        if (s < 60) { value = s; unit = 'second'; }
+        else {
+          const m = Math.round(s / 60);
+          if (m < 60) { value = m; unit = 'minute'; }
+          else {
+            const h = Math.round(m / 60);
+            if (h < 24) { value = h; unit = 'hour'; }
+            else {
+              const d = Math.round(h / 24);
+              if (d < 30) { value = d; unit = 'day'; }
+              else {
+                const mo = Math.round(d / 30);
+                if (mo < 12) { value = mo; unit = 'month'; }
+                else { value = Math.round(mo / 12); unit = 'year'; }
+              }
+            }
+          }
+        }
+        const label = value + ' ' + unit + (value === 1 ? '' : 's');
+        return future ? 'in ' + label : label + ' ago';
+      }
+      function convertTime() {
+        const raw = timeInput.value.trim();
+        if (!raw) { timeUnixS.textContent = '—'; timeUnixMs.textContent = '—'; timeIso.textContent = '—'; timeLocal.textContent = '—'; timeUtc.textContent = '—'; timeRelative.textContent = '—'; return; }
+        let date;
+        if (/^\d+$/.test(raw)) {
+          const num = parseInt(raw, 10);
+          date = new Date(num > 9999999999 ? num : num * 1000);
+        } else {
+          date = new Date(raw);
+        }
+        if (isNaN(date.getTime())) { timeUnixS.textContent = 'Invalid'; timeUnixMs.textContent = 'Invalid'; timeIso.textContent = 'Invalid'; timeLocal.textContent = 'Invalid'; timeUtc.textContent = 'Invalid'; timeRelative.textContent = 'Invalid'; return; }
+        const now = new Date();
+        timeUnixS.textContent = Math.floor(date.getTime() / 1000).toString();
+        timeUnixMs.textContent = date.getTime().toString();
+        timeIso.textContent = date.toISOString();
+        timeLocal.textContent = date.toLocaleString();
+        timeUtc.textContent = date.toUTCString();
+        timeRelative.textContent = formatRelative(date.getTime() - now.getTime());
+      }
+      timeInput.addEventListener('input', convertTime);
+      document.getElementById('time-now').addEventListener('click', () => { timeInput.value = Math.floor(Date.now() / 1000).toString(); convertTime(); });
+      document.getElementById('time-clear').addEventListener('click', () => { timeInput.value = ''; timeUnixS.textContent = '—'; timeUnixMs.textContent = '—'; timeIso.textContent = '—'; timeLocal.textContent = '—'; timeUtc.textContent = '—'; timeRelative.textContent = '—'; });
+    })();
+  </script>
+</BaseLayout>

@@ -1,0 +1,1018 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-07-10T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Tax Calculator?',
+    a: 'The Best Answer Hub Tax Calculator is a free, privacy-first browser tool that calculates both your tax burden and your potential refund or amount owed. It works in two modes: a custom rate mode for any country where you enter your own tax rate, and a US Federal Brackets mode that pre-loads the official 2026 IRS brackets, standard deductions, and self-employment tax rates. Every pre-filled rate is editable so you can adjust for local or updated rules. Everything runs instantly in your browser. No signup, no server, no data collection.',
+  },
+  {
+    q: 'What is the difference between a tax calculator and a tax refund estimator?',
+    a: 'A tax calculator shows how much tax you owe based on your income, deductions, and tax rate. A refund estimator compares that tax bill against what you already paid through withholding or quarterly estimates to tell you whether you will get money back or owe more. The Best Answer Hub Tax Calculator shows both answers from the same inputs. Enter your income and tax rate to see your total tax burden, then add your withholding to see your refund or balance due.',
+  },
+  {
+    q: 'What is the difference between marginal tax rate and effective tax rate?',
+    a: 'Your marginal rate is the tax rate applied to your last dollar of income, the highest bracket you hit. Your effective rate is your total tax divided by your total income, which is almost always lower. For example, a single filer earning $80,000 in 2026 hits the 22% marginal bracket but pays an effective federal rate of about 11%. Many people panic when they see the marginal rate and think their entire salary is taxed at that level. It is not. The Best Answer Hub Tax Calculator shows both numbers so you understand your true tax burden.',
+  },
+  {
+    q: 'How do I calculate how much tax I will pay on my salary?',
+    a: 'For a quick estimate in Custom Rate mode, enter your gross salary, subtract any pre-tax deductions like 401k or HSA contributions, and multiply the remainder by your effective tax rate. In US Federal Brackets mode, the calculator does this automatically using the official IRS brackets. It subtracts your standard deduction, applies each bracket rate to the corresponding slice of income, and adds FICA payroll taxes. For a $65,000 single filer in 2026, total federal tax is roughly $10,500 including FICA.',
+  },
+  {
+    q: 'Will I get a tax refund or owe money this year?',
+    a: 'You get a refund if your employer withheld more tax than you actually owe. You owe money if they withheld too little. Enter your total income, deductions, and tax rate in the Best Answer Hub Tax Calculator to find your total tax bill. Then enter the total tax already withheld from your paychecks or paid via quarterly estimates. If withheld is larger than tax owed, the difference is your refund. If it is smaller, you owe the difference. A typical $60,000 W-2 employee with standard withholding breaks even or gets a small refund.',
+  },
+  {
+    q: 'How much should I set aside for taxes if I am self-employed?',
+    a: 'A safe rule of thumb is 25% to 30% of your net self-employment income. This covers both federal income tax and the 15.3% self-employment tax, which is Social Security and Medicare combined. On $60,000 of net freelance income, that means setting aside roughly $15,000 to $18,000 total. The Best Answer Hub Tax Calculator breaks this down precisely: it shows your SE tax, your income tax after the deductible half of SE tax, and your recommended quarterly payment amount.',
+  },
+  {
+    q: 'What is self-employment tax and how is it calculated?',
+    a: 'Self-employment tax is the Social Security and Medicare tax that employers normally pay on your behalf. When you are self-employed, you pay both the employee and employer portions, totaling 15.3%. The Social Security portion is 12.4% on income up to the annual wage base, and the Medicare portion is 2.9% on all net earnings. The IRS only taxes 92.35% of your net self-employment income to approximate the employer-paid portion. You can then deduct half of your SE tax from your taxable income. The Best Answer Hub Tax Calculator pre-fills the 2026 rates and wage base, but both are editable if rules change.',
+  },
+  {
+    q: 'What deductions can I claim to reduce my tax bill?',
+    a: 'For most taxpayers, the standard deduction is the biggest automatic reduction: $16,100 for single filers and $32,200 for married couples filing jointly in 2026. Beyond that, pre-tax contributions to a 401k or HSA directly reduce your taxable income. Self-employed individuals can deduct business expenses, half of their self-employment tax, and potentially 20% of qualified business income through the QBI deduction. Itemized deductions like mortgage interest, state taxes, and charitable donations only help if they exceed your standard deduction.',
+  },
+  {
+    q: 'How do quarterly estimated tax payments work?',
+    a: 'If you expect to owe $1,000 or more in tax for the year and do not have enough withholding, the IRS requires quarterly estimated payments. The due dates are typically April 15, June 16, September 15, and January 15 of the following year. Each payment should be roughly one-fourth of your expected annual tax. To avoid penalties, you can pay 90% of your current-year tax, or 100% of your prior-year tax, 110% if your adjusted gross income exceeds $150,000. The Best Answer Hub Tax Calculator shows your estimated quarterly amount whenever self-employment income is included.',
+  },
+  {
+    q: 'Why is my tax refund smaller than last year?',
+    a: 'The most common reasons are changes in withholding, income changes, and shifts in credits. The pandemic-era Child Tax Credit of up to $3,600 per child ended, and the credit is now up to $2,200 per child, indexed for inflation. Your employer may have adjusted W-4 withholding. If you picked up side income without adjusting withholding, that income was not taxed throughout the year, creating a bill at filing time. Use the Best Answer Hub Tax Calculator to model your current-year numbers and see exactly how much your refund or owed amount changed.',
+  },
+  {
+    q: 'How do I adjust my W-4 so I do not get a huge refund?',
+    a: 'A large refund means you gave the IRS an interest-free loan. Submit a new Form W-4 to your employer and reduce withholding. In Step 4c of the W-4, you can enter a specific extra amount to withhold per paycheck, or you can increase your claimed dependents in Step 3. The Best Answer Hub Tax Calculator shows your estimated total tax and compares it to your current withholding so you can see exactly how much to adjust. Aim to break even (within a few hundred dollars) rather than getting a four-figure refund.',
+  },
+  {
+    q: 'Do I have to pay taxes on side hustle income under $600?',
+    a: 'Yes. All self-employment income over $400 is taxable, regardless of whether you receive a 1099 form. The earlier $600 reporting rule was reversed: a platform must now send a Form 1099-K only when your payments exceed $20,000 and 200 transactions. But reporting is separate from owing, and you are still legally required to report the income on Schedule C. On $500 of net side income, you would owe roughly $71 in self-employment tax plus any federal income tax. The Best Answer Hub Tax Calculator handles side income of any amount.',
+  },
+  {
+    q: 'What is the Qualified Business Income (QBI) deduction?',
+    a: 'The QBI deduction, also called the Section 199A deduction, lets eligible self-employed individuals and small business owners deduct up to 20% of their qualified business income. For 2026, the full deduction is generally available if your taxable income is below $201,750 for single filers or $403,500 for married couples filing jointly. Above those thresholds, it phases out depending on your business type. The deduction reduces your income tax but not your self-employment tax. The Best Answer Hub Tax Calculator includes a toggle to model the 20% deduction.',
+  },
+  {
+    q: 'What is the $400 rule for self-employment tax?',
+    a: 'If your net earnings from self-employment are $400 or more in a year, you must file a tax return and pay self-employment tax. This covers the 15.3% Social Security and Medicare tax on your net business income. Even if you owe zero federal income tax after deductions, the IRS still collects self-employment tax on earnings above the $400 threshold. On $400 of net earnings, the self-employment tax is roughly $57.',
+  },
+  {
+    q: 'What happens if I miss a quarterly tax deadline?',
+    a: 'The IRS charges an underpayment penalty that is roughly equivalent to the federal short-term interest rate plus 3 percentage points, currently about 8% annualized on the shortfall. The penalty is calculated from each quarterly due date until the tax is paid or April 15, whichever comes first. If you miss one payment but overpay on the next, the IRS applies the excess to the missed quarter and reduces the penalty. The Best Answer Hub Tax Calculator shows your estimated quarterly amounts so you can set calendar reminders for April 15, June 16, September 15, and January 15.',
+  },
+];
+
+const seo = {
+  title: 'Free Tax Calculator & Refund Estimator — 2026 Brackets',
+  description: 'Free tax calculator with 2026 US federal brackets and custom rates. Estimate your refund, self-employment tax, and QBI deduction instantly.',
+  url: '/calculators/tax-calculator/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-24T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Finance Toolkit', url: '/finance-toolkit/' },
+    { name: 'Tax Calculator', url: '/calculators/tax-calculator/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated 2026 · Custom & US Modes
+          </div>
+          <a href="/finance-toolkit/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Finance Toolkit
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Tax Calculator &<br/>
+          <em class="italic text-bae-primary">Refund Estimator</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Calculate your total tax burden and see whether you will get a refund or owe money. Use custom rates for any country, or switch to US Federal Brackets with pre-loaded 2026 IRS rates, every number is editable.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Tax calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Income -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Income</h2>
+            <div class="space-y-5">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Annual Gross Income</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-income">$60,000</span>
+                </div>
+                <input type="range" id="income-slider" min="0" max="500000" step="1000" value="60000" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="income" min="0" value="60000" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Pre-Tax Deductions (401k, HSA, etc.)</label>
+                <input type="number" id="preTaxDeductions" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Tax Mode -->
+          <div class="bg-bae-primary-soft border border-bae-primary/20 rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-primary mb-4">Tax Calculation Mode</h2>
+            <div class="flex gap-2 p-1 bg-white rounded-bae-sm border border-bae-border">
+              <button type="button" id="mode-custom" class="mode-btn flex-1 text-sm font-semibold py-2 rounded-bae-sm bg-bae-primary text-white transition-colors">Custom Rate</button>
+              <button type="button" id="mode-us" class="mode-btn flex-1 text-sm font-semibold py-2 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors">US Federal Brackets (2026)</button>
+            </div>
+            <p class="text-xs text-bae-muted mt-3 leading-relaxed" id="mode-desc">Enter your own effective tax rate. Works for any country or state.</p>
+          </div>
+
+          <!-- Custom Rate Inputs -->
+          <div id="custom-inputs" class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Custom Tax Rates</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Effective Income Tax Rate (%)</label>
+                <input type="number" id="customTaxRate" min="0" max="100" step="0.1" value="15" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Enter your actual average rate, not your top marginal bracket. Verify at your local tax authority.</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Payroll / FICA Tax Rate (%)</label>
+                <input type="number" id="customFicaRate" min="0" max="100" step="0.1" value="7.65" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Typically 7.65% for W-2 employees. Verify current rate, this changes by country.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- US Brackets Inputs -->
+          <div id="us-inputs" class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm hidden">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">US Federal Tax Details</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Filing Status</label>
+                <select id="filingStatus" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary">
+                  <option value="single">Single</option>
+                  <option value="married">Married Filing Jointly</option>
+                  <option value="hoh">Head of Household</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">Standard Deduction ($)</label>
+                <input type="number" id="stdDeduction" min="0" value="16100" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Pre-filled for 2026. Verify current amount at IRS.gov, this adjusts annually for inflation.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Self-Employment -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted">Self-Employment</h2>
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="se-toggle" class="w-4 h-4 rounded border-bae-border text-bae-primary focus:ring-bae-primary" />
+                <span class="text-sm text-bae-ink font-medium">Include self-employment income</span>
+              </label>
+            </div>
+            <div id="se-panel" class="space-y-5 hidden">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">SE Net Income ($)</label>
+                <input type="number" id="seIncome" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">Net earnings after business expenses, added on top of any W-2 income above. Self-employed with no W-2 job? Set Annual Gross Income to $0 and enter your earnings here.</p>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-2">SE Tax Rate (%)</label>
+                  <input type="number" id="seTaxRate" min="0" max="100" step="0.1" value="15.3" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                  <p class="text-xs text-bae-muted mt-1.5">Typically 15.3%. Verify current rate.</p>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-2">SS Wage Base ($)</label>
+                  <input type="number" id="ssCap" min="0" value="184500" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                  <p class="text-xs text-bae-muted mt-1.5">Verify current cap at SSA.gov, adjusts annually.</p>
+                </div>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-2">W-2 Wages ($), for shared SS cap</label>
+                <input type="number" id="w2Wages" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">If you also have a W-2 job, enter those wages so the Social Security cap is calculated correctly.</p>
+              </div>
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="qbi-toggle" class="w-4 h-4 rounded border-bae-border text-bae-primary focus:ring-bae-primary" />
+                <span class="text-sm text-bae-ink font-medium">Apply 20% QBI deduction</span>
+              </label>
+              <p class="text-xs text-bae-muted">The Qualified Business Income deduction reduces income tax for eligible pass-through businesses. Assumes income is below phase-out thresholds.</p>
+            </div>
+          </div>
+
+          <!-- Withholding -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Withholding & Payments</h2>
+            <div>
+              <label class="text-sm font-semibold text-bae-ink block mb-2">Tax Already Withheld or Paid ($)</label>
+              <input type="number" id="withheld" min="0" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              <p class="text-xs text-bae-muted mt-1.5">Total federal tax withheld from paychecks plus any quarterly estimated payments already made. This determines your refund or amount owed.</p>
+            </div>
+          </div>
+
+          <!-- Reset -->
+          <div class="flex justify-end -mt-1 mb-1">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset calculator
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <!-- Main Results -->
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Your Tax Results</h3>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Taxable Income</div>
+                <div class="text-lg font-semibold" id="res-taxableIncome">$43,900</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Federal Income Tax</div>
+                <div class="text-lg font-semibold" id="res-federalTax">$5,500</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 mb-4">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">FICA / SE Tax</div>
+                <div class="text-lg font-semibold" id="res-ficaSeTax">$4,590</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Total Tax</div>
+                <div class="text-xl font-bold font-serif text-bae-primary" id="res-totalTax">$10,090</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 border-t border-white/10 pt-4 mb-4">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Effective Rate</div>
+                <div class="text-xl font-bold font-serif" id="res-effectiveRate">16.8%</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1" id="label-marginal">Marginal Rate</div>
+                <div class="text-xl font-bold font-serif" id="res-marginalRate">22%</div>
+              </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-4 mb-4">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Refund or Amount Owed</div>
+              <div class="text-2xl font-bold font-serif" id="res-refundOwed">$0</div>
+              <p class="text-xs text-white/50 mt-1" id="res-refundDesc">Enter withholding above to see refund or balance due</p>
+            </div>
+
+            <div class="border-t border-white/10 pt-4 mb-4">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Estimated Take-Home</div>
+              <div class="text-xl font-bold font-serif" id="res-takeHome">$49,910</div>
+            </div>
+
+            <div class="border-t border-white/10 pt-4 hidden" id="res-quarterly-panel">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Quarterly Estimate</div>
+              <div class="text-lg font-bold font-serif" id="res-quarterly">$0</div>
+              <p class="text-xs text-white/50 mt-1">Due dates: Apr 15, Jun 16, Sep 15, Jan 15</p>
+            </div>
+
+            <button type="button" id="pdf-btn" class="w-full mt-4 bg-bae-primary hover:bg-bae-accent text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+              Download PDF Report
+            </button>
+          </div>
+
+          <!-- Show Your Work -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Show Your Work</h3>
+            <div class="space-y-2 text-sm" id="show-work-content">
+              <p class="text-bae-muted">Select US Federal Brackets mode to see a line-by-line breakdown of how your tax is calculated.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Report Summary (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Report Summary</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Tax Analysis Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Taxable Income</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-taxable">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Tax</p>
+              <p class="text-3xl font-bold text-bae-primary" id="report-total">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Effective Rate</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-effective">—</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Federal Income Tax</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-federal">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">FICA / SE Tax</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-fica">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Refund / Owed</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-refund">—</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" id="report-details">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>Estimates are based on the inputs provided and standard tax formulas. Pre-filled rates reflect 2026 US federal tax parameters. Always verify current rates at IRS.gov and SSA.gov before filing. This tool is for estimation purposes only and does not constitute tax advice. Consult a qualified tax professional for your specific situation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Choose your mode', text: 'Pick Custom Rate for any country or state, or switch to US Federal Brackets for pre-loaded 2026 IRS rates. Every pre-filled number is editable with verification notices.' },
+    { name: 'Enter your numbers', text: 'Input your income, deductions, and any self-employment earnings. Toggle the QBI deduction if you qualify. Add your withholding to see your refund or balance due instantly.' },
+    { name: 'See the full picture', text: 'Get your taxable income, federal tax, FICA or SE tax, effective rate, and take-home pay. In US mode, expand Show Your Work to see every bracket calculation line by line. Download a PDF to share.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Choose your mode</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Pick Custom Rate for any country or state, or switch to US Federal Brackets for pre-loaded 2026 IRS rates. Every pre-filled number is editable with verification notices.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter your numbers</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Input your income, deductions, and any self-employment earnings. Toggle the QBI deduction if you qualify. Add your withholding to see your refund or balance due instantly.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">See the full picture</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Get your taxable income, federal tax, FICA or SE tax, effective rate, and take-home pay. In US mode, expand Show Your Work to see every bracket calculation line by line. Download a PDF to share.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/roi-calculator/" class="text-bae-primary hover:underline">ROI Calculator</a>, <a href="/calculators/mortgage-calculator/" class="text-bae-primary hover:underline">Mortgage Calculator</a>, and the <a href="/finance-toolkit/" class="text-bae-primary hover:underline">Finance Toolkit</a>.</p>
+        </div>
+        <a href="/finance-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse the Finance Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What People Pay -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What people pay</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Single W-2 employee, $65K, standard deduction</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Office worker, no itemizing</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $10,500 total tax</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Federal income tax is roughly $5,500. FICA is another $4,972. Effective rate is about 16.1%. Take-home is roughly $54,500. No quarterly payments needed.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Married couple, $120K joint, $15K 401k</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Dual income with retirement savings</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $17,500 total tax</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Pre-tax 401k contributions drop taxable income to $72,800. Federal tax is roughly $8,300 and FICA is $9,180. Effective rate is about 14.6%. Take-home is roughly $102,500.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Freelancer, $80K gross, $12K expenses</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Self-employed designer</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $13,300 total tax</div>
+          <p class="text-sm text-bae-muted leading-relaxed">SE net income of $68K. SE tax is roughly $9,600. After the deductible half and QBI, federal income tax is about $3,700. Effective rate on gross is roughly 16.6%. Quarterly payments of about $3,325.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Side hustler, $55K W-2 + $15K side income</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Day job plus weekend gig</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $12,500 total tax</div>
+          <p class="text-sm text-bae-muted leading-relaxed">W-2 FICA is $4,207. SE tax on $15K is roughly $2,120. Combined federal income tax is about $6,160. Effective rate on total income is roughly 17.9%. May need quarterly payments on the SE portion.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are modeled estimates based on 2026 tax parameters. Your actual tax will vary by deductions, credits, state taxes, and individual circumstances. Always verify rates at IRS.gov and consult a tax professional.</p>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      function formatMoney(n) {
+        const abs = Math.abs(n);
+        if (abs >= 1000) return '$' + Math.round(n).toLocaleString();
+        if (abs >= 1) return '$' + n.toFixed(2);
+        return '$' + n.toFixed(2);
+      }
+
+      function formatPct(n) {
+        if (!isFinite(n)) return '—';
+        return n.toFixed(1) + '%';
+      }
+
+      const US_BRACKETS = {
+        single: [
+          { rate: 0.10, limit: 12400 },
+          { rate: 0.12, limit: 50400 },
+          { rate: 0.22, limit: 105700 },
+          { rate: 0.24, limit: 201775 },
+          { rate: 0.32, limit: 256225 },
+          { rate: 0.35, limit: 640600 },
+          { rate: 0.37, limit: Infinity },
+        ],
+        married: [
+          { rate: 0.10, limit: 24800 },
+          { rate: 0.12, limit: 100800 },
+          { rate: 0.22, limit: 211400 },
+          { rate: 0.24, limit: 403550 },
+          { rate: 0.32, limit: 512450 },
+          { rate: 0.35, limit: 768700 },
+          { rate: 0.37, limit: Infinity },
+        ],
+        hoh: [
+          { rate: 0.10, limit: 17700 },
+          { rate: 0.12, limit: 67450 },
+          { rate: 0.22, limit: 105700 },
+          { rate: 0.24, limit: 201775 },
+          { rate: 0.32, limit: 256200 },
+          { rate: 0.35, limit: 640600 },
+          { rate: 0.37, limit: Infinity },
+        ],
+      };
+
+      const STD_DEDUCTION_DEFAULTS = {
+        single: 16100,
+        married: 32200,
+        hoh: 24150,
+      };
+
+      let currentMode = 'custom';
+
+      function calculateUSTax(taxableIncome, filingStatus) {
+        const brackets = US_BRACKETS[filingStatus];
+        let tax = 0;
+        let remaining = taxableIncome;
+        let prevLimit = 0;
+        const breakdown = [];
+
+        for (const b of brackets) {
+          if (remaining <= 0) break;
+          const bracketSize = b.limit === Infinity ? remaining : b.limit - prevLimit;
+          const taxedAtThisRate = Math.min(remaining, bracketSize);
+          const bracketTax = taxedAtThisRate * b.rate;
+          tax += bracketTax;
+          breakdown.push({
+            rate: b.rate,
+            amount: taxedAtThisRate,
+            tax: bracketTax,
+            from: prevLimit,
+            to: b.limit === Infinity ? Infinity : b.limit,
+          });
+          remaining -= taxedAtThisRate;
+          prevLimit = b.limit;
+        }
+        return { tax, breakdown };
+      }
+
+      function getMarginalRate(taxableIncome, filingStatus) {
+        const brackets = US_BRACKETS[filingStatus];
+        for (const b of brackets) {
+          if (taxableIncome <= b.limit) return b.rate;
+        }
+        return brackets[brackets.length - 1].rate;
+      }
+
+      function calculate() {
+        const income = parseFloat($('income').value) || 0;
+        const preTaxDeductions = parseFloat($('preTaxDeductions').value) || 0;
+        const withheld = parseFloat($('withheld').value) || 0;
+        const seOn = $('se-toggle').checked;
+
+        // SE calculations
+        let seTax = 0;
+        let seDeductibleHalf = 0;
+        let qbiDeduction = 0;
+        let seIncome = 0;
+        let seTaxable = 0;
+
+        if (seOn) {
+          seIncome = parseFloat($('seIncome').value) || 0;
+          const seRate = parseFloat($('seTaxRate').value) || 15.3;
+          const ssCap = parseFloat($('ssCap').value) || 0;
+          const w2Wages = parseFloat($('w2Wages').value) || 0;
+
+          seTaxable = seIncome * 0.9235;
+          const ssRemaining = Math.max(0, ssCap - w2Wages);
+          // Standard SE tax = 12.4% Social Security (capped) + 2.9% Medicare = 15.3%.
+          // Scale both parts by the editable SE rate so that field actually drives the result.
+          const rateScale = seRate / 15.3;
+          const ssPortion = Math.min(seTaxable, ssRemaining) * 0.124 * rateScale;
+          const medicarePortion = seTaxable * 0.029 * rateScale;
+          seTax = ssPortion + medicarePortion;
+          seDeductibleHalf = seTax * 0.5;
+
+          if ($('qbi-toggle').checked) {
+            qbiDeduction = seIncome * 0.20;
+          }
+        }
+
+        const totalGross = income + seIncome;
+        let federalTax = 0;
+        let ficaTax = 0;
+        let taxableIncome = 0;
+        let marginalRate = 0;
+        let bracketBreakdown = [];
+
+        if (currentMode === 'custom') {
+          const taxRate = parseFloat($('customTaxRate').value) || 0;
+          const ficaRate = parseFloat($('customFicaRate').value) || 0;
+
+          taxableIncome = Math.max(0, totalGross - preTaxDeductions - seDeductibleHalf - qbiDeduction);
+          federalTax = taxableIncome * (taxRate / 100);
+          ficaTax = income * (ficaRate / 100);
+          marginalRate = taxRate;
+        } else {
+          const filingStatus = $('filingStatus').value;
+          const stdDeduction = parseFloat($('stdDeduction').value) || 0;
+
+          taxableIncome = Math.max(0, totalGross - preTaxDeductions - stdDeduction - seDeductibleHalf - qbiDeduction);
+          const result = calculateUSTax(taxableIncome, filingStatus);
+          federalTax = result.tax;
+          bracketBreakdown = result.breakdown;
+          marginalRate = getMarginalRate(taxableIncome, filingStatus) * 100;
+          // W-2 FICA: 6.2% Social Security up to the wage base + 1.45% Medicare on all wages.
+          // (Equals a flat 7.65% below the cap; only differs for high earners above it.)
+          const ssWageBase = parseFloat($('ssCap').value) || 184500;
+          ficaTax = Math.min(income, ssWageBase) * 0.062 + income * 0.0145;
+        }
+
+        const totalTax = federalTax + ficaTax + seTax;
+        const effectiveRate = totalGross > 0 ? (totalTax / totalGross) * 100 : 0;
+        const refundOwed = withheld - totalTax;
+        const takeHome = totalGross - totalTax;
+        const quarterly = totalTax / 4;
+
+        // Update main results
+        $('res-taxableIncome').textContent = formatMoney(taxableIncome);
+        $('res-federalTax').textContent = formatMoney(federalTax);
+        $('res-ficaSeTax').textContent = formatMoney(ficaTax + seTax);
+        $('res-totalTax').textContent = formatMoney(totalTax);
+        $('res-effectiveRate').textContent = formatPct(effectiveRate);
+        $('res-marginalRate').textContent = formatPct(marginalRate);
+        $('res-takeHome').textContent = formatMoney(takeHome);
+
+        // Refund / Owed
+        const refundEl = $('res-refundOwed');
+        const refundDesc = $('res-refundDesc');
+        if (withheld > 0) {
+          if (refundOwed > 0) {
+            refundEl.textContent = formatMoney(refundOwed);
+            refundEl.className = 'text-2xl font-bold font-serif text-bae-primary';
+            refundDesc.textContent = 'Estimated refund';
+          } else if (refundOwed < 0) {
+            refundEl.textContent = formatMoney(Math.abs(refundOwed));
+            refundEl.className = 'text-2xl font-bold font-serif text-red-400';
+            refundDesc.textContent = 'Estimated amount owed';
+          } else {
+            refundEl.textContent = '$0';
+            refundEl.className = 'text-2xl font-bold font-serif';
+            refundDesc.textContent = 'Break even';
+          }
+        } else {
+          refundEl.textContent = formatMoney(totalTax);
+          refundEl.className = 'text-2xl font-bold font-serif';
+          refundDesc.textContent = 'Enter withholding above to see refund or balance due';
+        }
+
+        // Quarterly
+        if (seOn) {
+          $('res-quarterly-panel').classList.remove('hidden');
+          $('res-quarterly').textContent = formatMoney(quarterly) + '/quarter';
+        } else {
+          $('res-quarterly-panel').classList.add('hidden');
+        }
+
+        // Show Your Work
+        const workContent = $('show-work-content');
+        if (currentMode === 'us' && bracketBreakdown.length > 0) {
+          let html = '<div class="space-y-2">';
+          html += '<div class="flex justify-between text-xs font-semibold text-bae-muted uppercase tracking-wider border-b border-bae-border pb-1">';
+          html += '<span>Bracket</span><span>Tax</span></div>';
+          bracketBreakdown.forEach(b => {
+            const ratePct = (b.rate * 100).toFixed(0) + '%';
+            const toLabel = b.to === Infinity ? '+' : '– $' + b.to.toLocaleString();
+            html += '<div class="flex justify-between items-center text-sm">';
+            html += '<span class="text-bae-muted">' + ratePct + ' on $' + Math.round(b.amount).toLocaleString() + '</span>';
+            html += '<span class="font-semibold text-bae-ink">' + formatMoney(b.tax) + '</span></div>';
+          });
+          html += '<div class="flex justify-between items-center text-sm border-t border-bae-border pt-2 mt-2">';
+          html += '<span class="font-semibold text-bae-ink">Federal Tax</span>';
+          html += '<span class="font-bold text-bae-primary">' + formatMoney(federalTax) + '</span></div>';
+          if (seOn && seTax > 0) {
+            html += '<div class="flex justify-between items-center text-sm">';
+            html += '<span class="text-bae-muted">SE Tax (92.35% × ' + formatPct(parseFloat($('seTaxRate').value) || 15.3) + ')</span>';
+            html += '<span class="font-semibold text-bae-ink">' + formatMoney(seTax) + '</span></div>';
+          }
+          if (ficaTax > 0) {
+            html += '<div class="flex justify-between items-center text-sm">';
+            html += '<span class="text-bae-muted">FICA (7.65% on wages)</span>';
+            html += '<span class="font-semibold text-bae-ink">' + formatMoney(ficaTax) + '</span></div>';
+          }
+          html += '</div>';
+          workContent.innerHTML = html;
+        } else if (currentMode === 'custom') {
+          let html = '<div class="space-y-2 text-sm">';
+          html += '<p class="text-bae-muted">Custom Rate Calculation:</p>';
+          html += '<div class="flex justify-between"><span class="text-bae-muted">Taxable Income</span><span class="font-semibold text-bae-ink">' + formatMoney(taxableIncome) + '</span></div>';
+          html += '<div class="flex justify-between"><span class="text-bae-muted">Income Tax (' + (parseFloat($('customTaxRate').value) || 0) + '%)</span><span class="font-semibold text-bae-ink">' + formatMoney(federalTax) + '</span></div>';
+          html += '<div class="flex justify-between"><span class="text-bae-muted">Payroll Tax (' + (parseFloat($('customFicaRate').value) || 0) + '%)</span><span class="font-semibold text-bae-ink">' + formatMoney(ficaTax) + '</span></div>';
+          if (seOn && seTax > 0) {
+            html += '<div class="flex justify-between"><span class="text-bae-muted">SE Tax</span><span class="font-semibold text-bae-ink">' + formatMoney(seTax) + '</span></div>';
+          }
+          html += '</div>';
+          workContent.innerHTML = html;
+        }
+
+        // Report
+        $('report-taxable').textContent = formatMoney(taxableIncome);
+        $('report-total').textContent = formatMoney(totalTax);
+        $('report-effective').textContent = formatPct(effectiveRate);
+        $('report-federal').textContent = formatMoney(federalTax);
+        $('report-fica').textContent = formatMoney(ficaTax + seTax);
+        if (withheld > 0) {
+          $('report-refund').textContent = (refundOwed >= 0 ? '' : '-') + formatMoney(Math.abs(refundOwed));
+        } else {
+          $('report-refund').textContent = '—';
+        }
+
+        const reportDetails = $('report-details');
+        reportDetails.innerHTML = '';
+        const rows = [
+          ['Gross Income', formatMoney(income)],
+          ['Pre-Tax Deductions', formatMoney(preTaxDeductions)],
+        ];
+        if (seOn) {
+          rows.push(['SE Net Income', formatMoney(seIncome)]);
+          rows.push(['SE Taxable (92.35%)', formatMoney(seTaxable)]);
+          rows.push(['SE Tax', formatMoney(seTax)]);
+          rows.push(['SE Deduction (50%)', formatMoney(seDeductibleHalf)]);
+          if (qbiDeduction > 0) rows.push(['QBI Deduction (20%)', formatMoney(qbiDeduction)]);
+        }
+        rows.push(['Taxable Income', formatMoney(taxableIncome)]);
+        rows.push(['Federal Income Tax', formatMoney(federalTax)]);
+        rows.push(['FICA / SE Tax', formatMoney(ficaTax + seTax)]);
+        rows.push(['Total Tax', formatMoney(totalTax)]);
+        rows.push(['Effective Rate', formatPct(effectiveRate)]);
+        if (withheld > 0) {
+          rows.push(['Withheld', formatMoney(withheld)]);
+          rows.push(['Refund / Owed', (refundOwed >= 0 ? '' : '-') + formatMoney(Math.abs(refundOwed))]);
+        }
+        rows.push(['Take-Home Pay', formatMoney(takeHome)]);
+        if (seOn) {
+          rows.push(['Quarterly Estimate', formatMoney(quarterly)]);
+        }
+        rows.forEach(([label, value]) => {
+          const div = document.createElement('div');
+          const span1 = document.createElement('span');
+          span1.className = 'text-bae-muted';
+          span1.textContent = label + ': ';
+          const span2 = document.createElement('span');
+          span2.className = 'font-medium text-bae-ink';
+          span2.textContent = value;
+          div.appendChild(span1);
+          div.appendChild(span2);
+          reportDetails.appendChild(div);
+        });
+
+        updateURL();
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          const params = new URLSearchParams();
+
+          const income = parseFloat($('income').value) || 0;
+          const preTax = parseFloat($('preTaxDeductions').value) || 0;
+          const withheld = parseFloat($('withheld').value) || 0;
+
+          if (income !== 60000) params.set('income', income);
+          if (preTax !== 0) params.set('pretax', preTax);
+          if (withheld !== 0) params.set('withheld', withheld);
+
+          if (currentMode === 'us') {
+            params.set('mode', 'us');
+            const fs = $('filingStatus').value;
+            if (fs !== 'single') params.set('fs', fs);
+            const std = parseFloat($('stdDeduction').value) || 0;
+            if (std !== 16100) params.set('std', std);
+          }
+
+          if (currentMode === 'custom') {
+            const ctr = parseFloat($('customTaxRate').value) || 0;
+            const cfr = parseFloat($('customFicaRate').value) || 0;
+            if (ctr !== 15) params.set('ctr', ctr);
+            if (cfr !== 7.65) params.set('cfr', cfr);
+          }
+
+          if ($('se-toggle').checked) {
+            params.set('se', '1');
+            const seInc = parseFloat($('seIncome').value) || 0;
+            const seRate = parseFloat($('seTaxRate').value) || 0;
+            const ssCap = parseFloat($('ssCap').value) || 0;
+            const w2w = parseFloat($('w2Wages').value) || 0;
+            if (seInc !== 0) params.set('seinc', seInc);
+            if (seRate !== 15.3) params.set('serate', seRate);
+            if (ssCap !== 184500) params.set('sscap', ssCap);
+            if (w2w !== 0) params.set('w2w', w2w);
+            if ($('qbi-toggle').checked) params.set('qbi', '1');
+          }
+
+          url.search = params.toString();
+          window.history.replaceState({}, '', url);
+        } catch (e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+
+          const income = url.searchParams.get('income');
+          if (income !== null) { $('income').value = income; $('income-slider').value = income; $('display-income').textContent = '$' + parseFloat(income).toLocaleString(); }
+
+          const pretax = url.searchParams.get('pretax');
+          if (pretax !== null) $('preTaxDeductions').value = pretax;
+
+          const withheld = url.searchParams.get('withheld');
+          if (withheld !== null) $('withheld').value = withheld;
+
+          const mode = url.searchParams.get('mode');
+          if (mode === 'us') setMode('us');
+
+          const fs = url.searchParams.get('fs');
+          if (fs && $('filingStatus').querySelector('option[value="' + fs + '"]]')) {
+            $('filingStatus').value = fs;
+          }
+
+          const std = url.searchParams.get('std');
+          if (std !== null) $('stdDeduction').value = std;
+
+          const ctr = url.searchParams.get('ctr');
+          if (ctr !== null) $('customTaxRate').value = ctr;
+
+          const cfr = url.searchParams.get('cfr');
+          if (cfr !== null) $('customFicaRate').value = cfr;
+
+          if (url.searchParams.get('se') === '1') {
+            $('se-toggle').checked = true;
+            $('se-panel').classList.remove('hidden');
+            const seinc = url.searchParams.get('seinc'); if (seinc !== null) $('seIncome').value = seinc;
+            const serate = url.searchParams.get('serate'); if (serate !== null) $('seTaxRate').value = serate;
+            const sscap = url.searchParams.get('sscap'); if (sscap !== null) $('ssCap').value = sscap;
+            const w2w = url.searchParams.get('w2w'); if (w2w !== null) $('w2Wages').value = w2w;
+            if (url.searchParams.get('qbi') === '1') $('qbi-toggle').checked = true;
+          }
+        } catch (e) {}
+      }
+
+      function setMode(mode) {
+        currentMode = mode;
+        const customBtn = $('mode-custom');
+        const usBtn = $('mode-us');
+        const customInputs = $('custom-inputs');
+        const usInputs = $('us-inputs');
+        const desc = $('mode-desc');
+
+        if (mode === 'custom') {
+          customBtn.classList.add('bg-bae-primary', 'text-white');
+          customBtn.classList.remove('text-bae-muted');
+          usBtn.classList.remove('bg-bae-primary', 'text-white');
+          usBtn.classList.add('text-bae-muted');
+          customInputs.classList.remove('hidden');
+          usInputs.classList.add('hidden');
+          desc.textContent = 'Enter your own effective tax rate. Works for any country or state.';
+          $('label-marginal').textContent = 'Stated Rate';
+        } else {
+          usBtn.classList.add('bg-bae-primary', 'text-white');
+          usBtn.classList.remove('text-bae-muted');
+          customBtn.classList.remove('bg-bae-primary', 'text-white');
+          customBtn.classList.add('text-bae-muted');
+          customInputs.classList.add('hidden');
+          usInputs.classList.remove('hidden');
+          desc.textContent = 'Uses pre-loaded 2026 IRS brackets and standard deductions. All values are editable.';
+          $('label-marginal').textContent = 'Marginal Rate';
+        }
+        calculate();
+      }
+
+      // Mode toggle
+      $('mode-custom').addEventListener('click', () => setMode('custom'));
+      $('mode-us').addEventListener('click', () => setMode('us'));
+
+      // Income slider sync
+      const incomeInput = $('income');
+      const incomeSlider = $('income-slider');
+      const incomeDisplay = $('display-income');
+      incomeInput.addEventListener('input', () => {
+        incomeSlider.value = incomeInput.value;
+        incomeDisplay.textContent = '$' + (parseFloat(incomeInput.value) || 0).toLocaleString();
+        calculate();
+      });
+      incomeSlider.addEventListener('input', () => {
+        incomeInput.value = incomeSlider.value;
+        incomeDisplay.textContent = '$' + (parseFloat(incomeSlider.value) || 0).toLocaleString();
+        calculate();
+      });
+
+      // Other inputs
+      ['preTaxDeductions', 'withheld', 'customTaxRate', 'customFicaRate', 'stdDeduction', 'seIncome', 'seTaxRate', 'ssCap', 'w2Wages'].forEach(id => {
+        $(id)?.addEventListener('input', calculate);
+      });
+
+      // Filing status change
+      $('filingStatus').addEventListener('change', () => {
+        const status = $('filingStatus').value;
+        $('stdDeduction').value = STD_DEDUCTION_DEFAULTS[status];
+        calculate();
+      });
+
+      // SE toggle
+      $('se-toggle').addEventListener('change', (e) => {
+        if (e.target.checked) {
+          $('se-panel').classList.remove('hidden');
+        } else {
+          $('se-panel').classList.add('hidden');
+        }
+        calculate();
+      });
+
+      // QBI toggle
+      $('qbi-toggle').addEventListener('change', calculate);
+
+      // Reset
+      $('clear-btn').addEventListener('click', () => {
+        $('income').value = 0; $('income-slider').value = 0; $('display-income').textContent = '$0';
+        $('preTaxDeductions').value = 0;
+        $('withheld').value = 0;
+        $('customTaxRate').value = 15;
+        $('customFicaRate').value = 7.65;
+        $('filingStatus').value = 'single';
+        $('stdDeduction').value = 16100;
+        $('se-toggle').checked = false;
+        $('se-panel').classList.add('hidden');
+        $('seIncome').value = 0;
+        $('seTaxRate').value = 15.3;
+        $('ssCap').value = 184500;
+        $('w2Wages').value = 0;
+        $('qbi-toggle').checked = false;
+        setMode('custom');
+        window.history.replaceState({}, '', window.location.pathname);
+        calculate();
+      });
+
+      // PDF
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const element = $('print-report');
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'tax-analysis-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // Init
+      readURL();
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+  </style>
+</BaseLayout>

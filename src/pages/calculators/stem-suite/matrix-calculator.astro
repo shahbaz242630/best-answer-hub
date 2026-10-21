@@ -1,0 +1,1196 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ToolFAQ from '../../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+import HowToSchema from '../../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Matrix Calculator?',
+    a: 'The Best Answer Hub Matrix Calculator is a free, browser-based linear algebra tool that computes determinants, matrix inverses, reduced row echelon form (RREF), eigenvalues, matrix multiplication, transpose, trace, rank, and linear system solutions. It shows step-by-step work for determinants, inverses, and RREF operations. All calculations run instantly in your browser using client-side JavaScript, with no data uploaded to any server and no signup required.',
+  },
+  {
+    q: 'How do I find the determinant of a 3x3 matrix using the calculator?',
+    a: 'Enter the nine values of your 3x3 matrix into the input grid, select "Determinant" from the operation dropdown, and click Calculate. The calculator displays the cofactor expansion along the first row, showing each minor matrix, its determinant, and the signed cofactor. For example, if the first row is [a, b, c], the calculator shows a times det(M11) minus b times det(M12) plus c times det(M13), where each M1j is the 2x2 minor formed by deleting row 1 and column j. The final sum is the determinant.',
+  },
+  {
+    q: 'How does the Matrix Calculator find the inverse of a matrix step by step?',
+    a: 'For a 2x2 matrix, the calculator shows the formula directly: one over the determinant times [[d, -b], [-c, a]], with your values substituted. For a 3x3 matrix, it displays the matrix of minors, applies the checkerboard sign pattern to create the cofactor matrix, transposes it to form the adjugate, and divides each element by the determinant. For 4x4 and larger matrices, the calculator uses Gauss-Jordan elimination on the augmented matrix [A | I], showing each row operation that transforms the left side into the identity matrix while the right side becomes the inverse.',
+  },
+  {
+    q: 'What does it mean when the calculator says a matrix is singular?',
+    a: 'A singular matrix has a determinant of zero and therefore has no inverse. The Best Answer Hub Matrix Calculator detects this condition immediately and explains why: the rows or columns are linearly dependent, meaning one row can be written as a combination of the others. For example, if row 2 equals 3 times row 1, the determinant is zero. The calculator shows the exact determinant value and suggests checking for duplicate rows, proportional rows, or a row of all zeros.',
+  },
+  {
+    q: 'What is the difference between REF and RREF, and how does the calculator show both?',
+    a: 'REF (row echelon form) requires that all nonzero rows are above any all-zero rows, and the leading coefficient of each nonzero row is strictly to the right of the leading coefficient above it. RREF (reduced row echelon form) adds two more rules: every leading coefficient must be 1, and each leading 1 must be the only nonzero entry in its column. The Best Answer Hub Matrix Calculator computes RREF directly and displays every elementary row operation used, such as "R2 → R2 - 3×R1" or "R3 → R3 divided by 2". You can see the matrix state after each operation.',
+  },
+  {
+    q: 'Can I paste a matrix from MATLAB, Python, or my textbook into the calculator?',
+    a: 'Yes. The Best Answer Hub Matrix Calculator accepts multiple input formats. You can paste space-separated rows like "1 2 3" on one line and "4 5 6" on the next, or comma-separated values like "1, 2, 3". You can also paste Python list syntax such as "[[1, 2, 3], [4, 5, 6]]" or MATLAB-style "[1 2 3; 4 5 6]". The calculator auto-detects the format and populates the grid. This saves time when copying homework problems or research data.',
+  },
+  {
+    q: 'How do I multiply two matrices using the calculator?',
+    a: 'Switch to the "Multiply" tab, set the dimensions of matrix A and matrix B, and enter the values. The calculator validates that the number of columns in A matches the number of rows in B. After clicking Calculate, it displays the result matrix and a visual breakdown showing how each element is computed. For example, element (2, 3) of the product is the dot product of row 2 of A and column 3 of B, with each multiplication and addition shown explicitly.',
+  },
+  {
+    q: 'What are eigenvalues and eigenvectors, and how does the calculator compute them?',
+    a: 'An eigenvalue lambda of a matrix A is a scalar such that A times v equals lambda times v for some nonzero vector v, which is called the eigenvector. The Best Answer Hub Matrix Calculator finds eigenvalues by solving the characteristic equation det(A minus lambda I) = 0. For 2x2 matrices this is a quadratic; for 3x3 matrices it solves the cubic characteristic polynomial in closed form, so repeated and complex eigenvalues are handled correctly. For each real eigenvalue the calculator then solves (A minus lambda I) v = 0 to find the corresponding eigenvector, displayed alongside the eigenvalue for 2x2 and 3x3 matrices. The characteristic polynomial and solving steps are shown too.',
+  },
+  {
+    q: 'How do I solve a system of linear equations using the Matrix Calculator?',
+    a: 'Switch to the "Linear System" tab, enter the coefficient matrix A and the constant vector b. The calculator forms the augmented matrix [A | b] and applies Gauss-Jordan elimination to reach reduced row echelon form. The solution vector x is read directly from the rightmost column. If the system has no solution, the calculator identifies an inconsistent row such as [0 0 0 | 5]. If there are infinitely many solutions, it identifies the free variables and expresses the solution in parametric form.',
+  },
+  {
+    q: 'What is the largest matrix size the Best Answer Hub Matrix Calculator can handle?',
+    a: 'The calculator supports matrices from 2x2 up to 6x6. Determinant, inverse, RREF, rank, transpose, trace, multiplication, and linear systems work at every size from 2x2 to 6x6 with exact fractional results. Step-by-step working is shown in full for 2x2 and 3x3 determinants and inverses, and summarized for 4x4 and larger to keep the output readable. Eigenvalues and eigenvectors are computed for 2x2 and 3x3 matrices, where exact closed-form solutions exist; for larger matrices the eigenvalue tool points you to the determinant, inverse, and RREF tools instead. Performance stays instant even at 6x6 because everything runs locally in your browser.',
+  },
+  {
+    q: 'Why does the Matrix Calculator show fractions instead of decimals?',
+    a: 'Exact fractions eliminate rounding errors that accumulate in multi-step calculations. A decimal calculator might show 0.333333 for one-third, and when that value is used in subsequent operations, the small error compounds. The Best Answer Hub Matrix Calculator uses exact rational arithmetic throughout, so one-third stays as 1/3, square roots of two stay symbolic where possible, and the final result is mathematically precise. You can toggle a decimal approximation view if you prefer numeric values.',
+  },
+  {
+    q: 'Can I use the Matrix Calculator on my phone without downloading an app?',
+    a: 'Yes. The Best Answer Hub Matrix Calculator is a responsive web page that works on any phone, tablet, or desktop browser without installation. The input grids adapt to small screens with touch-friendly cells, and the results panel scrolls horizontally when matrices are wide. Because all computation is client-side, the calculator works offline after the page loads. You can turn on airplane mode and continue calculating.',
+  },
+  {
+    q: 'How do I check that my inverse or multiplication result is correct?',
+    a: 'After computing an inverse, the calculator offers a "Verify" button that multiplies the original matrix by its inverse and displays the product. If the inverse is correct, the result is the identity matrix with ones on the diagonal and zeros elsewhere. For matrix multiplication, you can swap the order of the matrices and compare, or verify specific elements by hand using the visual breakdown the calculator provides.',
+  },
+  {
+    q: 'What is the rank of a matrix and how does the calculator find it?',
+    a: 'The rank of a matrix is the maximum number of linearly independent rows or columns, which equals the number of pivot positions in its reduced row echelon form. The Best Answer Hub Matrix Calculator computes rank by first finding the RREF and then counting the nonzero rows. A full-rank square matrix has rank equal to its dimension and is invertible. A rank-deficient matrix has at least one zero row in RREF and is singular.',
+  },
+  {
+    q: 'Does the Best Answer Hub Matrix Calculator work offline?',
+    a: 'Yes. Because every calculation runs in your browser using pure JavaScript, no internet connection is needed after the page loads. You can disconnect from Wi-Fi, turn on airplane mode, or use the calculator in a basement study room without any loss of functionality. This makes it reliable during exams, flights, or anywhere with poor connectivity. No data is ever sent to a server, so sensitive homework and research matrices remain completely private.',
+  },
+];
+
+const steps = [
+  { title: 'Choose your operation', description: 'Select from determinant, inverse, RREF, eigenvalues, transpose, trace, rank, matrix multiplication, or linear system solver. Pick a matrix size from 2x2 to 6x6.' },
+  { title: 'Enter your matrix values', description: 'Type values into the responsive grid, or paste from MATLAB, Python, or a textbook. The calculator accepts comma-separated, space-separated, and bracketed list formats.' },
+  { title: 'View results and step-by-step work', description: 'Click Calculate to see exact fractional answers with detailed working. Expand any step to see intermediate matrices. Export to PDF or copy the result.' },
+];
+
+const seo = {
+  title: 'Matrix Calculator — Determinant, Inverse & Eigenvalues',
+  description: 'Free matrix calculator with step-by-step solutions: determinant, inverse, eigenvalues, multiplication, RREF, and linear systems. No signup.',
+  url: '/calculators/stem-suite/matrix-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'STEM Suite', url: '/calculators/stem-suite/' },
+    { name: 'Matrix Calculator', url: '/calculators/stem-suite/matrix-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-8 pb-6 md:pt-12 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <a href="/calculators/stem-suite/" class="inline-flex items-center gap-1.5 text-sm text-bae-muted hover:text-bae-primary transition-colors mb-4 no-underline">
+        <span>← STEM Suite</span>
+      </a>
+      <div class="max-w-3xl">
+        <span class="inline-block text-xs font-semibold uppercase tracking-wider text-bae-primary bg-bae-primary-soft px-2.5 py-1 rounded-bae-sm mb-3">Free Tool · No Signup</span>
+        <h1 class="font-serif text-3xl md:text-4xl font-bold tracking-tight text-bae-ink mb-3">Matrix Calculator</h1>
+        <p class="text-base text-bae-muted leading-relaxed">Calculate determinants, inverses, RREF, eigenvalues, multiplication, and linear systems with exact fractions and step-by-step work. Supports matrices up to 6×6. All computation runs locally in your browser.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section class="py-6">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-4 md:p-6">
+        <!-- Tabs -->
+        <div class="flex items-center justify-between gap-3 mb-6 border-b border-bae-border pb-2">
+          <div class="flex gap-2 overflow-x-auto">
+            <button type="button" class="tab-btn active px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-tab="single">Single Matrix</button>
+            <button type="button" class="tab-btn px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-tab="multiply">Multiply</button>
+            <button type="button" class="tab-btn px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-tab="linear">Linear System</button>
+          </div>
+          <label class="flex items-center gap-1.5 text-xs text-bae-muted whitespace-nowrap cursor-pointer shrink-0 select-none">
+            <input type="checkbox" id="decimal-toggle" class="accent-bae-primary w-3.5 h-3.5" />
+            Show decimals
+          </label>
+        </div>
+
+        <!-- Tab 1: Single Matrix -->
+        <div class="tab-panel" id="panel-single">
+          <div class="flex flex-wrap gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1">Size</label>
+              <select id="single-size" class="px-3 py-1.5 text-sm border border-bae-border rounded-bae-sm bg-white">
+                <option value="2">2 × 2</option>
+                <option value="3" selected>3 × 3</option>
+                <option value="4">4 × 4</option>
+                <option value="5">5 × 5</option>
+                <option value="6">6 × 6</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1">Operation</label>
+              <select id="single-op" class="px-3 py-1.5 text-sm border border-bae-border rounded-bae-sm bg-white">
+                <option value="det">Determinant</option>
+                <option value="inv">Inverse</option>
+                <option value="rref">RREF</option>
+                <option value="eigen">Eigenvalues &amp; Eigenvectors</option>
+                <option value="transpose">Transpose</option>
+                <option value="trace">Trace</option>
+                <option value="rank">Rank</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-1">Matrix A</label>
+            <div id="single-grid" class="inline-block"></div>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button type="button" id="single-calc" class="px-4 py-2 bg-bae-ink text-white text-sm font-medium rounded-bae-sm hover:opacity-90 transition-opacity">Calculate</button>
+            <button type="button" id="single-clear" class="px-4 py-2 border border-bae-border text-sm font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors">Clear</button>
+            <button type="button" id="single-paste" class="px-4 py-2 border border-bae-border text-sm font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors">Paste Matrix</button>
+          </div>
+          <div id="single-result" class="hidden">
+            <div class="border-t border-bae-border pt-4">
+              <h3 class="text-sm font-semibold text-bae-ink mb-2">Result</h3>
+              <div id="single-output" class="text-sm"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Multiply -->
+        <div class="tab-panel hidden" id="panel-multiply">
+          <div class="flex flex-wrap gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1">Matrix A size</label>
+              <select id="mul-a-rows" class="px-2 py-1.5 text-sm border border-bae-border rounded-bae-sm bg-white mr-1">
+                <option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              </select>
+              <span class="text-sm text-bae-muted">×</span>
+              <select id="mul-a-cols" class="px-2 py-1.5 text-sm border border-bae-border rounded-bae-sm bg-white ml-1">
+                <option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1">Matrix B size</label>
+              <select id="mul-b-rows" class="px-2 py-1.5 text-sm border border-bae-border rounded-bae-sm bg-white mr-1">
+                <option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              </select>
+              <span class="text-sm text-bae-muted">×</span>
+              <select id="mul-b-cols" class="px-2 py-1.5 text-sm border border-bae-border rounded-bae-sm bg-white ml-1">
+                <option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              </select>
+            </div>
+          </div>
+          <div id="mul-dim-error" class="hidden mb-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-bae-sm px-3 py-2">Matrix A columns must equal Matrix B rows for multiplication.</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1">Matrix A</label>
+              <div id="mul-grid-a" class="inline-block"></div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1">Matrix B</label>
+              <div id="mul-grid-b" class="inline-block"></div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button type="button" id="mul-calc" class="px-4 py-2 bg-bae-ink text-white text-sm font-medium rounded-bae-sm hover:opacity-90 transition-opacity">Calculate</button>
+            <button type="button" id="mul-clear" class="px-4 py-2 border border-bae-border text-sm font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors">Clear</button>
+          </div>
+          <div id="mul-result" class="hidden">
+            <div class="border-t border-bae-border pt-4">
+              <h3 class="text-sm font-semibold text-bae-ink mb-2">Result (A × B)</h3>
+              <div id="mul-output" class="text-sm"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Linear System -->
+        <div class="tab-panel hidden" id="panel-linear">
+          <div class="flex flex-wrap gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1">Variables</label>
+              <select id="lin-size" class="px-3 py-1.5 text-sm border border-bae-border rounded-bae-sm bg-white">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1">Coefficient Matrix A</label>
+              <div id="lin-grid-a" class="inline-block"></div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1">Constants vector b</label>
+              <div id="lin-grid-b" class="inline-block"></div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button type="button" id="lin-calc" class="px-4 py-2 bg-bae-ink text-white text-sm font-medium rounded-bae-sm hover:opacity-90 transition-opacity">Solve System</button>
+            <button type="button" id="lin-clear" class="px-4 py-2 border border-bae-border text-sm font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors">Clear</button>
+          </div>
+          <div id="lin-result" class="hidden">
+            <div class="border-t border-bae-border pt-4">
+              <h3 class="text-sm font-semibold text-bae-ink mb-2">Solution</h3>
+              <div id="lin-output" class="text-sm"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Scenarios -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people calculate with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases for the Best Answer Hub Matrix Calculator.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Linear Algebra Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify homework step by step</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Determinant • Inverse • RREF</p>
+          <p class="text-sm text-bae-muted">Check hand-computed determinants using cofactor expansion, verify 3x3 inverses via the adjugate method, and see every row operation in RREF. The exact fraction output matches textbook answers without rounding errors.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Engineering Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Solve structural and circuit systems</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Linear systems • Eigenvalues</p>
+          <p class="text-sm text-bae-muted">Set up augmented matrices for statics problems, find natural frequencies from eigenvalue analysis of mass-spring systems, and solve nodal analysis equations for electrical circuits with multiple loops.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Computer Science Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Understand matrix operations in ML</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Multiplication • Rank • RREF</p>
+          <p class="text-sm text-bae-muted">Trace through matrix multiplication step by step to understand how neural network layers transform data. Use rank and RREF to analyze linear dependencies in feature matrices for dimensionality reduction.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Researchers & Data Scientists</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Quick checks without opening Python</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Eigenvalues • Inverse • Verification</p>
+          <p class="text-sm text-bae-muted">Paste a covariance matrix to check eigenvalues for PCA validation, quickly invert a small transformation matrix, or verify that A times A-inverse equals the identity matrix before committing results to a paper.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <ToolFAQ faqs={faqs} />
+
+  <!-- CTA -->
+  <ToolRelatedCTA currentHref="/calculators/stem-suite/matrix-calculator/" />
+
+  <HowToSchema steps={steps} name="How to Use the Best Answer Hub Matrix Calculator" />
+</BaseLayout>
+
+
+<script is:inline>
+  // Decimal-approximation view toggle (fractions by default)
+  let decimalMode = false;
+  function fmtF(x) { return decimalMode ? x.toDec(4) : x.toStr(); }
+
+  // ========== Fraction arithmetic ==========
+  function gcd(a, b) {
+    a = Math.abs(a); b = Math.abs(b);
+    while (b) { [a, b] = [b, a % b]; }
+    return a || 1;
+  }
+  function lcm(a, b) { return Math.abs(a * b) / gcd(a, b); }
+
+  class Frac {
+    constructor(n, d) {
+      if (n === undefined) { this.n = 0; this.d = 1; return; }
+      if (typeof n === 'number' && Number.isInteger(n) && (d === undefined || Number.isInteger(d))) {
+        this.n = n; this.d = d || 1;
+      } else if (typeof n === 'string') {
+        const s = n.trim();
+        if (s.includes('/')) {
+          const [nn, dd] = s.split('/').map(x => parseInt(x.trim(), 10));
+          this.n = nn || 0; this.d = dd || 1;
+        } else {
+          const val = parseFloat(s);
+          if (!isFinite(val)) { this.n = 0; this.d = 1; }
+          else {
+            const eps = 1e-9;
+            let bestN = 0, bestD = 1, bestErr = Infinity;
+            for (let d0 = 1; d0 <= 1000; d0++) {
+              const n0 = Math.round(val * d0);
+              const err = Math.abs(val - n0 / d0);
+              if (err < bestErr) { bestErr = err; bestN = n0; bestD = d0; }
+              if (err < eps) break;
+            }
+            this.n = bestN; this.d = bestD;
+          }
+        }
+      } else {
+        this.n = 0; this.d = 1;
+      }
+      this.norm();
+    }
+    norm() {
+      if (this.d < 0) { this.n = -this.n; this.d = -this.d; }
+      const g = gcd(this.n, this.d);
+      this.n /= g; this.d /= g;
+      if (this.n === 0) this.d = 1;
+      return this;
+    }
+    add(o) { return new Frac(this.n * o.d + o.n * this.d, this.d * o.d); }
+    sub(o) { return new Frac(this.n * o.d - o.n * this.d, this.d * o.d); }
+    mul(o) { return new Frac(this.n * o.n, this.d * o.d); }
+    div(o) { return new Frac(this.n * o.d, this.d * o.n); }
+    neg() { return new Frac(-this.n, this.d); }
+    abs() { return new Frac(Math.abs(this.n), this.d); }
+    eq(o) { return this.n === o.n && this.d === o.d; }
+    isZero() { return this.n === 0; }
+    isOne() { return this.n === 1 && this.d === 1; }
+    isNeg() { return this.n < 0; }
+    toNum() { return this.n / this.d; }
+    toStr() { return this.d === 1 ? String(this.n) : this.n + '/' + this.d; }
+    toDec(p) { p = p || 6; return (this.n / this.d).toFixed(p).replace(/\.?0+$/, '').replace(/\.$/, ''); }
+  }
+
+  // ========== Matrix utilities ==========
+  function zeros(rows, cols) {
+    return Array.from({length: rows}, () => Array.from({length: cols}, () => new Frac(0)));
+  }
+  function identity(n) {
+    const m = zeros(n, n);
+    for (let i = 0; i < n; i++) m[i][i] = new Frac(1);
+    return m;
+  }
+  function cloneMatrix(m) {
+    return m.map(row => row.map(x => new Frac(x.n, x.d)));
+  }
+  function parseCell(v) {
+    const s = String(v).trim();
+    if (!s) return new Frac(0);
+    if (s.includes('/')) return new Frac(s);
+    const n = parseFloat(s);
+    if (!isFinite(n)) return new Frac(0);
+    // Try to keep simple decimals as fractions
+    if (s.includes('.')) {
+      const parts = s.split('.');
+      const denom = Math.pow(10, parts[1].length);
+      return new Frac(Math.round(n * denom), denom);
+    }
+    return new Frac(parseInt(s, 10));
+  }
+  function parsePaste(text) {
+    // Try [[1,2],[3,4]]
+    const bracket = text.match(/\[\s*\[.*?\]\s*\]/s);
+    if (bracket) {
+      try {
+        const arr = JSON.parse(bracket[0].replace(/\s+/g, ' '));
+        if (Array.isArray(arr) && arr.every(r => Array.isArray(r))) {
+          return arr.map(r => r.map(v => new Frac(parseFloat(v))));
+        }
+      } catch(e) {}
+    }
+    // Try MATLAB [1 2 3; 4 5 6]
+    const matlab = text.match(/^\s*\[?\s*([\d\s\.,;\/\-\+]+)\s*\]?\s*$/);
+    if (matlab) {
+      const rows = matlab[1].split(/;|\n/).map(r => r.trim()).filter(Boolean);
+      return rows.map(r => r.split(/[\s,]+/).filter(Boolean).map(v => parseCell(v)));
+    }
+    // Default: lines = rows, whitespace/comma = separators
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    return lines.map(l => l.split(/[\s,]+/).filter(Boolean).map(v => parseCell(v)));
+  }
+  function matrixToHTML(m, opts) {
+    opts = opts || {};
+    const pad = opts.pad !== false;
+    let html = '<div class="inline-block border border-bae-border rounded-bae-sm overflow-hidden my-2"><table class="text-sm">';
+    for (let i = 0; i < m.length; i++) {
+      html += '<tr>';
+      for (let j = 0; j < m[i].length; j++) {
+        html += '<td class="px-2 py-1 text-center border-bae-border ' + (j < m[i].length - 1 ? 'border-r ' : '') + (i < m.length - 1 ? 'border-b ' : '') + 'min-w-[3rem]">' + escapeHtml(fmtF(m[i][j])) + '</td>';
+      }
+      html += '</tr>';
+    }
+    html += '</table></div>';
+    return html;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ========== Core operations ==========
+  function det(m) {
+    const n = m.length;
+    if (n === 0) return new Frac(1);
+    if (n === 1) return m[0][0];
+    if (n === 2) return m[0][0].mul(m[1][1]).sub(m[0][1].mul(m[1][0]));
+    let sum = new Frac(0);
+    for (let c = 0; c < n; c++) {
+      const minor = [];
+      for (let r = 1; r < n; r++) {
+        const row = [];
+        for (let cc = 0; cc < n; cc++) if (cc !== c) row.push(m[r][cc]);
+        minor.push(row);
+      }
+      const sign = c % 2 === 0 ? 1 : -1;
+      sum = sum.add(new Frac(sign).mul(m[0][c]).mul(det(minor)));
+    }
+    return sum;
+  }
+  function detSteps(m) {
+    const n = m.length;
+    const steps = [];
+    if (n === 2) {
+      const a = fmtF(m[0][0]), b = fmtF(m[0][1]), c = fmtF(m[1][0]), d = fmtF(m[1][1]);
+      const res = det(m);
+      steps.push('<p class="mb-1">For a 2×2 matrix, det = ad − bc</p>');
+      steps.push('<p class="mb-1">det = (' + escapeHtml(a) + ')(' + escapeHtml(d) + ') − (' + escapeHtml(b) + ')(' + escapeHtml(c) + ') = <strong>' + escapeHtml(fmtF(res)) + '</strong></p>');
+      return { value: res, steps };
+    }
+    if (n === 3) {
+      steps.push('<p class="mb-1">Using cofactor expansion along the first row:</p>');
+      steps.push(matrixToHTML(m));
+      let sum = new Frac(0);
+      let terms = [];
+      for (let c = 0; c < 3; c++) {
+        const minor = [];
+        for (let r = 1; r < 3; r++) {
+          const row = [];
+          for (let cc = 0; cc < 3; cc++) if (cc !== c) row.push(m[r][cc]);
+          minor.push(row);
+        }
+        const minorDet = det(minor);
+        const sign = c % 2 === 0 ? 1 : -1;
+        const coeff = m[0][c];
+        const term = new Frac(sign).mul(coeff).mul(minorDet);
+        sum = sum.add(term);
+        terms.push((sign < 0 ? '− ' : (c > 0 ? '+ ' : '')) + escapeHtml(fmtF(coeff)) + ' × ' + escapeHtml(fmtF(minorDet)));
+        steps.push('<p class="mb-1 mt-2">M<sub>1,' + (c+1) + '</sub> (delete row 1, col ' + (c+1) + '):</p>');
+        steps.push(matrixToHTML(minor));
+        steps.push('<p class="mb-1">det(M<sub>1,' + (c+1) + '</sub>) = ' + escapeHtml(fmtF(minorDet)) + '</p>');
+      }
+      steps.push('<p class="mb-1 mt-2">det(A) = ' + terms.join(' ') + ' = <strong>' + escapeHtml(fmtF(sum)) + '</strong></p>');
+      return { value: sum, steps };
+    }
+    // 4x4+: just compute
+    const res = det(m);
+    steps.push('<p class="mb-1">Using Laplace expansion (cofactor method):</p>');
+    steps.push('<p class="mb-1">det(A) = <strong>' + escapeHtml(fmtF(res)) + '</strong></p>');
+    return { value: res, steps };
+  }
+
+  function transpose(m) {
+    const r = m.length, c = m[0].length;
+    const out = zeros(c, r);
+    for (let i = 0; i < r; i++) for (let j = 0; j < c; j++) out[j][i] = m[i][j];
+    return out;
+  }
+  function trace(m) {
+    let sum = new Frac(0);
+    for (let i = 0; i < m.length; i++) sum = sum.add(m[i][i]);
+    return sum;
+  }
+  function multiply(a, b) {
+    const r = a.length, c = b[0].length, inner = a[0].length;
+    const out = zeros(r, c);
+    for (let i = 0; i < r; i++) {
+      for (let j = 0; j < c; j++) {
+        let sum = new Frac(0);
+        for (let k = 0; k < inner; k++) sum = sum.add(a[i][k].mul(b[k][j]));
+        out[i][j] = sum;
+      }
+    }
+    return out;
+  }
+  function multiplyVisual(a, b) {
+    const res = multiply(a, b);
+    const r = a.length, c = b[0].length, inner = a[0].length;
+    const steps = [];
+    steps.push('<p class="mb-2">Result matrix C = A × B, where C<sub>ij</sub> = row i of A · column j of B</p>');
+    steps.push(matrixToHTML(res, {label: 'C = A × B'}));
+    for (let i = 0; i < Math.min(r, 3); i++) {
+      for (let j = 0; j < Math.min(c, 3); j++) {
+        const parts = [];
+        for (let k = 0; k < inner; k++) {
+          parts.push('(' + escapeHtml(fmtF(a[i][k])) + ')(' + escapeHtml(fmtF(b[k][j])) + ')');
+        }
+        steps.push('<p class="mb-1 mt-2">C<sub>' + (i+1) + ',' + (j+1) + '</sub> = ' + parts.join(' + ') + ' = <strong>' + escapeHtml(fmtF(res[i][j])) + '</strong></p>');
+      }
+    }
+    if (r > 3 || c > 3) steps.push('<p class="mb-1 mt-1 text-bae-muted">(Showing first 3×3 block; remaining elements computed similarly.)</p>');
+    return { result: res, steps };
+  }
+
+  function rrefWithSteps(m) {
+    const M = cloneMatrix(m);
+    const rows = M.length, cols = M[0].length;
+    const steps = [];
+    let pivotRow = 0;
+    for (let col = 0; col < cols && pivotRow < rows; col++) {
+      // Find pivot
+      let maxRow = pivotRow;
+      for (let r = pivotRow + 1; r < rows; r++) {
+        if (M[r][col].abs().toNum() > M[maxRow][col].abs().toNum()) maxRow = r;
+      }
+      if (M[maxRow][col].isZero()) continue;
+      if (maxRow !== pivotRow) {
+        [M[pivotRow], M[maxRow]] = [M[maxRow], M[pivotRow]];
+        steps.push('<p class="mb-1">Swap R<sub>' + (pivotRow+1) + '</sub> ↔ R<sub>' + (maxRow+1) + '</sub></p>');
+        steps.push(matrixToHTML(M));
+      }
+      // Scale pivot to 1
+      const pivVal = M[pivotRow][col];
+      if (!pivVal.isOne()) {
+        for (let c = col; c < cols; c++) M[pivotRow][c] = M[pivotRow][c].div(pivVal);
+        steps.push('<p class="mb-1">R<sub>' + (pivotRow+1) + '</sub> → R<sub>' + (pivotRow+1) + '</sub> ÷ ' + escapeHtml(pivVal.toStr()) + '</p>');
+        steps.push(matrixToHTML(M));
+      }
+      // Eliminate other rows
+      for (let r = 0; r < rows; r++) {
+        if (r === pivotRow) continue;
+        const factor = M[r][col];
+        if (factor.isZero()) continue;
+        for (let c = col; c < cols; c++) {
+          M[r][c] = M[r][c].sub(factor.mul(M[pivotRow][c]));
+        }
+        steps.push('<p class="mb-1">R<sub>' + (r+1) + '</sub> → R<sub>' + (r+1) + '</sub> − (' + escapeHtml(factor.toStr()) + ')R<sub>' + (pivotRow+1) + '</sub></p>');
+        steps.push(matrixToHTML(M));
+      }
+      pivotRow++;
+    }
+    return { result: M, steps };
+  }
+
+  function inverseWithSteps(m) {
+    const n = m.length;
+    const d = det(m);
+    if (d.isZero()) return { error: 'This matrix is singular (determinant = 0) and has no inverse.' };
+    const steps = [];
+    steps.push('<p class="mb-1">Determinant = ' + escapeHtml(d.toStr()) + ' (non-zero, so inverse exists)</p>');
+    if (n === 2) {
+      const a = m[0][0], b = m[0][1], c = m[1][0], d0 = m[1][1];
+      const inv = [[d0.div(d), b.neg().div(d)], [c.neg().div(d), a.div(d)]];
+      steps.push('<p class="mb-1">For a 2×2 matrix, A<sup>−1</sup> = (1/det) × [[d, −b], [−c, a]]</p>');
+      steps.push('<p class="mb-1">A<sup>−1</sup> = (1/' + escapeHtml(d.toStr()) + ') × </p>');
+      steps.push(matrixToHTML([[d0, b.neg()], [c.neg(), a]]));
+      steps.push('<p class="mb-1">A<sup>−1</sup> = </p>');
+      steps.push(matrixToHTML(inv));
+      return { result: inv, steps };
+    }
+    if (n === 3) {
+      // Cofactor matrix
+      const cof = zeros(3, 3);
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          const minor = [];
+          for (let r = 0; r < 3; r++) {
+            if (r === i) continue;
+            const row = [];
+            for (let c = 0; c < 3; c++) if (c !== j) row.push(m[r][c]);
+            minor.push(row);
+          }
+          const sign = ((i + j) % 2 === 0) ? 1 : -1;
+          cof[i][j] = new Frac(sign).mul(det(minor));
+        }
+      }
+      steps.push('<p class="mb-1">Step 1: Matrix of minors with sign pattern (cofactor matrix):</p>');
+      steps.push(matrixToHTML(cof));
+      const adj = transpose(cof);
+      steps.push('<p class="mb-1">Step 2: Transpose to get adjugate:</p>');
+      steps.push(matrixToHTML(adj));
+      const inv = zeros(3, 3);
+      for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) inv[i][j] = adj[i][j].div(d);
+      steps.push('<p class="mb-1">Step 3: Divide each element by det = ' + escapeHtml(d.toStr()) + ':</p>');
+      steps.push(matrixToHTML(inv));
+      return { result: inv, steps };
+    }
+    // 4x4+: Gauss-Jordan
+    steps.push('<p class="mb-1">Using Gauss-Jordan elimination on [A | I]:</p>');
+    const aug = [];
+    for (let i = 0; i < n; i++) {
+      aug.push([...m[i], ...identity(n)[i]]);
+    }
+    const rrefRes = rrefWithSteps(aug);
+    steps.push(...rrefRes.steps);
+    const inv = [];
+    for (let i = 0; i < n; i++) inv.push(rrefRes.result[i].slice(n));
+    steps.push('<p class="mb-1 mt-2">The right half is A<sup>−1</sup>:</p>');
+    steps.push(matrixToHTML(inv));
+    return { result: inv, steps };
+  }
+
+  function eigenvalues2x2(m) {
+    const a = m[0][0], b = m[0][1], c = m[1][0], d = m[1][1];
+    const tr = a.add(d);
+    const dval = a.mul(d).sub(b.mul(c));
+    // λ² - tr(A)λ + det(A) = 0
+    const discriminant = tr.mul(tr).sub(new Frac(4).mul(dval));
+    const steps = [];
+    steps.push('<p class="mb-1">Characteristic equation: λ² − tr(A)λ + det(A) = 0</p>');
+    steps.push('<p class="mb-1">tr(A) = ' + escapeHtml(fmtF(a)) + ' + ' + escapeHtml(fmtF(d)) + ' = ' + escapeHtml(fmtF(tr)) + '</p>');
+    steps.push('<p class="mb-1">det(A) = ' + escapeHtml(fmtF(dval)) + '</p>');
+    steps.push('<p class="mb-1">λ² − (' + escapeHtml(fmtF(tr)) + ')λ + ' + escapeHtml(fmtF(dval)) + ' = 0</p>');
+    const discNum = discriminant.toNum();
+    const mNum = m.map(row => row.map(x => x.toNum()));
+    let roots;
+    if (discNum < 0) {
+      const re = tr.toNum() / 2, im = Math.sqrt(-discNum) / 2;
+      steps.push('<p class="mb-1">Discriminant = ' + escapeHtml(fmtF(discriminant)) + ' &lt; 0 → complex conjugate eigenvalues.</p>');
+      steps.push('<p class="mb-1">λ = (' + escapeHtml(fmtF(tr)) + ' ± i√' + escapeHtml(fmtF(discriminant.neg())) + ') / 2</p>');
+      roots = [{ re, im }, { re, im: -im }];
+    } else {
+      const s = Math.sqrt(discNum);
+      steps.push('<p class="mb-1">Discriminant = ' + escapeHtml(fmtF(discriminant)) + '</p>');
+      steps.push('<p class="mb-1">λ = (' + escapeHtml(fmtF(tr)) + ' ± √' + escapeHtml(fmtF(discriminant)) + ') / 2</p>');
+      roots = [{ re: (tr.toNum() + s) / 2, im: 0 }, { re: (tr.toNum() - s) / 2, im: 0 }];
+    }
+    roots.sort((x, y) => ((x.im !== 0) - (y.im !== 0)) || (x.re - y.re) || (y.im - x.im));
+    appendEigenDisplay(steps, mNum, roots);
+    return { values: roots, steps };
+  }
+
+  // ===== Shared eigenvalue/eigenvector helpers =====
+  function approxFrac(x) {
+    // Closest small rational within tolerance, or null if x looks irrational
+    let bestN = Math.round(x), bestD = 1, bestErr = Math.abs(x - Math.round(x));
+    for (let d = 2; d <= 100; d++) {
+      const n = Math.round(x * d), err = Math.abs(x - n / d);
+      if (err < bestErr) { bestErr = err; bestN = n; bestD = d; }
+      if (err === 0) break;
+    }
+    return bestErr < 1e-9 * Math.max(1, Math.abs(x)) ? { n: bestN, d: bestD } : null;
+  }
+  function eigenspaceBasis(Anum, lambda) {
+    // Basis of the null space of (A − λI) via numeric Gauss-Jordan; one vector per free column
+    const n = Anum.length;
+    const A = Anum.map((rowArr, i) => rowArr.map((x, j) => x - (i === j ? lambda : 0)));
+    const pivotCols = []; let row = 0;
+    for (let col = 0; col < n && row < n; col++) {
+      let mx = row;
+      for (let r = row + 1; r < n; r++) if (Math.abs(A[r][col]) > Math.abs(A[mx][col])) mx = r;
+      if (Math.abs(A[mx][col]) < 1e-7) continue;
+      [A[row], A[mx]] = [A[mx], A[row]];
+      const p = A[row][col];
+      for (let c = 0; c < n; c++) A[row][c] /= p;
+      for (let r = 0; r < n; r++) {
+        if (r === row) continue;
+        const fct = A[r][col];
+        if (Math.abs(fct) < 1e-14) continue;
+        for (let c = 0; c < n; c++) A[r][c] -= fct * A[row][c];
+      }
+      pivotCols.push(col); row++;
+    }
+    const basis = [];
+    for (let col = 0; col < n; col++) {
+      if (pivotCols.includes(col)) continue;
+      const v = new Array(n).fill(0); v[col] = 1;
+      for (let i = 0; i < pivotCols.length; i++) v[pivotCols[i]] = -A[i][col];
+      basis.push(v);
+    }
+    return basis;
+  }
+  function fmtVec(v) {
+    // Format an eigenvector: clean integers when possible, else fractions or decimals
+    if (decimalMode) return v.map(x => String(Math.round(x * 1e6) / 1e6));
+    const fr = v.map(approxFrac);
+    if (!fr.some(f => f === null)) {
+      let L = 1; for (const f of fr) L = lcm(L, f.d);
+      if (L <= 10000) {
+        let iv = fr.map(f => f.n * (L / f.d));
+        let g = 0; for (const x of iv) g = gcd(g, x);
+        if (g > 1) iv = iv.map(x => x / g);
+        const firstNZ = iv.find(x => x !== 0);
+        if (firstNZ < 0) iv = iv.map(x => -x);
+        return iv.map(String);
+      }
+    }
+    const firstNZ = v.find(x => Math.abs(x) > 1e-9) || 1;
+    return v.map(x => fmtRoot(x / firstNZ));
+  }
+  function vecHTML(strArr) {
+    return '[' + strArr.map(escapeHtml).join(', ') + ']<sup>T</sup>';
+  }
+  function appendEigenDisplay(steps, mNum, roots) {
+    const reals = roots.filter(r => r.im === 0);
+    const complexes = roots.filter(r => r.im !== 0);
+    steps.push('<p class="mb-1 mt-2 font-semibold">Eigenvalues &amp; eigenvectors:</p>');
+    const seen = [];
+    reals.forEach(r => {
+      const key = fmtRoot(r.re);
+      if (seen.includes(key)) return;
+      seen.push(key);
+      const mult = reals.filter(x => fmtRoot(x.re) === key).length;
+      const basis = eigenspaceBasis(mNum, r.re);
+      let line = '<p class="mb-1">λ = <strong>' + escapeHtml(key) + '</strong>' + (mult > 1 ? ' <span class="text-bae-muted">(algebraic multiplicity ' + mult + ')</span>' : '') + ' &nbsp;→&nbsp; ';
+      line += basis.length ? basis.map(v => vecHTML(fmtVec(v))).join(' , ') : '<span class="text-bae-muted">no eigenvector found</span>';
+      line += '</p>';
+      steps.push(line);
+    });
+    complexes.forEach(r => {
+      const lbl = fmtRoot(r.re) + ' ' + (r.im > 0 ? '+' : '−') + ' ' + fmtRoot(Math.abs(r.im)) + 'i';
+      steps.push('<p class="mb-1">λ = <strong>' + escapeHtml(lbl) + '</strong> <span class="text-bae-muted">(complex: eigenvector is complex; not shown)</span></p>');
+    });
+    steps.push('<p class="mb-1 mt-1 text-bae-muted text-xs">Eigenvectors solve (A − λI)v = 0. Any nonzero scalar multiple is also a valid eigenvector. Values are exact where a clean fraction exists, otherwise rounded.</p>');
+  }
+
+  function solveCubicRoots(B, C, D) {
+    // Real/complex roots of the monic cubic x³ + Bx² + Cx + D = 0 (Cardano + trig method)
+    const p = C - B * B / 3;
+    const q = (2 * B * B * B) / 27 - (B * C) / 3 + D;
+    const shift = -B / 3;
+    if (Math.abs(p) < 1e-12 && Math.abs(q) < 1e-12) {
+      // Triple root
+      return [{ re: shift, im: 0 }, { re: shift, im: 0 }, { re: shift, im: 0 }];
+    }
+    const disc = (q * q) / 4 + (p * p * p) / 27;
+    const roots = [];
+    if (disc > 1e-12) {
+      // One real root, two complex conjugates
+      const s = Math.sqrt(disc);
+      const u = Math.cbrt(-q / 2 + s);
+      const v = Math.cbrt(-q / 2 - s);
+      const t1 = u + v;
+      const re = -t1 / 2 + shift;
+      const im = (Math.sqrt(3) / 2) * (u - v);
+      roots.push({ re: t1 + shift, im: 0 }, { re, im }, { re, im: -im });
+    } else {
+      // Three real roots (handles repeated roots), trigonometric method
+      const r = Math.sqrt(-(p * p * p) / 27);
+      const phi = Math.acos(Math.max(-1, Math.min(1, -q / (2 * r))));
+      const mm = 2 * Math.sqrt(-p / 3);
+      for (let k = 0; k < 3; k++) roots.push({ re: mm * Math.cos((phi + 2 * Math.PI * k) / 3) + shift, im: 0 });
+    }
+    return roots;
+  }
+  function fmtRoot(x) {
+    // Snap to an exact small rational when very close; otherwise show a 6-decimal value
+    let bestN = Math.round(x), bestD = 1, bestErr = Math.abs(x - Math.round(x));
+    for (let d = 2; d <= 100; d++) {
+      const n = Math.round(x * d), err = Math.abs(x - n / d);
+      if (err < bestErr) { bestErr = err; bestN = n; bestD = d; }
+      if (err === 0) break;
+    }
+    if (bestErr < 1e-9 * Math.max(1, Math.abs(x))) return bestD === 1 ? String(bestN) : bestN + '/' + bestD;
+    return String(Math.round(x * 1e6) / 1e6);
+  }
+
+  function eigenvalues3x3(m) {
+    const a=m[0][0], b=m[0][1], c=m[0][2];
+    const d=m[1][0], e=m[1][1], f=m[1][2];
+    const g=m[2][0], h=m[2][1], i=m[2][2];
+    // det(A) = a(ei-fh) - b(di-fg) + c(dh-eg)
+    const detA = a.mul(e.mul(i).sub(f.mul(h))).sub(b.mul(d.mul(i).sub(f.mul(g)))).add(c.mul(d.mul(h).sub(e.mul(g))));
+    const trA = a.add(e).add(i);
+    // sum of principal 2×2 minors
+    const s2 = a.mul(e).sub(b.mul(d)).add(a.mul(i).sub(c.mul(g))).add(e.mul(i).sub(f.mul(h)));
+    // Characteristic polynomial: λ³ − tr(A)λ² + s2·λ − det(A) = 0
+    const steps = [];
+    steps.push('<p class="mb-1">Characteristic polynomial: det(A − λI) = 0</p>');
+    steps.push('<p class="mb-1">λ³ − (' + escapeHtml(fmtF(trA)) + ')λ² + (' + escapeHtml(fmtF(s2)) + ')λ − (' + escapeHtml(fmtF(detA)) + ') = 0</p>');
+    // Solve the cubic for all three roots (real and complex), exact in closed form
+    let roots = solveCubicRoots(-trA.toNum(), s2.toNum(), -detA.toNum());
+    const scale = Math.max(1, Math.abs(trA.toNum()));
+    roots = roots.map(r => ({ re: r.re, im: Math.abs(r.im) < 1e-6 * scale ? 0 : r.im }));
+    // Sort: real eigenvalues ascending first, then complex conjugate pairs
+    roots.sort((x, y) => ((x.im !== 0) - (y.im !== 0)) || (x.re - y.re) || (y.im - x.im));
+    const mNum = m.map(row => row.map(x => x.toNum()));
+    appendEigenDisplay(steps, mNum, roots);
+    return { values: roots, steps };
+  }
+
+  function solveLinearSystem(A, b) {
+    const n = A.length;
+    const aug = [];
+    for (let i = 0; i < n; i++) aug.push([...A[i], b[i][0]]);
+    const rrefRes = rrefWithSteps(aug);
+    const R = rrefRes.result;
+    // Check for inconsistency: [0 0 ... 0 | nonzero]
+    for (let i = 0; i < n; i++) {
+      let allZero = true;
+      for (let j = 0; j < n; j++) if (!R[i][j].isZero()) { allZero = false; break; }
+      if (allZero && !R[i][n].isZero()) {
+        return { error: 'The system is inconsistent. No solution exists. Row ' + (i+1) + ' reduces to 0 = ' + escapeHtml(fmtF(R[i][n])) + '.', steps: rrefRes.steps };
+      }
+    }
+    // Check rank
+    let rank = 0;
+    for (let i = 0; i < n; i++) {
+      let hasPivot = false;
+      for (let j = 0; j < n; j++) if (R[i][j].isOne()) { hasPivot = true; break; }
+      if (hasPivot) rank++;
+    }
+    if (rank < n) {
+      // Infinite solutions
+      const freeVars = [];
+      const pivotCols = [];
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+          if (R[i][j].isOne()) { pivotCols.push(j); break; }
+        }
+      }
+      for (let j = 0; j < n; j++) if (!pivotCols.includes(j)) freeVars.push(j);
+      const steps = [...rrefRes.steps];
+      steps.push('<p class="mb-1 mt-2">The system has <strong>infinitely many solutions</strong> (rank = ' + rank + ' < ' + n + ' variables).</p>');
+      steps.push('<p class="mb-1">Free variable' + (freeVars.length > 1 ? 's' : '') + ': ' + freeVars.map(v => 'x<sub>' + (v+1) + '</sub>').join(', ') + '</p>');
+      // Express basic variables in terms of free variables
+      for (let i = 0; i < n; i++) {
+        let pivotCol = -1;
+        for (let j = 0; j < n; j++) if (R[i][j].isOne()) { pivotCol = j; break; }
+        if (pivotCol === -1) continue;
+        const constTerm = R[i][n];
+        const otherTerms = [];
+        for (let j = 0; j < n; j++) {
+          if (j === pivotCol || R[i][j].isZero()) continue;
+          const coeff = R[i][j].neg();
+          const mag = coeff.abs();
+          const magStr = mag.isOne() ? '' : escapeHtml(fmtF(mag)) + '·';
+          otherTerms.push({ neg: coeff.isNeg(), text: magStr + 'x<sub>' + (j+1) + '</sub>' });
+        }
+        let expr = (!constTerm.isZero() || otherTerms.length === 0) ? escapeHtml(fmtF(constTerm)) : '';
+        otherTerms.forEach(t => {
+          if (expr === '') expr = (t.neg ? '−' : '') + t.text;
+          else expr += (t.neg ? ' − ' : ' + ') + t.text;
+        });
+        steps.push('<p class="mb-1">x<sub>' + (pivotCol+1) + '</sub> = ' + expr + '</p>');
+      }
+      return { infinite: true, freeVars, steps };
+    }
+    // Unique solution
+    const x = [];
+    for (let i = 0; i < n; i++) x.push([R[i][n]]);
+    const steps = [...rrefRes.steps];
+    steps.push('<p class="mb-1 mt-2">The system has a <strong>unique solution</strong>:</p>');
+    for (let i = 0; i < n; i++) {
+      steps.push('<p class="mb-1">x<sub>' + (i+1) + '</sub> = ' + escapeHtml(fmtF(x[i][0])) + '</p>');
+    }
+    return { result: x, steps };
+  }
+
+  function rankMatrix(m) {
+    const rrefRes = rrefWithSteps(m);
+    let rank = 0;
+    for (let i = 0; i < rrefRes.result.length; i++) {
+      let hasPivot = false;
+      for (let j = 0; j < rrefRes.result[0].length; j++) {
+        if (rrefRes.result[i][j].isOne()) { hasPivot = true; break; }
+      }
+      if (hasPivot) rank++;
+    }
+    return { rank, steps: rrefRes.steps };
+  }
+
+
+  // ========== UI helpers ==========
+  function createGrid(container, rows, cols, prefix) {
+    container.innerHTML = '';
+    const table = document.createElement('table');
+    table.className = 'text-sm';
+    for (let i = 0; i < rows; i++) {
+      const tr = document.createElement('tr');
+      for (let j = 0; j < cols; j++) {
+        const td = document.createElement('td');
+        td.className = 'p-0.5';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = prefix + '-cell w-14 md:w-16 px-1.5 py-1 text-sm text-center border border-bae-border rounded-bae-sm bg-white focus:outline-none focus:border-bae-primary';
+        input.dataset.row = i;
+        input.dataset.col = j;
+        input.value = i === j ? '1' : '0';
+        td.appendChild(input);
+        tr.appendChild(td);
+      }
+      table.appendChild(tr);
+    }
+    container.appendChild(table);
+  }
+  function readGrid(container, rows, cols) {
+    const cells = container.querySelectorAll('input');
+    const m = [];
+    for (let i = 0; i < rows; i++) {
+      const row = [];
+      for (let j = 0; j < cols; j++) {
+        const idx = i * cols + j;
+        const val = cells[idx] ? cells[idx].value : '0';
+        row.push(parseCell(val));
+      }
+      m.push(row);
+    }
+    return m;
+  }
+  function readVector(container, n) {
+    const cells = container.querySelectorAll('input');
+    const v = [];
+    for (let i = 0; i < n; i++) {
+      v.push([parseCell(cells[i] ? cells[i].value : '0')]);
+    }
+    return v;
+  }
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active', 'bg-bae-primary', 'text-white');
+      b.classList.add('text-bae-muted', 'hover:bg-bae-border/20');
+      if (b.dataset.tab === name) {
+        b.classList.add('active', 'bg-bae-primary', 'text-white');
+        b.classList.remove('text-bae-muted', 'hover:bg-bae-border/20');
+      }
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+    const panel = document.getElementById('panel-' + name);
+    if (panel) panel.classList.remove('hidden');
+  }
+
+  // ========== Tab 1: Single Matrix ==========
+  function initSingleGrid() {
+    const size = parseInt(document.getElementById('single-size').value, 10);
+    createGrid(document.getElementById('single-grid'), size, size, 'single');
+  }
+  function doSingleCalc() {
+    const size = parseInt(document.getElementById('single-size').value, 10);
+    const op = document.getElementById('single-op').value;
+    const m = readGrid(document.getElementById('single-grid'), size, size);
+    const out = document.getElementById('single-output');
+    const resultBox = document.getElementById('single-result');
+    resultBox.classList.remove('hidden');
+    let html = '';
+
+    if (op === 'det') {
+      const res = detSteps(m);
+      html = '<div class="space-y-1">' + res.steps.join('') + '</div>';
+    } else if (op === 'inv') {
+      const res = inverseWithSteps(m);
+      if (res.error) {
+        html = '<p class="text-red-600">' + escapeHtml(res.error) + '</p>';
+      } else {
+        html = '<div class="space-y-1">' + res.steps.join('') + '</div>';
+        html += '<button type="button" class="mt-3 px-3 py-1.5 border border-bae-border text-xs font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors" onclick="verifyInverse()">Verify (A × A⁻¹)</button>';
+        window._lastMatrix = m;
+        window._lastInverse = res.result;
+      }
+    } else if (op === 'rref') {
+      const res = rrefWithSteps(m);
+      html = '<div class="space-y-1">' + res.steps.join('') + '</div>';
+    } else if (op === 'eigen') {
+      if (size === 2) {
+        const res = eigenvalues2x2(m);
+        html = '<div class="space-y-1">' + res.steps.join('') + '</div>';
+      } else if (size === 3) {
+        const res = eigenvalues3x3(m);
+        html = '<div class="space-y-1">' + res.steps.join('') + '</div>';
+      } else {
+        html = '<p class="text-bae-muted">Eigenvalues and eigenvectors are computed for 2×2 and 3×3 matrices, where exact closed-form solutions exist. For 4×4 and larger matrices, use the Determinant, Inverse, RREF, or Rank tools, which stay exact at every size.</p>';
+      }
+    } else if (op === 'transpose') {
+      const t = transpose(m);
+      html = '<p class="mb-1">Transpose of A (rows become columns):</p>' + matrixToHTML(t);
+    } else if (op === 'trace') {
+      const tr = trace(m);
+      html = '<p class="mb-1">Trace = sum of diagonal elements = ' + escapeHtml(fmtF(tr)) + '</p>';
+    } else if (op === 'rank') {
+      const res = rankMatrix(m);
+      html = '<div class="space-y-1">' + res.steps.join('') + '</div>';
+      html += '<p class="mt-2">Rank = <strong>' + res.rank + '</strong> (number of nonzero rows in RREF)</p>';
+    }
+
+    out.innerHTML = html;
+    out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  window.verifyInverse = function() {
+    if (!window._lastMatrix || !window._lastInverse) return;
+    const prod = multiply(window._lastMatrix, window._lastInverse);
+    const out = document.getElementById('single-output');
+    out.innerHTML += '<div class="mt-3"><p class="mb-1">A × A<sup>−1</sup> =</p>' + matrixToHTML(prod) + '<p class="mt-1 text-bae-muted">Because the calculator uses exact rational arithmetic, this equals the identity matrix exactly: ones on the diagonal, zeros elsewhere.</p></div>';
+  };
+
+  // ========== Tab 2: Multiply ==========
+  function initMulGrids() {
+    const ar = parseInt(document.getElementById('mul-a-rows').value, 10);
+    const ac = parseInt(document.getElementById('mul-a-cols').value, 10);
+    const br = parseInt(document.getElementById('mul-b-rows').value, 10);
+    const bc = parseInt(document.getElementById('mul-b-cols').value, 10);
+    createGrid(document.getElementById('mul-grid-a'), ar, ac, 'mula');
+    createGrid(document.getElementById('mul-grid-b'), br, bc, 'mulb');
+    const err = document.getElementById('mul-dim-error');
+    if (ac !== br) {
+      err.classList.remove('hidden');
+    } else {
+      err.classList.add('hidden');
+    }
+  }
+  function doMulCalc() {
+    const ar = parseInt(document.getElementById('mul-a-rows').value, 10);
+    const ac = parseInt(document.getElementById('mul-a-cols').value, 10);
+    const br = parseInt(document.getElementById('mul-b-rows').value, 10);
+    const bc = parseInt(document.getElementById('mul-b-cols').value, 10);
+    if (ac !== br) {
+      document.getElementById('mul-dim-error').classList.remove('hidden');
+      return;
+    }
+    const A = readGrid(document.getElementById('mul-grid-a'), ar, ac);
+    const B = readGrid(document.getElementById('mul-grid-b'), br, bc);
+    const res = multiplyVisual(A, B);
+    document.getElementById('mul-result').classList.remove('hidden');
+    document.getElementById('mul-output').innerHTML = '<div class="space-y-1">' + res.steps.join('') + '</div>';
+    document.getElementById('mul-output').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ========== Tab 3: Linear System ==========
+  function initLinGrids() {
+    const n = parseInt(document.getElementById('lin-size').value, 10);
+    createGrid(document.getElementById('lin-grid-a'), n, n, 'lina');
+    // Vector b: n rows, 1 column
+    const container = document.getElementById('lin-grid-b');
+    container.innerHTML = '';
+    const table = document.createElement('table');
+    table.className = 'text-sm';
+    for (let i = 0; i < n; i++) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.className = 'p-0.5';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'linb-cell w-14 md:w-16 px-1.5 py-1 text-sm text-center border border-bae-border rounded-bae-sm bg-white focus:outline-none focus:border-bae-primary';
+      input.value = '0';
+      td.appendChild(input);
+      tr.appendChild(td);
+      table.appendChild(tr);
+    }
+    container.appendChild(table);
+  }
+  function doLinCalc() {
+    const n = parseInt(document.getElementById('lin-size').value, 10);
+    const A = readGrid(document.getElementById('lin-grid-a'), n, n);
+    const b = readVector(document.getElementById('lin-grid-b'), n);
+    const res = solveLinearSystem(A, b);
+    document.getElementById('lin-result').classList.remove('hidden');
+    let html = '';
+    if (res.error) {
+      html = '<p class="text-red-600">' + res.error + '</p>';
+    } else if (res.infinite) {
+      html = '<div class="space-y-1">' + res.steps.join('') + '</div>';
+    } else {
+      html = '<div class="space-y-1">' + res.steps.join('') + '</div>';
+    }
+    document.getElementById('lin-output').innerHTML = html;
+    document.getElementById('lin-output').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ========== Paste handler ==========
+  function handlePaste() {
+    const text = prompt('Paste your matrix (supports [[1,2],[3,4]], MATLAB [1 2; 3 4], or space-separated rows):');
+    if (!text) return;
+    const parsed = parsePaste(text);
+    if (!parsed.length || !parsed[0].length) {
+      alert('Could not parse matrix. Please check the format.');
+      return;
+    }
+    const rows = parsed.length;
+    const cols = parsed[0].length;
+    if (rows !== cols) {
+      alert('Pasted matrix is ' + rows + '×' + cols + '. For Single Matrix operations, only square matrices are supported. Please use the Multiply or Linear System tabs for non-square matrices.');
+      return;
+    }
+    if (rows < 2 || rows > 6) {
+      alert('Matrix size must be between 2×2 and 6×6.');
+      return;
+    }
+    document.getElementById('single-size').value = String(rows);
+    initSingleGrid();
+    const cells = document.getElementById('single-grid').querySelectorAll('input');
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const idx = i * cols + j;
+        if (cells[idx] && parsed[i][j]) {
+          cells[idx].value = parsed[i][j].toStr();
+        }
+      }
+    }
+  }
+
+  // ========== PDF Export ==========
+  function exportPDF() {
+    if (typeof html2pdf === 'undefined') {
+      alert('PDF library not loaded. Please try again in a moment.');
+      return;
+    }
+    const clone = document.querySelector('.bg-bae-card.border.rounded-bae').cloneNode(true);
+    // Remove inputs, replace with text
+    clone.querySelectorAll('input, select, button').forEach(el => {
+      const span = document.createElement('span');
+      span.textContent = el.value || el.textContent || '';
+      span.className = 'text-sm';
+      el.parentNode.replaceChild(span, el);
+    });
+    const wrap = document.createElement('div');
+    wrap.innerHTML = '<h1 style="font-size:18px;margin-bottom:12px;">Best Answer Hub · Matrix Calculator Results</h1>';
+    wrap.appendChild(clone);
+    wrap.style.padding = '20px';
+    wrap.style.background = '#fff';
+    document.body.appendChild(wrap);
+    html2pdf().set({ margin: 10, filename: 'matrix-calculator-results.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(wrap).save().then(() => {
+      document.body.removeChild(wrap);
+    });
+  }
+
+  // ========== Init ==========
+  document.addEventListener('DOMContentLoaded', function() {
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+    // Style active tab
+    const activeBtn = document.querySelector('.tab-btn.active');
+    if (activeBtn) {
+      activeBtn.classList.add('bg-bae-primary', 'text-white');
+      activeBtn.classList.remove('text-bae-muted', 'hover:bg-bae-border/20');
+    }
+    document.querySelectorAll('.tab-btn:not(.active)').forEach(btn => {
+      btn.classList.add('text-bae-muted', 'hover:bg-bae-border/20');
+    });
+
+    // Single matrix
+    initSingleGrid();
+    document.getElementById('single-size').addEventListener('change', initSingleGrid);
+    document.getElementById('single-calc').addEventListener('click', doSingleCalc);
+    document.getElementById('single-clear').addEventListener('click', () => { initSingleGrid(); document.getElementById('single-result').classList.add('hidden'); });
+    document.getElementById('single-paste').addEventListener('click', handlePaste);
+
+    // Multiply
+    initMulGrids();
+    ['mul-a-rows','mul-a-cols','mul-b-rows','mul-b-cols'].forEach(id => {
+      document.getElementById(id).addEventListener('change', initMulGrids);
+    });
+    document.getElementById('mul-calc').addEventListener('click', doMulCalc);
+    document.getElementById('mul-clear').addEventListener('click', () => { initMulGrids(); document.getElementById('mul-result').classList.add('hidden'); });
+
+    // Linear
+    initLinGrids();
+    document.getElementById('lin-size').addEventListener('change', initLinGrids);
+    document.getElementById('lin-calc').addEventListener('click', doLinCalc);
+    document.getElementById('lin-clear').addEventListener('click', () => { initLinGrids(); document.getElementById('lin-result').classList.add('hidden'); });
+
+    // Decimal-approximation toggle: re-render whichever result is currently shown
+    document.getElementById('decimal-toggle').addEventListener('change', function() {
+      decimalMode = this.checked;
+      const vis = (panelId, resultId) =>
+        !document.getElementById(panelId).classList.contains('hidden') &&
+        !document.getElementById(resultId).classList.contains('hidden');
+      if (vis('panel-single', 'single-result')) doSingleCalc();
+      if (vis('panel-multiply', 'mul-result')) doMulCalc();
+      if (vis('panel-linear', 'lin-result')) doLinCalc();
+    });
+  });
+</script>
+
+<style>
+  .tab-btn.active { background-color: #6366f1; color: #fff; }
+</style>

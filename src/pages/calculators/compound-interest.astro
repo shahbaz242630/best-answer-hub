@@ -1,0 +1,919 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-07-11T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Compound Interest Calculator?',
+    a: 'The Best Answer Hub Compound Interest Calculator is a free, privacy-first browser tool that shows how much money you can grow through compound interest. Enter your starting principal, monthly contributions, interest rate, and time horizon to see your total balance, total contributions, and interest earned. A live chart visualizes your growth year by year. Everything runs instantly in your browser. No signup, no server, no data collection.',
+  },
+  {
+    q: 'How much will $10,000 grow in 20 years if invested at 7% compound interest?',
+    a: 'At 7% compounded annually, $10,000 grows to roughly $38,697 in 20 years with no additional contributions. That is $28,697 in pure interest. If you also add $200 per month, the total reaches about $141,000. The same $10,000 at 10% grows to about $67,275. Small rate differences create massive gaps over decades because compound interest is exponential, not linear.',
+  },
+  {
+    q: 'What is the difference between daily and monthly compounding?',
+    a: 'Daily compounding calculates interest 365 times per year, while monthly compounding calculates it 12 times per year. The gap between daily and monthly is tiny: on a $10,000 balance at 5%, daily beats monthly by only about $17 over 10 years, widening to roughly $135 over 30 years. The bigger jump comes from the low end of the frequency scale: moving from annual to monthly compounding on $10,000 at 7% over 30 years adds about 6–7% to your final balance (roughly $81,165 monthly versus $76,123 annually). Beyond monthly, extra compounding frequency barely moves the needle.',
+  },
+  {
+    q: 'How does the Rule of 72 estimate how long it takes to double my money?',
+    a: 'The Rule of 72 is a quick mental math trick: divide 72 by your annual interest rate to estimate doubling time in years. At 7.2%, money doubles in about 10 years. At 10%, it doubles in roughly 7.2 years. It is surprisingly accurate for rates between 6% and 10%. For example, $10,000 at 7% actually doubles in 10.24 years. The Rule of 72 gives you 10.3, which is close enough for planning.',
+  },
+  {
+    q: 'Should I invest monthly or make a lump sum contribution?',
+    a: 'If you already have the cash, lump sum investing wins roughly 65–70% of the time because markets trend upward over time and money invested earlier has more time to compound. However, monthly investing (called dollar-cost averaging) reduces the risk of investing everything right before a market drop. For most people building wealth from paychecks, monthly contributions are the only realistic option, and they are still incredibly powerful.',
+  },
+  {
+    q: 'How much do I need to save each month to reach $1 million by age 65?',
+    a: 'It depends entirely on when you start. At 7% annual return, starting at age 25 requires roughly $380 per month. Starting at 35 requires about $820 per month. Starting at 45 requires about $2,050 per month. Starting at 55 requires about $6,200 per month. This is why starting early is the single most powerful lever in investing. Time does the heavy lifting when you give it decades.',
+  },
+  {
+    q: 'What interest rate should I use for S&P 500 stock market investments?',
+    a: 'The S&P 500 has returned roughly 10% annually before inflation over the past century, and about 7% after inflation. For conservative retirement planning, most advisors recommend using 6–7% to account for inflation and sequence-of-returns risk. For younger investors with decades ahead, 7–8% is a reasonable planning assumption. Never use the most optimistic rate you have heard. Planning with conservative numbers means pleasant surprises instead of shortfalls.',
+  },
+  {
+    q: 'How much will my 401(k) grow if I contribute $500 per month at 7%?',
+    a: 'Contributing $500 per month to a 401(k) at 7% annual return grows to roughly $609,000 over 30 years. With a typical 4% employer match, that becomes an extra $243,000 in free money, pushing your total to about $852,000. Over 20 years without a match, the same contribution reaches about $260,000. Always contribute at least enough to get your full employer match. It is literally free money with a 100% immediate return.',
+  },
+  {
+    q: 'What is the difference between APR and APY?',
+    a: 'APR is the annual percentage rate, the nominal rate before compounding. APY is the annual percentage yield, which includes compounding. A 7% APR compounded monthly gives a 7.23% APY. Banks advertise savings accounts with APY because it is the higher, more impressive number. Credit cards advertise APR because it is the lower, less scary number. When using a compound interest calculator, enter your APY if you know it. That is the actual rate your money grows at.',
+  },
+  {
+    q: 'If I start investing $200 per month at 25 versus 35, how much less will I have?',
+    a: 'At a 7% return compounded monthly, $200 per month from age 25 to 65 grows to about $525,000. Starting at 35 with the same $200 per month grows to about $244,000. The 10-year delay costs you roughly $281,000, more than half your potential nest egg. Even worse, to catch up and reach $525,000 by 65, the 35-year-old would need to invest about $430 per month, more than double. Time is the most valuable asset in compounding.',
+  },
+  {
+    q: 'Why does my credit card balance grow so fast with minimum payments?',
+    a: 'Credit cards use compound interest against you. A $5,000 balance at 22% APR with a 2% minimum payment takes over 30 years to pay off and costs roughly $18,000 in total interest. The minimum payment barely covers the interest in early months, so your principal shrinks painfully slowly. This is compound interest working in reverse. Paying off high-interest debt is mathematically equivalent to earning a guaranteed 22% return with zero risk.',
+  },
+  {
+    q: 'How much will investment fees cost me over 30 years?',
+    a: 'Fees are compound interest working against you in stealth mode. A 1% annual fee on a $500-per-month portfolio at 7% return costs roughly $162,000 over 30 years. A 0.5% fee costs about $87,000. The difference between a 1% fee and a 0.1% index fund fee is about $135,000 in lost growth. This is why low-cost index funds and fee-only advisors are core principles of long-term wealth building.',
+  },
+  {
+    q: 'What is the real inflation-adjusted value of my investment after 20 years?',
+    a: 'Nominal returns ignore inflation, which erodes purchasing power at roughly 2–3% per year. If your investments grow at 7% annually and inflation averages 3%, your real return is about 4%. So $500,000 in 20 years might feel like $277,000 in today dollars. The Best Answer Hub Compound Interest Calculator shows nominal values. For retirement planning, mentally haircut your final number by 30–40% to estimate true purchasing power, or use a 4–5% real return assumption instead of 7%.',
+  },
+  {
+    q: 'Is it better to pay off high-interest debt first or start investing?',
+    a: 'Pay off debt with interest rates above 7% first. Credit card debt at 20–25% is a guaranteed negative return that compound interest accelerates against you. Once high-interest debt is gone, split extra cash between investing and lower-rate debt. The one exception: always capture your full 401(k) employer match first. That is an instant 50–100% return that no debt interest rate can beat. After the match, attack the debt aggressively.',
+  },
+  {
+    q: 'Is my financial data stored or sent to a server?',
+    a: 'No. Your numbers never leave your browser. All calculations happen locally using JavaScript. The Best Answer Hub Compound Interest Calculator does not log, store, or transmit any principal amounts, rates, or results. You can verify this by disconnecting from the internet after loading the page. It will continue to work perfectly. This makes it safer than cloud-based financial calculators for sensitive planning.',
+  },
+];
+
+const seo = {
+  title: 'Compound Interest Calculator: Free, Visual & Private (2026)',
+  description: 'Free compound interest calculator with monthly contributions, live chart, and amortization schedule. No signup. Your data never leaves your browser.',
+  url: '/calculators/compound-interest/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-23T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Finance Toolkit', url: '/finance-toolkit/' },
+    { name: 'Compound Interest Calculator', url: '/calculators/compound-interest/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated May 2026 · No signup, no data stored
+          </div>
+          <a href="/finance-toolkit/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Finance Toolkit
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Compound Interest Calculator:<br/>
+          <em class="italic text-bae-primary">See your money grow</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Calculate how much you will earn with compound interest. Add monthly contributions, adjust your rate, and watch the growth chart update instantly. Your inputs never leave your browser.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Compound interest calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Your Inputs</h2>
+
+            <!-- Principal -->
+            <div class="mb-5">
+              <div class="flex items-center justify-between mb-2">
+                <label for="principal" class="text-sm font-semibold text-bae-ink">Starting Principal</label>
+                <span class="text-sm font-semibold text-bae-primary" id="principal-display">$10,000</span>
+              </div>
+              <input type="range" id="principal-slider" min="0" max="1000000" step="1000" value="10000" class="w-full accent-bae-primary mb-2" />
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-bae-muted">$</span>
+                <input type="number" id="principal" min="0" max="10000000" value="10000" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+
+            <!-- Monthly Contribution -->
+            <div class="mb-5">
+              <div class="flex items-center justify-between mb-2">
+                <label for="contribution" class="text-sm font-semibold text-bae-ink">Monthly Contribution</label>
+                <span class="text-sm font-semibold text-bae-primary" id="contribution-display">$200</span>
+              </div>
+              <input type="range" id="contribution-slider" min="0" max="10000" step="50" value="200" class="w-full accent-bae-primary mb-2" />
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-bae-muted">$</span>
+                <input type="number" id="contribution" min="0" max="100000" value="200" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+
+            <!-- Interest Rate -->
+            <div class="mb-5">
+              <div class="flex items-center justify-between mb-2">
+                <label for="rate" class="text-sm font-semibold text-bae-ink">Annual Interest Rate</label>
+                <span class="text-sm font-semibold text-bae-primary" id="rate-display">7.00%</span>
+              </div>
+              <input type="range" id="rate-slider" min="0" max="20" step="0.05" value="7" class="w-full accent-bae-primary mb-2" />
+              <div class="flex items-center gap-2">
+                <input type="number" id="rate" min="0" max="100" step="0.01" value="7" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <span class="text-xs text-bae-muted">%</span>
+              </div>
+            </div>
+
+            <!-- Years -->
+            <div class="mb-5">
+              <div class="flex items-center justify-between mb-2">
+                <label for="years" class="text-sm font-semibold text-bae-ink">Years to Grow</label>
+                <span class="text-sm font-semibold text-bae-primary" id="years-display">30 years</span>
+              </div>
+              <input type="range" id="years-slider" min="1" max="50" step="1" value="30" class="w-full accent-bae-primary mb-2" />
+              <input type="number" id="years" min="0" max="100" value="30" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+            </div>
+
+            <!-- Compounding Frequency -->
+            <div class="mb-2">
+              <label for="frequency" class="text-sm font-semibold text-bae-ink mb-2 block">Compounding Frequency</label>
+              <select id="frequency" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary">
+                <option value="12" selected>Monthly (12x per year)</option>
+                <option value="4">Quarterly (4x per year)</option>
+                <option value="2">Semi-Annually (2x per year)</option>
+                <option value="1">Annually (1x per year)</option>
+                <option value="365">Daily (365x per year)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Compare Growth Rate -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Compare Growth Rate</h2>
+            <div class="mb-4">
+              <div class="flex items-center justify-between mb-2">
+                <label for="compare-rate" class="text-sm font-semibold text-bae-ink">What if you earned</label>
+                <span class="text-sm font-semibold text-bae-primary" id="compare-rate-display">7.00%</span>
+              </div>
+              <input type="range" id="compare-rate-slider" min="1" max="20" step="0.05" value="7" class="w-full accent-bae-primary mb-2" />
+              <div class="flex items-center gap-2">
+                <input type="number" id="compare-rate" min="1" max="20" step="0.01" value="7" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <span class="text-xs text-bae-muted">%</span>
+              </div>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs text-bae-muted">At your current rate</span>
+                <span class="text-sm font-semibold text-bae-ink" id="compare-current">$0</span>
+              </div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs text-bae-muted">At comparison rate</span>
+                <span class="text-sm font-semibold text-bae-primary" id="compare-alt">$0</span>
+              </div>
+              <div class="border-t border-bae-border pt-2 mt-2 flex items-center justify-between">
+                <span class="text-xs font-semibold text-bae-ink">Difference</span>
+                <span class="text-sm font-bold text-bae-ink" id="compare-diff">$0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end -mt-2 mb-1">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset calculator
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="lg:sticky lg:top-[84px] space-y-4">
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Results</h3>
+            <div class="mb-5">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Final Balance</div>
+              <div class="text-3xl md:text-4xl font-bold font-serif" id="result-total">$0</div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-5">
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Total Contributed</div>
+                <div class="text-lg font-semibold" id="result-contributed">$0</div>
+              </div>
+              <div>
+                <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">Interest Earned</div>
+                <div class="text-lg font-semibold text-emerald-400" id="result-interest">$0</div>
+              </div>
+            </div>
+            <div class="mb-5">
+              <div class="text-[11px] font-medium text-white/50 uppercase tracking-wider mb-1">APY (Effective Rate)</div>
+              <div class="text-lg font-semibold" id="result-apy">0.00%</div>
+            </div>
+            <button type="button" id="print-btn" class="w-full bg-bae-primary hover:bg-bae-accent text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+              Download PDF Report
+            </button>
+          </div>
+
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Growth Chart</h3>
+            <div class="relative w-full" style="height: 220px;">
+              <canvas id="growth-chart" class="w-full h-full"></canvas>
+            </div>
+            <div class="flex items-center justify-center gap-4 mt-3 text-xs text-bae-muted">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-bae-primary"></span> Total Balance</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Interest Earned</span>
+            </div>
+          </div>
+
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Year-by-Year Breakdown</h3>
+            <div class="overflow-y-auto max-h-[240px] pr-1" id="breakdown-table">
+              <table class="w-full text-sm">
+                <thead class="sticky top-0 bg-bae-card">
+                  <tr class="border-b border-bae-border">
+                    <th class="text-left py-2 pr-3 font-semibold text-bae-ink text-xs">Year</th>
+                    <th class="text-right py-2 px-2 font-semibold text-bae-ink text-xs">Balance</th>
+                    <th class="text-right py-2 pl-2 font-semibold text-bae-ink text-xs">Interest</th>
+                  </tr>
+                </thead>
+                <tbody id="breakdown-body" class="divide-y divide-bae-border-light">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Enter your numbers', text: 'Set your starting principal, monthly contribution, interest rate, and time horizon. Use the sliders for quick exploration or type exact values.' },
+    { name: 'Watch it grow live', text: 'The chart and totals update instantly as you type. No page reloads, no "Calculate" button, no waiting. See the power of compound interest in real time.' },
+    { name: 'Compare and share', text: 'Use the Compare Growth Rate slider to see what your balance would be at any rate from 1% to 20%. Copy the URL to share your exact calculation with a partner or advisor.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter your numbers</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Set your starting principal, monthly contribution, interest rate, and time horizon. Use the sliders for quick exploration or type exact values.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Watch it grow live</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">The chart and totals update instantly as you type. No page reloads, no "Calculate" button, no waiting. See the power of compound interest in real time.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Compare and share</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Use the Compare Growth Rate slider to see what your balance would be at any rate from 1% to 20%. Copy the URL to share your exact calculation with a partner or advisor.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed" set:html={item.a}></p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What People Pay -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What people pay</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$10,000 lump sum, 7%, 30 years</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The patient investor</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $81,165</div>
+          <p class="text-sm text-bae-muted leading-relaxed">No additional contributions, compounded monthly. Pure compound interest turns $10,000 into over $81,000. Interest alone accounts for $71,165.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$500/month for 30 years at 7%</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The steady saver</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $609,000</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Contributed $180,000 total. Compound interest adds roughly $429,000 on top. This is the power of consistent monthly investing.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Start at 25 vs 35: $200/month at 7%</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The 10-year penalty</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $281,000 less</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Starting at 25 yields about $525,000 by 65. Starting at 35 yields about $244,000. That decade of delay costs more than half your nest egg.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Credit card at 22% APR, $5,000, minimum payments</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Compound interest against you</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $18,000 total</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Takes over 30 years to pay off. The bank earns $13,000 in interest on your $5,000 balance. This is why high-interest debt must be crushed first.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are modeled estimates based on standard compound interest formulas as of May 2026. Actual returns vary by investment, fees, and market conditions.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/mortgage-calculator/" class="text-bae-primary hover:underline">Mortgage Calculator</a>, <a href="/calculators/cloud-cost-calculator/" class="text-bae-primary hover:underline">Cloud Cost Calculator</a>, and the <a href="/finance-toolkit/" class="text-bae-primary hover:underline">Finance Toolkit</a>.</p>
+        </div>
+        <a href="/finance-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse the Finance Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Report Summary (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Report Summary</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Compound Interest Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Final Balance</p>
+              <p class="text-2xl font-bold text-bae-ink" id="print-total">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Contributed</p>
+              <p class="text-xl font-bold text-bae-ink" id="print-contributed">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Interest Earned</p>
+              <p class="text-xl font-bold text-emerald-600" id="print-interest">$0</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div><span class="text-bae-muted">Principal:</span> <span class="font-medium text-bae-ink" id="print-principal">$0</span></div>
+            <div><span class="text-bae-muted">Monthly Contribution:</span> <span class="font-medium text-bae-ink" id="print-contribution">$0</span></div>
+            <div><span class="text-bae-muted">Annual Rate:</span> <span class="font-medium text-bae-ink" id="print-rate">0%</span></div>
+            <div><span class="text-bae-muted">Time Horizon:</span> <span class="font-medium text-bae-ink" id="print-years">0</span></div>
+          </div>
+        </div>
+        <!-- Comparison for PDF -->
+        <div class="border-t border-bae-border pt-4 mb-6" id="print-comparison-section">
+          <p class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Comparison Scenario</p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Comparison Rate</p>
+              <p class="text-xl font-bold text-bae-ink" id="print-compare-rate">7.00%</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Balance at Compare Rate</p>
+              <p class="text-xl font-bold text-bae-primary" id="print-compare-total">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Extra Interest Earned</p>
+              <p class="text-xl font-bold text-emerald-600" id="print-compare-diff">$0</p>
+            </div>
+          </div>
+        </div>
+        <!-- Chart for PDF -->
+        <div class="border-t border-bae-border pt-6 mb-6">
+          <p class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Growth Visualization</p>
+          <img id="report-chart-img" src="" alt="Compound interest growth chart" class="w-full max-w-md mx-auto" style="display:none;" />
+        </div>
+
+        <!-- Year-by-year table for PDF -->
+        <div class="border-t border-bae-border pt-6 mb-6">
+          <p class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Year-by-Year Breakdown</p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-bae-border">
+                  <th class="text-left py-2 pr-3 font-semibold text-bae-ink text-xs">Year</th>
+                  <th class="text-right py-2 px-2 font-semibold text-bae-ink text-xs">Balance</th>
+                  <th class="text-right py-2 pl-2 font-semibold text-bae-ink text-xs">Interest</th>
+                </tr>
+              </thead>
+              <tbody id="report-breakdown-body" class="divide-y divide-bae-border-light">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>This report is an estimate for educational purposes only. Actual investment returns vary. Consult a qualified financial advisor before making investment decisions. Generated <span id="report-gen-date"></span>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+      // Report "Generated" date is stamped at runtime (the user's date), not at
+      // build time — a build-time date would change the static HTML every day and
+      // trigger a spurious IndexNow re-submit for an unchanged page.
+      const genDateEl = $('report-gen-date');
+      if (genDateEl) genDateEl.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const inputs = {
+        principal: $('principal'),
+        contribution: $('contribution'),
+        rate: $('rate'),
+        years: $('years'),
+        frequency: $('frequency'),
+      };
+      const sliders = {
+        principal: $('principal-slider'),
+        contribution: $('contribution-slider'),
+        rate: $('rate-slider'),
+        years: $('years-slider'),
+      };
+      const displays = {
+        principal: $('principal-display'),
+        contribution: $('contribution-display'),
+        rate: $('rate-display'),
+        years: $('years-display'),
+      };
+
+      function formatMoney(n) {
+        if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+        if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+        if (n >= 1000) return '$' + Math.round(n).toLocaleString();
+        return '$' + n.toFixed(2);
+      }
+
+      // Precise final-balance projection (same model as calculate()): used by the
+      // comparison panel so it never relies on the rounded/abbreviated on-screen text.
+      function projectBalance(P, monthlyContrib, rAnnual, t, n) {
+        const ratePerPeriod = (rAnnual / 100) / n;
+        const contributionPerPeriod = monthlyContrib * 12 / n;
+        const totalPeriods = t * n;
+        let balance = P;
+        for (let period = 1; period <= totalPeriods; period++) {
+          balance = balance * (1 + ratePerPeriod) + contributionPerPeriod;
+        }
+        return balance;
+      }
+
+      function calculate() {
+        const P = Math.max(0, parseFloat(inputs.principal.value) || 0);
+        const monthlyContrib = Math.max(0, parseFloat(inputs.contribution.value) || 0);
+        const rAnnual = Math.max(0, parseFloat(inputs.rate.value) || 0);
+        const t = Math.max(1, parseInt(inputs.years.value, 10) || 1);
+        const n = parseInt(inputs.frequency.value, 10) || 1;
+
+        const r = rAnnual / 100;
+        const periodsPerYear = n;
+        const totalPeriods = t * periodsPerYear;
+        const ratePerPeriod = r / periodsPerYear;
+        const contributionPerPeriod = monthlyContrib * 12 / periodsPerYear;
+
+        let balance = P;
+        let totalContributed = P;
+        const yearlyData = [];
+        let lastYearBalance = P;
+
+        for (let period = 1; period <= totalPeriods; period++) {
+          balance = balance * (1 + ratePerPeriod) + contributionPerPeriod;
+          totalContributed += contributionPerPeriod;
+
+          if (period % periodsPerYear === 0 || period === totalPeriods) {
+            const year = Math.ceil(period / periodsPerYear);
+            const interestSoFar = balance - totalContributed;
+            yearlyData.push({
+              year,
+              balance,
+              interest: interestSoFar,
+              contributed: totalContributed,
+            });
+            lastYearBalance = balance;
+          }
+        }
+
+        const finalBalance = balance;
+        const totalInterest = finalBalance - totalContributed;
+        const apy = n === 1 ? rAnnual : ((Math.pow(1 + r / n, n) - 1) * 100);
+
+        // Update displays
+        $('result-total').textContent = formatMoney(finalBalance);
+        $('result-contributed').textContent = formatMoney(totalContributed);
+        $('result-interest').textContent = formatMoney(totalInterest);
+        $('result-apy').textContent = apy.toFixed(2) + '%';
+
+        // Update print report
+        $('print-total').textContent = formatMoney(finalBalance);
+        $('print-contributed').textContent = formatMoney(totalContributed);
+        $('print-interest').textContent = formatMoney(totalInterest);
+        $('print-principal').textContent = formatMoney(P);
+        $('print-contribution').textContent = formatMoney(monthlyContrib);
+        $('print-rate').textContent = rAnnual.toFixed(2) + '%';
+        $('print-years').textContent = t + (t === 1 ? ' year' : ' years');
+
+        // Update breakdown table
+        const tbody = $('breakdown-body');
+        tbody.textContent = '';
+        yearlyData.forEach((row) => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-bae-bg/50 transition-colors';
+          const td1 = document.createElement('td');
+          td1.className = 'py-2 pr-3 text-bae-ink font-medium';
+          td1.textContent = row.year;
+          const td2 = document.createElement('td');
+          td2.className = 'py-2 px-2 text-right text-bae-ink font-mono';
+          td2.textContent = formatMoney(row.balance);
+          const td3 = document.createElement('td');
+          td3.className = 'py-2 pl-2 text-right text-emerald-600 font-mono';
+          td3.textContent = formatMoney(row.interest);
+          tr.appendChild(td1);
+          tr.appendChild(td2);
+          tr.appendChild(td3);
+          tbody.appendChild(tr);
+        });
+
+        // Update report breakdown table (for PDF)
+        const reportTbody = $('report-breakdown-body');
+        if (reportTbody) {
+          reportTbody.textContent = '';
+          yearlyData.forEach((row) => {
+            const tr = document.createElement('tr');
+            const td1 = document.createElement('td');
+            td1.className = 'py-2 pr-3 text-bae-ink font-medium';
+            td1.textContent = row.year;
+            const td2 = document.createElement('td');
+            td2.className = 'py-2 px-2 text-right text-bae-ink font-mono';
+            td2.textContent = formatMoney(row.balance);
+            const td3 = document.createElement('td');
+            td3.className = 'py-2 pl-2 text-right text-emerald-600 font-mono';
+            td3.textContent = formatMoney(row.interest);
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            tr.appendChild(td3);
+            reportTbody.appendChild(tr);
+          });
+        }
+
+        // Draw chart
+        drawChart(yearlyData);
+
+        // Update report chart image (for PDF)
+        const canvas = $('growth-chart');
+        const reportImg = $('report-chart-img');
+        if (canvas && reportImg) {
+          try {
+            reportImg.src = canvas.toDataURL('image/png');
+            reportImg.style.display = 'block';
+          } catch(e) {
+            reportImg.style.display = 'none';
+          }
+        }
+
+        // Update URL
+        updateURL(P, monthlyContrib, rAnnual, t, n);
+
+        calculateComparison();
+      }
+
+      function drawChart(data) {
+        const canvas = $('growth-chart');
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+
+        const w = rect.width;
+        const h = rect.height;
+        const padding = { top: 10, right: 10, bottom: 24, left: 48 };
+        const chartW = w - padding.left - padding.right;
+        const chartH = h - padding.top - padding.bottom;
+
+        ctx.clearRect(0, 0, w, h);
+
+        if (data.length < 2) return;
+
+        const maxVal = Math.max(...data.map(d => d.balance));
+
+        // Grid lines
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        const gridLines = 5;
+        for (let i = 0; i <= gridLines; i++) {
+          const y = padding.top + chartH - (i / gridLines) * chartH;
+          ctx.beginPath();
+          ctx.moveTo(padding.left, y);
+          ctx.lineTo(padding.left + chartW, y);
+          ctx.stroke();
+
+          ctx.fillStyle = '#9ca3af';
+          ctx.font = '10px Inter, sans-serif';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          const labelVal = (maxVal * (i / gridLines));
+          ctx.fillText(formatMoney(labelVal), padding.left - 6, y);
+        }
+
+        // X labels
+        const xStep = chartW / (data.length - 1);
+        data.forEach((d, i) => {
+          if (data.length > 15 && i % 2 !== 0 && i !== data.length - 1) return;
+          const x = padding.left + i * xStep;
+          ctx.fillStyle = '#9ca3af';
+          ctx.font = '10px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          ctx.fillText(d.year, x, padding.top + chartH + 6);
+        });
+
+        // Interest area
+        ctx.fillStyle = 'rgba(52, 211, 153, 0.15)';
+        ctx.beginPath();
+        ctx.moveTo(padding.left, padding.top + chartH);
+        data.forEach((d, i) => {
+          const x = padding.left + i * xStep;
+          const y = padding.top + chartH - (d.interest / maxVal) * chartH;
+          ctx.lineTo(x, y);
+        });
+        ctx.lineTo(padding.left + chartW, padding.top + chartH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Balance line
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        data.forEach((d, i) => {
+          const x = padding.left + i * xStep;
+          const y = padding.top + chartH - (d.balance / maxVal) * chartH;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // Interest line
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        data.forEach((d, i) => {
+          const x = padding.left + i * xStep;
+          const y = padding.top + chartH - (d.interest / maxVal) * chartH;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+
+      function updateURL(P, contrib, rate, years, freq) {
+        try {
+          const url = new URL(window.location.href);
+          url.search = '';
+          if (P !== 0) url.searchParams.set('p', P);
+          if (contrib !== 0) url.searchParams.set('c', contrib);
+          if (rate !== 0) url.searchParams.set('r', rate);
+          if (years !== 0) url.searchParams.set('y', years);
+          if (freq !== 12) url.searchParams.set('f', freq);
+          window.history.replaceState({}, '', url);
+        } catch(e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+          const p = parseFloat(url.searchParams.get('p'));
+          const c = parseFloat(url.searchParams.get('c'));
+          const r = parseFloat(url.searchParams.get('r'));
+          const y = parseInt(url.searchParams.get('y'), 10);
+          const f = parseInt(url.searchParams.get('f'), 10);
+          if (!isNaN(p)) { inputs.principal.value = p; sliders.principal.value = Math.min(p, 1000000); }
+          if (!isNaN(c)) { inputs.contribution.value = c; sliders.contribution.value = Math.min(c, 10000); }
+          if (!isNaN(r)) { inputs.rate.value = r; sliders.rate.value = Math.min(r, 20); }
+          if (!isNaN(y)) { inputs.years.value = y; sliders.years.value = Math.min(y, 50); }
+          if (!isNaN(f)) inputs.frequency.value = f;
+        } catch(e) {}
+      }
+
+      function syncInputAndSlider(input, slider, display, prefix, suffix) {
+        input.addEventListener('input', () => {
+          slider.value = input.value;
+          if (display) display.textContent = (prefix || '') + parseFloat(input.value).toLocaleString() + (suffix || '');
+          calculate();
+        });
+        slider.addEventListener('input', () => {
+          input.value = slider.value;
+          if (display) display.textContent = (prefix || '') + parseFloat(slider.value).toLocaleString() + (suffix || '');
+          calculate();
+        });
+      }
+
+      syncInputAndSlider(inputs.principal, sliders.principal, displays.principal, '$');
+      syncInputAndSlider(inputs.contribution, sliders.contribution, displays.contribution, '$');
+      syncInputAndSlider(inputs.rate, sliders.rate, displays.rate, '', '%');
+      syncInputAndSlider(inputs.years, sliders.years, displays.years, '', ' years');
+      inputs.frequency.addEventListener('change', calculate);
+
+      // Compare rate slider
+      const compareRateInput = $('compare-rate');
+      const compareRateSlider = $('compare-rate-slider');
+      const compareRateDisplay = $('compare-rate-display');
+
+      function syncCompareRate() {
+        compareRateSlider.value = compareRateInput.value;
+        compareRateDisplay.textContent = parseFloat(compareRateInput.value).toFixed(2) + '%';
+        calculate();
+      }
+      compareRateInput.addEventListener('input', syncCompareRate);
+      compareRateSlider.addEventListener('input', () => {
+        compareRateInput.value = compareRateSlider.value;
+        syncCompareRate();
+      });
+
+      function calculateComparison() {
+        const P = Math.max(0, parseFloat(inputs.principal.value) || 0);
+        const monthlyContrib = Math.max(0, parseFloat(inputs.contribution.value) || 0);
+        const compareRate = Math.max(0, parseFloat(compareRateInput.value) || 0);
+        const t = Math.max(1, parseInt(inputs.years.value, 10) || 1);
+        const n = parseInt(inputs.frequency.value, 10) || 1;
+
+        const mainRate = Math.max(0, parseFloat(inputs.rate.value) || 0);
+        const balance = projectBalance(P, monthlyContrib, compareRate, t, n);
+        const currentTotal = projectBalance(P, monthlyContrib, mainRate, t, n);
+        $('compare-current').textContent = formatMoney(currentTotal);
+        $('compare-alt').textContent = formatMoney(balance);
+        const diff = balance - currentTotal;
+        const diffEl = $('compare-diff');
+        diffEl.textContent = (diff >= 0 ? '+' : '') + formatMoney(Math.abs(diff));
+        diffEl.className = 'text-sm font-bold ' + (diff >= 0 ? 'text-emerald-600' : 'text-red-500');
+
+        // Update print report comparison
+        $('print-compare-rate').textContent = compareRate.toFixed(2) + '%';
+        $('print-compare-total').textContent = formatMoney(balance);
+        $('print-compare-diff').textContent = (diff >= 0 ? '+' : '') + formatMoney(Math.abs(diff));
+        const printCompareSection = $('print-comparison-section');
+        if (printCompareSection) {
+          printCompareSection.style.display = (P === 0 && monthlyContrib === 0) ? 'none' : 'block';
+        }
+      }
+
+      // Clear / Reset
+      $('clear-btn').addEventListener('click', () => {
+        inputs.principal.value = 0;
+        sliders.principal.value = 0;
+        displays.principal.textContent = '$0';
+        inputs.contribution.value = 0;
+        sliders.contribution.value = 0;
+        displays.contribution.textContent = '$0';
+        inputs.rate.value = 0;
+        sliders.rate.value = 0;
+        displays.rate.textContent = '0.00%';
+        inputs.years.value = 0;
+        sliders.years.value = 0;
+        displays.years.textContent = '0 years';
+        inputs.frequency.value = 12;
+        compareRateInput.value = 7;
+        compareRateSlider.value = 7;
+        compareRateDisplay.textContent = '7.00%';
+        calculate();
+        window.history.replaceState({}, '', window.location.pathname);
+      });
+
+      // PDF download button
+      $('print-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('print-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const element = $('print-report');
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'compound-interest-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // Resize chart
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(calculate, 150);
+      });
+
+      // Init
+      readURL();
+      displays.principal.textContent = '$' + parseFloat(inputs.principal.value).toLocaleString();
+      displays.contribution.textContent = '$' + parseFloat(inputs.contribution.value).toLocaleString();
+      displays.rate.textContent = parseFloat(inputs.rate.value).toFixed(2) + '%';
+      displays.years.textContent = inputs.years.value + ' years';
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+  </style>
+</BaseLayout>

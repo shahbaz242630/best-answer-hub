@@ -1,0 +1,1020 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../components/tools/ToolRelatedCTA.astro';
+import ResumeState from '../../components/assessments/ResumeState.astro';
+
+const today = '2026-07-19T00:00:00+00:00';
+
+// Paddle checkout config (publishable values only; the secret API key never touches the build).
+// No price exists yet for this product, so the buy button stays "Coming soon" until the playbooks
+// are built and a Paddle price id is added to .env (PUBLIC_PADDLE_AITEST_PRICE).
+const PADDLE_ENV = import.meta.env.PUBLIC_PADDLE_ENV || 'sandbox';
+const PADDLE_CLIENT_TOKEN = import.meta.env.PUBLIC_PADDLE_CLIENT_TOKEN || '';
+const PADDLE_AITEST_PRICE = import.meta.env.PUBLIC_PADDLE_AITEST_PRICE || '';
+
+const steps = [
+  { title: 'Answer 50 questions, drawn fresh each time', description: 'Each test pulls 10 questions per domain from a larger 80-question bank, ordered easy to hard, with a progress rail and elapsed timer. Back navigation preserves answers. Takes about 20 minutes, with no account and no email.' },
+  { title: 'Read your instant result', description: 'Get a 0–100 knowledge score, a five-domain radar chart, your level (Beginner, Intermediate, or Advanced), and your two weakest domains, all computed in the browser the moment you finish.' },
+  { title: 'Act on your study tips', description: 'The free result includes study tips matched to your weakest domains. An optional per-level level-up playbook, with a full answer review and a sequenced curriculum, is in production.' },
+];
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub AI Knowledge Test?',
+    a: 'The Best Answer Hub AI Knowledge Test is a free assessment that measures your AI literacy across 5 domains (Foundations, Everyday Use, How Generative AI Works, Critical Evaluation, and Ethics & Responsible Use) and places you at Beginner, Intermediate, or Advanced. Each sitting draws 50 questions from a larger bank, runs entirely in the browser, and takes about 20 minutes with no signup. More assessments live in the <a href="/knowledge-center/">Knowledge Center</a>.',
+  },
+  {
+    q: 'How do I test my AI knowledge for free?',
+    a: 'Take the Best Answer Hub AI Knowledge Test: 50 objective questions drawn from a larger bank across 5 AI-literacy domains, scored instantly in your browser. It returns a Beginner, Intermediate, or Advanced level plus a radar showing which areas are strong or weak. No email, no signup, and no payment for the test or the full result.',
+  },
+  {
+    q: 'What is AI literacy, and how is it different from just using ChatGPT?',
+    a: 'AI literacy is understanding how AI works, where it fails, and how to use it responsibly, not only typing prompts. Someone can use a chatbot daily yet not know it predicts text rather than retrieving facts. The Best Answer Hub AI Knowledge Test checks genuine understanding across 5 domains, not tool familiarity alone.',
+  },
+  {
+    q: 'What are the levels of AI literacy?',
+    a: 'The three levels describe judgment, not just usage. Beginner recognizes AI terms and tools but takes output at face value. Intermediate uses AI deliberately and knows to verify it. Advanced reasons about why AI behaves as it does and judges when to trust it. The Best Answer Hub AI Knowledge Test places you by overall score.',
+  },
+  {
+    q: 'Can I just ask ChatGPT to quiz me on AI instead?',
+    a: 'You can, but a chatbot is an unreliable grader: it can give different verdicts to the same question and confidently mark wrong answers correct. The Best Answer Hub AI Knowledge Test uses a fixed bank of expert-designed questions with one defensible correct answer each, so your score stays consistent and comparable over time.',
+  },
+  {
+    q: 'Do I need to sign up or give my email?',
+    a: 'No. The Best Answer Hub AI Knowledge Test needs no account, no email, and no personal details. You start the test, answer 50 questions, and see the full result immediately. Removing the email gate is deliberate: most AI quizzes exist to capture leads, and this one is built to give an honest answer instead.',
+  },
+  {
+    q: 'Is the AI Knowledge Test really free?',
+    a: 'Yes. The test and the complete result, your level, domain radar, and weak areas, are free with nothing held back behind an email. The only paid item is an optional personalized level-up playbook, a fillable PDF that turns your result into a study plan. As of June 2026 that report is in production.',
+  },
+  {
+    q: 'What does the AI Knowledge Test measure?',
+    a: 'It measures 5 domains of AI literacy: Foundations & Concepts, Everyday Use & Applications, How Generative AI Works, Critical Evaluation & Limitations, and Ethics, Bias & Responsible Use. Each sitting draws 10 questions per domain from a larger bank, so the radar shows exactly where your knowledge is strong and where it has gaps.',
+  },
+  {
+    q: 'How is my AI knowledge level scored?',
+    a: 'Each of the 50 questions has one correct answer of equal weight. Every domain is scored 0 to 100 from its 10 questions, and the overall score is the percentage answered correctly. Levels: Beginner 0 to 49, Intermediate 50 to 79, Advanced 80 to 100. The method is transparent, and the same answers always give the same result.',
+  },
+  {
+    q: 'Are my answers stored or sent to a server?',
+    a: 'No. The Best Answer Hub AI Knowledge Test scores everything inside the browser with client-side JavaScript; answers and results are never uploaded, logged, or transmitted. Progress lives only in the tab’s session memory so a refresh does not lose your place, and it clears when the tab closes or a new attempt starts.',
+  },
+  {
+    q: 'Is this an AI literacy certificate or qualification?',
+    a: 'No, it is an honest self-assessment, not an accredited certification. It tells you where your AI knowledge stands across 5 domains and what to improve, which is its purpose. Many AI certificates are paid badges of limited value, so the Best Answer Hub AI Knowledge Test focuses on a real diagnosis instead of a credential.',
+  },
+  {
+    q: 'What AI skills do employers want in 2026?',
+    a: 'Employers increasingly value applied AI literacy: using AI tools well, checking their output, and using them responsibly. CNBC reported in April 2026 that entry-level roles requiring AI skills nearly doubled year over year. The Best Answer Hub AI Knowledge Test shows whether your understanding matches what those roles expect, across 5 practical domains.',
+  },
+  {
+    q: 'What is the difference between AI literacy and AI engineering?',
+    a: 'AI literacy is using and judging AI tools well, and it needs no coding. AI or machine-learning engineering is building the models themselves, which requires programming and strong math. The Best Answer Hub AI Knowledge Test measures literacy, the practical understanding most professionals need, not the specialist skills of someone who trains models.',
+  },
+  {
+    q: 'How can I improve my AI knowledge after the test?',
+    a: 'Start with your two weakest domains from the radar, then learn in that order rather than randomly. Free starting points include hands-on practice with tools like ChatGPT, Google Gemini, or Microsoft Copilot. The <a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a> helps business owners, and an optional level-up playbook turns your result into a sequenced study plan.',
+  },
+  {
+    q: 'Can I retake the AI Knowledge Test to track progress?',
+    a: 'Yes, unlimited free retakes, and each attempt draws a fresh set of questions from the bank, so retakes are not memorized. Every attempt starts clean, so each result reflects your honest current knowledge. A practical rhythm is retaking after studying your weak domains, using the per-domain scores as a simple progress tracker as your AI literacy grows.',
+  },
+];
+
+const seo = {
+  title: 'AI Knowledge Test — Free AI Literacy Quiz (2026)',
+  description: 'Free AI knowledge test: 50 questions from a larger bank, instant level and a 5-domain radar. No signup, answers never leave your browser. About 20 minutes.',
+  url: '/knowledge-center/ai-knowledge-test/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Knowledge Center', url: '/knowledge-center/' },
+    { name: 'AI Knowledge Test', url: '/knowledge-center/ai-knowledge-test/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <div id="as-hero">
+  <ToolHero
+    badge="Free Test · No Signup, No Email"
+    title="AI Knowledge Test:"
+    accentText="How AI-literate are you?"
+    description="A 50-question test of your real AI literacy across 5 domains, drawn fresh from a larger bank each time. Get an instant 0–100 score, a domain radar, and your level (Beginner, Intermediate, or Advanced), plus your weakest areas and study tips. Answers never leave your browser."
+    backLink="/knowledge-center/"
+    backLabel="Knowledge Center"
+  />
+  </div>
+
+  <!-- ============ ASSESSMENT ============ -->
+  <section class="py-6 md:py-10" aria-label="AI Knowledge Test">
+    <div class="container max-w-page mx-auto px-6">
+
+      <!-- Intro / start card -->
+      <div id="as-intro" class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-8 md:p-10 max-w-content mx-auto text-center">
+        <h2 class="font-serif text-2xl font-bold text-bae-ink mb-3">A 20-minute check of your AI knowledge</h2>
+        <p class="text-sm text-bae-muted max-w-lg mx-auto mb-6">50 questions across 5 domains, drawn fresh from a larger bank each time and ordered easy to hard. No jargon, no email, no sales pitch. Just an honest result with your score, radar, level, and study tips.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-8">
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">Foundations</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">Everyday Use</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">How It Works</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">Evaluation</span></div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 flex items-center justify-center"><span class="text-xs font-semibold text-bae-ink text-center">Ethics</span></div>
+        </div>
+        <button id="as-start" type="button" class="bg-bae-primary text-white font-semibold text-sm px-8 py-3.5 rounded-bae-sm hover:opacity-90 transition-all hover:-translate-y-0.5">Start the test →</button>
+        <p class="text-xs text-bae-muted mt-4">50 questions · ~20 min · fresh each attempt · 100% client-side: answers never leave this browser tab</p>
+      </div>
+
+      <!-- Quiz (hidden until start) -->
+      <div id="as-quiz" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-5 items-stretch">
+          <!-- Domain rail (stretches to match the question card height) -->
+          <aside class="bg-bae-ink rounded-bae p-5 md:p-6 text-white flex flex-col h-full">
+            <h3 class="font-serif text-base font-semibold">AI Knowledge Test</h3>
+            <p class="text-xs text-gray-400 mb-4">5 domains · 50 questions</p>
+            <div id="as-rail"></div>
+            <div class="mt-auto pt-4 border-t border-white/10 text-xs text-gray-400">
+              Elapsed <b class="text-white tabular-nums" id="as-timer">00:00</b> · <b class="text-white" id="as-pct">0%</b> complete
+            </div>
+          </aside>
+          <!-- Question card -->
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-9">
+            <div class="text-xs font-bold uppercase tracking-wider text-bae-primary mb-1" id="as-pillarlabel"></div>
+            <div class="text-xs font-semibold text-bae-muted mb-3">Question <span id="as-num">1</span> of 50</div>
+            <h2 class="font-serif text-xl md:text-2xl font-semibold text-bae-ink leading-snug mb-2" id="as-q"></h2>
+            <div class="flex flex-col gap-2.5" id="as-opts" role="group" aria-label="Answer options"></div>
+            <div class="flex justify-between items-center mt-6">
+              <button id="as-back" type="button" class="text-sm font-semibold text-bae-muted hover:text-bae-ink px-3 py-2 rounded-bae-sm hover:bg-bae-border-light transition-colors disabled:opacity-30">← Back</button>
+              <span class="text-xs text-bae-muted hidden sm:inline">Press <kbd class="px-1.5 py-0.5 bg-bae-border-light border border-bae-border rounded text-[11px] font-semibold">1</kbd>–<kbd class="px-1.5 py-0.5 bg-bae-border-light border border-bae-border rounded text-[11px] font-semibold">4</kbd> to answer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calculating interstitial (shown between last answer and result) -->
+      <div id="as-calc" class="hidden bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-10 md:p-14 max-w-content mx-auto text-center">
+        <div class="mx-auto mb-6 w-12 h-12 rounded-full border-[3px] border-bae-border border-t-bae-primary animate-spin" aria-hidden="true"></div>
+        <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-2">Building your result</h2>
+        <p id="as-calcmsg" class="text-sm text-bae-muted min-h-[1.5rem] transition-opacity duration-300" aria-live="polite"></p>
+        <div class="max-w-xs mx-auto mt-6 h-1.5 rounded-full overflow-hidden" style="background:#f0f0f6">
+          <i id="as-calcbar" class="block h-full rounded-full bg-bae-primary" style="width:0%;transition:width 1s linear"></i>
+        </div>
+        <p class="text-xs text-bae-muted mt-5">All of this happens in your browser. Nothing is uploaded.</p>
+      </div>
+
+      <!-- Result (hidden until finish) -->
+      <div id="as-result" class="hidden">
+        <div id="as-resulthead" class="text-center mb-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">Your free result</span>
+          <h2 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink mt-1">AI Knowledge: <em class="text-bae-accent not-italic font-serif italic">Your level</em></h2>
+        </div>
+        <div class="w-full">
+
+          <!-- Score + breakdown sit ABOVE the split: on phones that puts the buy card directly under
+               the score and above the rest of the detail; on desktop the detail and the sticky buy
+               rail sit side by side beneath it. -->
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-9">
+          <div class="flex justify-between items-center flex-wrap gap-3">
+            <span id="res-badge" class="inline-block bg-bae-primary-soft text-bae-primary font-bold text-xs uppercase tracking-wide px-4 py-2 rounded-full"></span>
+            <span class="inline-flex items-center gap-1.5 bg-bae-border-light rounded-full px-3.5 py-1.5 text-xs font-semibold text-bae-muted">⏱ <span id="res-stamp"></span></span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-6">
+            <div class="text-center">
+              <svg id="res-radar" viewBox="0 0 400 300" width="100%" style="max-width:400px" aria-label="Five-domain AI knowledge radar chart" role="img"></svg>
+              <div class="font-serif text-5xl font-bold text-bae-ink leading-none"><span id="res-score">0</span><span class="text-lg text-bae-muted font-sans font-semibold"> /100</span></div>
+              <div class="text-xs text-bae-muted mt-1">Overall knowledge score</div>
+            </div>
+            <div>
+              <h3 class="font-serif text-lg font-semibold text-bae-ink mb-3.5">Domain breakdown</h3>
+              <div id="res-pillars" class="flex flex-col gap-3"></div>
+            </div>
+          </div>
+          </div>
+
+          <div class="grid lg:grid-cols-[minmax(0,1fr)_330px] gap-6 lg:gap-7 items-start mt-6">
+          <div class="order-2 lg:order-1 bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-9">
+
+          <div>
+            <h3 class="font-serif text-lg font-semibold text-bae-ink mb-8">Where you are on the AI literacy scale</h3>
+            <div class="relative">
+              <div id="res-you" class="absolute -top-8 bg-bae-ink text-white text-[11px] font-bold px-2.5 py-1 rounded whitespace-nowrap transition-all duration-1000" style="left:0%;transform:translateX(-50%)"></div>
+              <div class="grid grid-cols-3 gap-1.5" id="res-track"></div>
+            </div>
+            <p class="text-xs md:text-sm text-bae-muted mt-3.5" id="res-journeynote"></p>
+          </div>
+
+          <div class="mt-7 pt-6 border-t border-bae-border-light">
+            <h3 class="font-serif text-lg font-semibold text-bae-ink mb-3">Your 3 study tips</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="res-wins"></div>
+          </div>
+
+          </div>
+
+          <!-- Paid CTA. Sticky on desktop so it follows the reader down their result; on phones
+               it drops to order-1, directly under the score. The card MUST stay shorter than the
+               viewport or the browser cannot pin it - hence the compact cover. -->
+          <aside class="order-1 lg:order-2 lg:sticky lg:top-6">
+          <!-- card — personalized to level + weakest domains, with a live cover preview -->
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-5 md:p-6">
+            <div>
+              <!-- Live cover preview: the real playbook cover with the user's own score drawn on it -->
+              <div class="mx-auto w-full max-w-[132px]">
+                <div id="res-cover" class="relative rounded-bae-sm overflow-hidden shadow-xl ring-1 ring-black/10">
+                  <img id="res-coverimg" alt="" decoding="async" class="block w-full h-auto select-none" draggable="false" />
+                  <svg id="res-coversvg" class="absolute inset-0 w-full h-full" viewBox="0 0 595.3 841.9" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+                </div>
+                <p class="text-center text-[11px] font-medium text-bae-muted mt-2.5">Your personalized cover · 30-page fillable PDF</p>
+              </div>
+              <!-- Value text + buy button -->
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">The playbook for your level</span>
+                <h4 class="font-serif text-base font-bold text-bae-ink mt-1 mb-1.5">The <em id="res-ctaname" class="italic text-bae-primary"></em></h4>
+                <p id="res-ctahead" class="text-[13px] font-semibold text-bae-ink mb-1"></p>
+                <p id="res-ctabody" class="text-[12px] leading-snug font-medium text-bae-muted"></p>
+                <ul id="res-ctapoints" class="mt-3 grid grid-cols-1 gap-y-1 text-[12px] leading-snug font-medium text-bae-ink"></ul>
+                <div class="mt-6">
+                  <button id="res-buy" type="button" class="block w-full text-center bg-bae-primary text-white font-extrabold text-sm px-7 py-3.5 rounded-bae-sm opacity-90 cursor-default select-none transition hover:opacity-100">Coming soon · $29</button>
+                  <span id="res-buynote" class="block text-center text-[11px] font-semibold mt-2 text-bae-muted">In production · Instant download at launch</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          </aside>
+          </div>
+
+          <div class="text-center mt-6">
+            <button id="as-retake" type="button" class="text-sm font-semibold text-bae-muted hover:text-bae-ink underline underline-offset-4">Retake the test (fresh questions)</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people test with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people test with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common reasons people check where their AI knowledge really stands.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Jobseekers & Career Switchers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">See where your AI literacy actually stands</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Level + domain radar in ~20 minutes</p>
+          <p class="text-sm text-bae-muted">CNBC reported in April 2026 that entry-level roles requiring AI skills nearly doubled year over year. The Best Answer Hub AI Knowledge Test gives a clear Beginner, Intermediate, or Advanced read and names the two domains to study first, so preparation is targeted instead of guesswork.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Working Professionals</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Find AI blind spots before they show at work</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Confidence checked against real understanding</p>
+          <p class="text-sm text-bae-muted">Daily chatbot use can create confidence without judgment. The radar separates strong domains from weak ones, so a professional who scores well on Everyday Use but low on Critical Evaluation learns exactly that, and what to fix, before a confident wrong answer reaches a client.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Students & Graduates</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Find out what to learn first</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">A starting point, not a generic course list</p>
+          <p class="text-sm text-bae-muted">Many students use AI tools heavily with little formal instruction. The test turns a vague "I should learn AI" into a concrete starting point: an honest level, the two weakest domains, and study tips aimed at the gaps that matter most.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Managers & Team Leads</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Gauge a team's AI literacy baseline</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">No signup, works on any device</p>
+          <p class="text-sm text-bae-muted">A manager can have the team take the test on their own devices and compare levels and weak domains, with no accounts and nothing stored. It grounds an AI training plan in evidence rather than assumptions about who knows what.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+
+  <ResumeState />
+  <script is:inline src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script is:inline define:vars={{ PADDLE_ENV, PADDLE_CLIENT_TOKEN, PADDLE_AITEST_PRICE }}>
+    window.__BAE_PADDLE = { env: PADDLE_ENV, token: PADDLE_CLIENT_TOKEN, price: PADDLE_AITEST_PRICE };
+  </script>
+  <script is:inline>
+(function(){
+  'use strict';
+
+  /* ───────────────────────── CONFIG ───────────────────────── */
+  var CONFIG = {
+    storageKey: 'bae_aitest_v2',
+    serve: { mix: [3, 4, 3] }, /* per domain: 3 easy (l0), 4 medium (l1), 3 hard (l2) → 10/domain, 50 total */
+    buckets: [
+      { id: 'beginner', label: 'Beginner', min: 0, max: 49, report: 'Beginner Level-Up Playbook',
+        cta: {
+          headline: 'Your {score}/100 is a solid starting point to build real AI literacy.',
+          body: 'The Beginner Level-Up Playbook turns this result into a clear first study path, starting where your radar says to start: {weak1} and {weak2}.',
+          points: [
+            'A plain-English foundation in how AI really works',
+            'A guided path through your two weakest domains',
+            'Everyday prompting practice with worked examples',
+            'Simple rules for spotting wrong or biased output',
+            'A safe-use checklist for personal and work AI',
+            'Fillable PDF: a workbook, not a slide deck'
+          ] } },
+      { id: 'intermediate', label: 'Intermediate', min: 50, max: 79, report: 'Intermediate Level-Up Playbook',
+        cta: {
+          headline: 'At {score}/100 you have working AI knowledge. The next gains come from judgment.',
+          body: 'Written for the Intermediate band, with extra attention on your two focus areas: {weak1} and {weak2}.',
+          points: [
+            'Sharper evaluation skills for spotting hallucinations',
+            'A deeper model of how generative AI behaves',
+            'Prompting patterns for consistent, reliable results',
+            'When to trust AI and when to verify or avoid it',
+            'Responsible-use and bias judgment for real scenarios',
+            'Five hands-on worksheets, one per domain'
+          ] } },
+      { id: 'advanced', label: 'Advanced', min: 80, max: 100, report: 'Advanced Level-Up Playbook',
+        cta: {
+          headline: 'At {score}/100 you are ahead of most. The job now is staying sharp.',
+          body: 'Built for the Advanced band: no basics, no filler. It pressure-tests your two thinnest areas, {weak1} and {weak2}, and pushes into the nuance.',
+          points: [
+            'Edge cases in how language models fail and why',
+            'Advanced evaluation and source-checking habits',
+            'Nuanced bias, ethics, and accountability judgment',
+            'Keeping current as models and rules change',
+            'A framework for teaching AI literacy to others',
+            'Five hands-on worksheets, one per domain'
+          ] } }
+    ],
+    calc: {
+      stepMs: 1050,
+      messages: [
+        'Marking your 50 answers',
+        'Scoring each of the 5 domains',
+        'Checking your strongest areas',
+        'Finding your two weakest domains',
+        'Drawing your knowledge radar',
+        'Placing you on the AI literacy scale',
+        'Matching study tips to your gaps',
+        'Running a final check on the numbers',
+        'Your result is ready'
+      ]
+    },
+    bands: { low: 45, mid: 70 }, /* domain color bands: <45 red, <70 amber, else green */
+    domains: [
+      { id: 'foundations', name: 'Foundations & Concepts', short: 'Foundations',
+        win: 'Learn the basics of how AI, machine learning, and generative AI differ, and what training data is. A short reputable primer closes most gaps here fast.' },
+      { id: 'use', name: 'Everyday Use & Applications', short: 'Everyday Use',
+        win: 'Practice writing clear, specific prompts with context and an example. Run the same task in ChatGPT, Gemini, or Copilot and compare what changes the quality.' },
+      { id: 'genai', name: 'How Generative AI Works', short: 'How It Works',
+        win: 'Read a plain-English explainer on how large language models predict text, why they have a training cutoff, and why answers vary. It reframes everything else.' },
+      { id: 'evaluate', name: 'Critical Evaluation & Limitations', short: 'Evaluation',
+        win: 'Build the habit of verifying important AI answers against a trusted source, and treat fluent, confident output as a draft to check, not a fact.' },
+      { id: 'ethics', name: 'Ethics, Bias & Responsible Use', short: 'Ethics',
+        win: 'Set personal rules: never paste sensitive data into public tools, expect and question bias, and disclose AI use where it matters.' }
+    ],
+    /* 80-question bank. d = domain index, l = difficulty (0 easy, 1 medium, 2 hard), c = correct option index.
+       Each sitting serves 6 per domain (2/2/2) ramped easy→hard, with options shuffled at serve time, so
+       neither the question set nor the answer position can be memorized. */
+    bank: [
+      /* ── D0 Foundations & Concepts ── */
+      { d:0, l:0, c:0, q:'What is artificial intelligence (AI), in plain terms?', o:['Software or machines that can perform tasks usually requiring human thinking','Any advanced computer program that stores and retrieves information','A robot or app that follows fixed instructions created by humans','Technology that only works when it can think and feel like a human'] },
+      { d:0, l:0, c:1, q:'Which is an everyday example of AI?', o:['A calculator adding numbers using fixed arithmetic','A streaming app recommending shows from viewing history','A map showing roads and place names','A light switch turning power on or off'] },
+      { d:0, l:0, c:2, q:'What is machine learning, in simple terms?', o:['Software that follows rules a programmer wrote by hand','Software that searches the web for an existing answer','Software that improves at a task by learning patterns from data','Software that stores large amounts of information for later'] },
+      { d:0, l:0, c:3, q:'What is "training data" for an AI model?', o:['The prompt a user types in to get an answer back','The settings that control how the software installs','The activity records (logs) a program keeps over time','The dataset a model learns its patterns from before use'] },
+      { d:0, l:0, c:0, q:'What does generative AI do?', o:['Creates new content such as text, images, or code','Sorts existing data into a set of predefined categories','Retrieves and shows results from a fixed stored database','Watches systems and flags unusual or risky activity'] },
+      { d:0, l:1, c:1, q:'What is the difference between a large language model (LLM) and a chatbot?', o:['The LLM is the on-screen interface; the chatbot is hardware','The LLM is the underlying model; the chatbot is the app on it','They are identical, with two names used for marketing','The LLM handles speech, while the chatbot handles only text'] },
+      { d:0, l:1, c:2, q:'Tools like ChatGPT, Claude, and Gemini are best described as:', o:['Search engines that crawl, index, and rank web pages','Databases that store and return previously saved answers','Chatbot apps built on top of large language models','Operating systems that manage a computer’s hardware'] },
+      { d:0, l:1, c:3, q:'In AI, what is an "agent"?', o:['A chatbot reply that is unusually long and detailed','A human who manages an organization’s AI accounts','A server farm where companies train their large models','A system that can plan steps and use tools to reach a goal'] },
+      { d:0, l:1, c:0, q:'What mainly separates an AI agent from a basic chatbot?', o:['An agent can take actions across steps, not just reply','An agent runs only on phones, never on desktop machines','An agent always costs less to operate than a chatbot does','An agent needs no instructions at all from the user'] },
+      { d:0, l:1, c:1, q:'In a chatbot, what is the "context window"?', o:['The box where you type your next message','The amount of text a model can consider at one time','The time limit before a chat session closes','The model’s long-term memory about the user'] },
+      { d:0, l:1, c:1, q:'What does a chatbot’s "memory" feature let it do?', o:['It permanently retrains the model on every message','It lets the chatbot remember useful details across chats','It increases the model’s context window for one reply','It saves conversations only on the user’s device'] },
+      { d:0, l:1, c:0, q:'In an AI assistant, what is a "skill"?', o:['An added capability the assistant can use to complete a task','The model version powering the assistant','A reusable prompt saved by the user','The paid plan that gives more usage'] },
+      { d:0, l:2, c:1, q:'How do AI, machine learning (ML), and generative AI fit together?', o:['AI is part of ML, and generative AI sits outside both','ML is part of AI, and generative AI is a type of ML','The three are separate fields that very rarely overlap','The three are one field under three different names'] },
+      { d:0, l:2, c:2, q:'Today’s chatbots and image generators are examples of:', o:['General AI that can match humans on almost any task','Self-aware systems that set their own goals and plans','Narrow AI, built to handle specific types of tasks','Rule-based tools that follow fixed human instructions'] },
+      { d:0, l:2, c:3, q:'Which statement about artificial general intelligence (AGI) is accurate?', o:['AGI describes today’s most advanced chatbots and assistants','AGI is any AI system that is able to reach the internet','AGI refers to software once it can process images and text','AGI would match humans across most tasks, and none exists yet'] },
+      { d:0, l:2, c:0, q:'A spam filter hand-coded with a fixed banned-word list that never changes is:', o:['Rule-based software, since it never learns from any data','Machine learning, since it sorts messages into groups','Generative AI, since it decides what counts as spam','An AI agent, since it acts on each incoming message'] },
+      /* ── D1 Everyday Use & Applications ── */
+      { d:1, l:0, c:0, q:'What is a "prompt" when using an AI chatbot?', o:['The instruction or question you give the AI','The chatbot’s monthly subscription plan','The error message shown when it fails','The name of the company behind the tool'] },
+      { d:1, l:0, c:1, q:'Which is an everyday-life example of AI?', o:['A clock showing the current time','An assistant drafting an email from a short request','A folder storing documents by filename','A printer copying an existing file'] },
+      { d:1, l:0, c:2, q:'Which is the most useful prompt?', o:['"Write something about our product"','"Tell me about marketing"','"Draft a 120-word launch email for new customers"','"Handle the product thing from earlier"'] },
+      { d:1, l:0, c:3, q:'What best improves a vague AI answer?', o:['Repeat the same prompt unchanged','Write the request in capital letters','Tell the model to "be smarter"','Add context, detail, and an example'] },
+      { d:1, l:0, c:0, q:'Why does giving the AI an example help?', o:['It shows the format and style you want','It permanently trains the model on your data','It unlocks a more advanced paid model','It guarantees the answer will be correct'] },
+      { d:1, l:1, c:1, q:'What is the best way to summarize a long PDF?', o:['Ask the model to remember the report','Upload or paste the report and ask for a summary','Email the file to the AI company’s support team','Wait for the model to find the file itself'] },
+      { d:1, l:1, c:2, q:'Which is a good task for a general chatbot?', o:['Confirming a patient’s exact medication dose','Checking your live bank balance','Drafting and improving everyday text','Reporting verified live news without web access'] },
+      { d:1, l:1, c:3, q:'When should you not rely on a chatbot alone?', o:['Brainstorming early ideas','Rewording a paragraph','Drafting a casual message','Making legal or medical decisions unchecked'] },
+      { d:1, l:1, c:0, q:'What is the best basis for choosing an AI tool?', o:['Fit for the task and safe handling of data','The most colorful interface','The newest tool released','The most talked-about tool online'] },
+      { d:1, l:1, c:1, q:'How can you learn a topic with AI?', o:['Ask it to invent easier facts','Ask it to explain the topic in simple terms','Ask it to hide difficult parts','Ask it to skip examples'] },
+      { d:1, l:1, c:2, q:'How do you get an answer as a table?', o:['Hope it chooses a table','Repeat until a table appears','Ask directly for the answer as a table','Say tables are better than paragraphs'] },
+      { d:1, l:0, c:0, q:'Which is an AI feature in everyday apps?', o:['Predictive text suggesting words as you type','Battery percentage display','Speaker volume slider','Calendar month grid'] },
+      { d:1, l:2, c:1, q:'How should you handle an important document with AI?', o:['Publish the first AI draft immediately','Use AI to draft, then verify and edit yourself','Avoid AI completely','Choose the longest version'] },
+      { d:1, l:2, c:2, q:'After a bad first draft, the best next move is:', o:['Switch tools immediately','Repeat the same prompt unchanged','Tell it what to change and ask for a revision','Give up and write everything yourself'] },
+      { d:1, l:2, c:3, q:'What is the best use of an AI assistant that can take actions?', o:['Let it book and pay without review','Let it send emails without approval','Let it move money without checks','Let it draft steps for you to approve'] },
+      { d:1, l:1, c:0, q:'A chatbot with no web access is asked today’s stock price. What is true?', o:['It can only give reliable live prices if connected to live data','It will always connect directly to the stock exchange','It will update itself automatically every minute','It can guarantee today’s exact price from memory'] },
+      /* ── D2 How Generative AI Works ── */
+      { d:2, l:0, c:0, q:'How does a chatbot produce an answer?', o:['It predicts likely tokens one after another','It copies one fixed answer from a database','It asks a human expert in real time','It always searches the live web first'] },
+      { d:2, l:0, c:1, q:'What is an AI "hallucination"?', o:['It freezes and shows an error','It presents false information as if it were true','It refuses to answer a risky question','It becomes aware of itself'] },
+      { d:2, l:0, c:2, q:'Where does a standard chatbot’s knowledge come from?', o:['A live feed of the whole internet','Files saved on your personal computer','Patterns learned from training data up to a cutoff','Staff answering questions behind the scenes'] },
+      { d:2, l:0, c:3, q:'Why can the same question give different wording?', o:['The facts always change between replies','Your account settings secretly changed','The app needs to be reinstalled','The model generates probabilistically, so wording can vary'] },
+      { d:2, l:1, c:0, q:'What is a "token" in a language model?', o:['A small chunk of text, such as a word or part of one','A coin used to unlock paid access','A password for logging in','A reward for a correct answer'] },
+      { d:2, l:1, c:1, q:'What does a "training cutoff" mean?', o:['The point where the tool stops charging','The date after which the model has not learned new training data','The maximum length of one reply','The time when a chat session expires'] },
+      { d:2, l:1, c:2, q:'Are you training the model while chatting?', o:['Yes, every message instantly updates the model','Yes, it rewrites its own code while replying','No, the base model is not retrained by a normal chat','No, but every chat is emailed to engineers'] },
+      { d:2, l:1, c:3, q:'Why does AI sound confident even when wrong?', o:['It only answers when fully certain','It verifies every claim before replying','It copies official documents exactly','It is optimized for fluent, plausible text, not guaranteed truth'] },
+      { d:2, l:1, c:0, q:'What does connecting a model to live data (retrieval) do?', o:['It helps ground answers in current or specific information','It permanently retrains the model on your documents','It automatically turns the chatbot into an agent','It removes all risk of wrong answers'] },
+      { d:2, l:1, c:1, q:'What does the "temperature" setting control?', o:['How fast the reply appears','How varied or random the output is','How much each answer costs','How long chat history is saved'] },
+      { d:2, l:2, c:2, q:'Why can’t hallucinations simply be patched out?', o:['No company has tried hard enough','The whole internet is always wrong','Generating plausible text is part of how these models work','Users are always asking questions badly'] },
+      { d:2, l:2, c:3, q:'A model answers about an event after its training cutoff. Most likely it:', o:['Secretly learned it from the live internet','Was updated just for that question','Remembered it from an unrelated chat','May be filling the gap with plausible but unreliable text'] },
+      { d:2, l:2, c:0, q:'Two users get different answers to the same prompt. Why?', o:['Sampling can make outputs vary between runs','One user must be using a completely different AI','The model favors whoever pays more','The facts must have changed instantly'] },
+      { d:2, l:2, c:1, q:'What does "fine-tuning" a model mean?', o:['Making replies faster by upgrading servers','Training a model further on extra data for a specific use','Letting users click thumbs up or thumbs down','Resetting the current chat conversation'] },
+      { d:2, l:2, c:2, q:'Why can a model cite a study that does not exist?', o:['It deliberately lies to mislead the user','It was trained only on fake research','It can generate text that looks like a real citation','Its internet connection broke while fetching the paper'] },
+      { d:2, l:2, c:3, q:'How do LLMs "know" facts?', o:['Facts are stored as exact database rows','Facts are downloaded fresh for every reply','It reads from a private encyclopedia','Facts are represented as patterns in trained weights'] },
+      /* ── D3 Critical Evaluation & Limitations ── */
+      { d:3, l:0, c:0, q:'A fluent, confident AI answer tells you:', o:['Nothing reliable about whether it is correct','It must be true and well checked','A human expert approved it','It is the official final answer'] },
+      { d:3, l:0, c:1, q:'Before acting on important AI advice, you should:', o:['Trust it because the AI is advanced','Verify it against a trusted source','Share it quickly','Pick it if it is the longest'] },
+      { d:3, l:0, c:2, q:'An AI gives a statistic with a source. You should:', o:['Treat the citation as proof','Repeat the figure immediately','Check the source exists and supports the claim','Assume AI sources are always real'] },
+      { d:3, l:0, c:3, q:'What is a real limitation of today’s AI?', o:['It cannot write fluent text','It always refuses questions','It understands context exactly like humans','It can state false claims confidently'] },
+      { d:3, l:1, c:0, q:'A model gives a confident math answer. The wise move is:', o:['Check the calculation yourself or with a calculator','Trust it because computers are good at math','Assume it is right if formatted neatly','Ask the same model if it is confident'] },
+      { d:3, l:1, c:1, q:'Why is "it sounds right" a weak reason to trust an answer?', o:['Sounding right always means wrong','Plausible wording does not prove accuracy','The model hides better answers','Longer answers are more accurate'] },
+      { d:3, l:1, c:2, q:'A model with more parameters means:', o:['It is automatically better at every task','It can no longer make mistakes','It is not automatically better for your task','It understands meaning exactly like humans'] },
+      { d:3, l:1, c:3, q:'The best way to check a doubtful claim is:', o:['Ask the same chatbot if it is sure','Read the same answer again','Reword the prompt and accept the new answer','Compare it with an independent trusted source'] },
+      { d:3, l:1, c:0, q:'What is "automation bias"?', o:['Over-trusting machine output without checking','Preferring old tools over new tools','The model favoring certain users','A setting that speeds up replies'] },
+      { d:3, l:1, c:1, q:'A chatbot double-checking its own answer is:', o:['Reliable proof the answer is correct','Not true verification because it may repeat the error','Proof if it agrees with itself','The same as checking an outside source'] },
+      { d:3, l:1, c:2, q:'An AI summary adds a detail not in the document. This is:', o:['A sign the document was poorly written','The model deliberately deceiving you','A hallucination to catch by checking the source','Proof the model has newer information'] },
+      { d:3, l:2, c:3, q:'Which is a clear sign an answer needs verifying?', o:['It is short and simple','It apologizes politely','It uses technical words','It makes a specific factual claim'] },
+      { d:3, l:2, c:0, q:'A confident answer about a very recent event suggests:', o:['It may be outdated or invent details','It has the latest verified facts','It checked live news automatically','Recent events are its strongest area'] },
+      { d:3, l:2, c:1, q:'What best reduces the risk of acting on a wrong answer?', o:['Use one model and never question it','Treat AI output as a draft and verify what matters','Retry until the same answer appears','Pick the most detailed response'] },
+      { d:3, l:2, c:2, q:'A model lists references. The best step is:', o:['More references means more reliable','Trust them if formatted correctly','Open them and confirm they are real and relevant','Assume at least one is accurate'] },
+      { d:3, l:2, c:3, q:'Which reflects good judgment about AI?', o:['AI is reliable for facts but weak at writing','AI never makes mistakes on well-known topics','Longer AI answers are more trustworthy','AI is capable but fallible'] },
+      /* ── D4 Ethics, Bias & Responsible Use ── */
+      { d:4, l:0, c:0, q:'When using a public AI chatbot, you should:', o:['Avoid entering sensitive personal or customer data','Paste client records to get a faster reply','Enter full card details for payment help','Upload private contracts without checking rules'] },
+      { d:4, l:0, c:1, q:'What is true about data typed into public AI?', o:['It is always fully private','It may be stored or reviewed, so limit sensitive details','It is deleted as soon as the tab closes','It can never be accessed by the provider'] },
+      { d:4, l:0, c:2, q:'Why can AI be biased?', o:['Bias cannot happen in software','It is always programmed to be unfair','It can learn from human data containing bias','Only old AI systems can be biased'] },
+      { d:4, l:0, c:3, q:'With AI-assisted work, you should:', o:['Present it as fully unaided work','Hide AI use if asked','Assume disclosure is never needed','Disclose AI use where required or expected'] },
+      { d:4, l:0, c:0, q:'Which is true about AI and fairness?', o:['AI can reflect unfair patterns in data','AI is neutral because it is machine-made','AI is always fairer than humans','AI removes bias automatically'] },
+      { d:4, l:1, c:1, q:'Before using a new AI tool with company data, you should:', o:['Use the tool first and explain later','Check company AI and data rules first','Assume it is approved if others use it','Use a personal account to avoid controls'] },
+      { d:4, l:1, c:2, q:'When does AI-generated content raise a copyright concern?', o:['Output is used only privately','It is used for rough brainstorming','It closely reproduces protected work','It is heavily rewritten in your own words'] },
+      { d:4, l:1, c:3, q:'What is a "deepfake"?', o:['A blurry low-quality photo','Any lightly edited image','A fast-spreading online rumor','AI-made media that convincingly fakes a real person'] },
+      { d:4, l:1, c:0, q:'Why is AI screening of job applicants risky?', o:['It can repeat hidden bias in data or design','It always takes longer than manual review','It rejects every applicant by default','It is always more expensive'] },
+      { d:4, l:1, c:1, q:'How should you handle AI images of real people?', o:['Share freely because AI made them','Label clearly and avoid misleading viewers','Present as genuine if realistic','Use anonymously to avoid blame'] },
+      { d:4, l:1, c:2, q:'Submitting AI-written coursework as your own is:', o:['Fine because AI is just a tool','Acceptable if a few words are changed','Usually a breach if submitted as entirely your own','Only wrong if you are caught'] },
+      { d:4, l:2, c:3, q:'Who is accountable for a harmful AI-based decision?', o:['The AI itself','No one, because software made it','The original inventor only','The people and organization using it'] },
+      { d:4, l:2, c:0, q:'For high-stakes decisions, AI should be:', o:['An input reviewed by a qualified human','The final decision-maker','More trusted than experts','Always avoided in every case'] },
+      { d:4, l:2, c:1, q:'Where does bias in a model most often come from?', o:['The computer brand','Data and human choices used to build it','The wording of one prompt only','The time of day'] },
+      { d:4, l:2, c:2, q:'A responsible organizational approach to AI is:', o:['Let anyone use any tool with any data','Ban AI quietly while ignoring real use','Set clear rules for approved tools and data','Assume all AI output is compliant'] },
+      { d:4, l:2, c:3, q:'Why build AI literacy among staff?', o:['So all staff can build models from scratch','So no one needs to check AI output','So AI replaces all training','So employees can use AI safely and judge risks'] }
+    ]
+  };
+
+  /* ───────────────────────── SERVE (random per attempt, options shuffled) ───────────────────────── */
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function pickN(arr, n) { return shuffle(arr.slice()).slice(0, n); }
+  function buildServed(cfg) {
+    var served = [];
+    for (var d = 0; d < cfg.domains.length; d++) {
+      var byLevel = [[], [], []];
+      cfg.bank.forEach(function (q) { if (q.d === d) byLevel[q.l].push(q); });
+      var chosen = [];
+      for (var l = 0; l < 3; l++) { chosen = chosen.concat(pickN(byLevel[l], cfg.serve.mix[l])); } /* easy→med→hard ramp */
+      chosen.forEach(function (q) {
+        var order = shuffle([0, 1, 2, 3]);
+        var opts = order.map(function (k) { return q.o[k]; });
+        served.push({ d: q.d, q: q.q, opts: opts, correct: order.indexOf(q.c) });
+      });
+    }
+    return served;
+  }
+
+  /* ───────────────────────── SCORING (pure, testable) ───────────────────────── */
+  function computeResult(answers, served, cfg) {
+    var nD = cfg.domains.length;
+    var correctByD = new Array(nD).fill(0);
+    var totalByD = new Array(nD).fill(0);
+    for (var i = 0; i < served.length; i++) {
+      totalByD[served[i].d]++;
+      if (answers[i] === served[i].correct) correctByD[served[i].d]++;
+    }
+    var domainScores = correctByD.map(function (c, i2) { return totalByD[i2] ? Math.round((c / totalByD[i2]) * 100) : 0; });
+    var totalCorrect = correctByD.reduce(function (a, b) { return a + b; }, 0);
+    var overall = served.length ? Math.round((totalCorrect / served.length) * 100) : 0;
+    var bucket = cfg.buckets[cfg.buckets.length - 1];
+    for (var b = 0; b < cfg.buckets.length; b++) {
+      if (overall <= cfg.buckets[b].max) { bucket = cfg.buckets[b]; break; }
+    }
+    var order = domainScores.map(function (s, idx) { return { idx: idx, s: s }; })
+      .sort(function (a, b2) { return a.s - b2.s || a.idx - b2.idx; });
+    return {
+      domainScores: domainScores,
+      overall: overall,
+      bucket: bucket,
+      weakest: [order[0].idx, order[1].idx],
+      winIdx: [order[0].idx, order[1].idx, order[2].idx]
+    };
+  }
+  /* expose for node-testing */
+  if (typeof window !== 'undefined') { window.__baeAiTest = { computeResult: computeResult, buildServed: buildServed, fillCta: fillCta, CONFIG: CONFIG }; }
+
+  /* ───────────────────────── STATE & PERSISTENCE ───────────────────────── */
+  var st = { served: [], i: 0, answers: [], elapsed: 0, done: false, timerId: null };
+  function N() { return st.served.length; }
+
+  function freshState() { st.served = buildServed(CONFIG); st.i = 0; st.answers = new Array(st.served.length).fill(null); st.elapsed = 0; st.done = false; }
+  function save() {
+    try { sessionStorage.setItem(CONFIG.storageKey, JSON.stringify({ served: st.served, i: st.i, answers: st.answers, elapsed: st.elapsed, done: !!st.done })); } catch (e) {}
+  }
+  function clearSaved() { try { sessionStorage.removeItem(CONFIG.storageKey); } catch (e) {} }
+  function validServed(s) {
+    if (!Array.isArray(s) || s.length === 0) return false;
+    return s.every(function (q) { return q && typeof q.d === 'number' && Array.isArray(q.opts) && q.opts.length === 4 && typeof q.correct === 'number'; });
+  }
+  function restore() {
+    try {
+      var raw = sessionStorage.getItem(CONFIG.storageKey);
+      if (!raw) return false;
+      var s = JSON.parse(raw);
+      if (!s || !validServed(s.served)) return false;
+      if (!Array.isArray(s.answers) || s.answers.length !== s.served.length) return false;
+      st.served = s.served;
+      var cleanAnswers = s.answers.map(function (a) { return (a === 0 || a === 1 || a === 2 || a === 3) ? a : null; });
+      st.answers = cleanAnswers;
+      st.i = Math.min(Math.max(parseInt(s.i, 10) || 0, 0), st.served.length - 1);
+      st.elapsed = Math.max(parseInt(s.elapsed, 10) || 0, 0);
+      st.done = s.done === true;
+      return cleanAnswers.some(function (a) { return a !== null; });
+    } catch (e) { return false; }
+  }
+
+  /* ───────────────────────── DOM HELPERS (no user input ever hits innerHTML) ───────────────────────── */
+  function el(id) { return document.getElementById(id); }
+  function show(id) { el(id).classList.remove('hidden'); }
+  function hide(id) { el(id).classList.add('hidden'); }
+  function fmt(sec) {
+    var m = Math.floor(sec / 60), s2 = sec % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (s2 < 10 ? '0' : '') + s2;
+  }
+  function bandColor(s) { return s < CONFIG.bands.low ? '#ef4444' : s < CONFIG.bands.mid ? '#f59e0b' : '#10b981'; }
+
+  /* ───────────────────────── TIMER ───────────────────────── */
+  function startTimer() {
+    stopTimer();
+    st.timerId = setInterval(function () {
+      if (st.done) return;
+      st.elapsed++;
+      el('as-timer').textContent = fmt(st.elapsed);
+      if (st.elapsed % 5 === 0) save();
+    }, 1000);
+  }
+  function stopTimer() { if (st.timerId) { clearInterval(st.timerId); st.timerId = null; } }
+
+  /* ───────────────────────── QUIZ RENDER ───────────────────────── */
+  function renderQuiz() {
+    var q = st.served[st.i];
+    el('as-pillarlabel').textContent = CONFIG.domains[q.d].name;
+    el('as-num').textContent = String(st.i + 1);
+    el('as-q').textContent = q.q;
+    el('as-back').disabled = st.i === 0;
+    el('as-timer').textContent = fmt(st.elapsed);
+
+    var answered = st.answers.filter(function (a) { return a !== null; }).length;
+    el('as-pct').textContent = Math.round((answered / N()) * 100) + '%';
+
+    /* rail (one row per domain, tick when all its served questions are answered) */
+    var rail = el('as-rail');
+    rail.textContent = '';
+    var domainDone = CONFIG.domains.map(function (_, di) {
+      return st.served.every(function (qq, qi) { return qq.d !== di || st.answers[qi] !== null; });
+    });
+    CONFIG.domains.forEach(function (p, pi) {
+      var row = document.createElement('div');
+      var isNow = q.d === pi;
+      row.className = 'flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium ' +
+        (isNow ? 'bg-white/10 text-white font-semibold' : domainDone[pi] ? 'text-gray-300' : 'text-gray-500');
+      var ic = document.createElement('span');
+      ic.className = 'shrink-0 w-[22px] h-[22px] rounded-full border grid place-items-center text-[10px] font-bold ' +
+        (domainDone[pi] ? 'bg-bae-accent border-bae-accent text-white' : isNow ? 'border-bae-accent text-bae-accent' : 'border-gray-600 text-gray-500');
+      ic.textContent = domainDone[pi] ? '✓' : String(pi + 1);
+      row.appendChild(ic);
+      row.appendChild(document.createTextNode(p.name));
+      rail.appendChild(row);
+    });
+
+    /* options */
+    var box = el('as-opts');
+    box.textContent = '';
+    q.opts.forEach(function (txt, idx) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'w-full flex items-center gap-3.5 text-left rounded-bae-sm border-[1.5px] px-4 py-3 transition-all cursor-pointer ' +
+        (st.answers[st.i] === idx
+          ? 'border-bae-primary bg-bae-primary-soft shadow-[0_0_0_3px_rgba(99,102,241,.12)]'
+          : 'border-bae-border bg-bae-bg hover:border-bae-primary hover:bg-bae-primary-soft');
+      b.setAttribute('aria-label', 'Answer ' + (idx + 1) + ': ' + txt);
+      var big = document.createElement('span');
+      big.className = 'shrink-0 grid place-items-center w-7 h-7 rounded-full border border-bae-border bg-bae-card text-[13px] font-bold text-bae-primary';
+      big.textContent = String(idx + 1);
+      var sub = document.createElement('span');
+      sub.className = 'block text-sm font-medium text-bae-ink leading-snug';
+      sub.textContent = txt;
+      b.appendChild(big); b.appendChild(sub);
+      b.addEventListener('click', function () { answer(idx); });
+      box.appendChild(b);
+    });
+  }
+
+  function answer(idx) {
+    if (st.done) return;
+    st.answers[st.i] = idx;
+    save();
+    renderQuiz();
+    setTimeout(function () {
+      var next = st.answers.indexOf(null);
+      if (next === -1) { finish(); return; }
+      st.i = next;
+      save();
+      renderQuiz();
+    }, 300);
+  }
+
+  /* ───────────────────────── RESULT RENDER ───────────────────────── */
+  function finish(skipCalc) {
+    st.done = true;
+    stopTimer();
+    save(); /* keep the session: a reload of the results page must not restart the test */
+    var r = computeResult(st.answers, st.served, CONFIG);
+
+    /* result payload for future checkout wiring (Paddle custom data + PDF stamp) */
+    if (typeof window !== 'undefined' && window.__baeAiTest) {
+      window.__baeAiTest.lastResult = {
+        assessment: 'ai-knowledge-test',
+        bucket: r.bucket.id,
+        score: r.overall,
+        level: r.bucket.label,   // stamped on the cover (stamp_level) + re-test baseline (stamp_base_level)
+        domainScores: r.domainScores,
+        profile: null
+      };
+    }
+
+    hide('as-quiz');
+    /* skipCalc: a RESUMED session goes straight to the result. Everything above still runs, so
+       lastResult is always populated — bypassing finish() on resume is how the buy button ends up
+       dead after a refresh (caught in test, 2026-07-19). Only the animation is skipped, because on
+       a reload a "calculating..." sequence reads as the test restarting. */
+    if (skipCalc) { hide('as-calc'); revealResult(r); } else { runCalc(function () { revealResult(r); }); }
+  }
+
+  function runCalc(done) {
+    var msgs = CONFIG.calc.messages;
+    var msgEl = el('as-calcmsg'), bar = el('as-calcbar');
+    msgEl.style.opacity = '1';
+    msgEl.textContent = msgs[0];
+    bar.style.width = '0%';
+    show('as-calc');
+    el('as-calc').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    requestAnimationFrame(function () { bar.style.width = Math.round((1 / msgs.length) * 100) + '%'; });
+    var mi = 0;
+    var iv = setInterval(function () {
+      mi++;
+      if (mi >= msgs.length) {
+        clearInterval(iv);
+        hide('as-calc');
+        done();
+        return;
+      }
+      msgEl.style.opacity = '0';
+      setTimeout(function () { msgEl.textContent = msgs[mi]; msgEl.style.opacity = '1'; }, 260);
+      bar.style.width = Math.round(((mi + 1) / msgs.length) * 100) + '%';
+    }, CONFIG.calc.stepMs);
+  }
+
+  function revealResult(r) {
+    if (window.__baeResume) window.__baeResume.focusResult();
+    show('as-result');
+
+    el('res-badge').textContent = 'Your level: ' + r.bucket.label;
+    el('res-stamp').textContent = 'Completed in ' + fmt(st.elapsed) + ' · 50 questions · 5 domains';
+    renderCta(r);
+
+    var scoreEl = el('res-score'), n = 0;
+    var iv = setInterval(function () { n += 2; if (n >= r.overall) { n = r.overall; clearInterval(iv); } scoreEl.textContent = String(n); }, 28);
+
+    renderRadar(r);
+    renderDomains(r);
+    renderJourney(r);
+    renderWins(r);
+    el('as-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderRadar(r) {
+    var svg = el('res-radar');
+    svg.textContent = '';
+    var NS = 'http://www.w3.org/2000/svg';
+    var cx = 200, cy = 150, R = 105, P = CONFIG.domains.length;
+    function pt(i, rad) {
+      var ang = -Math.PI / 2 + i * 2 * Math.PI / P;
+      return [cx + rad * Math.cos(ang), cy + rad * Math.sin(ang)];
+    }
+    function poly(points, attrs) {
+      var p2 = document.createElementNS(NS, 'polygon');
+      p2.setAttribute('points', points.map(function (p3) { return p3.join(','); }).join(' '));
+      Object.keys(attrs).forEach(function (k) { p2.setAttribute(k, attrs[k]); });
+      svg.appendChild(p2);
+      return p2;
+    }
+    [0.25, 0.5, 0.75, 1].forEach(function (f) {
+      var pts = [];
+      for (var i = 0; i < P; i++) pts.push(pt(i, R * f));
+      poly(pts, { fill: 'none', stroke: '#e8e8f0', 'stroke-width': '1' });
+    });
+    CONFIG.domains.forEach(function (p, i) {
+      var line = document.createElementNS(NS, 'line');
+      var e = pt(i, R);
+      line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+      line.setAttribute('x2', e[0]); line.setAttribute('y2', e[1]);
+      line.setAttribute('stroke', '#e8e8f0'); line.setAttribute('stroke-width', '1');
+      svg.appendChild(line);
+      var lp = pt(i, R + 26);
+      var t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', lp[0]); t.setAttribute('y', lp[1] + 4);
+      t.setAttribute('text-anchor', Math.abs(lp[0] - cx) < 12 ? 'middle' : lp[0] > cx ? 'start' : 'end');
+      t.setAttribute('font-size', '11');
+      t.setAttribute('font-family', 'Inter, sans-serif');
+      var weak = r.weakest.indexOf(i) !== -1;
+      t.setAttribute('font-weight', weak ? '700' : '600');
+      t.setAttribute('fill', weak ? '#dc2626' : '#6b6b80');
+      t.textContent = p.short;
+      svg.appendChild(t);
+    });
+    var target = r.domainScores.map(function (s, i) { return pt(i, R * s / 100); });
+    var startPts = [];
+    for (var i2 = 0; i2 < P; i2++) startPts.push([cx, cy]);
+    var dataPoly = poly(startPts, { fill: 'rgba(99,102,241,0.18)', stroke: '#6366f1', 'stroke-width': '2.5', 'stroke-linejoin': 'round' });
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      dataPoly.style.transition = 'all 1s cubic-bezier(.4,0,.2,1)';
+      dataPoly.setAttribute('points', target.map(function (p3) { return p3.join(','); }).join(' '));
+      target.forEach(function (p3, i3) {
+        var c = document.createElementNS(NS, 'circle');
+        c.setAttribute('cx', p3[0]); c.setAttribute('cy', p3[1]); c.setAttribute('r', '4');
+        c.setAttribute('fill', r.weakest.indexOf(i3) !== -1 ? '#dc2626' : '#6366f1');
+        c.setAttribute('stroke', '#fff'); c.setAttribute('stroke-width', '1.5');
+        c.style.opacity = '0';
+        c.style.transition = 'opacity .4s ease ' + (0.6 + i3 * 0.08) + 's';
+        svg.appendChild(c);
+        requestAnimationFrame(function () { c.style.opacity = '1'; });
+      });
+    }); });
+  }
+
+  function renderDomains(r) {
+    var box = el('res-pillars');
+    box.textContent = '';
+    CONFIG.domains.forEach(function (p, i) {
+      var s = r.domainScores[i];
+      var weak = r.weakest.indexOf(i) !== -1;
+      var row = document.createElement('div');
+      var top = document.createElement('div');
+      top.className = 'flex justify-between mb-1.5 text-[13px] font-semibold text-bae-ink';
+      var left = document.createElement('span');
+      left.textContent = p.name;
+      if (weak) {
+        var tag = document.createElement('span');
+        tag.className = 'inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full ml-2 align-middle';
+        tag.style.background = 'rgba(239,68,68,.08)';
+        tag.style.color = '#dc2626';
+        tag.textContent = 'Focus area';
+        left.appendChild(tag);
+      }
+      var right = document.createElement('span');
+      right.className = 'text-bae-muted tabular-nums';
+      right.textContent = s + '/100';
+      top.appendChild(left); top.appendChild(right);
+      var bar = document.createElement('div');
+      bar.className = 'h-2 rounded-full overflow-hidden';
+      bar.style.background = '#f0f0f6';
+      var fill = document.createElement('i');
+      fill.className = 'block h-full rounded-full';
+      fill.style.width = '0%';
+      fill.style.background = bandColor(s);
+      fill.style.transition = 'width 1s cubic-bezier(.4,0,.2,1)';
+      bar.appendChild(fill);
+      row.appendChild(top); row.appendChild(bar);
+      box.appendChild(row);
+      requestAnimationFrame(function () { requestAnimationFrame(function () { fill.style.width = s + '%'; }); });
+    });
+  }
+
+  function renderJourney(r) {
+    var track = el('res-track');
+    track.textContent = '';
+    var nB = CONFIG.buckets.length;
+    var segW = 100 / nB;
+    var activeIdx = CONFIG.buckets.indexOf(r.bucket);
+    CONFIG.buckets.forEach(function (b, i) {
+      var seg = document.createElement('div');
+      seg.className = 'h-[52px] rounded-bae-sm grid place-items-center text-center text-[12px] font-bold leading-tight px-2';
+      if (i === activeIdx) { seg.style.background = '#6366f1'; seg.style.boxShadow = '0 6px 18px rgba(99,102,241,.35)'; seg.style.color = '#fff'; }
+      else if (i < activeIdx) { seg.style.background = 'rgba(99,102,241,0.08)'; seg.style.color = '#6366f1'; }
+      else { seg.style.background = '#f0f0f6'; seg.style.color = '#6b6b80'; }
+      var l1 = document.createElement('span');
+      l1.textContent = b.label;
+      var l2 = document.createElement('span');
+      l2.className = 'block font-semibold text-[10px] opacity-80';
+      l2.textContent = b.min + '–' + b.max;
+      var wrap = document.createElement('span');
+      wrap.appendChild(l1); wrap.appendChild(l2);
+      seg.appendChild(wrap);
+      track.appendChild(seg);
+    });
+    var you = el('res-you');
+    you.textContent = 'YOU ARE HERE · ' + r.overall + '/100';
+    var b2 = r.bucket;
+    var span = Math.max(b2.max - b2.min, 1);
+    var pos = activeIdx * segW + ((r.overall - b2.min) / span) * segW;
+    pos = Math.min(Math.max(pos, 4), 96);
+    setTimeout(function () { you.style.left = pos + '%'; }, 350);
+
+    var note = el('res-journeynote');
+    if (activeIdx < CONFIG.buckets.length - 1) {
+      var next = CONFIG.buckets[activeIdx + 1];
+      var gap = next.min - r.overall;
+      note.textContent = 'You’re ' + gap + ' points from ' + next.label + '. The fastest route up is studying your two weakest domains first: ' +
+        CONFIG.domains[r.weakest[0]].name + ' and ' + CONFIG.domains[r.weakest[1]].name + '.';
+    } else {
+      note.textContent = 'You’re in the top band. The work from here is staying sharp: keeping up as models and rules change, and sharpening judgment on the trickiest cases.';
+    }
+  }
+
+  function renderWins(r) {
+    var box = el('res-wins');
+    box.textContent = '';
+    r.winIdx.forEach(function (pi, n2) {
+      var card = document.createElement('div');
+      card.className = 'bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-[13px] text-bae-muted';
+      var num = document.createElement('span');
+      num.className = 'grid place-items-center w-6 h-6 rounded-full bg-bae-primary text-white text-xs font-bold mb-2';
+      num.textContent = String(n2 + 1);
+      var ttl = document.createElement('b');
+      ttl.className = 'block text-bae-ink text-sm mb-0.5';
+      ttl.textContent = CONFIG.domains[pi].name;
+      var txt = document.createElement('span');
+      txt.textContent = CONFIG.domains[pi].win;
+      card.appendChild(num); card.appendChild(ttl); card.appendChild(txt);
+      box.appendChild(card);
+    });
+  }
+
+  function fillCta(tpl, r) {
+    return tpl
+      .replace('{score}', String(r.overall))
+      .replace('{weak1}', CONFIG.domains[r.weakest[0]].name)
+      .replace('{weak2}', CONFIG.domains[r.weakest[1]].name);
+  }
+  function renderCta(r) {
+    var c = r.bucket.cta;
+    el('res-ctaname').textContent = r.bucket.report;
+    el('res-ctahead').textContent = fillCta(c.headline, r);
+    el('res-ctabody').textContent = fillCta(c.body, r);
+    var ul = el('res-ctapoints');
+    ul.textContent = '';
+    c.points.forEach(function (p) {
+      var li = document.createElement('li');
+      li.className = 'flex gap-2 items-start';
+      var mark = document.createElement('span');
+      mark.className = 'shrink-0 text-bae-primary font-bold';
+      mark.textContent = '✓';
+      var txt = document.createElement('span');
+      txt.textContent = p;
+      li.appendChild(mark); li.appendChild(txt);
+      ul.appendChild(li);
+    });
+    renderCoverPreview(r);
+  }
+
+  /* Live cover preview: draws the buyer's real score/level/radar onto the actual playbook cover,
+     using the SAME marker rectangles (point space 595.3 x 841.9 = the SVG viewBox) the bouncer
+     stamps, so the preview is 1:1 with the PDF they download. Cover is identical across levels. */
+  var COVER = {
+    png: '/kc-covers/cover-aikt.png', W: 595.3, H: 841.9,
+    score: [9.575, 79.222, 8.139, 4.062],
+    level: [32.103, 79.98, 12.473, 1.924],
+    radar: [61.739, 69.73, 24.614, 16.051]
+  };
+  function renderCoverPreview(r) {
+    var img = el('res-coverimg'), svg = el('res-coversvg');
+    if (!img || !svg) return;
+    img.src = COVER.png;
+    img.alt = 'The Best Answer Hub ' + r.bucket.report + ' cover, personalized with your score';
+    svg.textContent = '';
+    var W = COVER.W, H = COVER.H;
+    function px(rect) { return { x: rect[0] / 100 * W, y: rect[1] / 100 * H, w: rect[2] / 100 * W, h: rect[3] / 100 * H }; }
+    function svgNode(tag, attrs) { var n = document.createElementNS('http://www.w3.org/2000/svg', tag); for (var k in attrs) { if (Object.prototype.hasOwnProperty.call(attrs, k)) n.setAttribute(k, attrs[k]); } return n; }
+    function drawText(rect, str, size, fill, family, weight) {
+      var g = px(rect);
+      var t = svgNode('text', { x: g.x + 1, y: g.y + g.h / 2, 'font-family': family || 'Inter, system-ui, sans-serif',
+        'font-size': size, 'font-weight': weight || '700', fill: fill, 'dominant-baseline': 'central', 'text-anchor': 'start' });
+      t.textContent = str; svg.appendChild(t);
+    }
+    drawText(COVER.score, String(r.overall), 28, '#C6603F', '"Bricolage Grotesque", Georgia, serif', '800');
+    drawText(COVER.level, r.bucket.label, 16, '#B0512F', '"Bricolage Grotesque", system-ui, sans-serif', '700');
+    var sc = r.domainScores;
+    if (!sc || sc.length !== 5) return;
+    var rd = px(COVER.radar), sx = rd.w / 320, sy = rd.h / 280, pts = [];
+    for (var j = 0; j < 5; j++) {
+      var rr = 108 * sc[j] / 100, a = -Math.PI / 2 + j * 2 * Math.PI / 5;
+      pts.push((rd.x + (160 + rr * Math.cos(a)) * sx).toFixed(2) + ',' + (rd.y + (150 + rr * Math.sin(a)) * sy).toFixed(2));
+    }
+    svg.appendChild(svgNode('polygon', { points: pts.join(' '), fill: 'rgba(198,96,63,0.16)', stroke: '#C6603F', 'stroke-width': '2.6', 'stroke-linejoin': 'round' }));
+  }
+
+  /* ───────────────────────── FLOW CONTROL ───────────────────────── */
+  function startFresh() {
+    clearSaved();          /* retake integrity: every attempt gets a fresh served set */
+    freshState();
+    stopTimer();
+    hide('as-intro'); hide('as-result');
+    show('as-quiz');
+    save();
+    renderQuiz();
+    startTimer();
+    el('as-quiz').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  el('as-start').addEventListener('click', startFresh);
+  el('as-retake').addEventListener('click', startFresh);
+  el('as-back').addEventListener('click', function () {
+    if (st.i > 0 && !st.done) { st.i--; save(); renderQuiz(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (st.done || el('as-quiz').classList.contains('hidden')) return;
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+    var n2 = parseInt(e.key, 10);
+    if (n2 >= 1 && n2 <= 4) answer(n2 - 1);
+  });
+
+  /* ───────────────────────── PADDLE CHECKOUT (scaffold; no price yet → stays "Coming soon") ───────────────────────── */
+  var PADDLE = (typeof window !== 'undefined' && window.__BAE_PADDLE) || { env: 'sandbox', token: '', price: '' };
+  var paddleReady = false;
+  function paddleLive() { return PADDLE.env === 'production'; }
+  function paddleTestFlag() { try { return new URLSearchParams(location.search).has('testbuy'); } catch (e) { return false; } }
+  // LIVE ($29, go-live 2026-06-23): public checkout on production; ?testbuy=1 still works on non-prod.
+  function checkoutEnabled() { return !!PADDLE.token && /^pri_[a-z0-9]+$/i.test(PADDLE.price) && (paddleLive() || paddleTestFlag()); }
+  function initPaddle() {
+    if (paddleReady || typeof Paddle === 'undefined' || !PADDLE.token) return;
+    try {
+      if (PADDLE.env === 'sandbox') Paddle.Environment.set('sandbox');
+      Paddle.Initialize({
+        token: PADDLE.token,
+        eventCallback: function (ev) {
+          if (!ev || !ev.name) return;
+          if (ev.name === 'checkout.completed') {
+            var txn = ev.data && ev.data.transaction_id;
+            if (txn && /^txn_[a-z0-9]+$/i.test(txn)) window.location.href = '/kc/report/?txn=' + encodeURIComponent(txn);
+          }
+        }
+      });
+      paddleReady = true;
+    } catch (e) {}
+  }
+  function openCheckout() {
+    initPaddle();
+    if (typeof Paddle === 'undefined' || !paddleReady) return;
+    var lr = (window.__baeAiTest && window.__baeAiTest.lastResult) || null;
+    if (!lr) return;
+    try { Paddle.Checkout.open({ items: [{ priceId: PADDLE.price, quantity: 1 }], customData: lr }); } catch (e) {}
+  }
+  function setupBuyButton() {
+    var btn = el('res-buy'), note = el('res-buynote');
+    if (!btn) return;
+    if (!checkoutEnabled()) return; /* leave "Coming soon · $29" until a price exists + go-live */
+    btn.textContent = 'Buy now · $29' + (paddleLive() ? '' : ' (test)');
+    btn.classList.remove('cursor-default', 'opacity-90', 'select-none');
+    btn.classList.add('cursor-pointer');
+    if (note) note.textContent = paddleLive() ? 'Secure checkout by Paddle · instant download' : 'Sandbox test mode · no real charge';
+    btn.addEventListener('click', openCheckout);
+    initPaddle();
+  }
+  setupBuyButton();
+
+  /* Resume after a reload. A FINISHED session goes straight back to the result — no quiz flash and
+     no replay of the calculating animation. Length comes from the SERVED set, not a constant: this
+     bank is randomized per attempt, so served.length is what defines "all answered" here.
+     Decision lives in the shared ResumeState component so every assessment behaves the same. */
+  (function () {
+    var saved = window.__baeResume.read(CONFIG.storageKey);
+    var expected = (saved && Array.isArray(saved.served)) ? saved.served.length : 0;
+    var mode = window.__baeResume.mode(saved, expected);
+    if (mode === 'intro' || !restore()) return;
+    if (mode === 'result') {
+      hide('as-intro');
+      finish(true);   /* the one code path that also populates lastResult for the buy button */
+      return;
+    }
+    hide('as-intro');
+    show('as-quiz');
+    var firstUnanswered = st.answers.indexOf(null);
+    st.i = st.answers[st.i] === null ? st.i : (firstUnanswered === -1 ? 0 : firstUnanswered);
+    renderQuiz(); startTimer();
+  })();
+})();
+  </script>
+</BaseLayout>

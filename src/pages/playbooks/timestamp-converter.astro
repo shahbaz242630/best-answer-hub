@@ -1,0 +1,366 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Timestamp Converter?', a: 'The Best Answer Hub Timestamp Converter is a free, browser-based tool that converts a Unix timestamp or a date string into Unix seconds, Unix milliseconds, ISO 8601, local time, UTC, and relative time at once. It works in both directions, auto-detects seconds or milliseconds, and runs on your device with no signup and nothing uploaded.' },
+  { q: 'What is a Unix timestamp?', a: 'A Unix timestamp is a single number that represents an instant as the count of seconds since the Unix epoch, midnight UTC on January 1, 1970. Because it is one integer in UTC, it means the same moment everywhere, which is why databases, logs, and APIs use it. The Best Answer Hub Timestamp Converter turns any value into readable dates.' },
+  { q: 'What is the Unix epoch?', a: 'The Unix epoch is the reference point from which timestamps are counted: midnight UTC on January 1, 1970, as defined by the POSIX standard. A timestamp of 0 is exactly that moment, and negative values are instants before it. The Best Answer Hub Timestamp Converter can display any timestamp relative to this origin.' },
+  { q: 'What is the difference between seconds and milliseconds in a timestamp?', a: 'It is a factor of 1000. Classic Unix time counts whole seconds, while JavaScript and many modern APIs count milliseconds. Mixing them is the most common timestamp bug. A rule of thumb for current dates is that a 10-digit value is seconds and a 13-digit value is milliseconds. The Best Answer Hub Timestamp Converter auto-detects the scale.' },
+  { q: 'Why does my timestamp show a date in 1970?', a: 'Almost always because a seconds value was read as milliseconds. A 10-digit seconds value fed into a millisecond-based function lands about twenty days after the epoch, in January 1970. Multiply the value by 1000 first, or let the Best Answer Hub Timestamp Converter detect the unit and convert it correctly.' },
+  { q: 'How can I tell if a timestamp is in seconds or milliseconds?', a: 'For current-era dates, count the digits: a 10-digit number is seconds and a 13-digit number is milliseconds. A seconds value read as milliseconds shows a date near 1970, and a milliseconds value read as seconds shows a date far in the future. The Best Answer Hub Timestamp Converter detects the unit so you do not have to.' },
+  { q: 'How do I convert a Unix timestamp to a date?', a: 'Paste the timestamp into the Best Answer Hub Timestamp Converter and it instantly shows the human-readable date in ISO 8601, your local timezone, and UTC. It auto-detects whether the value is in seconds or milliseconds, so no manual multiplication or unit selection is needed.' },
+  { q: 'How do I convert a date to a Unix timestamp?', a: 'Paste a date string such as an ISO 8601 value or a plain date into the Best Answer Hub Timestamp Converter and it returns the matching Unix timestamp in both seconds and milliseconds. It uses the JavaScript date parser, which understands ISO 8601 and common formats, all in your browser.' },
+  { q: 'Which timezone is the converted date in?', a: 'The timestamp itself has no timezone; it is an absolute instant in UTC, and only the display has one. The same value renders as a different wall-clock time in UTC and in your local zone. The Best Answer Hub Timestamp Converter shows both at once, so you never have to guess which zone a result is in.' },
+  { q: 'What is ISO 8601?', a: 'ISO 8601 is the international standard for writing dates and times as text, in the form 2026-07-12T00:00:00Z, where T separates the date from the time and Z marks UTC. RFC 3339 profiles it for internet use. It is the default output of JavaScript toISOString and of most JSON APIs. The Best Answer Hub Timestamp Converter outputs it alongside every other format.' },
+  { q: 'What happens to Unix timestamps in 2038?', a: 'Systems storing a timestamp in a signed 32-bit integer overflow at 03:14:07 UTC on January 19, 2038, when the value reaches 2,147,483,647 seconds, then wrap to a date in December 1901. The fix is a signed 64-bit integer, which most modern systems already use. Legacy and embedded code is where the risk remains.' },
+  { q: 'Does Unix time include leap seconds?', a: 'No. UTC inserts occasional leap seconds, but Unix time treats every day as exactly 86,400 seconds and ignores them, which the POSIX rationale states plainly. That is why a timestamp only approximates the true elapsed seconds since the epoch. For everyday conversion it never matters, and the Best Answer Hub Timestamp Converter follows the same standard behavior.' },
+  { q: 'Can a Unix timestamp be negative?', a: 'Yes. A negative timestamp represents an instant before the epoch, so minus one is one second before midnight UTC on January 1, 1970. Both C and JavaScript support negative values. The Best Answer Hub Timestamp Converter handles dates before 1970 as well as after.' },
+  { q: 'How is it different from epochconverter.com?', a: 'The Best Answer Hub Timestamp Converter auto-detects seconds versus milliseconds and shows UTC and your local time together by default, where many converters make you choose the unit first and show one zone at a time. It converts both directions, runs entirely in your browser, works offline, and shows no ads.' },
+  { q: 'Is the Timestamp Converter free and does it work offline?', a: 'Yes. The Best Answer Hub Timestamp Converter is completely free with no usage limits and no signup, and after the page loads once it works with no internet connection because it uses only browser-native date methods. That also means your input never leaves your device.' },
+];
+
+const seo = {
+  title: 'Unix Timestamp to Date: Seconds, ms, and 2038',
+  description: 'What a Unix timestamp is, why the same number is a 1970 or 2025 date depending on seconds or milliseconds, which timezone it is in, and what breaks in 2038.',
+  url: '/playbooks/timestamp-converter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Timestamp Converter', url: '/playbooks/timestamp-converter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Developer Tools</span>
+        <div class="cav">Seconds or milliseconds? Get it right</div>
+        <h1>Convert a Unix Timestamp <em>Without the Off-by-1000 Bug</em></h1>
+        <p class="dek">A plain guide to Unix time: what a timestamp is, why the same number is a date in 1970 or today depending on whether it is seconds or milliseconds, which timezone the result is in, what happens in 2038, and the leap-second detail most tools get wrong. The Best Answer Hub Timestamp Converter reads the value both ways and shows UTC and your local time, in your browser.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Accuracy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Convert<small>both directions</small></div>
+          <div class="seg b2">Explain<small>UTC and local</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">1970</div><div class="l">the Unix epoch: Jan 1, 00:00:00 UTC</div><div class="src">POSIX</div></div>
+      <div class="stat"><div class="n">&times;1000</div><div class="l">seconds to milliseconds, the classic bug</div><div class="src">MDN</div></div>
+      <div class="stat"><div class="n">2038</div><div class="l">when 32-bit timestamps overflow</div><div class="src">Jan 19, 03:14:07 UTC</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#epoch">What a timestamp is</a>
+        <a href="#units">Seconds or milliseconds</a>
+        <a href="#timezone">Which timezone?</a>
+        <a href="#y2038">The 2038 problem</a>
+        <a href="#leap">Leap seconds</a>
+        <a href="#reference">Reference values</a>
+        <a href="#different">Versus other tools</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>A Unix timestamp is a count of seconds since midnight UTC on January 1, 1970, and the single most common bug is feeding a seconds value where milliseconds are expected, which lands the date back in 1970.</strong> The Best Answer Hub Timestamp Converter reads a value in either unit, converts in both directions, and shows the result in UTC and your local time at once. This guide covers what a timestamp is, how to tell seconds from milliseconds, which timezone a result is in, what breaks in 2038, and why Unix time quietly ignores leap seconds.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Timestamp Converter?</h2>
+        <p>The Best Answer Hub <a href="/tools/timestamp-converter/">Timestamp Converter</a> is a single-page tool that turns a Unix timestamp or a date string into every format you need at once: Unix seconds, Unix milliseconds, ISO 8601, your local time, UTC, and a relative expression like "3 hours ago." It converts in both directions, auto-detects whether your value is in seconds or milliseconds, and runs entirely in your browser with the native JavaScript date methods, so nothing is sent to a server and it works offline. It needs no account and shows no ads. The tool sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The basics</div>
+        <h2 id="epoch">What is a Unix timestamp?</h2>
+        <p>A Unix timestamp is a single number that represents an instant in time as the count of seconds since the Unix epoch, midnight UTC on January 1, 1970. The POSIX standard defines the epoch precisely as <a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html" target="_blank" rel="noopener noreferrer">"the time zero hours, zero minutes, zero seconds, on January 1, 1970 Coordinated Universal Time (UTC),"</a> and a timestamp as a value that <a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html" target="_blank" rel="noopener noreferrer">"approximates the number of seconds that have elapsed since the Epoch."</a> Because it is a single integer in UTC, the same timestamp means the same instant everywhere in the world, which is exactly why databases, logs, and APIs store time this way. A timestamp of 0 is the epoch itself, and negative values are instants before 1970.</p>
+
+        <div class="cav">The classic bug</div>
+        <h2 id="units">Seconds or milliseconds?</h2>
+        <p>The difference is a factor of 1000, and getting it wrong is the most common timestamp mistake. Classic Unix time, used by Linux, most databases, and APIs, counts whole seconds. JavaScript counts milliseconds: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now" target="_blank" rel="noopener noreferrer">"Date.now() returns the number of milliseconds elapsed since the epoch."</a> Feed a seconds value into a milliseconds-based function and the date lands about twenty days after the epoch, in January 1970; feed milliseconds into a seconds-based one and it lands tens of thousands of years in the future. A quick rule of thumb for current dates: a 10-digit number is seconds, a 13-digit number is milliseconds. The Best Answer Hub Timestamp Converter detects the scale for you, so a pasted value is read correctly either way.</p>
+        <div class="codebox">
+          <div class="dt">The off-by-1000 bug in JavaScript</div>
+          <div class="codelines">new Date(1752278400)
+<span class="cmt">// WRONG: read as milliseconds, lands 21 Jan 1970</span>
+
+new Date(1752278400 * 1000)
+<span class="cmt">// right: seconds converted to ms, lands in 2025</span>
+
+Math.floor(Date.now() / 1000)
+<span class="cmt">// a JavaScript ms value back to Unix seconds</span></div>
+          <p class="codenote">JavaScript expects milliseconds, so a 10-digit seconds value has to be multiplied by 1000 first. To go the other way, divide the millisecond value by 1000 and floor it. The Best Answer Hub Timestamp Converter handles both automatically.</p>
+        </div>
+        <figure class="chart">
+          <figcaption class="chart-title">Ten digits or thirteen</figcaption>
+          <svg viewBox="0 0 620 208" role="img" aria-label="A 10-digit value is seconds and a 13-digit value is milliseconds; both point to the same instant in 2025. Reading a 10-digit value as milliseconds lands the date in 1970.">
+            <rect x="18" y="18" width="270" height="74" rx="11" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="153" y="50" text-anchor="middle" font-family="ui-monospace, monospace" font-size="19" font-weight="700" fill="#8a4429">1752278400</text>
+            <text x="153" y="76" text-anchor="middle" font-family="Karla, sans-serif" font-size="12.5" font-weight="700" fill="#33302A">10 digits = seconds</text>
+            <rect x="332" y="18" width="270" height="74" rx="11" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="467" y="50" text-anchor="middle" font-family="ui-monospace, monospace" font-size="19" font-weight="700" fill="#8a4429">1752278400000</text>
+            <text x="467" y="76" text-anchor="middle" font-family="Karla, sans-serif" font-size="12.5" font-weight="700" fill="#33302A">13 digits = milliseconds</text>
+            <path d="M153 92 L270 122" stroke="#6F8A6A" stroke-width="2"/><path d="M262 116 l9 6 -10 3" fill="none" stroke="#6F8A6A" stroke-width="2"/>
+            <path d="M467 92 L350 122" stroke="#6F8A6A" stroke-width="2"/><path d="M358 116 l-10 3 9 6" fill="none" stroke="#6F8A6A" stroke-width="2"/>
+            <rect x="185" y="122" width="250" height="40" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="310" y="147" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#5a7355">the same instant in 2025</text>
+            <rect x="18" y="176" width="584" height="26" rx="9" fill="#F3E2D6" stroke="#ecd6c5" stroke-width="2"/>
+            <text x="310" y="193" text-anchor="middle" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#B0512F">Read a 10-digit value as milliseconds and the date lands in 1970.</text>
+          </svg>
+          <p class="chart-src">A 10-digit value is seconds, a 13-digit value is milliseconds; both name the same moment. Reading one as the other is the off-by-1000 bug. Source: MDN, Date.now.</p>
+        </figure>
+
+        <div class="cav">The other question</div>
+        <h2 id="timezone">Which timezone is the converted date in?</h2>
+        <p>The timestamp itself has no timezone: it is an absolute instant anchored to UTC, and only the display has a timezone. The same integer renders as one wall-clock time in UTC and a different one in your local zone, without the stored value ever changing. That is why a good converter shows both. The standard text format for the UTC instant is ISO 8601, profiled for the internet by <a href="https://www.rfc-editor.org/rfc/rfc3339" target="_blank" rel="noopener noreferrer">RFC 3339</a> as strings like <code>2026-07-12T00:00:00Z</code>, where the trailing Z marks UTC. The Best Answer Hub Timestamp Converter prints the ISO 8601 UTC string next to your local time, so you never have to guess which one a result is in.</p>
+
+        <div class="cav">The famous deadline</div>
+        <h2 id="y2038">What happens to Unix timestamps in 2038?</h2>
+        <p>Systems that store a Unix timestamp in a signed 32-bit integer run out of room on January 19, 2038. The maximum such value is 2,147,483,647 seconds, which is 03:14:07 UTC on that date; one second later the counter overflows and wraps to a negative number that reads as December 13, 1901 (<a href="https://en.wikipedia.org/wiki/Year_2038_problem" target="_blank" rel="noopener noreferrer">Year 2038 problem</a>). The fix is to store time in a signed 64-bit integer, which pushes the limit roughly 292 billion years out, and most 64-bit systems already do. The risk today lives in legacy code, embedded devices, and 32-bit fields in file formats. It is why 2147483647 is a number worth recognizing on sight.</p>
+
+        <div class="cav">The subtle one</div>
+        <h2 id="leap">Does Unix time count leap seconds?</h2>
+        <p>No, and this is the detail most explanations skip. UTC occasionally inserts a leap second to stay aligned with the earth's rotation, but Unix time treats every day as exactly 86,400 seconds and ignores them. The POSIX rationale is explicit: <a href="https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html" target="_blank" rel="noopener noreferrer">"Coordinated Universal Time (UTC) includes leap seconds. However, in POSIX time (seconds since the Epoch), leap seconds are ignored (not applied)."</a> That is why the standard calls a timestamp a value that only approximates the seconds since the epoch: it is an idealized count, off from true elapsed SI seconds by the couple dozen leap seconds added since 1972. For everyday conversion this never matters, but it is the reason Unix time is simple and monotonic.</p>
+        <blockquote>A Unix timestamp is a value that approximates the number of seconds that have elapsed since the Epoch. <span class="accent">Each and every day is accounted for by exactly 86,400 seconds.</span><cite>POSIX, The Open Group Base Specifications</cite></blockquote>
+
+        <div class="cav">Numbers to know</div>
+        <h2 id="reference">Common timestamp reference values</h2>
+        <p>A handful of values come up often enough to be worth memorizing, and they double as a way to sanity-check a converter. Each row below is an exact conversion in UTC. If a tool disagrees with these, it is reading the unit wrong. The Best Answer Hub Timestamp Converter matches them and shows the working alongside.</p>
+        <table>
+          <thead><tr><th>Unix seconds</th><th>ISO 8601 (UTC)</th><th>What it is</th></tr></thead>
+          <tbody>
+            <tr><td class="band"><code>0</code></td><td>1970-01-01T00:00:00Z</td><td>The epoch itself</td></tr>
+            <tr><td class="band"><code>1000000000</code></td><td>2001-09-09T01:46:40Z</td><td>One billion seconds</td></tr>
+            <tr><td class="band"><code>1234567890</code></td><td>2009-02-13T23:31:30Z</td><td>The sequential-digits milestone</td></tr>
+            <tr><td class="band"><code>2147483647</code></td><td>2038-01-19T03:14:07Z</td><td>Signed 32-bit maximum</td></tr>
+            <tr><td class="band"><code>-1</code></td><td>1969-12-31T23:59:59Z</td><td>One second before the epoch</td></tr>
+          </tbody>
+        </table>
+        <div class="callout sage"><div class="h">The two-second sanity check</div><p>If a converted date looks like 1970, your value is probably seconds being read as milliseconds, so multiply by 1000. If it looks tens of thousands of years out, it is milliseconds being read as seconds, so divide by 1000. The digit count settles it: 10 digits is seconds, 13 is milliseconds.</p></div>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from other converters?</h2>
+        <p>The difference is that the Best Answer Hub Timestamp Converter auto-detects the unit and shows UTC and your local time together by default, where many converters make you pick seconds or milliseconds first and show one zone at a time. It converts both directions, displays the live current epoch, and gets the 2038 and leap-second facts right. The table sets the usual experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical epoch converter</th></tr></thead>
+          <tbody>
+            <tr><td>Auto-detects seconds vs milliseconds</td><td class="band">Yes</td><td>Often you must pick the unit</td></tr>
+            <tr><td>Shows UTC and local time together</td><td class="band">Yes, by default</td><td>Often one at a time</td></tr>
+            <tr><td>Converts both directions</td><td class="band">Yes</td><td>Usually</td></tr>
+            <tr><td>Live current epoch</td><td class="band">Yes</td><td>Usually</td></tr>
+            <tr><td>Runs in your browser, works offline</td><td class="band">Yes</td><td>Varies</td></tr>
+            <tr><td>No signup, no ads</td><td class="band">Yes</td><td>Often ad-supported</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolbox</div><p>Timestamps usually turn up mid-task, so the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> keeps the neighbors close: a <a href="/developer-toolbox/cron-expression-generator/">Cron Expression Generator</a> for scheduling, a <a href="/tools/json-formatter/">JSON Formatter</a> for the payloads timestamps hide in, and a <a href="/tools/url-encoder/">URL Encoder</a>. Each runs in the browser and sends nothing.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Convert it now</span>
+          <h3>Open the Timestamp Converter</h3>
+          <p>Free, no signup, and calculated entirely in your browser. Paste a timestamp or a date, and read it in seconds, milliseconds, ISO 8601, UTC, and your local time at once.</p>
+          <a class="btn" href="/tools/timestamp-converter/">Convert a timestamp</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about Unix timestamps</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, from a JSON formatter to a hash generator, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/cron-expression-generator/">Write a Cron Expression That Runs When You Expect</a></b> The other time tool, for scheduling jobs without the day-of-week trap.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/url-encoder/">URL Encoding, and Which Function to Use</a></b> Percent-encoding done right, also entirely in your browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>The Open Group Base Specifications (POSIX), <a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html" target="_blank" rel="noopener noreferrer">Definitions, the Epoch</a> (midnight UTC on January 1, 1970).</li>
+          <li>The Open Group Base Specifications (POSIX), <a href="https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html" target="_blank" rel="noopener noreferrer">Seconds Since the Epoch</a> (a timestamp approximates seconds since the epoch; 86,400 seconds per day).</li>
+          <li>The Open Group Base Specifications (POSIX), <a href="https://pubs.opengroup.org/onlinepubs/9699919799/xrat/V4_xbd_chap04.html" target="_blank" rel="noopener noreferrer">Rationale</a> (leap seconds are ignored in POSIX time).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now" target="_blank" rel="noopener noreferrer">Date.now()</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" rel="noopener noreferrer">Date</a> (JavaScript counts milliseconds since the epoch; the representable range).</li>
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc3339" target="_blank" rel="noopener noreferrer">RFC 3339</a>, 2002 (the ISO 8601 date-time profile; the trailing Z for UTC).</li>
+          <li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Year_2038_problem" target="_blank" rel="noopener noreferrer">Year 2038 problem</a> (signed 32-bit overflow at 03:14:07 UTC on 19 January 2038; the 64-bit fix).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/timestamp-converter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Timestamp Converter</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, <a href="/developer-toolbox/cron-expression-generator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Cron Expression Generator</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-style:normal;font-size:.82rem;color:var(--label);margin-top:10px}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.7;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codelines .cmt{color:var(--sage-dark)}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

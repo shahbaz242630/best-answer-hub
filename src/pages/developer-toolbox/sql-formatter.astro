@@ -1,0 +1,479 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub SQL Formatter?',
+    a: 'The Best Answer Hub SQL Formatter is a free browser-based tool that beautifies, minifies, and validates SQL queries instantly. It supports PostgreSQL, MySQL, SQLite, and Microsoft SQL Server dialects. The formatter adds consistent indentation, line breaks, and keyword capitalization to messy or compressed SQL so you can read nested subqueries, JOINs, CTEs, and window functions easily. It also validates syntax and flags common errors like unbalanced parentheses or unclosed quotes. Everything runs locally in your browser, so no data is uploaded to any server.',
+  },
+  {
+    q: 'Is the SQL Formatter free and safe to use?',
+    a: 'The Best Answer Hub SQL Formatter is completely free with no usage limits and no signup required. It is safe because all formatting and validation happens locally inside your browser using the open-source sql-formatter library and vanilla JavaScript. Your SQL queries (which may contain table names, column names, or business logic) are never sent to a server, stored in a database, or logged anywhere. You can verify this by disconnecting from the internet after loading the page. The Best Answer Hub formatter will continue to work perfectly.',
+  },
+  {
+    q: 'What SQL dialects does the formatter support?',
+    a: 'The Best Answer Hub SQL Formatter supports four major dialects. PostgreSQL handles modern SQL features like JSON operators, window functions, CTEs with RECURSIVE, RETURNING clauses, and array syntax. MySQL supports backtick identifiers, LIMIT clauses, AUTO_INCREMENT, and MySQL-specific functions. SQLite covers the lightweight dialect used in mobile apps, embedded systems, and local development. Microsoft SQL Server (T-SQL) supports square-bracket identifiers, TOP clauses, and T-SQL-specific functions. Select your dialect from the dropdown before formatting for the most accurate output.',
+  },
+  {
+    q: 'What does the SQL Formatter do?',
+    a: 'The Best Answer Hub SQL Formatter performs three core functions. First, it beautifies SQL by adding consistent indentation, line breaks, and uppercase keywords to make nested structures readable. Second, it minifies SQL by removing all unnecessary whitespace to create a compact single-line string ideal for embedding in application code or logs. Third, it validates SQL by checking for balanced parentheses and balanced string quotes, displaying clear error messages when these structural issues are found.',
+  },
+  {
+    q: 'What is the difference between formatting and minifying SQL?',
+    a: 'Formatting (also called beautifying or prettifying) expands SQL into a human-readable structure with indentation and line breaks. A single-line query like "SELECT id,name FROM users WHERE active=1" becomes a multi-line indented structure where SELECT, FROM, and WHERE each appear on their own lines. Minifying does the opposite, removing all unnecessary whitespace, tabs, and newlines to produce the smallest possible valid SQL string. Minified SQL is used in production code, API requests, and logging to save space and bandwidth. Use the Best Answer Hub SQL Formatter to switch between both modes with a single click.',
+  },
+  {
+    q: 'How do I validate SQL with this tool?',
+    a: 'Paste your SQL into the Best Answer Hub SQL Formatter and click "Format." The tool first validates your query before formatting it. If the SQL contains a structural error (such as unbalanced parentheses or an unclosed string quote), the tool highlights the issue in red and shows a descriptive error message. If the SQL is valid, the tool instantly displays the beautified output with syntax highlighting. You can then click "Minify" to compress it or "Copy Output" to grab the result.',
+  },
+  {
+    q: 'Can I use the SQL Formatter offline?',
+    a: 'Yes. After you load the page once, the Best Answer Hub SQL Formatter works without an internet connection. It bundles the sql-formatter library directly into the page JavaScript during the build process. There are no external API calls, no CDN dependencies at runtime, and no server-side processing. This makes it ideal for working on sensitive database queries in restricted or air-gapped environments.',
+  },
+  {
+    q: 'Is my SQL query sent to a server?',
+    a: 'No. In the Best Answer Hub SQL Formatter, your SQL query never leaves your browser. It uses only client-side JavaScript to parse and format your input. There are no network requests, no analytics pings containing your query text, and no cloud processing. You can verify this by opening your browser\'s Network tab in Developer Tools. You will see zero outgoing requests when you format or validate SQL.',
+  },
+  {
+    q: 'Does the formatter support stored procedures and triggers?',
+    a: 'The Best Answer Hub SQL Formatter handles standard SQL statements (SELECT, INSERT, UPDATE, DELETE, CREATE TABLE, ALTER TABLE, DROP, and common DDL/DML) very well across all supported dialects. For stored procedures, triggers, functions, and complex procedural blocks (PL/pgSQL, T-SQL blocks, MySQL procedures), the formatter will format the SQL portions correctly but may not perfectly handle procedural control-flow syntax like DECLARE, BEGIN/END blocks, cursors, and exception handlers. For procedural code, dedicated IDE formatters like pgAdmin or SQL Server Management Studio may provide better results.',
+  },
+  {
+    q: 'What are common SQL syntax errors and how do I fix them?',
+    a: 'The most common error is unbalanced parentheses: every opening parenthesis must have a matching closing parenthesis. The Best Answer Hub SQL Formatter detects these instantly. Another common issue is unclosed string quotes: every single quote that starts a string literal must have a matching closing single quote. Missing commas between columns in SELECT lists, missing table names after FROM or JOIN, and misplaced semicolons are also frequent. The validator catches parentheses and quote balance issues; for semantic errors like missing tables, you will need to test against your actual database.',
+  },
+  {
+    q: 'Does the formatter support large SQL files?',
+    a: 'Yes. The Best Answer Hub SQL Formatter can handle SQL queries and scripts up to several megabytes in size, limited only by your browser\'s memory and JavaScript engine performance. For files under 1 MB, formatting is effectively instant on any modern device. For very large migration scripts or schema dumps over 5 MB, you may notice a brief processing delay because the formatter runs in the main thread. For most files (migration scripts, schema dumps, and stored procedure libraries), the results are instant.',
+  },
+  {
+    q: 'How does this SQL Formatter compare to IDE formatters?',
+    a: 'IDEs like DataGrip, DBeaver, and VS Code with SQL extensions offer excellent SQL formatting, but they require installing software, opening a project, and sometimes configuring extensions. The Best Answer Hub SQL Formatter works instantly in any browser with zero setup. It is perfect for quick formatting on a colleague\'s computer, reviewing queries from logs, or working on machines where you cannot install software. The output quality is comparable to standard IDE formatters for the supported dialects.',
+  },
+  {
+    q: 'Can I format SQL for specific databases like Amazon Redshift or Snowflake?',
+    a: 'While the Best Answer Hub SQL Formatter does not have dedicated Redshift or Snowflake modes, both platforms are largely compatible with PostgreSQL syntax. Select "PostgreSQL" from the dialect dropdown for Redshift queries. This handles most Redshift-specific syntax correctly. For Snowflake, PostgreSQL mode also works well for standard SQL, though some Snowflake-specific constructs like VARIANT columns and semi-structured data functions may not format perfectly. For BigQuery, select "Standard SQL" for the best results with its array and struct syntax.',
+  },
+  {
+    q: 'Why should I use this instead of sqlformat.org?',
+    a: 'Sqlformat.org recently migrated to client-side processing using Pyodide/WASM, which fixed its previous privacy issue but introduced a slow initial load time while the Python runtime downloads. The Best Answer Hub SQL Formatter uses a lightweight native JavaScript formatter that loads instantly with no runtime downloads. There are also no ads, no signup walls, no usage limits, and no premium tiers blocking features. The tool also provides syntax highlighting and validation that sqlformat.org does not offer.',
+  },
+  {
+    q: 'What is a window function in SQL and how does it differ from GROUP BY?',
+    a: 'A window function performs calculations across a set of rows related to the current row, without collapsing the result set the way GROUP BY does. With GROUP BY, rows are merged into one output row per group. Window functions use the OVER() clause (combined with PARTITION BY to define the group boundary) and return a value for every original row. PostgreSQL, SQL Server, and MySQL 8.0+ all support functions like ROW_NUMBER(), RANK(), LAG(), and LEAD(). Common uses include running totals, ranking within a category, and comparing a row to the previous row, tasks GROUP BY cannot do while keeping row-level detail intact. Paste complex window function queries into the Best Answer Hub SQL Formatter to make nested OVER() clauses readable at a glance.',
+  },
+];
+
+const steps = [
+  { title: 'Paste your SQL', description: 'Copy and paste raw, minified, or messy SQL into the input area. Select your database dialect (PostgreSQL, MySQL, SQLite, or SQL Server) for the most accurate formatting.' },
+  { title: 'Format or minify', description: 'Click "Format" to beautify with proper indentation and uppercase keywords. Click "Minify" to compress into a single line for embedding in code.' },
+  { title: 'Copy the result', description: 'Use the copy button to grab the formatted SQL and paste it into your editor, ORM, documentation, or database client.' },
+];
+
+const seo = {
+  title: 'Free SQL Formatter & Validator — Beautify & Minify (2026)',
+  description: 'Free SQL formatter and validator. Beautify and minify PostgreSQL, MySQL, SQLite, and SQL Server queries in your browser. No signup.',
+  url: '/developer-toolbox/sql-formatter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Developer Toolbox', url: '/developer-toolbox/' },
+    { name: 'SQL Formatter', url: '/developer-toolbox/sql-formatter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="SQL Formatter:"
+    accentText="Beautify, minify & validate"
+    description="Format raw SQL into readable, indented code. Minify for production. Validate syntax and catch errors instantly. Supports PostgreSQL, MySQL, SQLite, and SQL Server. All processing happens in your browser."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <section class="py-6 md:py-8" aria-label="SQL formatter">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">SQL Formatter & Validator</h2>
+
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs text-bae-muted">Dialect:</span>
+            <select id="sql-dialect" class="bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+              <option value="postgresql">PostgreSQL</option>
+              <option value="mysql">MySQL</option>
+              <option value="sqlite">SQLite</option>
+              <option value="tsql">SQL Server (T-SQL)</option>
+            </select>
+          </div>
+          <div class="flex flex-wrap gap-1.5 ml-auto">
+            <button type="button" id="sql-sample" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Sample Query</button>
+            <button type="button" id="sql-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Input (paste SQL here)</label>
+            <textarea id="sql-input" class="w-full h-64 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="SELECT id, name FROM users WHERE active = 1;" spellcheck="false"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Formatted Output</label>
+            <pre id="sql-output" class="w-full h-64 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm font-mono overflow-auto whitespace-pre-wrap"></pre>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <button type="button" id="sql-format" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Format</button>
+          <button type="button" id="sql-minify" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Minify</button>
+          <button type="button" id="sql-copy" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy Output</button>
+        </div>
+
+        <p id="sql-status" class="text-xs hidden"></p>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- What developers use it for -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What developers use it for</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Full-Stack Developer, ORM-powered app</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Debugging ORM-Generated SQL</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Readable joins and WHERE clauses in seconds</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Your ORM (Hibernate, SQLAlchemy, Sequelize) emits minified SQL in logs. Paste it in and see which tables are joined and whether the WHERE clause is filtering what you expect, in seconds.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Database Engineer, production migrations</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Migration Script Review</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Spot missing constraints before deploy</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Before running a CREATE TABLE or ALTER TABLE migration in production, format the script to spot missing constraints, incorrect column ordering, or copy-paste errors buried in unindented SQL.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Data Analyst, BI reporting team</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Analytics &amp; Window Functions</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Aligned CTEs and PARTITION BY clauses</div>
+          <p class="text-sm text-bae-muted leading-relaxed">CTEs and window functions nest multiple logical layers. Format as you write to keep PARTITION BY and OVER() clauses aligned, making it easier to validate logic and hand off to a colleague.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Engineering Lead, code review workflow</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">PR &amp; Doc Collaboration</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Consistent style baseline for every commit</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Inconsistently formatted SQL makes PR diffs noisy and review comments hard to pin to specific clauses. Format before committing to establish a consistent style baseline, the way Prettier does for JavaScript.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Actual formatting results depend on SQL dialect and query complexity.</p>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/developer-toolbox/diff-checker/" class="text-bae-primary hover:underline">Diff Checker</a>, <a href="/developer-toolbox/cron-expression-generator/" class="text-bae-primary hover:underline">Cron Generator</a>, <a href="/developer-toolbox/css-generators/" class="text-bae-primary hover:underline">CSS Generators</a>, <a href="/developer-toolbox/data-converter/" class="text-bae-primary hover:underline">Data Converter</a>, <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, and <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, all free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import { format } from 'sql-formatter';
+
+    function copyText(text) {
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => {});
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    // Simple SQL syntax highlighter
+    function highlightSQL(sql) {
+      const keywords = [
+        'SELECT','FROM','WHERE','AND','OR','NOT','INSERT','UPDATE','DELETE',
+        'CREATE','TABLE','DROP','ALTER','INDEX','VIEW','JOIN','INNER','LEFT',
+        'RIGHT','FULL','OUTER','CROSS','ON','GROUP','BY','ORDER','HAVING',
+        'LIMIT','OFFSET','UNION','ALL','DISTINCT','AS','CASE','WHEN','THEN',
+        'ELSE','END','IF','EXISTS','BETWEEN','IN','LIKE','IS','NULL','TRUE',
+        'FALSE','PRIMARY','KEY','FOREIGN','REFERENCES','DEFAULT','UNIQUE',
+        'CHECK','CONSTRAINT','CASCADE','SET','VALUES','INTO','RETURNING',
+        'WITH','RECURSIVE','WINDOW','OVER','PARTITION','ROWS','RANGE',
+        'PRECEDING','FOLLOWING','CURRENT','ROW','UNBOUNDED','EXCEPT',
+        'INTERSECT','USING','NATURAL','DECLARE','BEGIN','COMMIT','ROLLBACK',
+        'TRANSACTION','TRIGGER','FUNCTION','PROCEDURE','EXECUTE','CALL',
+        'GRANT','REVOKE','SHOW','DESCRIBE','EXPLAIN','ANALYZE','VACUUM',
+        'COMMENT','CAST','CONVERT','COALESCE','NULLIF','COUNT','SUM','AVG',
+        'MIN','MAX','ROUND','UPPER','LOWER','TRIM','LENGTH','SUBSTRING',
+        'CONCAT','REPLACE','DATE','TIME','TIMESTAMP','NOW','CURRENT_DATE',
+        'CURRENT_TIME','CURRENT_TIMESTAMP','EXTRACT','YEAR','MONTH','DAY',
+        'HOUR','MINUTE','SECOND','ASC','DESC','FILTER','OVERLAPS','SIMILAR',
+        'ESCAPE','GLOB','MATCH','REGEXP','ESCAPE','AUTO_INCREMENT','SERIAL',
+        'BIGINT','INT','INTEGER','SMALLINT','TINYINT','DECIMAL','NUMERIC',
+        'FLOAT','REAL','DOUBLE','CHAR','VARCHAR','TEXT','BLOB','DATE','TIME',
+        'DATETIME','TIMESTAMP','BOOLEAN','ENUM','ARRAY','JSON','JSONB',
+        'UUID','INET','CIDR','MACADDR','TSVECTOR','TSQUERY','BYTEA',
+        'XML','POINT','LINE','LSEG','BOX','PATH','POLYGON','CIRCLE',
+        'INTERVAL','MONEY','BIT','VARBIT','OID','CID','TID','XID','REGCLASS',
+        'REGTYPE','REGROLE','REGNAMESPACE','REGPROC','REGOPERATOR',
+        'LANGUAGE','PLPGSQL','SQL','IMMUTABLE','STABLE','VOLATILE',
+        'STRICT','SECURITY','DEFINER','INVOKER','COST','ROWS','SETOF',
+        'RECORD','SETOF','DOMAIN','TYPE','EXTENSION','SCHEMA','SEQUENCE',
+        'OWNED','OWNERS','PRIVILEGES','USAGE','LOGIN','NOLOGIN','SUPERUSER',
+        'NOSUPERUSER','CREATEDB','NOCREATEDB','CREATEROLE','NOCREATEROLE',
+        'INHERIT','NOINHERIT','REPLICATION','NOREPLICATION','BYPASSRLS',
+        'NOBYPASSRLS','CONNECTION','PASSWORD','VALID','UNTIL','ROLE',
+        'IN','GROUPS','ADMIN','OPTION','DENY','ALLOW','POLICY','FOR',
+        'TO','USING','CHECK','PERMISSIVE','RESTRICTIVE','RULE','DO',
+        'INSTEAD','NOTHING','ALSO','ENABLE','DISABLE','REPLICA','ALWAYS',
+        'INHERIT','NOINHERIT','VALIDATE','NOVALIDATE','RELY','NORELY',
+        'DEFERRABLE','NOT','DEFERRED','IMMEDIATE','INITIALLY','DEFERRED',
+        'INITIALLY','IMMEDIATE','MATCH','FULL','PARTIAL','SIMPLE','ACTION',
+        'NO','UPDATE','DELETE','SET','NULL','DEFAULT','RESTRICT','CASCADE',
+        'TRUNCATE','NORMALIZE','ENCODING','LC_COLLATE','LC_CTYPE',
+        'TEMPLATE','TABLESPACE','OWNER','MODE','SHARE','ROW','EXCLUSIVE',
+        'ACCESS','SHARE','SHARE','ROW','EXCLUSIVE','SHARE','UPDATE',
+        'EXCLUSIVE','ACCESS','EXCLUSIVE','NOWAIT','WAIT','SKIP','LOCKED',
+        'OF','NAMES','CHARACTER','SET','CLIENT_ENCODING','DATESTYLE',
+        'TIMEZONE','STANDARD_CONFORMING_STRINGS','INTERVALSTYLE',
+        'SEARCH_PATH','SESSION','AUTHORIZATION','ROLE','TRANSACTION',
+        'ISOLATION','LEVEL','READ','COMMITTED','REPEATABLE','READ',
+        'SERIALIZABLE','DEFERRABLE','READ','ONLY','WRITE','LOCAL',
+        'DIAGNOSTICS','ROW_COUNT','PG_CONTEXT','PG_EXCEPTION_DETAIL',
+        'PG_EXCEPTION_HINT','PG_EXCEPTION_CONTEXT','RETURN','QUERY',
+        'EXECUTE','PERFORM','GET','DIAGNOSTICS','OPEN','FETCH','MOVE',
+        'CLOSE','LOOP','WHILE','FOR','FOREACH','CONTINUE','EXIT','RAISE',
+        'NOTICE','WARNING','EXCEPTION','DEBUG','LOG','INFO','ASSERT',
+        'FORMAT','USING','ERRCODE','MESSAGE','DETAIL','HINT','COLUMN',
+        'CONSTRAINT','DATATYPE','TABLE','SCHEMA','RAISE','NOTICE','WARNING',
+        'EXCEPTION','DEBUG','LOG','INFO','ASSERT','FORMAT','USING','ERRCODE',
+        'MESSAGE','DETAIL','HINT','COLUMN','CONSTRAINT','DATATYPE','TABLE',
+        'SCHEMA','FOREIGN','KEY','PRIMARY','KEY','UNIQUE','CHECK','EXCLUSION',
+      ];
+      const kwSet = new Set(keywords.map(k => k.toUpperCase()));
+
+      let result = '';
+      let i = 0;
+      while (i < sql.length) {
+        // Single-line comment
+        if (sql.slice(i, i + 2) === '--') {
+          let end = sql.indexOf('\n', i);
+          if (end === -1) end = sql.length;
+          result += '<span class="text-bae-muted">' + escapeHtml(sql.slice(i, end)) + '</span>';
+          i = end;
+          continue;
+        }
+        // Multi-line comment
+        if (sql.slice(i, i + 2) === '/*') {
+          let end = sql.indexOf('*/', i + 2);
+          if (end === -1) end = sql.length;
+          result += '<span class="text-bae-muted">' + escapeHtml(sql.slice(i, end + 2)) + '</span>';
+          i = end + 2;
+          continue;
+        }
+        // String literal
+        if (sql[i] === "'" || sql[i] === '"') {
+          const quote = sql[i];
+          let j = i + 1;
+          while (j < sql.length) {
+            if (sql[j] === quote && sql[j + 1] === quote) { j += 2; continue; }
+            if (sql[j] === quote) break;
+            j++;
+          }
+          if (j >= sql.length) j = sql.length - 1;
+          result += '<span class="text-green-600">' + escapeHtml(sql.slice(i, j + 1)) + '</span>';
+          i = j + 1;
+          continue;
+        }
+        // Number
+        if (/\d/.test(sql[i])) {
+          let j = i;
+          while (j < sql.length && (/\d/.test(sql[j]) || sql[j] === '.')) j++;
+          result += '<span class="text-bae-primary">' + escapeHtml(sql.slice(i, j)) + '</span>';
+          i = j;
+          continue;
+        }
+        // Word
+        if (/[a-zA-Z_]/.test(sql[i])) {
+          let j = i;
+          while (j < sql.length && /[a-zA-Z0-9_$]/.test(sql[j])) j++;
+          const word = sql.slice(i, j);
+          if (kwSet.has(word.toUpperCase())) {
+            result += '<span class="text-bae-accent font-semibold">' + escapeHtml(word.toUpperCase()) + '</span>';
+          } else {
+            result += escapeHtml(word);
+          }
+          i = j;
+          continue;
+        }
+        // Default
+        result += escapeHtml(sql[i]);
+        i++;
+      }
+      return result;
+    }
+
+    function validateBasic(sql) {
+      let parens = 0;
+      let inQuote = false;
+      let quoteChar = '';
+      for (let i = 0; i < sql.length; i++) {
+        const ch = sql[i];
+        if (inQuote) {
+          if (ch === quoteChar) {
+            if (sql[i + 1] === quoteChar) { i++; continue; }
+            inQuote = false;
+          }
+        } else {
+          if (ch === '-' && sql[i + 1] === '-') {
+            // Line comment: skip to end of line so quotes/parens inside are ignored
+            while (i < sql.length && sql[i] !== '\n') i++;
+            continue;
+          }
+          if (ch === '/' && sql[i + 1] === '*') {
+            // Block comment: skip to closing */
+            i += 2;
+            while (i < sql.length && !(sql[i] === '*' && sql[i + 1] === '/')) i++;
+            i += 1;
+            continue;
+          }
+          if (ch === "'" || ch === '"') {
+            inQuote = true;
+            quoteChar = ch;
+          } else if (ch === '(') {
+            parens++;
+          } else if (ch === ')') {
+            parens--;
+            if (parens < 0) return { valid: false, error: 'Unbalanced parentheses: extra closing parenthesis' };
+          }
+        }
+      }
+      if (inQuote) return { valid: false, error: 'Unclosed string quote' };
+      if (parens > 0) return { valid: false, error: 'Unbalanced parentheses: missing closing parenthesis' };
+      return { valid: true };
+    }
+
+    const inputEl = document.getElementById('sql-input');
+    const outputEl = document.getElementById('sql-output');
+    const statusEl = document.getElementById('sql-status');
+    const dialectEl = document.getElementById('sql-dialect');
+
+    // Collapse whitespace OUTSIDE string literals only, so spaces/tabs/newlines
+    // inside quoted strings are preserved exactly.
+    function minifySQL(sql) {
+      let out = '', inQuote = false, quoteChar = '';
+      for (let i = 0; i < sql.length; i++) {
+        const ch = sql[i];
+        if (inQuote) {
+          out += ch;
+          if (ch === quoteChar) {
+            if (sql[i + 1] === quoteChar) { out += sql[i + 1]; i++; continue; }
+            inQuote = false;
+          }
+        } else if (ch === "'" || ch === '"') {
+          inQuote = true; quoteChar = ch; out += ch;
+        } else if (/\s/.test(ch)) {
+          if (out.length && !/\s$/.test(out)) out += ' ';
+        } else {
+          out += ch;
+        }
+      }
+      return out.trim();
+    }
+
+    function showStatus(msg, isError) {
+      if (!msg) { statusEl.classList.add('hidden'); statusEl.textContent = ''; return; }
+      statusEl.textContent = msg;
+      statusEl.classList.remove('hidden', 'text-green-600', 'text-red-600');
+      statusEl.classList.add(isError ? 'text-red-600' : 'text-green-600', 'font-medium');
+    }
+
+    function doFormat(minify) {
+      const raw = inputEl.value.trim();
+      if (!raw) { outputEl.innerHTML = ''; showStatus(''); return; }
+
+      const validation = validateBasic(raw);
+      if (!validation.valid) {
+        outputEl.innerHTML = '';
+        showStatus('✗ ' + validation.error, true);
+        return;
+      }
+
+      try {
+        const dialect = dialectEl.value;
+        const formatted = format(raw, {
+          language: dialect,
+          tabWidth: 2,
+          keywordCase: 'upper',
+          linesBetweenQueries: 2,
+        });
+
+        if (minify) {
+          const minified = minifySQL(formatted);
+          outputEl.innerHTML = highlightSQL(minified);
+          showStatus('✓ Minified', false);
+        } else {
+          outputEl.innerHTML = highlightSQL(formatted);
+          showStatus('✓ Formatted', false);
+        }
+      } catch (e) {
+        outputEl.innerHTML = '';
+        showStatus('✗ Format error: ' + e.message, true);
+      }
+    }
+
+    document.getElementById('sql-format').addEventListener('click', () => doFormat(false));
+    document.getElementById('sql-minify').addEventListener('click', () => doFormat(true));
+
+    document.getElementById('sql-copy').addEventListener('click', () => {
+      const text = outputEl.textContent || '';
+      copyText(text);
+    });
+
+    document.getElementById('sql-clear').addEventListener('click', () => {
+      inputEl.value = '';
+      outputEl.innerHTML = '';
+      showStatus('');
+    });
+
+    document.getElementById('sql-sample').addEventListener('click', () => {
+      inputEl.value = `SELECT u.id, u.name, u.email, COUNT(o.id) AS order_count, SUM(o.total) AS lifetime_value\nFROM users u\nLEFT JOIN orders o ON o.user_id = u.id\nWHERE u.created_at >= '2024-01-01'\n  AND u.active = true\nGROUP BY u.id, u.name, u.email\nHAVING COUNT(o.id) > 5\nORDER BY lifetime_value DESC\nLIMIT 50;`;
+      doFormat(false);
+    });
+  </script>
+</BaseLayout>

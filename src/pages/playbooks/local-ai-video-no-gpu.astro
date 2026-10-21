@@ -1,0 +1,380 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-10-08T00:00:00+00:00';
+
+// RelatedPlaybooks omitted while the skills track is under 3 spokes (§11.3 / §13.5 / §14.5).
+
+const faqs = [
+  { q: 'What is the Best Answer Hub guide to local AI video generators?', a: 'This Best Answer Hub playbook separates the two things called local AI video: generative models that invent footage and need a large graphics card, and composed video that draws frames from code and needs none. It lists the real memory requirement of each model from its own repository, and what a processor can genuinely do.' },
+  { q: 'Can you run AI video generation locally?', a: 'Yes, with a discrete NVIDIA card and enough memory. HunyuanVideo\'s repository states that an NVIDIA GPU with CUDA support is required and recommends 80GB for good quality. Smaller models run from about 5GB, but produce short, low-resolution clips. Composed video is a separate route that needs no graphics card.' },
+  { q: 'How much VRAM do you need for AI video generation?', a: 'From 5GB to 80GB depending on the model. CogVideoX-5B starts at 5GB, Wan 2.1\'s small model states 8.19GB, HunyuanVideo 1.5 states 14GB with offloading, Wan 2.2\'s consumer model wants 24GB, and its full model requires 80GB. Lower memory always means shorter, smaller output.' },
+  { q: 'Is 8GB of VRAM enough for AI video generation?', a: 'Enough to run something, not enough to enjoy it. Wan 2.1\'s 1.3B model states 8.19GB and produces five seconds of 480p in about four minutes on an RTX 4090. Below that, offloading trades memory for time: one published benchmark measured a 10.4 times slowdown when memory was cut aggressively.' },
+  { q: 'Can you make AI video with no graphics card?', a: 'Not generative footage, but yes for composed video. Narration, typography, charts, diagrams, motion graphics and the encode all run on a processor. Remotion\'s documentation states that most renders do not become faster with GPU acceleration, and its own cloud rendering runs on machines with no GPU.' },
+  { q: 'Does ComfyUI work without a GPU?', a: 'It installs and runs in CPU mode, which is useful for verifying a setup or running small image models. For video it is impractical. A measured benchmark put a single 512 by 512 image at 49 seconds on four cores at two steps, and a video model is far larger and needs many more steps across many frames.' },
+  { q: 'What is the best self hosted AI video generator?', a: 'It depends which job you mean. For generating footage on a 24GB card, Wan 2.2\'s TI2V-5B produces five seconds of 720p in under nine minutes. For finished narrated video on any machine, a programmatic framework such as Remotion with a local speech model is the practical answer and needs no graphics card.' },
+  { q: 'How long does it take to generate AI video locally?', a: 'For generative models, minutes per clip on a good card: about four minutes for five seconds of 480p on an RTX 4090, or under nine minutes for five seconds of 720p on a 24GB card. For composed video on a processor, roughly one to two minutes of compute per minute of finished output.' },
+  { q: 'Can you run AI video generation on a CPU?', a: 'Not usefully, and the honest position is that nobody has published a measurement. Searches of the model repositories, issue trackers and benchmark datasets turn up no credible CPU timing for an open video diffusion model. The widely repeated "many hours" figure traces to a vendor blog with no benchmark behind it.' },
+  { q: 'Is an open source AI video generator good enough for a low end PC?', a: 'For generation, no. The smallest credible option needs about 8GB of video memory and returns 480p clips of a few seconds. For a low-end machine the realistic path is composed video, which runs on the processor and produces full-length narrated output rather than short clips.' },
+  { q: 'Can you generate AI video locally on a Mac?', a: 'Composed video, yes, without qualification, because it is ordinary cross-platform software. Generative video is harder: HunyuanVideo requires CUDA and Linux, and while Apple Silicon\'s unified memory avoids a hard VRAM ceiling in principle, reproducible published timings for open video models on it are scarce.' },
+  { q: 'Why does local video generation need so much more than a local LLM?', a: 'Because a language model streams tokens one at a time and degrades gracefully under memory pressure, while a video model holds the whole latent frame sequence in memory at once and runs attention across it. That turns the memory requirement into a cliff rather than a slope, which surprises people who ran a local LLM successfully.' },
+  { q: 'Does a graphics card make video rendering faster?', a: 'For generative models, decisively. For composed video, barely. Remotion documents that most renders do not become faster with GPU acceleration, and that headless Chromium, which is how programmatic rendering runs, disables the GPU anyway. The exceptions are WebGL scenes, video decoding, and blur and shadow effects.' },
+  { q: 'What makes a no-GPU video render slow?', a: 'Pixel count, effects and image format, in that order. Blur, shadows and gradient backgrounds are the expensive properties because they normally lean on a GPU. Writing frames as PNG rather than JPEG is measurably slower, and a Chromium engineer investigating capture speed identified PNG encoding as a leading cost.' },
+  { q: 'What can a machine without a graphics card not do?', a: 'Generate photoreal footage, produce talking-head avatars, render WebGL-heavy 3D scenes at reasonable speed, or handle long 4K renders comfortably. The consolation is symmetrical: Stable Video Diffusion\'s model card notes it cannot render legible text, which is exactly what composed video does effortlessly.' },
+];
+
+const seo = {
+  title: 'Local AI Video Generator: What Your PC Can Actually Run',
+  description: 'Two different jobs share the name local AI video. Real VRAM requirements per model, what runs with no graphics card at all, and measured render times.',
+  url: '/playbooks/local-ai-video-no-gpu/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Local AI Video Generator', url: '/playbooks/local-ai-video-no-gpu/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+<div class="hero">
+  <span class="glow"></span>
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="masthead"><img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44"><span class="word">Best Answer Hub<i>.</i></span></div>
+      <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+    </div>
+    <span class="eyebrow">Best Answer Hub Playbooks &middot; AI Agent Skills</span>
+    <div class="cav">Before you buy a graphics card</div>
+    <h1>Which Local AI Video Generator Will <em>Actually Run</em> on Your PC?</h1>
+    <p class="dek">Two completely different jobs share the name "local AI video". One needs a 24GB graphics card to make five seconds of footage. The other needs no graphics card at all and makes finished, narrated videos. Almost every guide only tells you about the first one.</p>
+    <div class="byline"><span><b>Best Answer Hub</b></span><span>~13 min read</span><span>Requirements read at source</span><span>No signup</span></div>
+    <div class="bandstrip">
+      <div class="seg b1">Composed<small>No GPU needed at all</small></div>
+      <div class="seg b2">Generative, small<small>8 to 14GB, short clips</small></div>
+      <div class="seg b3">Generative, full<small>24 to 80GB VRAM</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat"><div class="n">47%</div><div class="l">of surveyed PC gamers have 8GB of video memory or less</div><div class="src">Steam Hardware Survey, July 2026</div></div>
+  <div class="stat"><div class="n">7%</div><div class="l">clear the 24GB bar one popular model asks for</div><div class="src">Derived from the same survey</div></div>
+  <div class="stat"><div class="n">10.4&times;</div><div class="l">slower when memory is cut by offloading to the processor</div><div class="src">Diffusers benchmark, 2025</div></div>
+  <div class="stat"><div class="n">0</div><div class="l">GPUs on the infrastructure one render engine calls its fastest</div><div class="src">Remotion documentation</div></div>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="On this page">
+    <div class="t">On this page</div>
+    <a href="#run">Can you run it locally?</a>
+    <a href="#vram">How much VRAM you need</a>
+    <a href="#8gb">Is 8GB enough?</a>
+    <a href="#composed">The route nobody mentions</a>
+    <a href="#comfyui">ComfyUI without a GPU</a>
+    <a href="#speed">How long a render takes</a>
+    <a href="#mac">Mac and AMD</a>
+    <a href="#limits">What a no-GPU machine cannot do</a>
+    <a href="#faq">FAQs</a>
+  </nav>
+
+  <article>
+
+    <p class="lead"><strong>The question "can I make AI video locally?" has two answers, because it is two questions.</strong> If you mean generating photoreal footage from a prompt, you need a discrete graphics card with a lot of memory, and there is no honest way around it. If you mean producing a finished, narrated, animated video on your own machine, you need no graphics card at all, and the tools have worked that way for years. Guides answer the first question and let readers conclude the second is impossible.</p>
+
+    <div class="cav">The real answer</div>
+    <h2 id="run">Can you run AI video generation locally?</h2>
+    <p>Yes, if your machine has a discrete NVIDIA card with enough memory, and no if you are hoping to do it on a processor alone. Open video models are genuinely heavy. Tencent's HunyuanVideo repository states plainly that <em>"an NVIDIA GPU with CUDA support is required"</em>, and recommends 80GB of memory for good quality.</p>
+
+    <p>What matters more is that this is only one of two production routes, and the industry has quietly defined the category so that the other one does not count. A typical guide opens by defining a local AI video generator as an open-weight model you run on your own GPU. That definition is not wrong, it is just narrow enough to exclude the answer most readers need.</p>
+
+    <div class="callout sage"><div class="h">Two jobs, one name</div><p><b>Generative video</b> invents pixels: photoreal footage, camera moves, imagined scenes. It runs a diffusion model and it is hungry. <b>Composed video</b> draws frames from things you specify: typography, charts, diagrams, motion graphics, narration over animation. It runs like software, on a processor, and a graphics card barely helps. Explainers, tutorials, product walkthroughs and data videos are all the second kind.</p></div>
+
+    <div class="cav">The hardware bar</div>
+    <h2 id="vram">How much VRAM do you need for AI video generation?</h2>
+    <p>Between roughly 5GB and 80GB, depending on the model, and the cheap end of that range buys you six seconds of 480p at 8 frames per second. Every figure below comes from the model's own repository or card, not from a listicle.</p>
+
+    <div class="chart">
+      <div class="chart-title">Stated minimum video memory, by model</div>
+      <svg viewBox="0 0 700 270" role="img" aria-label="Bar chart of stated minimum VRAM: CogVideoX-5B 5GB, Wan 2.1 1.3B 8.19GB, HunyuanVideo 1.5 14GB, Wan 2.2 TI2V-5B 24GB, HunyuanVideo 45GB, Mochi 1 60GB, Wan 2.2 A14B 80GB.">
+        <defs><linearGradient id="gbar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#C6603F"/><stop offset="100%" stop-color="#8a4429"/></linearGradient></defs>
+        <line x1="215" y1="12" x2="215" y2="238" stroke="#E1D4be" stroke-width="1"/>
+        <text x="207" y="30" text-anchor="end" font-family="Karla,sans-serif" font-size="12.5" fill="#847B6B">CogVideoX-5B</text>
+        <rect x="215" y="18" width="27" height="17" fill="url(#gbar)"/><text x="250" y="30" font-family="Bricolage Grotesque,sans-serif" font-size="14" font-weight="700" fill="#33302A">5GB</text>
+        <text x="207" y="62" text-anchor="end" font-family="Karla,sans-serif" font-size="12.5" fill="#847B6B">Wan 2.1 T2V-1.3B</text>
+        <rect x="215" y="50" width="44" height="17" fill="url(#gbar)"/><text x="267" y="62" font-family="Bricolage Grotesque,sans-serif" font-size="14" font-weight="700" fill="#33302A">8.19GB</text>
+        <text x="207" y="94" text-anchor="end" font-family="Karla,sans-serif" font-size="12.5" fill="#847B6B">HunyuanVideo 1.5</text>
+        <rect x="215" y="82" width="76" height="17" fill="url(#gbar)"/><text x="299" y="94" font-family="Bricolage Grotesque,sans-serif" font-size="14" font-weight="700" fill="#33302A">14GB</text>
+        <text x="207" y="126" text-anchor="end" font-family="Karla,sans-serif" font-size="12.5" fill="#847B6B">Wan 2.2 TI2V-5B</text>
+        <rect x="215" y="114" width="131" height="17" fill="url(#gbar)"/><text x="354" y="126" font-family="Bricolage Grotesque,sans-serif" font-size="14" font-weight="700" fill="#33302A">24GB</text>
+        <text x="207" y="158" text-anchor="end" font-family="Karla,sans-serif" font-size="12.5" fill="#847B6B">HunyuanVideo 13B</text>
+        <rect x="215" y="146" width="245" height="17" fill="url(#gbar)"/><text x="468" y="158" font-family="Bricolage Grotesque,sans-serif" font-size="14" font-weight="700" fill="#33302A">45GB</text>
+        <text x="207" y="190" text-anchor="end" font-family="Karla,sans-serif" font-size="12.5" fill="#847B6B">Mochi 1</text>
+        <rect x="215" y="178" width="327" height="17" fill="url(#gbar)"/><text x="550" y="190" font-family="Bricolage Grotesque,sans-serif" font-size="14" font-weight="700" fill="#33302A">60GB</text>
+        <text x="207" y="222" text-anchor="end" font-family="Karla,sans-serif" font-size="12.5" fill="#847B6B">Wan 2.2 T2V-A14B</text>
+        <rect x="215" y="210" width="436" height="17" fill="url(#gbar)"/><text x="659" y="222" font-family="Bricolage Grotesque,sans-serif" font-size="14" font-weight="700" fill="#33302A">80GB</text>
+        <text x="215" y="256" font-family="Karla,sans-serif" font-size="12" fill="#847B6B">Figures stated by each model's own repository or card. Only about 7% of surveyed PC gamers have 24GB or more.</text>
+      </svg>
+      <div class="chart-src">Sources: Wan 2.1 and Wan 2.2 repositories; HunyuanVideo and HunyuanVideo 1.5; Mochi 1; CogVideoX-5B model card; Steam Hardware Survey, July 2026.</div>
+    </div>
+
+    <p>Reading those figures in order: CogVideoX-5B starts at <strong>5GB</strong>, Wan 2.1's small model states <strong>8.19GB</strong>, HunyuanVideo 1.5 states <strong>14GB</strong> with offloading enabled, Wan 2.2's consumer model wants <strong>24GB</strong>, HunyuanVideo needs <strong>45GB</strong> at 544 by 960, Mochi 1 asks for about <strong>60GB</strong>, and Wan 2.2's full model requires <strong>80GB</strong>. For scale, roughly <strong>7%</strong> of machines in the Steam hardware survey have 24GB or more, and that survey covers PC gamers, a group biased towards owning good graphics cards.</p>
+
+    <div class="callout"><div class="h">Read the ceiling, not just the floor</div><p>The low numbers come with small outputs. CogVideoX-5B runs from 5GB and produces 720 by 480 at 8 frames per second, capped at 6 seconds, with the model card noting no support for other resolutions. Wan 2.1's 8.19GB model makes 480p, and takes about four minutes for five seconds on an RTX 4090. The cheapest entry to generative video is not a cheap way to make a video.</p></div>
+
+    <div class="cav">The honest trade</div>
+    <h2 id="8gb">Is 8GB of VRAM enough for AI video generation?</h2>
+    <p>Technically yes, through offloading and quantization, and the cost is time. Community forks advertise running select models in as little as 6GB. What they rarely publish alongside is what that costs, and there is a measured answer.</p>
+
+    <p>The diffusers library documents the mechanism bluntly: CPU offloading <em>"dramatically reduces memory usage, but it is also extremely slow because submodules are passed back and forth multiple times between devices"</em>, and can be <em>"impractical due to how slow it is."</em> A published benchmark on an image model puts a number on it: cutting GPU memory from 33.85GB to 2.41GB raised the generation time from 6.6 seconds to 68.4 seconds. That is <strong>10.4 times slower</strong> for the memory saving.</p>
+
+    <blockquote><span class="accent">That exchange rate is the fine print on every "runs in 6GB" claim.</span> The model does fit. It just stops being a tool you would use twice.</blockquote>
+
+    <div class="cav">The part nobody covers</div>
+    <h2 id="composed">What can you make locally with no graphics card at all?</h2>
+    <p>Finished, narrated, animated video: explainers, tutorials, data stories, product walkthroughs, anything built from typography, charts and motion rather than from imagined footage. This route needs no graphics card, and it is not a workaround. It is how a large share of professional motion graphics is produced.</p>
+
+    <p>The clearest confirmation comes from Remotion, the most widely used programmatic video framework. Its own documentation states that <em>"most renders do not become faster with GPU acceleration"</em>, and its cloud rendering products, which it describes as the fastest option, run on infrastructure with <strong>no GPU at all</strong>. There is a wrinkle worth knowing: in headless mode, which is how programmatic rendering runs, <em>"Chromium disables the GPU"</em> anyway. So even a machine with a good card largely does not use it for this work.</p>
+
+    <table>
+      <thead><tr><th>Stage</th><th>What does the work</th><th>GPU needed?</th><th>Measured on a processor</th></tr></thead>
+      <tbody>
+        <tr><td class="band">Narration</td><td>A small speech model</td><td><span class="score lv1">No</span></td><td>1.3x to 5x faster than real time</td></tr>
+        <tr><td class="band">Composition</td><td>Code, drawn by a headless browser</td><td><span class="score lv1">No</span></td><td>1 to 8 frames per second per core</td></tr>
+        <tr><td class="band">Encoding</td><td>ffmpeg, H.264</td><td><span class="score lv1">No</span></td><td>Median about 95 frames per second at 1080p</td></tr>
+        <tr><td class="band">Generative footage</td><td>A diffusion model</td><td><span class="score lv3">Yes</span></td><td>No credible published measurement exists</td></tr>
+      </tbody>
+    </table>
+
+    <p>That last row is not an oversight. Searching the model repositories, issue trackers and benchmark datasets turns up <strong>no credible published measurement of an open video diffusion model generating a clip on a processor alone</strong>. The commonly repeated "many hours on CPU" figure traces back to a vendor blog that presents no benchmark. It is probably directionally right, and it is not evidence.</p>
+
+    <div class="cav">The one exception</div>
+    <h2 id="comfyui">Does ComfyUI work without a GPU?</h2>
+    <p>It installs and runs, and for video generation it is not a practical answer. ComfyUI has a CPU mode, and people do use it to confirm an installation works or to run very small image models. Applied to video, it inherits the same wall: a video model runs 3D attention across roughly 120 latent frames for 20 to 50 steps, against an image model's single frame for 1 to 2 steps.</p>
+
+    <p>For a sense of scale from a measured source, a benchmark of Stable Diffusion v1-4 on four processor cores took <strong>49 seconds</strong> for a single image at just two denoising steps. A video model is eight to twenty-seven times larger in parameters, runs across many more frames, and needs ten to twenty-five times more steps. The direction of that arithmetic is not in doubt, though the exact figure remains unpublished.</p>
+
+    <div class="cav">Real numbers</div>
+    <h2 id="speed">How long does a local render actually take?</h2>
+    <p>For composed video on an ordinary laptop, roughly one to two minutes of compute per minute of finished video. Each stage has been measured independently, and the numbers are unglamorous in a good way.</p>
+
+    <div class="sec">
+      <ul class="pillars">
+        <li><span class="dot">1</span><div><b>Narration is faster than real time.</b> Kokoro-82M measured about 5 times faster than real time on a 32-core cloud processor, and 1.3 to 1.8 times faster on a 4-core machine with no graphics card. A ten-minute narration takes two to eight minutes.</div></li>
+        <li><span class="dot">2</span><div><b>Frame capture is the bottleneck.</b> A Chromium benchmark measured 8 screenshots a second on a simple page and 1 a second on a complex one. At 30 frames per second, a 60-second video is 1,800 frames, so four to five minutes on a single core, divided by however many run in parallel.</div></li>
+        <li><span class="dot">3</span><div><b>Encoding is not the problem.</b> Across more than 2,000 public results of a standard x264 benchmark at 1080p, the median machine reaches about 95 frames per second and the slowest quarter still manage 42, which is faster than real time.</div></li>
+      </ul>
+    </div>
+
+    <p>Two documented details save a lot of time. Writing frames as JPEG rather than PNG is markedly faster, and a Chromium engineer investigating capture speed found that <em>"one of the larger contributing factors is PNG encoding"</em>. And blur, shadows and gradient backgrounds are the expensive effects, named directly in Remotion's performance guidance, because they are the ones that normally lean on a GPU that headless mode has switched off.</p>
+
+    <div class="cav">Not just Windows and NVIDIA</div>
+    <h2 id="mac">Can you generate AI video locally on a Mac, or on AMD?</h2>
+    <p>For the composed route, yes on both, without qualification: it is ordinary software. For the generative route the picture is poorer, and most guides skip it entirely. HunyuanVideo requires CUDA and Linux. Community forks add AMD support for recent architectures. Apple Silicon has unified memory, which sidesteps the VRAM ceiling in principle, but published, reproducible timings for open video models on it are scarce.</p>
+
+    <div class="callout peach"><div class="h">A correction worth making</div><p>Many people arrive here having run a local language model successfully and assume video will be similar. It is not. A text model streams tokens and degrades gracefully when it runs short of memory. A video model needs the whole latent sequence in memory at once, which is why the requirement is a cliff rather than a slope.</p></div>
+
+    <div class="cav">Where the line really is</div>
+    <h2 id="limits">What can a machine with no graphics card genuinely not do?</h2>
+    <p>Four things, and it is worth being precise about them rather than optimistic. It cannot generate photoreal footage. It cannot produce talking-head avatars, where one model requires 24GB even to run slowly. It cannot do WebGL-heavy 3D scenes at reasonable speed, since headless rendering disables the GPU regardless. And it will struggle with long renders at 4K, where pixel count dominates everything.</p>
+
+    <p>There is a neat symmetry in the limits, though. Stable Video Diffusion's own model card lists among its limitations that <em>"the model cannot render legible text"</em>. Legible text is precisely what composed video does natively and effortlessly. The two routes fail at opposite things, which is the strongest practical argument for picking by output rather than by hardware.</p>
+
+    <div class="cta">
+      <span class="kicker">The composed route, already built</span>
+      <h3>AI Video &amp; Voice-Over Skill Pack</h3>
+      <p>Five agent skills that research, write, narrate, animate and package a video on your own machine. No GPU, no CUDA, no VRAM, and a permissively licensed local voice. Proven on a laptop with integrated graphics only.</p>
+      <a class="btn" href="/ai-agent-skills/video-voiceover/">Get the AI Video &amp; Voice-Over Skill Pack ($99)</a>
+    </div>
+
+    <div class="cav">Everything else people ask</div>
+    <h2 id="faq">Frequently asked questions</h2>
+
+    <div class="faq">
+      <div class="qa"><div class="q">What is the Best Answer Hub guide to local AI video generators?</div><div class="a">This Best Answer Hub playbook separates the two things called local AI video: generative models that invent footage and need a large graphics card, and composed video that draws frames from code and needs none. It lists the real memory requirement of each model from its own repository, and what a processor can genuinely do.</div></div>
+      <div class="qa"><div class="q">Can you run AI video generation locally?</div><div class="a">Yes, with a discrete NVIDIA card and enough memory. HunyuanVideo's repository states that an NVIDIA GPU with CUDA support is required and recommends 80GB for good quality. Smaller models run from about 5GB, but produce short, low-resolution clips. Composed video is a separate route that needs no graphics card.</div></div>
+      <div class="qa"><div class="q">How much VRAM do you need for AI video generation?</div><div class="a">From 5GB to 80GB depending on the model. CogVideoX-5B starts at 5GB, Wan 2.1's small model states 8.19GB, HunyuanVideo 1.5 states 14GB with offloading, Wan 2.2's consumer model wants 24GB, and its full model requires 80GB. Lower memory always means shorter, smaller output.</div></div>
+      <div class="qa"><div class="q">Is 8GB of VRAM enough for AI video generation?</div><div class="a">Enough to run something, not enough to enjoy it. Wan 2.1's 1.3B model states 8.19GB and produces five seconds of 480p in about four minutes on an RTX 4090. Below that, offloading trades memory for time: one published benchmark measured a 10.4 times slowdown when memory was cut aggressively.</div></div>
+      <div class="qa"><div class="q">Can you make AI video with no graphics card?</div><div class="a">Not generative footage, but yes for composed video. Narration, typography, charts, diagrams, motion graphics and the encode all run on a processor. Remotion's documentation states that most renders do not become faster with GPU acceleration, and its own cloud rendering runs on machines with no GPU.</div></div>
+      <div class="qa"><div class="q">Does ComfyUI work without a GPU?</div><div class="a">It installs and runs in CPU mode, which is useful for verifying a setup or running small image models. For video it is impractical. A measured benchmark put a single 512 by 512 image at 49 seconds on four cores at two steps, and a video model is far larger and needs many more steps across many frames.</div></div>
+      <div class="qa"><div class="q">What is the best self hosted AI video generator?</div><div class="a">It depends which job you mean. For generating footage on a 24GB card, Wan 2.2's TI2V-5B produces five seconds of 720p in under nine minutes. For finished narrated video on any machine, a programmatic framework such as Remotion with a local speech model is the practical answer and needs no graphics card.</div></div>
+      <div class="qa"><div class="q">How long does it take to generate AI video locally?</div><div class="a">For generative models, minutes per clip on a good card: about four minutes for five seconds of 480p on an RTX 4090, or under nine minutes for five seconds of 720p on a 24GB card. For composed video on a processor, roughly one to two minutes of compute per minute of finished output.</div></div>
+      <div class="qa"><div class="q">Can you run AI video generation on a CPU?</div><div class="a">Not usefully, and the honest position is that nobody has published a measurement. Searches of the model repositories, issue trackers and benchmark datasets turn up no credible CPU timing for an open video diffusion model. The widely repeated "many hours" figure traces to a vendor blog with no benchmark behind it.</div></div>
+      <div class="qa"><div class="q">Is an open source AI video generator good enough for a low end PC?</div><div class="a">For generation, no. The smallest credible option needs about 8GB of video memory and returns 480p clips of a few seconds. For a low-end machine the realistic path is composed video, which runs on the processor and produces full-length narrated output rather than short clips.</div></div>
+      <div class="qa"><div class="q">Can you generate AI video locally on a Mac?</div><div class="a">Composed video, yes, without qualification, because it is ordinary cross-platform software. Generative video is harder: HunyuanVideo requires CUDA and Linux, and while Apple Silicon's unified memory avoids a hard VRAM ceiling in principle, reproducible published timings for open video models on it are scarce.</div></div>
+      <div class="qa"><div class="q">Why does local video generation need so much more than a local LLM?</div><div class="a">Because a language model streams tokens one at a time and degrades gracefully under memory pressure, while a video model holds the whole latent frame sequence in memory at once and runs attention across it. That turns the memory requirement into a cliff rather than a slope, which surprises people who ran a local LLM successfully.</div></div>
+      <div class="qa"><div class="q">Does a graphics card make video rendering faster?</div><div class="a">For generative models, decisively. For composed video, barely. Remotion documents that most renders do not become faster with GPU acceleration, and that headless Chromium, which is how programmatic rendering runs, disables the GPU anyway. The exceptions are WebGL scenes, video decoding, and blur and shadow effects.</div></div>
+      <div class="qa"><div class="q">What makes a no-GPU video render slow?</div><div class="a">Pixel count, effects and image format, in that order. Blur, shadows and gradient backgrounds are the expensive properties because they normally lean on a GPU. Writing frames as PNG rather than JPEG is measurably slower, and a Chromium engineer investigating capture speed identified PNG encoding as a leading cost.</div></div>
+      <div class="qa"><div class="q">What can a machine without a graphics card not do?</div><div class="a">Generate photoreal footage, produce talking-head avatars, render WebGL-heavy 3D scenes at reasonable speed, or handle long 4K renders comfortably. The consolation is symmetrical: Stable Video Diffusion's model card notes it cannot render legible text, which is exactly what composed video does effortlessly.</div></div>
+    </div>
+
+    <div class="cav">Where these numbers came from</div>
+    <h2 id="sources">Sources</h2>
+    <ul class="sources">
+      <li><a href="https://github.com/Wan-Video/Wan2.2" target="_blank" rel="noopener noreferrer">Wan 2.2 repository</a> and <a href="https://github.com/Wan-Video/Wan2.1" target="_blank" rel="noopener noreferrer">Wan 2.1 repository</a>: the 24GB and 80GB requirements, 8.19GB for the 1.3B model, and the timing figures.</li>
+      <li><a href="https://github.com/Tencent-Hunyuan/HunyuanVideo" target="_blank" rel="noopener noreferrer">HunyuanVideo repository</a> and <a href="https://huggingface.co/tencent/HunyuanVideo-1.5" target="_blank" rel="noopener noreferrer">HunyuanVideo 1.5 model card</a>: the CUDA requirement, the 45GB and 60GB memory table, and the 14GB offloaded minimum.</li>
+      <li><a href="https://github.com/genmoai/mochi" target="_blank" rel="noopener noreferrer">Mochi 1 repository</a>: approximately 60GB on a single GPU.</li>
+      <li><a href="https://huggingface.co/THUDM/CogVideoX-5b" target="_blank" rel="noopener noreferrer">CogVideoX-5B model card</a>: from 5GB, capped at 720 by 480, 8 frames per second, 6 seconds.</li>
+      <li><a href="https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt" target="_blank" rel="noopener noreferrer">Stable Video Diffusion model card</a>: the stated limitations, including that it cannot render legible text.</li>
+      <li><a href="https://huggingface.co/docs/diffusers/en/optimization/memory" target="_blank" rel="noopener noreferrer">Diffusers memory documentation</a> and the <a href="https://github.com/huggingface/diffusers/pull/11682" target="_blank" rel="noopener noreferrer">group offloading benchmark</a>: offloading is "extremely slow", and the measured 10.4 times slowdown.</li>
+      <li><a href="https://www.remotion.dev/docs/compare-ssr" target="_blank" rel="noopener noreferrer">Remotion rendering comparison</a>, <a href="https://www.remotion.dev/docs/gpu" target="_blank" rel="noopener noreferrer">GPU documentation</a> and <a href="https://www.remotion.dev/docs/performance" target="_blank" rel="noopener noreferrer">performance guidance</a>: most renders do not benefit from a GPU, headless Chromium disables it, and which effects are expensive.</li>
+      <li><a href="https://huggingface.co/datasets/optimum-benchmark/cpu" target="_blank" rel="noopener noreferrer">Optimum benchmark CPU dataset</a>: 49 seconds for one Stable Diffusion image on four cores at two steps.</li>
+      <li><a href="https://openbenchmarking.org/test/pts/x264-1.7.0" target="_blank" rel="noopener noreferrer">OpenBenchmarking x264 results</a>: median about 95 frames per second at 1080p across more than 2,000 public results.</li>
+      <li><a href="https://groups.google.com/a/chromium.org/g/headless-dev/c/aVZw00nzxTU" target="_blank" rel="noopener noreferrer">Chromium headless discussion</a>: 1 to 8 screenshots per second, and PNG encoding as a leading cost.</li>
+      <li><a href="https://huggingface.co/hexgrad/Kokoro-82M" target="_blank" rel="noopener noreferrer">Kokoro-82M model card</a>, with CPU real-time factors measured in <a href="https://heyneo.com/blog/kokoro-supertonic-inflect-nano-cpu-tts-benchmark" target="_blank" rel="noopener noreferrer">an independent benchmark</a>.</li>
+      <li><a href="https://store.steampowered.com/hwsurvey/Steam-Hardware-Software-Survey-Welcome-to-Steam" target="_blank" rel="noopener noreferrer">Steam Hardware and Software Survey</a>, July 2026: the video memory distribution. Note the panel is self-selected PC gamers, so it overstates GPU availability among general users.</li>
+    </ul>
+
+    <p class="toolsrow">Related reading from Best Answer Hub: <a href="/playbooks/make-videos-with-claude-code/">how to make videos with Claude Code</a>, <a href="/playbooks/free-ai-voice-over-commercial-use/">which free AI voice overs you can actually sell</a>, and the free <a href="/tools/">Best Answer Hub tools</a>. The no-GPU pipeline lives at <a href="/ai-agent-skills/">AI Agent Skills</a>.</p>
+  </article>
+</div>
+  </div>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 11px;border-radius:999px;display:inline-block;white-space:nowrap;font-family:'Bricolage Grotesque',sans-serif}
+  .pb .lv1{background:var(--sage)}
+  .pb .lv2{background:var(--clay)}
+  .pb .lv3{background:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>
+</BaseLayout>

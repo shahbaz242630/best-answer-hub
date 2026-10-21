@@ -1,0 +1,745 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub CSS Generator?',
+    a: 'The Best Answer Hub CSS Generator is a free browser-based suite of four visual design tools: a Box Shadow builder, a Gradient builder, a Flexbox layout generator, and a CSS Grid builder. Each tool provides live sliders, color pickers, and preset buttons that update a real-time preview instantly. As you adjust controls, the tool generates both standard CSS code and Tailwind CSS utility classes that you can copy and paste directly into your project. Everything runs 100% in your browser, so no designs or data are ever uploaded to a server.',
+  },
+  {
+    q: 'Is the CSS Generator free and safe to use?',
+    a: 'The Best Answer Hub CSS Generator is completely free with no usage limits and no signup required. It is safe because all preview rendering and code generation happens locally inside your browser using vanilla JavaScript and the HTML Canvas and DOM APIs. Your design choices, color values, and layout configurations are never sent to a server, stored in a database, or logged anywhere. You can verify this by disconnecting from the internet after loading the page. The Best Answer Hub generator will continue to work perfectly.',
+  },
+  {
+    q: 'How do I use the Box Shadow Generator?',
+    a: 'In the Best Answer Hub CSS Generator, open the Box Shadow tab and adjust the sliders for horizontal offset, vertical offset, blur radius, and spread radius. Choose a shadow color using the color picker and set its opacity with the alpha slider. Toggle the "Inset" switch to create an inner shadow. You can add multiple shadow layers by clicking "Add Layer" and stack them for complex depth effects. The live preview updates instantly, and both the CSS <code>box-shadow</code> declaration and the Tailwind arbitrary-value class are generated below. Click "Copy CSS" or "Copy Tailwind" to grab the code.',
+  },
+  {
+    q: 'How do I use the Gradient Generator?',
+    a: 'In the Best Answer Hub CSS Generator, open the Gradient tab and select the type: linear, radial, or conic. For linear gradients, adjust the angle with the rotation slider. Add color stops by clicking "Add Stop" and position them along the gradient bar by dragging the handles or entering exact percentages. Change each stop\'s color with the color picker. The live preview shows the full gradient in real time. The generator outputs standard CSS <code>background</code> syntax and Tailwind <code>bg-gradient-to-* from-* to-*</code> classes with arbitrary values for precise color stops.',
+  },
+  {
+    q: 'How do I use the Flexbox Generator?',
+    a: 'In the Best Answer Hub CSS Generator, open the Flexbox tab and choose the direction: row, row-reverse, column, or column-reverse. Set wrap behavior, justify-content alignment, align-items alignment, and gap spacing using the dropdowns and sliders. The live preview shows six colored boxes that rearrange instantly as you change settings. Below the preview, the tool outputs the exact CSS <code>display: flex</code> properties and the equivalent Tailwind utility classes (for example, <code>flex flex-row flex-wrap justify-center items-center gap-4</code>).',
+  },
+  {
+    q: 'How do I use the Grid Generator?',
+    a: 'In the Best Answer Hub CSS Generator, open the Grid tab and set the number of columns and rows using the sliders. Adjust the gap between grid cells and set justify-items and align-items alignment. The live preview shows a responsive grid of colored boxes that updates in real time. The tool generates standard CSS <code>display: grid</code> properties with <code>grid-template-columns</code> and <code>grid-template-rows</code> values, plus the equivalent Tailwind classes like <code>grid grid-cols-3 gap-4 place-items-center</code>.',
+  },
+  {
+    q: 'Does the CSS Generator support Tailwind CSS output?',
+    a: 'Yes. The Best Answer Hub CSS Generator produces both standard CSS and Tailwind CSS utility classes for every tool. For Box Shadow, you get Tailwind\'s arbitrary-value syntax like <code>shadow-[0_4px_6px_rgba(0,0,0,0.1)]</code>. For Gradients, you get <code>bg-gradient-to-r from-[#6366f1] to-[#a855f7]</code>. For Flexbox and Grid, you get standard utility combinations like <code>flex flex-col justify-between items-center gap-6</code> or <code>grid grid-cols-4 gap-4 place-items-stretch</code>. This makes the tool especially valuable for Tailwind developers who want precise custom values without leaving their utility-first workflow.',
+  },
+  {
+    q: 'Can I use the CSS Generator offline?',
+    a: 'Yes. After you load the page once, the Best Answer Hub CSS Generator works without an internet connection. It is built entirely with vanilla JavaScript and uses only browser-native APIs like the DOM, CSSOM, and HTML input elements. There are no external library downloads, no CDN dependencies, and no server-side processing. This makes it ideal for designing components while traveling or working in restricted environments.',
+  },
+  {
+    q: 'Is my design data sent to a server?',
+    a: 'No. In the Best Answer Hub CSS Generator, your color choices, shadow values, gradient stops, and layout settings never leave your browser. It uses only client-side JavaScript to render previews and generate code. There are no network requests, no analytics pings containing your design data, and no cloud processing. You can verify this by opening your browser\'s Network tab in Developer Tools. You will see zero outgoing requests when you adjust any control.',
+  },
+  {
+    q: 'How does this compare to CSSGradient.io or Neumorphism.io?',
+    a: 'CSSGradient.io is excellent for gradients but offers no Box Shadow, Flexbox, or Grid tools and does not export Tailwind classes. Neumorphism.io focuses only on soft UI shadows and has known accessibility issues with low contrast. The Best Answer Hub CSS Generator consolidates all four tools into one page, exports both CSS and Tailwind, and is 100% client-side. No ads, no signup walls, and no single-purpose site fragmentation.',
+  },
+  {
+    q: 'Can I copy the generated code into my project?',
+    a: 'Yes. The Best Answer Hub CSS Generator has two copy buttons ("Copy CSS" and "Copy Tailwind") below every live preview. Click either button to copy the full code snippet to your clipboard. You can paste it directly into your stylesheet, component file, or Tailwind class list. The CSS output uses modern syntax without vendor prefixes, which is supported by all browsers released since 2020.',
+  },
+  {
+    q: 'Does the generator support dark mode previews?',
+    a: 'The Best Answer Hub CSS Generator\'s live preview areas use a checkerboard pattern and neutral backgrounds so you can see how shadows, gradients, and layouts behave on both light and dark surfaces. For gradients and shadows, the preview includes a toggle between light and dark background modes so you can verify contrast and visibility. Flexbox and Grid previews show on both light and dark backgrounds for realistic context.',
+  },
+  {
+    q: 'What browsers are supported?',
+    a: 'All modern browsers are fully supported, including Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, and Opera 76+. The Best Answer Hub CSS Generator uses standard CSS properties and browser APIs that have been universally supported since 2021. Internet Explorer is not supported. The generated CSS uses modern syntax like CSS Grid, CSS Custom Properties, and advanced gradient functions that work in all current browsers.',
+  },
+  {
+    q: 'Can I save or share my designs?',
+    a: 'Not currently. Best Answer Hub prioritizes privacy and speed, keeping all processing in your browser with no server storage. If you need to save a design, simply copy the CSS or Tailwind output and paste it into your project, a code snippet manager, or a text file. For sharing with teammates, paste the code into Slack, Discord, or a pull request description. Future updates may add URL hash encoding for shareable designs without any server storage.',
+  },
+  {
+    q: 'What is the difference between CSS box-shadow and filter: drop-shadow()?',
+    a: 'CSS <code>box-shadow</code> always follows the rectangular bounding box of the element, so even on transparent PNGs and SVG icons, the shadow appears as a rectangle. The <code>filter: drop-shadow()</code> function follows the actual alpha channel of the element, tracing the outline of a logo, icon path, or image cutout. In practice: use <code>box-shadow</code> for cards, buttons, and divs where rectangular shadows look correct. Use <code>filter: drop-shadow()</code> for logos and PNGs with transparent backgrounds where you want the shadow to follow the shape. Note that the Best Answer Hub CSS Generator\'s Box Shadow tool supports multiple stacked shadow layers, a feature not available in <code>filter: drop-shadow()</code>, which only accepts a single value. Browser support for both is universal since 2020.',
+  },
+];
+
+const steps = [
+  { title: 'Pick a generator', description: 'Choose Box Shadow, Gradient, Flexbox, or Grid from the tabs. Each has its own set of controls tailored to that CSS property.' },
+  { title: 'Adjust the controls', description: 'Use sliders, color pickers, and dropdowns to fine-tune your design. The live preview updates instantly as you make changes.' },
+  { title: 'Copy the code', description: 'Grab either standard CSS or Tailwind utility classes with one click. Paste directly into your project, with no cleanup needed.' },
+];
+
+const seo = {
+  title: 'Free CSS Generator — Shadow, Gradient & Flexbox (2026)',
+  description: 'Free visual CSS generators for Box Shadow, Gradient, Flexbox, and Grid. Live preview with instant CSS and Tailwind output. 100% client-side — no uploads.',
+  url: '/developer-toolbox/css-generators/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Developer Toolbox', url: '/developer-toolbox/' },
+    { name: 'CSS Generators', url: '/developer-toolbox/css-generators/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="CSS Generator:"
+    accentText="Box shadow, gradient, flexbox & grid"
+    description="Design CSS visually with live previews and instant code output. Generate Box Shadow, Gradients, Flexbox layouts, and CSS Grid, with both standard CSS and Tailwind utility classes. All processing happens in your browser."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- CSS Generator Interface -->
+  <section class="py-6 md:py-8" aria-label="CSS generator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">CSS Generator</h2>
+
+        <!-- Tabs -->
+        <div class="flex flex-wrap gap-1 mb-5 border-b border-bae-border pb-1" role="tablist">
+          <button type="button" class="css-tab active bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm transition-colors" data-tab="shadow" role="tab" aria-selected="true">Box Shadow</button>
+          <button type="button" class="css-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors" data-tab="gradient" role="tab" aria-selected="false">Gradient</button>
+          <button type="button" class="css-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors" data-tab="flexbox" role="tab" aria-selected="false">Flexbox</button>
+          <button type="button" class="css-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors" data-tab="grid" role="tab" aria-selected="false">Grid</button>
+        </div>
+
+        <!-- Box Shadow Panel -->
+        <div class="css-panel" data-panel="shadow">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div class="space-y-3">
+              <div id="shadow-layers"></div>
+              <button type="button" id="shadow-add" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">+ Add Layer</button>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">Live Preview</label>
+              <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-6 flex items-center justify-center min-h-[12rem]" id="shadow-preview-wrap">
+                <div id="shadow-preview-box" class="w-32 h-32 bg-bae-card border border-bae-border rounded-bae-sm flex items-center justify-center text-xs text-bae-muted">Preview</div>
+              </div>
+              <div class="mt-3 space-y-2">
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-[11px] font-medium text-bae-muted">CSS</label>
+                    <button type="button" class="copy-btn text-[11px] text-bae-primary hover:underline" data-target="shadow-css">Copy CSS</button>
+                  </div>
+                  <pre id="shadow-css" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs font-mono text-bae-ink overflow-auto whitespace-pre-wrap"></pre>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-[11px] font-medium text-bae-muted">Tailwind</label>
+                    <button type="button" class="copy-btn text-[11px] text-bae-primary hover:underline" data-target="shadow-tw">Copy Tailwind</button>
+                  </div>
+                  <pre id="shadow-tw" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs font-mono text-bae-ink overflow-auto whitespace-pre-wrap"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gradient Panel -->
+        <div class="css-panel hidden" data-panel="gradient">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <div class="flex-1">
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Type</label>
+                  <select id="grad-type" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+                    <option value="linear">Linear</option>
+                    <option value="radial">Radial</option>
+                    <option value="conic">Conic</option>
+                  </select>
+                </div>
+                <div class="flex-1" id="grad-angle-wrap">
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Angle</label>
+                  <input type="range" id="grad-angle" min="0" max="360" value="90" class="w-full" />
+                  <span id="grad-angle-val" class="text-[10px] text-bae-muted">90°</span>
+                </div>
+              </div>
+              <div id="grad-stops"></div>
+              <button type="button" id="grad-add" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">+ Add Stop</button>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">Live Preview</label>
+              <div id="grad-preview" class="w-full h-40 bg-bae-bg border border-bae-border rounded-bae-sm"></div>
+              <div class="mt-3 space-y-2">
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-[11px] font-medium text-bae-muted">CSS</label>
+                    <button type="button" class="copy-btn text-[11px] text-bae-primary hover:underline" data-target="grad-css">Copy CSS</button>
+                  </div>
+                  <pre id="grad-css" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs font-mono text-bae-ink overflow-auto whitespace-pre-wrap"></pre>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-[11px] font-medium text-bae-muted">Tailwind</label>
+                    <button type="button" class="copy-btn text-[11px] text-bae-primary hover:underline" data-target="grad-tw">Copy Tailwind</button>
+                  </div>
+                  <pre id="grad-tw" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs font-mono text-bae-ink overflow-auto whitespace-pre-wrap"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flexbox Panel -->
+        <div class="css-panel hidden" data-panel="flexbox">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div class="space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Direction</label>
+                  <select id="flex-dir" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+                    <option value="row">row</option>
+                    <option value="row-reverse">row-reverse</option>
+                    <option value="column">column</option>
+                    <option value="column-reverse">column-reverse</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Wrap</label>
+                  <select id="flex-wrap" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+                    <option value="nowrap">nowrap</option>
+                    <option value="wrap">wrap</option>
+                    <option value="wrap-reverse">wrap-reverse</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Justify Content</label>
+                  <select id="flex-justify" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+                    <option value="flex-start">flex-start</option>
+                    <option value="center">center</option>
+                    <option value="flex-end">flex-end</option>
+                    <option value="space-between">space-between</option>
+                    <option value="space-around">space-around</option>
+                    <option value="space-evenly">space-evenly</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Align Items</label>
+                  <select id="flex-align" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+                    <option value="stretch">stretch</option>
+                    <option value="flex-start">flex-start</option>
+                    <option value="center">center</option>
+                    <option value="flex-end">flex-end</option>
+                    <option value="baseline">baseline</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-bae-muted mb-1">Gap: <span id="flex-gap-val">16</span>px</label>
+                <input type="range" id="flex-gap" min="0" max="64" value="16" class="w-full" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">Live Preview</label>
+              <div id="flex-preview" class="w-full min-h-[10rem] bg-bae-bg border border-bae-border rounded-bae-sm p-3">
+                <div class="flex-item w-12 h-12 bg-bae-primary/80 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">1</div>
+                <div class="flex-item w-12 h-12 bg-bae-primary/60 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">2</div>
+                <div class="flex-item w-12 h-12 bg-bae-primary/40 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">3</div>
+                <div class="flex-item w-12 h-12 bg-bae-primary/80 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">4</div>
+                <div class="flex-item w-12 h-12 bg-bae-primary/60 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">5</div>
+                <div class="flex-item w-12 h-12 bg-bae-primary/40 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">6</div>
+              </div>
+              <div class="mt-3 space-y-2">
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-[11px] font-medium text-bae-muted">CSS</label>
+                    <button type="button" class="copy-btn text-[11px] text-bae-primary hover:underline" data-target="flex-css">Copy CSS</button>
+                  </div>
+                  <pre id="flex-css" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs font-mono text-bae-ink overflow-auto whitespace-pre-wrap"></pre>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-[11px] font-medium text-bae-muted">Tailwind</label>
+                    <button type="button" class="copy-btn text-[11px] text-bae-primary hover:underline" data-target="flex-tw">Copy Tailwind</button>
+                  </div>
+                  <pre id="flex-tw" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs font-mono text-bae-ink overflow-auto whitespace-pre-wrap"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid Panel -->
+        <div class="css-panel hidden" data-panel="grid">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div class="space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Columns: <span id="grid-cols-val">3</span></label>
+                  <input type="range" id="grid-cols" min="1" max="6" value="3" class="w-full" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Rows: <span id="grid-rows-val">2</span></label>
+                  <input type="range" id="grid-rows" min="1" max="6" value="2" class="w-full" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Gap: <span id="grid-gap-val">16</span>px</label>
+                  <input type="range" id="grid-gap" min="0" max="64" value="16" class="w-full" />
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Justify Items</label>
+                  <select id="grid-justify" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+                    <option value="stretch">stretch</option>
+                    <option value="center">center</option>
+                    <option value="start">start</option>
+                    <option value="end">end</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-bae-muted mb-1">Align Items</label>
+                  <select id="grid-align" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+                    <option value="stretch">stretch</option>
+                    <option value="center">center</option>
+                    <option value="start">start</option>
+                    <option value="end">end</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-bae-muted mb-1.5">Live Preview</label>
+              <div id="grid-preview" class="w-full min-h-[10rem] bg-bae-bg border border-bae-border rounded-bae-sm p-3">
+                <div class="grid-item w-full h-12 bg-bae-primary/80 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">1</div>
+                <div class="grid-item w-full h-12 bg-bae-primary/60 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">2</div>
+                <div class="grid-item w-full h-12 bg-bae-primary/40 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">3</div>
+                <div class="grid-item w-full h-12 bg-bae-primary/80 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">4</div>
+                <div class="grid-item w-full h-12 bg-bae-primary/60 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">5</div>
+                <div class="grid-item w-full h-12 bg-bae-primary/40 rounded-bae-sm flex items-center justify-center text-white text-xs font-bold">6</div>
+              </div>
+              <div class="mt-3 space-y-2">
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-[11px] font-medium text-bae-muted">CSS</label>
+                    <button type="button" class="copy-btn text-[11px] text-bae-primary hover:underline" data-target="grid-css">Copy CSS</button>
+                  </div>
+                  <pre id="grid-css" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs font-mono text-bae-ink overflow-auto whitespace-pre-wrap"></pre>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <label class="text-[11px] font-medium text-bae-muted">Tailwind</label>
+                    <button type="button" class="copy-btn text-[11px] text-bae-primary hover:underline" data-target="grid-tw">Copy Tailwind</button>
+                  </div>
+                  <pre id="grid-tw" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-xs font-mono text-bae-ink overflow-auto whitespace-pre-wrap"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What developers & designers use it for -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What developers &amp; designers use it for</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Frontend developer, React component library</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Card shadow and gradient styling</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">CSS + Tailwind in under 30 seconds</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Design cards, buttons, modals, and hero sections with layered box shadows and custom gradients. Copy the exact CSS values straight into your component file.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Full-stack developer, Tailwind project</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Arbitrary-value syntax without guesswork</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Ready-to-paste class strings every time</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Skip trial-and-error on Tailwind arbitrary-value syntax. Dial in exact shadow offsets and gradient stops visually, then copy the ready-to-use Tailwind class string.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Product designer, design system build</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Flexbox and Grid layout exploration</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Export exact grid-template values instantly</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Prototype Flexbox and CSS Grid layouts before writing any code. Adjust columns, gaps, and alignment with sliders, then export the exact grid-template values for your stylesheet.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Design lead, agency handoff workflow</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Figma spec to production CSS</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Zero back-and-forth on shadow values</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Turn Figma shadow and gradient specs into working CSS instantly. Paste the output directly into a pull request, Slack message, or README so developers get exact values, with no back-and-forth.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Actual workflow speed depends on project complexity and familiarity with CSS.</p>
+    </div>
+  </section>
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/developer-toolbox/diff-checker/" class="text-bae-primary hover:underline">Diff Checker</a>, <a href="/developer-toolbox/cron-expression-generator/" class="text-bae-primary hover:underline">Cron Generator</a>, <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, and <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, all free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      // --- Utility ---
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+
+      function hexToRgba(hex, alpha) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+      }
+
+      // --- Tabs ---
+      const tabs = document.querySelectorAll('.css-tab');
+      const panels = document.querySelectorAll('.css-panel');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const target = this.dataset.tab;
+          tabs.forEach(t => {
+            t.classList.remove('bg-bae-primary', 'text-white');
+            t.classList.add('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+            t.setAttribute('aria-selected', 'false');
+          });
+          this.classList.remove('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+          this.classList.add('bg-bae-primary', 'text-white');
+          this.setAttribute('aria-selected', 'true');
+
+          panels.forEach(p => {
+            if (p.dataset.panel === target) p.classList.remove('hidden');
+            else p.classList.add('hidden');
+          });
+        });
+      });
+
+      // --- Copy Buttons ---
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const targetId = this.dataset.target;
+          const el = document.getElementById(targetId);
+          if (el) copyText(el.textContent);
+        });
+      });
+
+      // ===== BOX SHADOW =====
+      let shadowLayers = [
+        { x: 0, y: 4, blur: 6, spread: -1, color: '#000000', alpha: 0.1, inset: false }
+      ];
+
+      function renderShadowControls() {
+        const container = document.getElementById('shadow-layers');
+        container.innerHTML = '';
+        shadowLayers.forEach((layer, i) => {
+          const div = document.createElement('div');
+          div.className = 'bg-bae-bg border border-bae-border rounded-bae-sm p-3 mb-2';
+          div.innerHTML =
+            '<div class="flex items-center justify-between mb-2">' +
+              '<span class="text-xs font-semibold text-bae-ink">Layer ' + (i + 1) + '</span>' +
+              (shadowLayers.length > 1 ? '<button type="button" class="shadow-remove text-[11px] text-red-600 hover:underline" data-idx="' + i + '">Remove</button>' : '') +
+            '</div>' +
+            '<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2">' +
+              '<div><label class="text-[10px] text-bae-muted">X</label><input type="number" class="shadow-x w-full bg-bae-card border border-bae-border rounded-bae-sm px-2 py-1 text-xs font-mono" data-idx="' + i + '" value="' + layer.x + '" /></div>' +
+              '<div><label class="text-[10px] text-bae-muted">Y</label><input type="number" class="shadow-y w-full bg-bae-card border border-bae-border rounded-bae-sm px-2 py-1 text-xs font-mono" data-idx="' + i + '" value="' + layer.y + '" /></div>' +
+              '<div><label class="text-[10px] text-bae-muted">Blur</label><input type="number" class="shadow-blur w-full bg-bae-card border border-bae-border rounded-bae-sm px-2 py-1 text-xs font-mono" data-idx="' + i + '" value="' + layer.blur + '" /></div>' +
+              '<div><label class="text-[10px] text-bae-muted">Spread</label><input type="number" class="shadow-spread w-full bg-bae-card border border-bae-border rounded-bae-sm px-2 py-1 text-xs font-mono" data-idx="' + i + '" value="' + layer.spread + '" /></div>' +
+            '</div>' +
+            '<div class="flex items-center gap-2">' +
+              '<input type="color" class="shadow-color w-8 h-8 rounded-bae-sm border border-bae-border cursor-pointer" data-idx="' + i + '" value="' + layer.color + '" />' +
+              '<div class="flex-1"><label class="text-[10px] text-bae-muted">Opacity: ' + layer.alpha + '</label><input type="range" class="shadow-alpha w-full" data-idx="' + i + '" min="0" max="1" step="0.01" value="' + layer.alpha + '" /></div>' +
+              '<label class="flex items-center gap-1 text-[11px] text-bae-muted cursor-pointer"><input type="checkbox" class="shadow-inset" data-idx="' + i + '" ' + (layer.inset ? 'checked' : '') + ' /> Inset</label>' +
+            '</div>';
+          container.appendChild(div);
+        });
+
+        container.querySelectorAll('.shadow-remove').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.idx);
+            shadowLayers.splice(idx, 1);
+            renderShadowControls();
+            updateShadow();
+          });
+        });
+
+        ['x','y','blur','spread'].forEach(prop => {
+          container.querySelectorAll('.shadow-' + prop).forEach(input => {
+            input.addEventListener('input', function() {
+              const idx = parseInt(this.dataset.idx);
+              shadowLayers[idx][prop] = parseInt(this.value) || 0;
+              updateShadow();
+            });
+          });
+        });
+
+        container.querySelectorAll('.shadow-color').forEach(input => {
+          input.addEventListener('input', function() {
+            const idx = parseInt(this.dataset.idx);
+            shadowLayers[idx].color = this.value;
+            updateShadow();
+          });
+        });
+
+        container.querySelectorAll('.shadow-alpha').forEach(input => {
+          input.addEventListener('input', function() {
+            const idx = parseInt(this.dataset.idx);
+            shadowLayers[idx].alpha = parseFloat(this.value);
+            this.previousElementSibling.textContent = 'Opacity: ' + this.value;
+            updateShadow();
+          });
+        });
+
+        container.querySelectorAll('.shadow-inset').forEach(input => {
+          input.addEventListener('change', function() {
+            const idx = parseInt(this.dataset.idx);
+            shadowLayers[idx].inset = this.checked;
+            updateShadow();
+          });
+        });
+      }
+
+      function updateShadow() {
+        const css = shadowLayers.map(l => {
+          const rgba = hexToRgba(l.color, l.alpha);
+          return (l.inset ? 'inset ' : '') + l.x + 'px ' + l.y + 'px ' + l.blur + 'px ' + l.spread + 'px ' + rgba;
+        }).join(', ');
+
+        const box = document.getElementById('shadow-preview-box');
+        box.style.boxShadow = css;
+
+        document.getElementById('shadow-css').textContent = 'box-shadow: ' + css + ';';
+
+        const tw = shadowLayers.map(l => {
+          // Underscore the rgba() spaces — arbitrary Tailwind values cannot contain raw spaces.
+          const rgba = hexToRgba(l.color, l.alpha).replace(/ /g, '_');
+          return (l.inset ? 'inset_' : '') + l.x + 'px_' + l.y + 'px_' + l.blur + 'px_' + l.spread + 'px_' + rgba;
+        }).join(',');
+        document.getElementById('shadow-tw').textContent = 'shadow-[' + tw + ']';
+      }
+
+      document.getElementById('shadow-add').addEventListener('click', function() {
+        shadowLayers.push({ x: 0, y: 4, blur: 6, spread: -1, color: '#000000', alpha: 0.1, inset: false });
+        renderShadowControls();
+        updateShadow();
+      });
+
+      renderShadowControls();
+      updateShadow();
+
+      // ===== GRADIENT =====
+      let gradStops = [
+        { color: '#6366f1', pos: 0 },
+        { color: '#a855f7', pos: 100 }
+      ];
+
+      function renderGradControls() {
+        const container = document.getElementById('grad-stops');
+        container.innerHTML = '';
+        gradStops.forEach((stop, i) => {
+          const div = document.createElement('div');
+          div.className = 'flex items-center gap-2 mb-2';
+          div.innerHTML =
+            '<input type="color" class="grad-color w-8 h-8 rounded-bae-sm border border-bae-border cursor-pointer" data-idx="' + i + '" value="' + stop.color + '" />' +
+            '<div class="flex-1"><label class="text-[10px] text-bae-muted">Position: ' + stop.pos + '%</label><input type="range" class="grad-pos w-full" data-idx="' + i + '" min="0" max="100" value="' + stop.pos + '" /></div>' +
+            (gradStops.length > 2 ? '<button type="button" class="grad-remove text-[11px] text-red-600 hover:underline" data-idx="' + i + '">Remove</button>' : '');
+          container.appendChild(div);
+        });
+
+        container.querySelectorAll('.grad-remove').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.idx);
+            gradStops.splice(idx, 1);
+            renderGradControls();
+            updateGrad();
+          });
+        });
+
+        container.querySelectorAll('.grad-color').forEach(input => {
+          input.addEventListener('input', function() {
+            const idx = parseInt(this.dataset.idx);
+            gradStops[idx].color = this.value;
+            updateGrad();
+          });
+        });
+
+        container.querySelectorAll('.grad-pos').forEach(input => {
+          input.addEventListener('input', function() {
+            const idx = parseInt(this.dataset.idx);
+            gradStops[idx].pos = parseInt(this.value);
+            this.previousElementSibling.textContent = 'Position: ' + this.value + '%';
+            updateGrad();
+          });
+        });
+      }
+
+      function updateGrad() {
+        const type = document.getElementById('grad-type').value;
+        const angle = document.getElementById('grad-angle').value;
+        const stops = gradStops.slice().sort((a, b) => a.pos - b.pos);
+        const stopsCss = stops.map(s => s.color + ' ' + s.pos + '%').join(', ');
+
+        let css = '';
+        if (type === 'linear') {
+          css = 'linear-gradient(' + angle + 'deg, ' + stopsCss + ')';
+        } else if (type === 'radial') {
+          css = 'radial-gradient(' + stopsCss + ')';
+        } else {
+          css = 'conic-gradient(' + stopsCss + ')';
+        }
+
+        document.getElementById('grad-preview').style.background = css;
+        document.getElementById('grad-css').textContent = 'background: ' + css + ';';
+
+        // Tailwind
+        let tw = '';
+        if (type === 'linear') {
+          const dirMap = { '0': 'bg-gradient-to-t', '45': 'bg-gradient-to-tr', '90': 'bg-gradient-to-r', '135': 'bg-gradient-to-br', '180': 'bg-gradient-to-b', '225': 'bg-gradient-to-bl', '270': 'bg-gradient-to-l', '315': 'bg-gradient-to-tl' };
+          if (dirMap[angle] && stops.length === 2) {
+            // Idiomatic Tailwind gradient utilities for cardinal angles with two stops.
+            tw = dirMap[angle] + ' from-[' + stops[0].color + '] to-[' + stops[stops.length - 1].color + ']';
+          } else {
+            // Arbitrary value for non-cardinal angles or 3+ stops — exact, spaces underscored.
+            tw = 'bg-[' + css.replace(/ /g, '_') + ']';
+          }
+        } else {
+          tw = 'bg-[' + css.replace(/ /g, '_') + ']';
+        }
+        document.getElementById('grad-tw').textContent = tw;
+      }
+
+      document.getElementById('grad-type').addEventListener('change', function() {
+        const angleWrap = document.getElementById('grad-angle-wrap');
+        if (this.value === 'linear') angleWrap.classList.remove('hidden');
+        else angleWrap.classList.add('hidden');
+        updateGrad();
+      });
+
+      document.getElementById('grad-angle').addEventListener('input', function() {
+        document.getElementById('grad-angle-val').textContent = this.value + '°';
+        updateGrad();
+      });
+
+      document.getElementById('grad-add').addEventListener('click', function() {
+        const last = gradStops[gradStops.length - 1];
+        gradStops.push({ color: last ? last.color : '#6366f1', pos: 100 });
+        renderGradControls();
+        updateGrad();
+      });
+
+      renderGradControls();
+      updateGrad();
+
+      // ===== FLEXBOX =====
+      function updateFlex() {
+        const dir = document.getElementById('flex-dir').value;
+        const wrap = document.getElementById('flex-wrap').value;
+        const justify = document.getElementById('flex-justify').value;
+        const align = document.getElementById('flex-align').value;
+        const gap = document.getElementById('flex-gap').value;
+
+        const preview = document.getElementById('flex-preview');
+        preview.style.display = 'flex';
+        preview.style.flexDirection = dir;
+        preview.style.flexWrap = wrap;
+        preview.style.justifyContent = justify;
+        preview.style.alignItems = align;
+        preview.style.gap = gap + 'px';
+
+        document.getElementById('flex-gap-val').textContent = gap;
+
+        const css = 'display: flex;\n' +
+          'flex-direction: ' + dir + ';\n' +
+          'flex-wrap: ' + wrap + ';\n' +
+          'justify-content: ' + justify + ';\n' +
+          'align-items: ' + align + ';\n' +
+          'gap: ' + gap + 'px;';
+        document.getElementById('flex-css').textContent = css;
+
+        const twDir = dir === 'row' ? 'flex-row' : dir === 'row-reverse' ? 'flex-row-reverse' : dir === 'column' ? 'flex-col' : 'flex-col-reverse';
+        const twWrap = wrap === 'nowrap' ? '' : wrap === 'wrap' ? ' flex-wrap' : ' flex-wrap-reverse';
+        const twJust = justify === 'flex-start' ? ' justify-start' : justify === 'flex-end' ? ' justify-end' : justify === 'space-between' ? ' justify-between' : justify === 'space-around' ? ' justify-around' : justify === 'space-evenly' ? ' justify-evenly' : ' justify-center';
+        const twAlign = align === 'stretch' ? ' items-stretch' : align === 'flex-start' ? ' items-start' : align === 'flex-end' ? ' items-end' : align === 'baseline' ? ' items-baseline' : ' items-center';
+        const twGap = gap > 0 ? ' gap-[' + gap + 'px]' : '';
+        document.getElementById('flex-tw').textContent = 'flex ' + twDir + twWrap + twJust + twAlign + twGap;
+      }
+
+      ['flex-dir','flex-wrap','flex-justify','flex-align'].forEach(id => {
+        document.getElementById(id).addEventListener('change', updateFlex);
+      });
+      document.getElementById('flex-gap').addEventListener('input', updateFlex);
+      updateFlex();
+
+      // ===== GRID =====
+      function updateGrid() {
+        const cols = document.getElementById('grid-cols').value;
+        const rows = document.getElementById('grid-rows').value;
+        const gap = document.getElementById('grid-gap').value;
+        const justify = document.getElementById('grid-justify').value;
+        const align = document.getElementById('grid-align').value;
+
+        const preview = document.getElementById('grid-preview');
+        preview.style.display = 'grid';
+        preview.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+        preview.style.gridTemplateRows = 'repeat(' + rows + ', minmax(3rem, auto))';
+        preview.style.gap = gap + 'px';
+        preview.style.justifyItems = justify;
+        preview.style.alignItems = align;
+
+        document.getElementById('grid-cols-val').textContent = cols;
+        document.getElementById('grid-rows-val').textContent = rows;
+        document.getElementById('grid-gap-val').textContent = gap;
+
+        const css = 'display: grid;\n' +
+          'grid-template-columns: repeat(' + cols + ', 1fr);\n' +
+          'grid-template-rows: repeat(' + rows + ', minmax(3rem, auto));\n' +
+          'gap: ' + gap + 'px;\n' +
+          'justify-items: ' + justify + ';\n' +
+          'align-items: ' + align + ';';
+        document.getElementById('grid-css').textContent = css;
+
+        const twCols = cols <= 6 ? ' grid-cols-' + cols : ' grid-cols-[' + cols + ']';
+        const twRows = rows <= 6 ? ' grid-rows-' + rows : ' grid-rows-[' + rows + ']';
+        const twGap = gap > 0 ? ' gap-[' + gap + 'px]' : '';
+        const twJust = justify === 'stretch' ? '' : ' justify-items-' + justify;
+        const twAlign = align === 'stretch' ? '' : ' items-' + align;
+        document.getElementById('grid-tw').textContent = 'grid' + twCols + (rows !== '1' ? twRows : '') + twGap + twJust + twAlign;
+      }
+
+      ['grid-cols','grid-rows','grid-gap'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateGrid);
+      });
+      ['grid-justify','grid-align'].forEach(id => {
+        document.getElementById(id).addEventListener('change', updateGrid);
+      });
+      updateGrid();
+    })();
+  </script>
+</BaseLayout>

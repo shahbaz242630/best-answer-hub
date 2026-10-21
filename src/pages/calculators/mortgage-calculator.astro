@@ -1,0 +1,1017 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-30T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Mortgage Calculator?',
+    a: 'The Best Answer Hub Mortgage Calculator is a free, privacy-first browser tool that shows your true monthly mortgage payment, not just principal and interest, but the full amount including property taxes, homeowners insurance, PMI, and HOA fees. Enter your home price, down payment, interest rate, and loan term to see exactly what you will pay every month and over the life of the loan. You can also model extra payments to see how many years and dollars you will save. Everything runs instantly in your browser, with no signup, no server, and no data collection.',
+  },
+  {
+    q: 'How much house can I afford on a $100,000 salary?',
+    a: 'On a $100,000 annual salary, most lenders approve a monthly housing payment around $2,330 using the 28% front-end rule. At a 7% interest rate with 10% down, that translates to roughly a $375,000–$400,000 home price depending on local property taxes and insurance. Always factor in your existing debt payments, since the back-end 36% rule caps your total monthly debt at $3,000. Use the Best Answer Hub Mortgage Calculator to test exact numbers with your local tax rate.',
+  },
+  {
+    q: 'Why is my actual mortgage payment $400 higher than what the calculator showed me?',
+    a: 'Most basic calculators only show principal and interest, which is typically just 60–70% of your real monthly payment. The missing 30–40% comes from property taxes, homeowners insurance, PMI if your down payment is under 20%, and HOA dues. On a $350,000 home, taxes and insurance alone often add $400–$600 per month. The Best Answer Hub Mortgage Calculator shows the full PITI plus PMI and HOA upfront so there are no surprises.',
+  },
+  {
+    q: 'What is the 28/36 rule for mortgage affordability?',
+    a: 'The 28/36 rule is the standard lenders use to determine how much you can borrow. The 28% rule means your total monthly housing payment (principal, interest, taxes, insurance, PMI, and HOA) should not exceed 28% of your gross monthly income. The 36% rule means your total monthly debt payments, including the mortgage, car loans, student loans, and credit cards, should not exceed 36% of your gross income. Some lenders allow up to 43% with strong credit.',
+  },
+  {
+    q: 'How much is PMI per month on a $300,000 house with 10% down?',
+    a: 'With 10% down on a $300,000 home, your loan amount is $270,000 and PMI typically costs 0.5% of the loan balance annually, which works out to about $113 per month. PMI rates generally range from 0.3% to 1.5% per year depending on your down payment percentage and credit score. A larger down payment or higher credit score lowers your PMI. The Best Answer Hub Mortgage Calculator auto-estimates PMI based on your down payment percentage.',
+  },
+  {
+    q: 'When does PMI go away on a conventional loan?',
+    a: 'On a conventional loan, PMI automatically drops off once your loan balance reaches 78% of the original home value, which usually happens around month 80 to month 110 depending on your down payment and interest rate. You can also request cancellation at 80% LTV once you have a payment history and a current appraisal. Making extra principal payments can get you to 80% LTV years earlier. The Best Answer Hub Mortgage Calculator shows the exact month your PMI disappears based on your inputs.',
+  },
+  {
+    q: 'Should I get a 15-year or 30-year mortgage?',
+    a: 'A 15-year mortgage saves you tens of thousands in interest and builds equity faster, but your monthly payment is roughly 40–50% higher. A 30-year mortgage gives you a lower payment and more flexibility to invest the difference or handle income shocks. If the 15-year payment is under 25% of your gross income, it is usually the better financial move. If it strains your budget, take the 30-year and make voluntary extra payments when you can. Use the comparison panel in the Best Answer Hub Mortgage Calculator to see the exact difference for your numbers.',
+  },
+  {
+    q: 'How much money do I need at closing if I am buying a $300,000 house with 10% down?',
+    a: 'You will need the $30,000 down payment plus closing costs of 2% to 5% of the purchase price, which is $6,000 to $15,000 on a $300,000 home. That brings your total cash needed to roughly $36,000 to $45,000. Closing costs include loan origination, appraisal, title insurance, escrow setup, prepaid interest, and an escrow cushion for taxes and insurance. Some lenders offer no-closing-cost options that roll fees into a slightly higher rate.',
+  },
+  {
+    q: 'What is included in a monthly mortgage payment besides principal and interest?',
+    a: 'The full monthly housing payment (called PITI) includes four parts: Principal, Interest, Taxes, and Insurance. Many calculators stop there, but the real number also includes PMI if you put down less than 20%, plus HOA dues if you are buying a condo or a home in a managed community. On a typical $400,000 home, taxes and insurance can add $500 to $700 per month, and PMI can add another $100 to $300. The Best Answer Hub Mortgage Calculator adds every component so you see the true payment.',
+  },
+  {
+    q: 'How much can I save by making extra payments on my 30-year mortgage?',
+    a: 'Even small extra payments create dramatic savings. Paying an extra $100 per month on a $350,000 loan at 7% can save you about $55,000 in interest and pay off the loan roughly 3.5 years early. An extra $200 per month can save over $95,000 and cut almost 6 years off the term. A single $5,000 lump-sum payment in year one can save $20,000-plus over the life of the loan. The Best Answer Hub Mortgage Calculator instantly shows your years saved and interest saved whenever you add an extra payment.',
+  },
+  {
+    q: 'Should I refinance my mortgage if rates drop by 0.5%?',
+    a: 'A 0.5% rate drop is right at the borderline where refinancing starts to make sense. The standard rule of thumb is to refinance when rates fall by 0.5% to 1%, but the real deciding factor is your break-even point. Divide your total closing costs by your monthly savings to find how many months it takes to recover the refinance fees. If you plan to stay in the home longer than that break-even period, refinancing is usually worth it. On a $350,000 loan, a 0.5% drop saves roughly $100 per month.',
+  },
+  {
+    q: 'Can I afford a house with a 5% down payment, or do I need 20%?',
+    a: 'You can absolutely buy a house with 5% down on a conventional loan, and FHA loans allow as little as 3.5% down. The trade-off is PMI, which adds roughly $150 to $400 per month depending on your loan size and credit score. With 20% down, you eliminate PMI entirely and get a slightly better interest rate, but saving $80,000 for a $400,000 home takes most buyers years. If home values in your area are rising faster than you can save, buying at 5% down and paying PMI is often the smarter financial move.',
+  },
+  {
+    q: 'How much does a 1% difference in interest rate affect my monthly mortgage payment?',
+    a: 'On a $400,000 loan, a 1% rate difference changes your monthly principal and interest payment by roughly $265. Over 30 years, that 1% costs or saves about $95,000 in total interest. On a $600,000 loan, the monthly swing is about $400 and the lifetime difference is over $140,000. This is why shopping for the best rate and improving your credit score before applying can have a six-figure impact. The Best Answer Hub Mortgage Calculator lets you toggle between rates to see the exact difference.',
+  },
+  {
+    q: 'What is the difference between PMI and FHA mortgage insurance?',
+    a: 'PMI applies to conventional loans when you put down less than 20%. It typically costs 0.3% to 1.5% annually and automatically cancels at 78% LTV. FHA mortgage insurance, called MIP, applies to all FHA loans regardless of down payment size. It includes an upfront premium of 1.75% rolled into the loan plus an annual premium of 0.55% to 1.05% paid monthly. Crucially, FHA MIP on loans with less than 10% down lasts for the entire loan term. It never drops off. Conventional PMI is almost always cheaper and cancellable.',
+  },
+  {
+    q: 'Why did my monthly mortgage payment go up even though I have a fixed-rate loan?',
+    a: 'A fixed-rate loan locks your principal and interest amount, but most homeowners pay through an escrow account that also covers property taxes and homeowners insurance. When your property is reassessed at a higher value or your insurance premium increases, your escrow payment rises to cover the new amount. Lenders are also required to keep a two-month cushion in the escrow account, so a big tax jump can create a double hit. The only way your P&I changes on a fixed loan is if you refinance or modify the loan.',
+  },
+];
+
+const seo = {
+  title: 'Free Mortgage Calculator — PMI, Taxes & Amortization (2026)',
+  description: 'Calculate your true monthly mortgage payment with taxes, insurance, PMI, and HOA. Compare 15- vs 30-year loans and see how extra payments save interest.',
+  url: '/calculators/mortgage-calculator/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-24T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Finance Toolkit', url: '/finance-toolkit/' },
+    { name: 'Mortgage Calculator', url: '/calculators/mortgage-calculator/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated May 2026
+          </div>
+          <a href="/finance-toolkit/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Finance Toolkit
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Mortgage Calculator:<br/>
+          <em class="italic text-bae-primary">Your true monthly payment</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          See exactly what you will pay every month: principal, interest, taxes, insurance, PMI, and HOA included. Compare loan terms and model extra payments to see your savings.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Mortgage calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Home Price & Down Payment -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Home Price & Down Payment</h2>
+            <div class="space-y-5">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Home Price</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-homePrice">$400,000</span>
+                </div>
+                <input type="range" id="homePrice-slider" min="50000" max="2000000" step="5000" value="400000" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="homePrice" min="0" value="400000" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Down Payment (%)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-downPaymentPercent">10%</span>
+                </div>
+                <input type="range" id="downPaymentPercent-slider" min="0" max="50" step="0.5" value="10" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="downPaymentPercent" min="0" max="100" step="0.5" value="10" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div class="grid grid-cols-2 gap-4 pt-2 border-t border-bae-border">
+                <div>
+                  <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Down Payment ($)</p>
+                  <p class="text-lg font-bold text-bae-ink" id="display-downPaymentAmount">$40,000</p>
+                </div>
+                <div>
+                  <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Loan Amount</p>
+                  <p class="text-lg font-bold text-bae-ink" id="display-loanAmount">$360,000</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loan Details -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Loan Details</h2>
+            <div class="space-y-5">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Loan Term (years)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-loanTerm">30 years</span>
+                </div>
+                <input type="range" id="loanTerm-slider" min="1" max="30" step="1" value="30" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="loanTerm" min="1" max="50" value="30" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Interest Rate (%)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-interestRate">7.00%</span>
+                </div>
+                <input type="range" id="interestRate-slider" min="1" max="15" step="0.05" value="7" class="w-full accent-bae-primary mb-2" />
+                <input type="number" id="interestRate" min="0" max="30" step="0.05" value="7" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Monthly Costs -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Monthly Costs</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Property Tax Rate (%)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-taxRate">1.10%</span>
+                </div>
+                <input type="number" id="taxRate" min="0" max="5" step="0.05" value="1.1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">≈ <span id="display-taxMonthly">$367</span>/mo</p>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Insurance (yearly)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-insuranceYearly">$1,200</span>
+                </div>
+                <input type="number" id="insuranceYearly" min="0" max="20000" step="50" value="1200" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1.5">≈ <span id="display-insuranceMonthly">$100</span>/mo</p>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Homeowners Association Fees (monthly)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-hoa">$0</span>
+                </div>
+                <input type="number" id="hoa" min="0" max="5000" step="25" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="text-sm font-semibold text-bae-ink">Extra Payment (monthly)</label>
+                  <span class="text-sm font-semibold text-bae-primary" id="display-extra">$0</span>
+                </div>
+                <input type="number" id="extra" min="0" max="10000" step="25" value="0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end -mt-2 mb-1">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset calculator
+            </button>
+          </div>
+
+          <!-- Payment Breakdown & Balance -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-2">Payment Breakdown & Balance</h2>
+            <p class="text-xs text-bae-muted mb-4">See how each yearly payment is split between principal and interest, and watch your loan balance decrease over time, just like your mortgage statement.</p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-bae-border">
+                    <th class="text-left py-2 pr-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Year</th>
+                    <th class="text-right py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Payment</th>
+                    <th class="text-right py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Principal</th>
+                    <th class="text-right py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Interest</th>
+                    <th class="text-right py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Extra</th>
+                    <th class="text-right py-2 pl-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="amortization-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <!-- Total Payment -->
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Total Monthly Payment</h3>
+            <div class="text-3xl md:text-4xl font-bold font-serif mb-1" id="result-totalMonthly">$2,795</div>
+            <p class="text-xs text-white/50 mb-5">Principal, Interest, Taxes, Insurance, PMI & HOA Fees</p>
+
+            <div class="space-y-3 border-t border-white/10 pt-4">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-white/70">Principal & Interest</span>
+                <span class="text-sm font-semibold" id="result-pi">$2,395</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-white/70">Property Tax</span>
+                <span class="text-sm font-semibold" id="result-tax">$367</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-white/70">Insurance</span>
+                <span class="text-sm font-semibold" id="result-insurance">$100</span>
+              </div>
+              <div class="flex justify-between items-center" id="row-pmi">
+                <span class="text-sm text-white/70">PMI</span>
+                <span class="text-sm font-semibold" id="result-pmi">$0</span>
+              </div>
+              <div class="flex justify-between items-center" id="row-hoa">
+                <span class="text-sm text-white/70">HOA Fees</span>
+                <span class="text-sm font-semibold" id="result-hoa">$0</span>
+              </div>
+            </div>
+            <div class="border-t border-white/10 pt-3 mt-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-white/50">Total Interest (over full term)</span>
+                <span class="text-sm font-semibold" id="result-totalInterestPanel">$502,000</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loan Summary -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Loan Summary</h3>
+            <div class="space-y-2.5">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-bae-muted">Loan Amount</span>
+                <span class="text-sm font-semibold text-bae-ink" id="summary-loanAmount">$360,000</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-bae-muted">Total Interest</span>
+                <span class="text-sm font-semibold text-bae-ink" id="summary-totalInterest">$502,000</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-bae-muted">Total Cost</span>
+                <span class="text-sm font-semibold text-bae-ink" id="summary-totalCost">$862,000</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-bae-muted">Loan-to-Value (LTV)</span>
+                <span class="text-sm font-semibold text-bae-ink" id="summary-ltv">90.0%</span>
+              </div>
+              <div class="flex justify-between items-center" id="row-pmiDrop">
+                <span class="text-sm text-bae-muted">PMI Drops Off</span>
+                <span class="text-sm font-semibold text-bae-primary" id="summary-pmiDrop">Month 96</span>
+              </div>
+              <div class="flex justify-between items-center" id="row-payoffDate">
+                <span class="text-sm text-bae-muted">Payoff Date</span>
+                <span class="text-sm font-semibold text-bae-primary" id="summary-payoffDate">May 2056</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra Payment Savings -->
+          <div class="bg-bae-primary-soft border border-bae-primary/20 rounded-bae p-5 shadow-bae-sm" id="extra-savings-panel">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-primary mb-3">Extra Payment Savings</h3>
+            <div class="space-y-2.5">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-bae-muted">Interest Saved</span>
+                <span class="text-sm font-semibold text-bae-ink" id="savings-interest">$0</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-bae-muted">Years Saved</span>
+                <span class="text-sm font-semibold text-bae-ink" id="savings-years">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Comparison -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3" id="compare-title">How Much Could You Save?</h3>
+            <div class="space-y-3" id="compare-content">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <button type="button" id="pdf-btn" class="w-full bg-bae-ink hover:bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+            Download PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Report Summary (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Report Summary</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Mortgage Payment Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Monthly</p>
+              <p class="text-3xl font-bold text-bae-ink" id="report-total">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Loan Amount</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-loan">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Total Interest</p>
+              <p class="text-2xl font-bold text-bae-primary" id="report-interest">$0</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" id="report-details">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>Estimates are based on standard amortization formulas and typical PMI rates as of May 2026. Actual costs vary by lender, location, credit profile, and market conditions. Always obtain an official Loan Estimate before committing to a mortgage.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Payment Breakdown Report (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-schedule">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Payment Breakdown by Year</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-6 md:p-8 shadow-bae-sm">
+        <p class="text-sm text-bae-muted mb-4">Year-by-year breakdown of your principal, interest, and remaining balance.</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-bae-border">
+                <th class="text-left py-2 pr-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Year</th>
+                <th class="text-right py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Payment</th>
+                <th class="text-right py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Principal</th>
+                <th class="text-right py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Interest</th>
+                <th class="text-right py-2 px-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Extra</th>
+                <th class="text-right py-2 pl-4 text-xs font-semibold text-bae-muted uppercase tracking-wider">Balance</th>
+              </tr>
+            </thead>
+            <tbody id="report-amortization-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Enter your home details', text: 'Input your home price, down payment, interest rate, and loan term. Add your local property tax rate, insurance, and any HOA fees for the most accurate estimate.' },
+    { name: 'See your true payment', text: 'We show the full monthly amount, not just principal and interest, but taxes, insurance, PMI, and HOA too. No hidden surprises when your actual loan estimate arrives.' },
+    { name: 'Compare and optimize', text: 'Toggle between 15-year and 30-year terms, model extra payments to see interest savings, and download a PDF report to share with your lender or partner.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter your home details</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Input your home price, down payment, interest rate, and loan term. Add your local property tax rate, insurance, and any HOA fees for the most accurate estimate.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">See your true payment</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">We show the full monthly amount, not just principal and interest, but taxes, insurance, PMI, and HOA too. No hidden surprises when your actual loan estimate arrives.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Compare and optimize</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Toggle between 15-year and 30-year terms, model extra payments to see interest savings, and download a PDF report to share with your lender or partner.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/compound-interest/" class="text-bae-primary hover:underline">Compound Interest Calculator</a>, <a href="/calculators/cloud-cost-calculator/" class="text-bae-primary hover:underline">Cloud Cost Calculator</a>, and the <a href="/finance-toolkit/" class="text-bae-primary hover:underline">Finance Toolkit</a>.</p>
+        </div>
+        <a href="/finance-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse the Finance Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What People Pay -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What people pay</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$400K home, 7%, 30yr, 10% down</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">First-time buyer scenario</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $3,012/mo</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Principal and interest is $2,395. Property tax (1.1%), insurance, and PMI add another $617. Total interest over 30 years: roughly $502,000.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$300K home, 6.5%, 30yr, 20% down</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">No-PMI conventional</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $1,909/mo</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Eliminating PMI and putting 20% down saves roughly $150/month versus 10% down. Total interest over the loan: about $327,000.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$600K home, 6.75%, 15yr, 20% down</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Aggressive payoff plan</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $5,048/mo</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Higher monthly payment but total interest is only about $208,000, roughly $350,000 less than a 30-year loan at the same rate.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">$350K home, 7%, 30yr + $200 extra/mo</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Extra payment strategy</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">≈ $2,530/mo</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Adding $200 extra principal per month pays off the loan roughly 5.5 years early and saves about $95,000 in total interest.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are modeled estimates based on typical rates and costs as of May 2026. Your actual payment will vary by lender, location, and credit profile.</p>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      function formatMoney(n) {
+        const abs = Math.abs(n);
+        if (abs >= 1000) return '$' + Math.round(n).toLocaleString();
+        if (abs >= 1) return '$' + n.toFixed(2);
+        return '$' + n.toFixed(2);
+      }
+
+      function formatNumber(n) {
+        return n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+      }
+
+      function getPMIRate(downPercent) {
+        if (downPercent >= 20) return 0;
+        if (downPercent >= 15) return 0.003;
+        if (downPercent >= 10) return 0.005;
+        if (downPercent >= 5) return 0.0075;
+        return 0.01;
+      }
+
+      function calculateMonthlyPayment(principal, monthlyRate, termMonths) {
+        if (monthlyRate <= 0) return principal / termMonths;
+        return principal * (monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
+      }
+
+      function calculateAmortization(principal, monthlyRate, monthlyPayment, extraMonthly, termMonths) {
+        let balance = principal;
+        let totalInterest = 0;
+        let months = 0;
+        const yearly = [];
+
+        for (let year = 1; year <= Math.ceil(termMonths / 12) + 20; year++) {
+          let yearInterest = 0;
+          let yearPrincipal = 0;
+          let yearExtra = 0;
+          let startBalance = balance;
+
+          for (let m = 0; m < 12; m++) {
+            if (balance <= 0.01) break;
+            months++;
+            const interest = balance * monthlyRate;
+            let principalPaid = monthlyPayment - interest;
+            if (principalPaid < 0) principalPaid = 0;
+            if (principalPaid > balance) principalPaid = balance;
+
+            let extra = Math.min(extraMonthly, balance - principalPaid);
+            if (extra < 0) extra = 0;
+
+            balance -= (principalPaid + extra);
+            yearInterest += interest;
+            yearPrincipal += principalPaid;
+            yearExtra += extra;
+          }
+
+          if (yearInterest > 0 || yearPrincipal > 0) {
+            yearly.push({
+              year,
+              startBalance,
+              interest: yearInterest,
+              principal: yearPrincipal,
+              extra: yearExtra,
+              endBalance: Math.max(0, balance)
+            });
+          }
+          totalInterest += yearInterest;
+          if (balance <= 0.01) break;
+        }
+        return { months, totalInterest, yearly };
+      }
+
+      function getPMIDropMonth(principal, monthlyRate, monthlyPayment, extraMonthly, homePrice) {
+        const targetBalance = homePrice * 0.78;
+        let balance = principal;
+        let month = 0;
+        while (balance > targetBalance && month < 600) {
+          month++;
+          const interest = balance * monthlyRate;
+          let principalPaid = monthlyPayment - interest;
+          if (principalPaid < 0) principalPaid = 0;
+          if (principalPaid > balance) principalPaid = balance;
+          let extra = Math.min(extraMonthly, balance - principalPaid);
+          if (extra < 0) extra = 0;
+          balance -= (principalPaid + extra);
+          if (balance <= 0) break;
+        }
+        return month;
+      }
+
+      function calculate() {
+        const homePrice = parseFloat($('homePrice').value) || 0;
+        const downPercent = parseFloat($('downPaymentPercent').value) || 0;
+        const interestRate = parseFloat($('interestRate').value) || 0;
+        const loanTerm = parseInt($('loanTerm').value) || 30;
+        const taxRate = parseFloat($('taxRate').value) || 0;
+        const insuranceYearly = parseFloat($('insuranceYearly').value) || 0;
+        const hoa = parseFloat($('hoa').value) || 0;
+        const extra = parseFloat($('extra').value) || 0;
+
+        const downAmount = homePrice * (downPercent / 100);
+        const loanAmount = Math.max(0, homePrice - downAmount);
+        const monthlyRate = interestRate / 100 / 12;
+        const termMonths = loanTerm * 12;
+
+        const monthlyPI = calculateMonthlyPayment(loanAmount, monthlyRate, termMonths);
+        const pmiRate = getPMIRate(downPercent);
+        const monthlyPMI = loanAmount * pmiRate / 12;
+        const monthlyTax = (homePrice * (taxRate / 100)) / 12;
+        const monthlyInsurance = insuranceYearly / 12;
+        const totalMonthly = monthlyPI + monthlyTax + monthlyInsurance + monthlyPMI + hoa;
+
+        // Standard amortization (no extra)
+        const standard = calculateAmortization(loanAmount, monthlyRate, monthlyPI, 0, termMonths);
+        // With extra payments
+        const withExtra = calculateAmortization(loanAmount, monthlyRate, monthlyPI, extra, termMonths);
+
+        const totalInterest = standard.totalInterest;
+        const totalCost = loanAmount + totalInterest;
+        const ltv = homePrice > 0 ? (loanAmount / homePrice) * 100 : 0;
+
+        const pmiDropMonth = downPercent >= 20 ? 0 : getPMIDropMonth(loanAmount, monthlyRate, monthlyPI, extra, homePrice);
+        const payoffDate = new Date();
+        payoffDate.setMonth(payoffDate.getMonth() + withExtra.months);
+
+        // Update displays
+        $('display-downPaymentAmount').textContent = formatMoney(downAmount);
+        $('display-loanAmount').textContent = formatMoney(loanAmount);
+        $('display-taxMonthly').textContent = formatMoney(monthlyTax) + '/mo';
+        $('display-insuranceMonthly').textContent = formatMoney(monthlyInsurance) + '/mo';
+
+        $('result-totalMonthly').textContent = formatMoney(totalMonthly);
+        $('result-pi').textContent = formatMoney(monthlyPI);
+        $('result-tax').textContent = formatMoney(monthlyTax);
+        $('result-insurance').textContent = formatMoney(monthlyInsurance);
+        $('result-pmi').textContent = formatMoney(monthlyPMI);
+        $('result-hoa').textContent = formatMoney(hoa);
+        $('result-totalInterestPanel').textContent = formatMoney(totalInterest);
+
+        $('summary-loanAmount').textContent = formatMoney(loanAmount);
+        $('summary-totalInterest').textContent = formatMoney(totalInterest);
+        $('summary-totalCost').textContent = formatMoney(totalCost);
+        $('summary-ltv').textContent = ltv.toFixed(1) + '%';
+
+        if (downPercent >= 20) {
+          $('row-pmi').style.display = 'none';
+          $('row-pmiDrop').style.display = 'none';
+        } else {
+          $('row-pmi').style.display = 'flex';
+          $('row-pmiDrop').style.display = 'flex';
+          const pmiYears = Math.floor(pmiDropMonth / 12);
+          const pmiMonths = pmiDropMonth % 12;
+          $('summary-pmiDrop').textContent = pmiYears > 0 ? 'Year ' + (pmiYears + 1) + ' (' + pmiDropMonth + ' mo)' : 'Month ' + pmiDropMonth;
+        }
+
+        $('summary-payoffDate').textContent = payoffDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+
+        // Extra savings
+        const interestSaved = totalInterest - withExtra.totalInterest;
+        const yearsSaved = (termMonths - withExtra.months) / 12;
+        if (extra > 0) {
+          $('extra-savings-panel').style.display = 'block';
+          $('savings-interest').textContent = formatMoney(interestSaved);
+          $('savings-years').textContent = yearsSaved >= 1 ? yearsSaved.toFixed(1) + ' years' : (termMonths - withExtra.months) + ' months';
+        } else {
+          $('extra-savings-panel').style.display = 'none';
+        }
+
+
+        // Populate comparison section
+        const compareContent = $('compare-content');
+        compareContent.innerHTML = '';
+        if (extra > 0) {
+          // Mode: Standard vs With Extra
+          $('compare-title').textContent = 'Standard vs With Extra Payments';
+          const standardPayoff = new Date();
+          standardPayoff.setMonth(standardPayoff.getMonth() + standard.months);
+          const extraPayoff = new Date();
+          extraPayoff.setMonth(extraPayoff.getMonth() + withExtra.months);
+
+          const rows = [
+            { label: 'Total Interest (standard)', value: formatMoney(standard.totalInterest) },
+            { label: 'Total Interest (with extra)', value: formatMoney(withExtra.totalInterest) },
+            { label: 'Payoff Date (standard)', value: standardPayoff.toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) },
+            { label: 'Payoff Date (with extra)', value: extraPayoff.toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) },
+          ];
+          rows.forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'flex justify-between items-center';
+            div.innerHTML = '<span class="text-sm text-bae-muted">' + r.label + '</span><span class="text-sm font-semibold text-bae-ink">' + r.value + '</span>';
+            compareContent.appendChild(div);
+          });
+          const savingsDiv = document.createElement('div');
+          savingsDiv.className = 'border-t border-bae-border pt-2 mt-2';
+          savingsDiv.innerHTML = '<div class="flex justify-between text-xs"><span class="text-bae-muted">Interest saved with extra payments</span><span class="font-semibold text-bae-primary">' + formatMoney(interestSaved) + '</span></div>' +
+            '<div class="flex justify-between text-xs mt-1"><span class="text-bae-muted">Years saved</span><span class="font-semibold text-bae-primary">' + (yearsSaved >= 1 ? yearsSaved.toFixed(1) + ' years' : (termMonths - withExtra.months) + ' months') + '</span></div>';
+          compareContent.appendChild(savingsDiv);
+        } else {
+          // Mode: Selected term vs 15-year
+          const compareTermMonths = 15 * 12;
+          const pi15 = calculateMonthlyPayment(loanAmount, monthlyRate, compareTermMonths);
+          const std15 = calculateAmortization(loanAmount, monthlyRate, pi15, 0, compareTermMonths);
+          const interestSaved15 = totalInterest - std15.totalInterest;
+          const maxBar = Math.max(pi15, monthlyPI, 1);
+
+          $('compare-title').textContent = 'Your Term vs 15-Year Term';
+
+          const bar15 = document.createElement('div');
+          bar15.className = 'flex items-center gap-3';
+          bar15.innerHTML = '<div class="w-16 text-xs font-medium text-bae-muted">15 Yr</div>' +
+            '<div class="flex-1 h-2.5 bg-bae-bg rounded-full overflow-hidden"><div class="h-full rounded-full bg-bae-primary" style="width:' + Math.min(100, (pi15 / maxBar) * 100) + '%"></div></div>' +
+            '<div class="w-20 text-right text-sm font-semibold text-bae-ink">' + formatMoney(pi15) + '</div>';
+          compareContent.appendChild(bar15);
+
+          const barCurrent = document.createElement('div');
+          barCurrent.className = 'flex items-center gap-3';
+          barCurrent.innerHTML = '<div class="w-16 text-xs font-medium text-bae-primary">' + loanTerm + ' Yr</div>' +
+            '<div class="flex-1 h-2.5 bg-bae-bg rounded-full overflow-hidden"><div class="h-full rounded-full bg-bae-border" style="width:' + Math.min(100, (monthlyPI / maxBar) * 100) + '%"></div></div>' +
+            '<div class="w-20 text-right text-sm font-semibold text-bae-ink">' + formatMoney(monthlyPI) + '</div>';
+          compareContent.appendChild(barCurrent);
+
+          const savingsDiv = document.createElement('div');
+          savingsDiv.className = 'border-t border-bae-border pt-2 mt-2';
+          savingsDiv.innerHTML = '<div class="flex justify-between text-xs"><span class="text-bae-muted">Interest saved with 15-year term</span><span class="font-semibold text-bae-primary">' + formatMoney(interestSaved15) + '</span></div>';
+          compareContent.appendChild(savingsDiv);
+        }
+
+        // Report
+        $('report-total').textContent = formatMoney(totalMonthly);
+        $('report-loan').textContent = formatMoney(loanAmount);
+        $('report-interest').textContent = formatMoney(totalInterest);
+
+        const reportDetails = $('report-details');
+        reportDetails.innerHTML = '';
+        const reportRows = [
+          ['Home Price', formatMoney(homePrice)],
+          ['Down Payment', formatMoney(downAmount) + ' (' + downPercent.toFixed(1) + '%)'],
+          ['Interest Rate', interestRate.toFixed(2) + '%'],
+          ['Loan Term', loanTerm + ' years'],
+          ['Property Tax', formatMoney(monthlyTax) + '/mo'],
+          ['Insurance', formatMoney(monthlyInsurance) + '/mo'],
+          ['PMI', formatMoney(monthlyPMI) + '/mo'],
+          ['HOA', formatMoney(hoa) + '/mo'],
+        ];
+        if (extra > 0) {
+          reportRows.push(['Extra Payment', formatMoney(extra) + '/mo']);
+          reportRows.push(['Interest Saved', formatMoney(interestSaved)]);
+        }
+        reportRows.forEach(([label, value]) => {
+          const div = document.createElement('div');
+          const span1 = document.createElement('span');
+          span1.className = 'text-bae-muted';
+          span1.textContent = label + ': ';
+          const span2 = document.createElement('span');
+          span2.className = 'font-medium text-bae-ink';
+          span2.textContent = value;
+          div.appendChild(span1);
+          div.appendChild(span2);
+          reportDetails.appendChild(div);
+        });
+
+        // Amortization table (visible)
+        const tbody = $('amortization-body');
+        tbody.innerHTML = '';
+        const reportTbody = $('report-amortization-body');
+        reportTbody.innerHTML = '';
+        withExtra.yearly.forEach((row) => {
+          const yearPayment = row.principal + row.interest;
+          const cells = [
+            row.year,
+            formatMoney(yearPayment),
+            formatMoney(row.principal),
+            formatMoney(row.interest),
+            formatMoney(row.extra),
+            formatMoney(row.endBalance),
+          ];
+          // Visible table
+          const tr = document.createElement('tr');
+          tr.className = 'border-b border-bae-border/50';
+          cells.forEach((text, idx) => {
+            const td = document.createElement('td');
+            td.className = idx === 0 ? 'py-2 pr-4 text-bae-ink' : 'py-2 px-4 text-right text-bae-ink';
+            td.textContent = text;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+          // Report table (for PDF)
+          const rtr = document.createElement('tr');
+          rtr.className = 'border-b border-bae-border/50';
+          cells.forEach((text, idx) => {
+            const td = document.createElement('td');
+            td.className = idx === 0 ? 'py-2 pr-4 text-bae-ink' : 'py-2 px-4 text-right text-bae-ink';
+            td.textContent = text;
+            rtr.appendChild(td);
+          });
+          reportTbody.appendChild(rtr);
+        });
+
+        updateURL();
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          const params = new URLSearchParams();
+
+          const hp = parseFloat($('homePrice').value) || 400000;
+          const dp = parseFloat($('downPaymentPercent').value) || 10;
+          const rate = parseFloat($('interestRate').value) || 7;
+          const tax = parseFloat($('taxRate').value) || 1.1;
+          const ins = parseFloat($('insuranceYearly').value) || 1200;
+          const hoa = parseFloat($('hoa').value) || 0;
+          const extra = parseFloat($('extra').value) || 0;
+
+          const currentTerm = parseInt($('loanTerm').value) || 30;
+          if (hp !== 400000) params.set('price', hp);
+          if (dp !== 10) params.set('down', dp);
+          if (rate !== 7) params.set('rate', rate);
+          if (currentTerm !== 30) params.set('term', currentTerm);
+          if (tax !== 1.1) params.set('tax', tax);
+          if (ins !== 1200) params.set('insurance', ins);
+          if (hoa !== 0) params.set('hoa', hoa);
+          if (extra !== 0) params.set('extra', extra);
+
+          url.search = params.toString();
+          window.history.replaceState({}, '', url);
+        } catch (e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+          const price = url.searchParams.get('price');
+          const down = url.searchParams.get('down');
+          const rate = url.searchParams.get('rate');
+          const term = url.searchParams.get('term');
+          const tax = url.searchParams.get('tax');
+          const insurance = url.searchParams.get('insurance');
+          const hoa = url.searchParams.get('hoa');
+          const extra = url.searchParams.get('extra');
+
+          if (price !== null) { $('homePrice').value = price; $('homePrice-slider').value = price; $('display-homePrice').textContent = '$' + parseFloat(price).toLocaleString(); }
+          if (down !== null) { $('downPaymentPercent').value = down; $('downPaymentPercent-slider').value = down; $('display-downPaymentPercent').textContent = parseFloat(down) + '%'; }
+          if (rate !== null) { $('interestRate').value = rate; $('interestRate-slider').value = rate; $('display-interestRate').textContent = parseFloat(rate).toFixed(2) + '%'; }
+          if (tax !== null) { $('taxRate').value = tax; $('display-taxRate').textContent = parseFloat(tax).toFixed(2) + '%'; }
+          if (insurance !== null) { $('insuranceYearly').value = insurance; $('display-insuranceYearly').textContent = '$' + parseFloat(insurance).toLocaleString(); }
+          if (hoa !== null) { $('hoa').value = hoa; $('display-hoa').textContent = '$' + parseFloat(hoa).toLocaleString(); }
+          if (extra !== null) { $('extra').value = extra; $('display-extra').textContent = '$' + parseFloat(extra).toLocaleString(); }
+
+          if (term !== null) {
+            const t = parseInt(term);
+            if (t >= 1 && t <= 50) {
+              $('loanTerm').value = t;
+              $('loanTerm-slider').value = t;
+              $('display-loanTerm').textContent = t + ' years';
+            }
+          }
+        } catch (e) {}
+      }
+
+      // Input sync
+      function syncInputAndSlider(inputId, displayId, prefix, suffix) {
+        const input = $(inputId);
+        const slider = $(inputId + '-slider');
+        const display = $(displayId);
+        if (!input || !slider || !display) return;
+        input.addEventListener('input', () => {
+          slider.value = input.value;
+          let val = parseFloat(input.value);
+          if (isNaN(val)) val = 0;
+          display.textContent = (prefix || '') + val.toLocaleString() + (suffix || '');
+          calculate();
+        });
+        slider.addEventListener('input', () => {
+          input.value = slider.value;
+          let val = parseFloat(slider.value);
+          if (isNaN(val)) val = 0;
+          display.textContent = (prefix || '') + val.toLocaleString() + (suffix || '');
+          calculate();
+        });
+      }
+
+      syncInputAndSlider('homePrice', 'display-homePrice', '$');
+      syncInputAndSlider('downPaymentPercent', 'display-downPaymentPercent', '', '%');
+      syncInputAndSlider('interestRate', 'display-interestRate', '', '%');
+      syncInputAndSlider('loanTerm', 'display-loanTerm', '', ' years');
+
+      // Other inputs
+      ['taxRate', 'insuranceYearly', 'hoa', 'extra'].forEach(id => {
+        $(id).addEventListener('input', calculate);
+      });
+
+      // Clear / Reset
+      $('clear-btn').addEventListener('click', () => {
+        $('homePrice').value = 0;
+        $('homePrice-slider').value = 0;
+        $('display-homePrice').textContent = '$0';
+        $('downPaymentPercent').value = 0;
+        $('downPaymentPercent-slider').value = 0;
+        $('display-downPaymentPercent').textContent = '0%';
+        $('loanTerm').value = 0;
+        $('loanTerm-slider').value = 0;
+        $('display-loanTerm').textContent = '0 years';
+        $('interestRate').value = 0;
+        $('interestRate-slider').value = 0;
+        $('display-interestRate').textContent = '0.00%';
+        $('taxRate').value = 0;
+        $('display-taxRate').textContent = '0.00%';
+        $('insuranceYearly').value = 0;
+        $('display-insuranceYearly').textContent = '$0';
+        $('hoa').value = 0;
+        $('display-hoa').textContent = '$0';
+        $('extra').value = 0;
+        $('display-extra').textContent = '$0';
+        window.history.replaceState({}, '', window.location.pathname);
+        calculate();
+      });
+
+      // PDF button
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        // Create a wrapper that holds both report sections for PDF
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '210mm';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.style.margin = '0';
+
+        const report1 = $('print-report').cloneNode(true);
+        report1.removeAttribute('id');
+        report1.classList.remove('hidden');
+        const report2 = $('print-schedule').cloneNode(true);
+        report2.removeAttribute('id');
+        report2.classList.remove('hidden');
+        wrapper.appendChild(report1);
+        wrapper.appendChild(report2);
+        document.body.appendChild(wrapper);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'mortgage-payment-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(wrapper).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (wrapper.parentNode) document.body.removeChild(wrapper);
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      });
+
+      // Init
+      readURL();
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report *, #print-schedule, #print-schedule * { visibility: visible; }
+      #print-report, #print-schedule { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container, #print-schedule .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report):not(#print-schedule), main > *:not(#print-report):not(#print-schedule) { display: none !important; }
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6366f1;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+  </style>
+
+  <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Mortgage Calculator with PMI, Taxes & Amortization",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0" }
+    }
+  </script>
+</BaseLayout>

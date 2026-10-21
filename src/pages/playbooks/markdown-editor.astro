@@ -1,0 +1,361 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Markdown Editor?', a: 'The Best Answer Hub Markdown Editor is a free, browser-based split-pane editor. You write Markdown on the left and see a live GitHub-flavored preview on the right, then export as a .md file or styled .html. It runs entirely in your browser and auto-saves your draft locally, so nothing is uploaded.' },
+  { q: 'Where does my text go when I use an online Markdown editor?', a: 'It depends on the editor. Cloud editors like StackEdit and HackMD sync your text to their servers, usually tied to an account. The Best Answer Hub Markdown Editor keeps your text in your own browser using local storage, so your draft is never transmitted to any server.' },
+  { q: 'Is the Markdown Editor free to use?', a: 'Yes. The Best Answer Hub Markdown Editor is completely free with no usage limits, no signup, and no watermarks. You can write and export as many documents as you like. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.' },
+  { q: 'What is Markdown and why do developers use it?', a: 'Markdown is a plain-text formatting syntax created by John Gruber in 2004 that converts cleanly to HTML. Developers use it because it is readable in raw form, works in any text editor, and is the standard for README files, Reddit and Stack Overflow posts, and notes. The Best Answer Hub Markdown Editor supports it fully.' },
+  { q: 'Does the editor support GitHub Flavored Markdown?', a: 'Yes. The Best Answer Hub Markdown Editor uses the marked.js parser with GitHub Flavored Markdown enabled, so tables, task lists, fenced code blocks, strikethrough, and autolinks all render. The preview uses github-markdown-css to match how GitHub displays your document.' },
+  { q: 'What is the difference between CommonMark and GFM?', a: 'CommonMark is the strict, unambiguous specification of Markdown that fixed inconsistent rendering across systems. GitHub Flavored Markdown is a strict superset of CommonMark that adds five extensions: tables, task lists, strikethrough, extended autolinks, and disallowed raw HTML. Fenced code blocks are part of CommonMark, not a GFM addition.' },
+  { q: 'Can I preview my README before pushing to GitHub?', a: 'Yes, that is a primary use. The Best Answer Hub Markdown Editor styles its preview with github-markdown-css, replicating GitHub typography, spacing, and table borders closely. No preview is pixel-perfect because GitHub uses internal theming, but it is accurate enough to catch every real formatting mistake before you commit.' },
+  { q: 'Is my text sent to a server?', a: 'No. Your text never leaves your browser in the Best Answer Hub Markdown Editor. Parsing and previewing happen with client-side JavaScript, with no network requests after the page loads. You can confirm this in the browser Network tab, which makes the editor safe for private notes and proprietary README files.' },
+  { q: 'Can I use the Markdown Editor offline?', a: 'Yes. After the Best Answer Hub Markdown Editor page loads once, it works with no internet connection, because all parsing, previewing, and exporting run locally. The only network use is the initial load of the marked.js and highlight.js libraries. Once cached, the tool works entirely offline.' },
+  { q: 'How do I export my Markdown document?', a: 'Click Download Markdown to save the raw .md file, which opens in any editor or commits to Git. Click Download HTML for a self-contained styled page you can open in a browser or email. The Best Answer Hub Markdown Editor also lets you copy just the HTML body for pasting into a CMS.' },
+  { q: 'Does the editor auto-save my work?', a: 'Yes. The Best Answer Hub Markdown Editor saves your draft to your browser local storage as you type, so it survives a refresh or an accidental tab close. Because local storage stays on your device, this auto-save never sends your work to a server. Clearing browser data will remove it.' },
+  { q: 'Why does Markdown last longer than other formats?', a: 'Because a Markdown file is plain text, it is not locked into a proprietary format the way a Word file is. The Markdown Guide notes you can read it on any device and even after the app you wrote it in stops working. That durability is why the Best Answer Hub Markdown Editor exports plain .md.' },
+  { q: 'What code languages does the preview highlight?', a: 'The Best Answer Hub Markdown Editor uses highlight.js with its common language pack, covering JavaScript, TypeScript, Python, Java, Go, Rust, Ruby, PHP, Bash, SQL, HTML, CSS, JSON, and YAML. Tag a fenced code block with a language, and the editor applies the matching colors automatically, with a fallback to plain text.' },
+  { q: 'Can I insert a table of contents?', a: 'Yes. Click the TOC button and the Best Answer Hub Markdown Editor scans your headings, builds a nested list of anchor links, and inserts it at your cursor. It uses standard Markdown link syntax, which works on GitHub, GitLab, and static site generators like Hugo and Jekyll.' },
+  { q: 'Is it safe for private or proprietary documents?', a: 'Yes. Because the Best Answer Hub Markdown Editor never uploads your text, it suits internal docs, unpublished writing, and proprietary README files. This is the strongest form of data minimization, which the FTC and NIST both recommend: text that is never transmitted cannot be exposed in a breach of an external server.' },
+];
+
+const seo = {
+  title: 'Where Does Your Text Go in an Online Markdown Editor?',
+  description: 'Popular online Markdown editors sync your draft to the cloud. Here is how a browser-only editor with live preview keeps your text on your own device.',
+  url: '/playbooks/markdown-editor/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Markdown Editor', url: '/playbooks/markdown-editor/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Developer Tools</span>
+        <div class="cav">Where does your draft live?</div>
+        <h1>Where Does Your Text Go in a <em>Markdown Editor?</em></h1>
+        <p class="dek">You paste a private README or a set of unpublished notes into an online editor. Where does that text actually go? In many popular editors, straight to a cloud account. This guide covers what Markdown is, how CommonMark and GitHub Flavored Markdown differ, and why the Best Answer Hub Markdown Editor keeps every keystroke in your browser.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Developer tools</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Write<small>with live preview</small></div>
+          <div class="seg b2">Export<small>.md or .html</small></div>
+          <div class="seg b3">Private<small>nothing synced</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">2004</div><div class="l">the year John Gruber created Markdown</div><div class="src">Daring Fireball</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">features GitHub Flavored Markdown adds to CommonMark</div><div class="src">GitHub GFM Spec, 2019</div></div>
+      <div class="stat"><div class="n">180M+</div><div class="l">developers on GitHub, where READMEs are Markdown</div><div class="src">GitHub Octoverse, 2025</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">rendered in your browser, no account</div><div class="src">no upload</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#markdown">What Markdown is</a>
+        <a href="#flavors">CommonMark vs GFM</a>
+        <a href="#privacy">Where your text goes</a>
+        <a href="#preview">Preview a README</a>
+        <a href="#different">Versus other editors</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>Your text goes wherever the editor decides to send it. In a cloud-synced editor, that means your account on someone else's server; in a browser-only editor, it means nowhere at all.</strong> The Best Answer Hub <a href="/developer-toolbox/markdown-editor/">Markdown Editor</a> renders your Markdown to a live preview using JavaScript in your own browser and saves your draft to that browser's local storage, so a private README or an unpublished note never leaves your device.</p>
+
+        <p>That is a real difference, not a marketing one. The most recognized online Markdown editors are built around cloud sync and accounts, which is convenient and also the exact point where a private draft leaves your machine. This guide explains what Markdown is and why it lasts, how the CommonMark and GitHub Flavored Markdown standards fit together, where your text goes in each kind of editor, and how to preview a README before you push it. The editor sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Markdown Editor?</h2>
+        <p>The Best Answer Hub Markdown Editor is a free, browser-based split-pane editor: you write Markdown on the left and see a live preview on the right. It supports GitHub Flavored Markdown, including tables, task lists, fenced code blocks, strikethrough, and autolinks, and it exports your work as a <code>.md</code> file or as styled <code>.html</code>. Your draft auto-saves to your browser's local storage, and nothing is uploaded to any server.</p>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">1</span><div><b>Live preview.</b> The right pane re-renders as you type, using the <code>marked.js</code> parser with GitHub Flavored Markdown enabled.</div></li>
+            <li><span class="dot">2</span><div><b>Export anywhere.</b> Download raw <code>.md</code>, download a self-contained styled <code>.html</code> page, or copy the HTML for a CMS.</div></li>
+            <li><span class="dot">3</span><div><b>Stays on your device.</b> Your draft persists in local storage, so it survives a refresh without ever being sent to a server.</div></li>
+          </ul>
+        </div>
+
+        <div class="cav">A format that outlives its app</div>
+        <h2 id="markdown">What is Markdown, and why does it last?</h2>
+        <p>Markdown is a plain-text formatting syntax that converts cleanly to HTML, created by John Gruber in 2004. Gruber described it as "a text-to-HTML conversion tool for web writers" whose overriding goal was readability: the raw text should be legible as-is, without looking like it is covered in tags (<a href="https://daringfireball.net/projects/markdown/" target="_blank" rel="noopener noreferrer">Daring Fireball, 2004</a>). You write <code>**bold**</code>, <code>&#35; headings</code>, and <code>- lists</code>, and it becomes structured HTML.</p>
+        <p>Its durability is the quiet superpower. Because a Markdown file is just text, it is not locked into a proprietary format the way a Word document is. As the Markdown Guide puts it, you can open the file in virtually any application, on any operating system, and "even if the application you're using stops working at some point in the future, you'll still be able to read your Markdown-formatted text using a text editing application" (<a href="https://www.markdownguide.org/getting-started/" target="_blank" rel="noopener noreferrer">The Markdown Guide, 2026</a>). That is why it became the default for README files on GitHub, posts on Reddit and Stack Overflow, and notes in tools like Obsidian. GitHub alone reports over 180 million developers, all writing their READMEs, issues, and comments in Markdown (<a href="https://octoverse.github.com/" target="_blank" rel="noopener noreferrer">GitHub Octoverse, 2025</a>).</p>
+
+        <div class="cav">Two standards, one family</div>
+        <h2 id="flavors">CommonMark vs GitHub Flavored Markdown: what is the difference?</h2>
+        <p>CommonMark is the strict, unambiguous specification of Markdown; GitHub Flavored Markdown is CommonMark plus a handful of extensions. Gruber's original description left gaps, so the same document could render differently across systems, and, as CommonMark's authors note, "nothing in Markdown counts as a syntax error." CommonMark fixed that with "a standard, unambiguous syntax specification" and a test suite, now used by GitHub, GitLab, Reddit, Stack Overflow, and Discord (<a href="https://commonmark.org/" target="_blank" rel="noopener noreferrer">CommonMark, 2026</a>).</p>
+        <p>GitHub Flavored Markdown, or GFM, builds on that. The official spec states that "GFM is a strict superset of CommonMark," adding five documented extensions on top (<a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">GitHub GFM Spec, 2019</a>). A common misconception is that fenced code blocks are a GFM feature; they are part of base CommonMark. Here is what actually belongs to each.</p>
+        <table>
+          <thead><tr><th>Feature</th><th>Where it comes from</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Headings, lists, links, fenced code blocks</td><td>CommonMark base</td></tr>
+            <tr><td class="band">Tables</td><td>GFM extension</td></tr>
+            <tr><td class="band">Task list items</td><td>GFM extension</td></tr>
+            <tr><td class="band">Strikethrough</td><td>GFM extension</td></tr>
+            <tr><td class="band">Autolinks (extended)</td><td>GFM extension</td></tr>
+            <tr><td class="band">Disallowed raw HTML</td><td>GFM extension</td></tr>
+          </tbody>
+        </table>
+        <p>The Best Answer Hub Markdown Editor enables GFM through <code>marked.js</code>, so all five extensions render, and it styles the preview with <code>github-markdown-css</code> to match how GitHub itself displays the result.</p>
+
+        <div class="cav">The question that matters</div>
+        <h2 id="privacy">Where does your text go in an online Markdown editor?</h2>
+        <p>In the best-known online editors, it goes to the cloud, often tied to an account. That is a feature, not a scandal, but it is worth knowing before you draft something private. StackEdit describes its core function as being able to "sync your files with Google Drive, Dropbox and GitHub" (<a href="https://stackedit.io/" target="_blank" rel="noopener noreferrer">StackEdit, 2026</a>). Dillinger integrates with GitHub, Dropbox, Google Drive, OneDrive, and Bitbucket (<a href="https://github.com/joemccann/dillinger" target="_blank" rel="noopener noreferrer">Dillinger, 2026</a>). HackMD is a collaborative service built around accounts and server-stored version history. Typora keeps files local but is a paid desktop app, not a browser tool.</p>
+        <p>The safest data is the data you never send. The FTC advises businesses that if you do not have a legitimate need to keep sensitive information, "don't even collect it" (<a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">FTC, 2026</a>), and NIST frames data minimization, processing only what is necessary, as a way to reduce the information "vulnerable to unauthorized access" (<a href="https://pages.nist.gov/800-63-4/sp800-63a/privacy/" target="_blank" rel="noopener noreferrer">NIST SP 800-63-4, 2026</a>). A browser-only editor is minimization taken to its logical end: your draft is kept on your own device in local storage, which MDN notes is "saved across browser sessions" with no expiration, so nothing has to be transmitted to persist it (<a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" target="_blank" rel="noopener noreferrer">MDN, 2026</a>).</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">The Best Answer Hub Markdown Editor keeps text on your device</figcaption>
+          <svg viewBox="0 0 600 210" role="img" aria-label="Flow diagram: you type Markdown, the browser renders it with marked.js, and you get a live preview plus .md or .html export, with nothing uploaded or synced">
+            <defs>
+              <linearGradient id="mdgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient>
+              <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#C6603F"/></marker>
+            </defs>
+            <rect x="18" y="52" width="160" height="66" rx="12" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="98" y="80" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">You type</text>
+            <text x="98" y="100" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#847B6B">Markdown</text>
+            <rect x="220" y="52" width="160" height="66" rx="12" fill="url(#mdgrad)"/>
+            <text x="300" y="80" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#fff">Browser renders</text>
+            <text x="300" y="100" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#f3ddd2">marked.js on device</text>
+            <rect x="422" y="52" width="160" height="66" rx="12" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="502" y="80" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">Preview + export</text>
+            <text x="502" y="100" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#847B6B">.md or .html</text>
+            <path d="M178 85 L220 85" stroke="#C6603F" stroke-width="2.5" marker-end="url(#arr)"/>
+            <path d="M380 85 L422 85" stroke="#C6603F" stroke-width="2.5" marker-end="url(#arr)"/>
+            <rect x="18" y="150" width="564" height="40" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="300" y="175" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#5a7355">Nothing is uploaded, synced, or tied to an account</text>
+          </svg>
+          <p class="chart-src">The editor parses and previews Markdown locally with marked.js and persists your draft in browser local storage (MDN). No network request carries your text.</p>
+        </figure>
+
+        <div class="cav">The everyday use</div>
+        <h2 id="preview">How do you preview a README before you push it?</h2>
+        <p>You render it in a preview that mirrors GitHub, then fix the formatting before you commit. This is the single most common reason people reach for a Markdown editor: catching a broken table, a mis-nested list, or a code block that did not close, before it shows up on your repository's front page. The Best Answer Hub Markdown Editor styles its preview with <code>github-markdown-css</code>, which replicates GitHub's typography, spacing, headings, link colors, and table borders.</p>
+        <p>No third-party preview is pixel-perfect, because GitHub applies its own internal theming, but a GFM-accurate preview gets you close enough to spot every real formatting mistake. Write the README, watch the right pane, adjust, then download the <code>.md</code> and commit it, or export a styled <code>.html</code> version to share outside GitHub. Because the tool runs offline after the first load, you can do all of this on a plane or a locked-down work laptop.</p>
+        <div class="callout sage"><div class="h">A small habit that saves reworks</div><p>Keep a browser tab with the Best Answer Hub Markdown Editor open while writing docs. Paste the raw Markdown in, glance at the preview, and you will catch the table and list errors that otherwise only appear after you push. It costs nothing and needs no account.</p></div>
+
+        <div class="cav">Why this one</div>
+        <h2 id="different">How is Best Answer Hub different from other Markdown editors?</h2>
+        <p>The difference is where your text lives and what it costs. The table below reflects what each editor states about itself. The Best Answer Hub Markdown Editor is the free, browser-only, no-account option, with full GFM support and export built in.</p>
+        <table>
+          <thead><tr><th>Editor</th><th>Your text lives</th><th>Account needed?</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Best Answer Hub</td><td>In your browser</td><td>No</td></tr>
+            <tr><td class="band">StackEdit</td><td>Cloud sync</td><td>To sync or publish</td></tr>
+            <tr><td class="band">Dillinger</td><td>Local, plus optional cloud</td><td>To connect a cloud service</td></tr>
+            <tr><td class="band">HackMD</td><td>Cloud-hosted</td><td>Yes, for saving and collaboration</td></tr>
+            <tr><td class="band">Typora</td><td>Local files</td><td>No, but it is paid desktop software</td></tr>
+          </tbody>
+        </table>
+        <p>Best Answer Hub asks for no signup, sets no usage limits, shows no ads, and never gates the export behind an upgrade. It is a fast, private place to write and preview Markdown, whether that is a README, release notes, a blog draft, or notes you would rather not sync anywhere.</p>
+
+        <div class="cta">
+          <span class="kicker">Write it without sending it anywhere</span>
+          <h3>Try the free Markdown Editor</h3>
+          <p>Live GitHub-flavored preview, export to .md or .html, auto-save on your device. No signup, no sync, no limits.</p>
+          <a class="btn" href="/developer-toolbox/markdown-editor/">Open the Markdown Editor</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Frequently asked questions about Markdown editors</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/sql-formatter/">Is It Safe to Paste SQL Into an Online Formatter?</a></b> The same browser-only principle, for SQL queries.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/word-counter/">The Word Counter That Knows Every Platform Limit</a></b> Another writing tool that runs entirely on your device.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/ai-knowledge-test/">The Free AI Knowledge Test</a></b> A no-signup check of how well you really understand AI.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>Daring Fireball (John Gruber), <a href="https://daringfireball.net/projects/markdown/" target="_blank" rel="noopener noreferrer">Markdown project page</a>, 2004.</li>
+          <li>The Markdown Guide (Matt Cone), <a href="https://www.markdownguide.org/getting-started/" target="_blank" rel="noopener noreferrer">Getting Started</a>, 2026.</li>
+          <li>CommonMark, <a href="https://commonmark.org/" target="_blank" rel="noopener noreferrer">CommonMark specification</a>, 2026.</li>
+          <li>GitHub, <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">GitHub Flavored Markdown Spec (0.29-gfm)</a>, 2019.</li>
+          <li>StackEdit, <a href="https://stackedit.io/" target="_blank" rel="noopener noreferrer">stackedit.io</a>, 2026 (cloud sync, vendor claim).</li>
+          <li>Dillinger, <a href="https://github.com/joemccann/dillinger" target="_blank" rel="noopener noreferrer">Project README</a>, 2026 (cloud integrations, vendor claim).</li>
+          <li>FTC, <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">Protecting Personal Information</a>, 2026.</li>
+          <li>NIST, <a href="https://pages.nist.gov/800-63-4/sp800-63a/privacy/" target="_blank" rel="noopener noreferrer">SP 800-63-4, Privacy and data minimization</a>, 2026.</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" target="_blank" rel="noopener noreferrer">Window.localStorage</a>, 2026.</li>
+          <li>GitHub, <a href="https://octoverse.github.com/" target="_blank" rel="noopener noreferrer">Octoverse 2025</a>, 2025 (180M+ developers, platform reach).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">More free developer tools: <a href="/developer-toolbox/markdown-editor/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Markdown Editor</a>, <a href="/developer-toolbox/sql-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">SQL Formatter</a>, <a href="/tools/json-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">JSON Formatter</a>, and <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">the Developer Toolbox</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-style:normal;font-size:.82rem;color:var(--label);margin-top:10px}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

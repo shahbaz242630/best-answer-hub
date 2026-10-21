@@ -1,0 +1,241 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../components/tools/ToolRelatedCTA.astro';
+import BuyPack from '../../components/commerce/BuyPack.astro';
+
+const today = '2026-10-08T00:00:00+00:00';
+// Real content change: the 8 Oct 2026 pack upgrade (new kit, alba house voice, the reel) and the
+// copy for the new kit. Organic visitors pay $99; the free edition is for social traffic only
+// (Malik, 8 Oct 2026), so this page never links to /free-video-pack/.
+const updated = '2026-10-08T00:00:00+00:00';
+
+// Checkout is handled entirely by <BuyPack productId="ai-video-voiceover" />, which reads
+// src/data/catalog.mjs and the bouncer pack manifest. This page holds no Paddle config and no
+// price id: it renders "Coming soon" until the catalog entry goes live AND the archive is on
+// disk, because Paddle takes the money before fulfillment can fail. Go-live = provision the
+// Paddle product/price, paste the ids into catalog.mjs AND
+// kc-data/products/ai-video-voiceover/manifest.php, set PUBLIC_PADDLE_SKILLPACK_VIDEO_PRICE
+// in .env, then `npm run catalog:check`.
+
+const skills = [
+  { n: '1', name: 'pack-setup', owns: 'Installs the studio and proves it. It finishes by speaking a real sentence, measuring the audio that comes back, and rendering a real frame, rather than reporting that the packages installed.' },
+  { n: '2', name: 'research-engine', owns: 'Gathers and verifies the facts before a word is written. Sources are graded, claims are traced to the primary source, and anything unverifiable is cut rather than hedged.' },
+  { n: '3', name: 'video-script-writer', owns: 'Studies the reference videos you supply and rebuilds their shape with your own verified facts and your own words. Includes the house rules that override generic advice.' },
+  { n: '4', name: 'video-making', owns: 'Owns everything the viewer sees: three looks, an animation kit of about forty scenes and sixteen diagram moves, cueing to the narration, the 16:9 video and its 9:16 reel, and the render itself.' },
+  { n: '5', name: 'video-publishing', owns: 'Turns the finished render into an upload package: thumbnail, title, description, chapters computed from the real timings, captions, the voice credit line, and a gate that includes the AI disclosure.' },
+];
+
+const steps = [
+  { title: 'Point your agent at the folder', description: 'Unzip the download anywhere and tell your AI agent to install the skills from it. It puts them where they belong itself. Nothing to configure, no paths to edit, no restart.' },
+  { title: 'Run setup once', description: 'The setup skill installs the Python and Node packages, fetches the voice model, and proves the install by speaking a real sentence and rendering a real frame. It exits non-zero if anything is wrong.' },
+  { title: 'Give it a topic', description: 'Research, script, narration, picture, render, upload package. Each stage is its own skill and each one stops for review, so the script and the edit are yours rather than a template\'s.' },
+];
+
+const requirements = [
+  { k: 'AI agent', v: 'Any agent that reads the Agent Skills standard. Proven on Claude Code, and it also loads in Claude Desktop and Cowork. The agent needs to be able to run scripts on your machine.' },
+  { k: 'Operating system', v: 'Windows 11, proven. macOS and Linux are expected to work but have not been tested.' },
+  { k: 'Memory', v: '8 GB minimum, 16 GB comfortable. Free memory decides render speed more than the processor does.' },
+  { k: 'Graphics card', v: 'None needed. No GPU, no CUDA, no VRAM. Both the voice and the render run on the processor.' },
+  { k: 'Processor', v: 'Any modern 4-core or better. Proven on an i7-13620H with integrated graphics only.' },
+  { k: 'Disk space', v: 'About 1.5 GB free, plus roughly 50 MB per finished video. The optional house voice adds about 1.2 GB.' },
+  { k: 'Python', v: '3.13.7 proven. 3.11 or newer is expected to work. 3.10 and below will fail on the type syntax used throughout.' },
+  { k: 'Node.js', v: '22.23.1 proven. Node 20 or newer is expected to work.' },
+  { k: 'Internet', v: 'For the install and a one-time voice model download of about 350 MB, or about 1.2 GB more for the optional house voice. After that the pipeline runs offline.' },
+  { k: 'Motion skills', v: 'The picture-building steps expect seven third-party agent skills for animation and charts. They are not part of the pack; it names each one and where to install it.' },
+  { k: 'Accounts and API keys', v: 'None. No speech account, no image account, no per-minute billing, and the script never leaves the machine.' },
+];
+
+const limits = [
+  { t: 'macOS and Linux are untested', d: 'Every measurement was taken on Windows 11, and every documented failure was hit and fixed there. Nothing in the stack is Windows-specific by design, which is a reason to expect the others to work rather than evidence that they do.' },
+  { t: 'Companies of four or more owe Remotion a license', d: 'The animation engine is free for individuals, non-profits and for-profit companies of up to three employees. Above that, Remotion requires a paid company license, from $25 a month per seat, paid to Remotion and not included here. Worth knowing before twenty videos exist.' },
+  { t: 'Speed depends on your machine', d: 'One published benchmark measured this speech model at roughly twice realtime on four CPU cores with no GPU, and render times swing by about six times depending on free memory. Treat any figure as a shape rather than a promise.' },
+  { t: 'It composes video, it does not generate footage', d: 'This produces narrated, animated explainer video: typography, cards, charts, motion. It is not a text-to-video model and it will not invent photoreal footage of a place or a person.' },
+];
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub AI Video & Voice-Over Skill Pack?',
+    a: 'The Best Answer Hub AI Video & Voice-Over Skill Pack is a set of five agent skills that take a topic through research, script, voice-over, animation and the upload package, producing a finished narrated video on your own machine. It costs $99 once. There is no subscription, no per-video fee, no API key and no account, and nothing you write is uploaded anywhere.',
+  },
+  {
+    q: 'Can you create videos with Claude Code?',
+    a: 'Yes, and the Best Answer Hub AI Video & Voice-Over Skill Pack is built to do exactly that. Claude Code can already run scripts on your machine, so the missing pieces are the instructions, the design system and the pipeline, which is what the pack supplies. You give it a topic, and it researches, writes, narrates, animates and renders, stopping at each stage for review. The pack also loads in Claude Desktop and Cowork.',
+  },
+  {
+    q: 'Can an AI agent make YouTube videos for me automatically?',
+    a: 'It can do the production, and you should keep the judgement. The Best Answer Hub AI Video & Voice-Over Skill Pack automates the slow middle: the research pass, the word budget, the narration, the animation and the render. Every stage pauses so you approve the angle and the script. What YouTube declines to monetise is interchangeable, template-produced uploads, and it states that its guidelines apply regardless of how content was made, so the pack is built as a pipeline with a person in it rather than a content mill.',
+  },
+  {
+    q: 'Is Kokoro TTS free for commercial use?',
+    a: 'Yes. Kokoro-82M is published under the Apache-2.0 license, which permits commercial use, and its model card states plainly that it has been deployed in commercial APIs. The Best Answer Hub AI Video & Voice-Over Skill Pack installs it as the baseline voice for exactly that reason: 54 voices ride on one 325 MB model with 28 MB of voice packs, under one permissive license. Its house voice, alba, voiced by Alba MacKenna for Kyutai’s Pocket TTS, is CC BY 4.0, which also permits commercial use with a credit line naming both.',
+  },
+  {
+    q: 'What is a genuinely free alternative to ElevenLabs for voice-over?',
+    a: 'A local, commercially licensed model, and that is what the Best Answer Hub AI Video & Voice-Over Skill Pack narrates with: alba under CC BY 4.0, or Kokoro under Apache-2.0. This matters more than the monthly price: ElevenLabs states that its free plan does not include a commercial license and cannot be used for any commercial purpose, so the cheapest legally sellable narration there starts at the paid tier. A local model has no tier, no credit counter, and no monthly reset.',
+  },
+  {
+    q: 'Is there a free open source local AI video generator?',
+    a: 'There are free open-source projects that do parts of this, and it is worth saying so. The honest difference is that the Best Answer Hub AI Video & Voice-Over Skill Pack is a supported pipeline, proven on Windows 11, rather than a starting point: an animation kit of about forty scenes, a measured motion set, an install that proves itself, and a documented fix for every failure the stack is known to produce. What you are buying is the assembly and the hard-won detail, not the license to free software.',
+  },
+  {
+    q: 'Can you run AI video generation locally without a GPU?',
+    a: 'Yes, if the video is composed rather than generated. Most local AI video guides assume a diffusion model and 8 GB or more of VRAM. The Best Answer Hub AI Video & Voice-Over Skill Pack takes a different route: the voice runs on the processor and the picture is animated, so no GPU, no CUDA and no VRAM are needed. It was built and proven on a laptop with integrated graphics only.',
+  },
+  {
+    q: 'Is there an AI video maker without a subscription?',
+    a: 'This one, for $99 once. For comparison, as of August 2026 Runway\'s free plan grants 125 credits one time that never renew, and its Gen-4 model costs 12 credits a second, which is about ten seconds of watermarked video in total. Kapwing\'s free tier exports 720p with a watermark and allows 30 seconds of text-to-speech a month. Pictory has no free plan at all, only a 14-day trial. The Best Answer Hub AI Video & Voice-Over Skill Pack has no credits, no watermark and no renewal.',
+  },
+  {
+    q: 'How do you create a video from a script for free without a watermark?',
+    a: 'Render it yourself. Nothing produced by the Best Answer Hub AI Video & Voice-Over Skill Pack carries a watermark, because the frames are drawn on your own machine rather than exported from somebody\'s free tier. There is no resolution cap either. Output is 1920x1080 at 30 fps, plus a 1080x1920 reel of every video, and the only running cost is the electricity to render it.',
+  },
+  {
+    q: 'How do you automate YouTube video creation with AI?',
+    a: 'By making each stage repeatable, not by pressing one button. The Best Answer Hub AI Video & Voice-Over Skill Pack splits the job into five skills, so research, script, narration, picture and packaging each run the same way every time, and one kit with three looks means episode forty is built from the same parts as episode one. Chapters and captions are computed from the real audio timings rather than typed, which is where hand-made pipelines usually drift.',
+  },
+  {
+    q: 'Can I use an AI voice on YouTube and still get monetized?',
+    a: 'Yes, provided the content is genuinely yours. YouTube does not demonetise synthetic narration as such. It requires that monetised content is not mass-produced, generic, repetitive or manipulative, and it specifically restricts AI-generated content made with unoriginal templates that gives the impression of mass production. The Best Answer Hub AI Video & Voice-Over Skill Pack keeps a person in the research, the angle and the script, which is the part that decides which side of that rule a channel lands on.',
+  },
+  {
+    q: 'Do I have to label AI-generated video?',
+    a: 'It depends on what the video shows and on the platform, and the blanket yes most pages give is wrong. YouTube requires disclosure when AI generates realistic content, and its exemptions cover fully animated work and cloning your own voice for voice overs, so an obviously animated explainer normally sits inside them. Meta is broader: its own examples name a reel narrated with a realistic AI voiceover as needing a label. The Best Answer Hub AI Video & Voice-Over Skill Pack puts the check in its upload gate, so the call is made per video rather than forgotten.',
+  },
+  {
+    q: 'What do I need installed, and will it run on my computer?',
+    a: 'Python, Node, and an AI agent that can run scripts locally. The Best Answer Hub AI Video & Voice-Over Skill Pack needs 8 GB of memory as a minimum with 16 GB comfortable, about 1.5 GB of free disk, Python 3.11 or newer and Node 20 or newer. No graphics card is required. ffmpeg arrives with the Python packages, so there is no separate system install and no PATH editing. The full table is above.',
+  },
+  {
+    q: 'Do I need a Remotion license to sell videos made with this?',
+    a: 'It depends on the size of the company using it, and this is worth checking before you build a workflow on it. The animation engine behind the Best Answer Hub AI Video & Voice-Over Skill Pack is Remotion, which is free for individuals, non-profits and for-profit organisations of up to three employees, including commercial use. A for-profit organisation with four or more employees needs a paid Remotion company license, paid to Remotion directly. As of August 2026 Remotion lists two routes: Creators at $25 a month per seat, and Automators at $0.01 a render with a $100 monthly minimum.',
+  },
+  {
+    q: 'How is it delivered, and can I get a refund?',
+    a: 'Instant download after payment, through Paddle as merchant of record. The Best Answer Hub AI Video & Voice-Over Skill Pack is a folder of Markdown instructions and scripts, with no installer and no license key. Consumers in the UK, EU, EEA and Switzerland hold a 14-day statutory right to withdraw from digital content contracts, which is lost once the buyer expressly consents to immediate delivery and acknowledges losing that right, as set out in Regulation 37 of the UK Consumer Contracts Regulations 2013. That consent is collected at checkout before the download unlocks.',
+  },
+];
+
+const seo = {
+  title: 'AI Video & Voice-Over Skill Pack: Local, No GPU (2026)',
+  description: 'Turn a topic into a narrated, animated video on your own machine. Commercially licensed voice, no GPU, no API key, no watermark. $99 once.',
+  url: '/ai-agent-skills/video-voiceover/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: updated,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'AI Agent Skills', url: '/ai-agent-skills/' },
+    { name: 'AI Video & Voice-Over Skill Pack', url: '/ai-agent-skills/video-voiceover/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Skill Pack · $99 One-Time · Runs On Your Machine"
+    title="AI Video & Voice-Over Skill Pack:"
+    accentText="a topic in, a finished video out"
+    description="Five agent skills that research a topic, write the script, narrate it, animate it and package the upload. Everything runs locally on an ordinary laptop with no graphics card, no API key and no account, and both voice models are licensed for commercial use, so the videos are yours to sell."
+    backLink="/ai-agent-skills/"
+    backLabel="AI Agent Skills"
+  />
+
+
+  <!-- Buy card -->
+  <section class="pb-6 md:pb-8" aria-label="Buy the pack">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-6 md:p-8 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
+        <div>
+          <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-3">What you get for $99, once</h2>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-bae-muted list-none p-0 m-0">
+            <li class="flex gap-2"><span class="text-bae-primary font-bold">+</span>Five agent skills, plain readable Markdown</li>
+            <li class="flex gap-2"><span class="text-bae-primary font-bold">+</span>The scripts and templates they drive</li>
+            <li class="flex gap-2"><span class="text-bae-primary font-bold">+</span>An animation kit: three looks, about forty scenes</li>
+            <li class="flex gap-2"><span class="text-bae-primary font-bold">+</span>A CC BY house voice plus Kokoro's 54 Apache-2.0 voices</li>
+            <li class="flex gap-2"><span class="text-bae-primary font-bold">+</span>An install that proves itself, not one that hopes</li>
+            <li class="flex gap-2"><span class="text-bae-primary font-bold">+</span>A documented fix for every known failure</li>
+            <li class="flex gap-2"><span class="text-bae-primary font-bold">+</span>Commercial use of everything you make</li>
+            <li class="flex gap-2"><span class="text-bae-primary font-bold">+</span>No subscription, no credits, no watermark</li>
+          </ul>
+        </div>
+        <div class="w-full bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-5 text-center">
+          <div class="font-serif text-3xl font-bold text-bae-ink">$99</div>
+          <div class="text-xs font-semibold text-bae-muted mt-1 mb-4">One-time payment · Instant download</div>
+          <!-- The whole money path. BuyPack derives price, label and availability from
+               catalog.mjs + the bouncer pack manifest, and refuses to render a live button until
+               the Paddle ids exist AND the archive is on disk, because Paddle takes the money
+               before fulfillment can fail. On success it hands off to /kc/pack/. -->
+          <BuyPack
+            productId="ai-video-voiceover"
+            label="Get the pack · $99 one-time"
+            note="One-time payment. No subscription, no credits, no per-video fee."
+            pendingNote="Checkout opens shortly · Paddle handles payment and VAT"
+            showTrustLine={false}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What is in the pack -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light" aria-label="What is in the pack">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">The five skills, in the order they run</h2>
+      <p class="text-sm text-bae-muted mb-8 max-w-3xl">Each skill is a folder holding its instructions and its reference material. Your agent loads them one at a time, at the step that needs them, so a large pack costs almost nothing until it runs.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {skills.map((s) => (
+          <div class="bg-bae-card border border-bae-border rounded-bae p-6 flex gap-4">
+            <div class="w-8 h-8 shrink-0 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold">{s.n}</div>
+            <div>
+              <h3 class="text-sm font-semibold text-bae-ink mb-1 font-mono">{s.name}</h3>
+              <p class="text-sm text-bae-muted m-0">{s.owns}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- System requirements -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light" id="requirements" aria-label="System requirements">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">System requirements</h2>
+      <p class="text-sm text-bae-muted mb-8 max-w-3xl">Measured on the machine this pack was built and proven on, not estimated. Where something is untested, the table says so.</p>
+      <div class="bg-bae-card border border-bae-border rounded-bae overflow-hidden">
+        <dl class="divide-y divide-bae-border-light">
+          {requirements.map((r) => (
+            <div class="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-1 sm:gap-6 px-6 py-4">
+              <dt class="text-sm font-semibold text-bae-ink">{r.k}</dt>
+              <dd class="text-sm text-bae-muted m-0">{r.v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Honest limits -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light" aria-label="What to know before buying">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What to know before buying</h2>
+      <p class="text-sm text-bae-muted mb-8 max-w-3xl">A buyer who is told the limits can believe the rest. These are the four things worth knowing before the money changes hands.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {limits.map((l) => (
+          <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+            <h3 class="text-base font-semibold text-bae-ink mb-2">{l.t}</h3>
+            <p class="text-sm text-bae-muted m-0">{l.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+  <ToolRelatedCTA title="More from Best Answer Hub" description="Free browser-based tools, diagnostic assessments, and plain-English playbooks on getting real work out of AI." browseHref="/ai-agent-skills/" browseLabel="Back to AI Agent Skills →" />
+</BaseLayout>

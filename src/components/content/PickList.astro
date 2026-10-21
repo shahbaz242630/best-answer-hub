@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import { formatDate } from '../../lib/seo';
+
+const articles = await getCollection('articles', ({ data }) => data.status === 'published');
+const sortedArticles = articles.sort((a, b) => new Date(b.data.publishedDate).getTime() - new Date(a.data.publishedDate).getTime()).slice(0, 6);
+---
+
+<section class="py-10 pb-20 relative z-[1]" aria-labelledby="picks-title">
+  <div class="container max-w-page mx-auto px-6">
+    <div class="flex justify-between items-baseline mb-6">
+      <h2 id="picks-title" class="font-serif text-2xl md:text-[1.6rem] font-bold tracking-tight text-bae-ink">Latest picks</h2>
+      <a href="/best/" class="text-sm font-semibold text-bae-primary hover:underline">View all →</a>
+    </div>
+    <div class="flex flex-col gap-3">
+      {sortedArticles.map((article) => (
+        <a href={`/best/${article.slug}/`} class="group grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-2 md:gap-6 items-center bg-bae-card border border-bae-border rounded-bae-sm px-5 py-4 no-underline text-inherit transition-all hover:border-bae-primary hover:translate-x-1">
+          <h3 class="text-sm font-semibold text-bae-ink">{article.data.title}</h3>
+          <span class="text-xs text-bae-muted font-medium">{formatDate(article.data.publishedDate)} · {article.data.readTime || '5'} min read</span>
+          <span class="text-[0.72rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 rounded-full bg-bae-primary-soft text-bae-primary whitespace-nowrap justify-self-start md:justify-self-auto">{article.data.category}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

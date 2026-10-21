@@ -1,0 +1,366 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Cooking Converter?', a: 'The Best Answer Hub Cooking Converter is a free, browser-based tool with two modes: an ingredient converter that moves between volume and weight using each ingredient real density, and a recipe scaler that adjusts a recipe and returns kitchen fractions. It needs no account, shows no ads, and works offline, so it is handy on a phone in the kitchen.' },
+  { q: 'Why does a cup of flour weigh less than a cup of sugar?', a: 'Because flour is less dense than sugar, so the same volume holds less weight. King Arthur puts a cup of all-purpose flour at 120 grams and a cup of granulated sugar at 198 grams. That is why a single cups-to-grams number is wrong for most ingredients, and why the Best Answer Hub Cooking Converter asks for the ingredient first.' },
+  { q: 'How many grams is a cup of all-purpose flour?', a: 'King Arthur Baking, the reference bakers cite, puts one US cup of all-purpose flour at 120 grams, though many recipes assume closer to 125 and a scooped cup can reach 140. The spread is why weighing beats scooping. The Best Answer Hub Cooking Converter uses real densities so you can switch flour from cups to grams.' },
+  { q: 'How many grams is a cup of sugar?', a: 'One US cup of granulated sugar is about 198 grams, and packed brown sugar is about 213 grams, per King Arthur. Sugar is denser than flour, which is why the same cup weighs more. The Best Answer Hub Cooking Converter carries both, so you get the right weight for the sugar your recipe calls for.' },
+  { q: 'Can I use one cups-to-grams number for everything?', a: 'No. A cup measures volume and a gram measures weight, so the conversion depends on the ingredient density. A cup of flour, sugar, and water all weigh different amounts. Any tool that gives one universal cups-to-grams figure is wrong for most ingredients, which is why the Best Answer Hub Cooking Converter is ingredient-aware.' },
+  { q: 'What is the difference between a US cup and a metric cup?', a: 'A US customary cup is 236.6 milliliters and a metric cup, used in Australia, New Zealand, and much of the Commonwealth, is 250 milliliters, about six percent larger. The US nutrition-label cup is rounded to 240 milliliters. The Best Answer Hub Cooking Converter lets you choose so the grams match your recipe origin.' },
+  { q: 'How many milliliters is a US cup?', a: 'A US customary cup is 236.588 milliliters, which is 8 US fluid ounces. On US nutrition labels the cup is rounded to 240 milliliters by FDA regulation. The metric cup is 250 milliliters. The Best Answer Hub Cooking Converter uses the standard you pick so the conversion is correct for your recipe.' },
+  { q: 'How many teaspoons are in a tablespoon?', a: 'A US tablespoon is 3 teaspoons, about 14.79 milliliters, and a US teaspoon is about 4.93 milliliters. The international metric tablespoon is exactly 15 milliliters. The Best Answer Hub Cooking Converter handles the spoon conversions so you do not have to count teaspoons by hand.' },
+  { q: 'Why is an Australian tablespoon different?', a: 'The Australian metric tablespoon is 20 milliliters, which is 4 teaspoons rather than the 3 in a US or international tablespoon, so it is a third larger. This matters for strong ingredients like salt, baking soda, and spices. The Best Answer Hub Cooking Converter accounts for the different spoon sizes.' },
+  { q: 'How do I convert an oven temperature from Fahrenheit to Celsius?', a: 'Use C equals F minus 32, times five, divided by nine. So 350 Fahrenheit is 176.7 Celsius, commonly rounded to 180 on oven dials, and 400 Fahrenheit is about 205 Celsius. The Best Answer Hub Cooking Converter shows the exact value and the usual dial rounding together.' },
+  { q: 'Is 350F 180C or 177C?', a: 'Both, depending on rounding. The exact conversion of 350 Fahrenheit is 176.7 Celsius, but oven dials and European recipes usually round it to 180. A good converter should be explicit about which it shows. The Best Answer Hub Cooking Converter gives the precise figure alongside the common dial value.' },
+  { q: 'Should I weigh ingredients or measure by volume?', a: 'For baking, weigh. A scooped cup of flour can vary by 20 percent or more depending on how it settles, and King Arthur recommends weighing with a digital scale for best results. Volume is fine for everyday cooking. The Best Answer Hub Cooking Converter turns a cup recipe into grams so you can weigh from then on.' },
+  { q: 'How many grams is a stick of butter?', a: 'One US stick of butter is 113 grams, which equals half a cup or 8 tablespoons, so a full cup of butter is about 227 grams. Butter has a consistent density, so these figures are reliable. The Best Answer Hub Cooking Converter handles butter in sticks, cups, tablespoons, and grams.' },
+  { q: 'How is it different from other cooking converters?', a: 'Many converters apply one generic density and quietly assume a US cup. The Best Answer Hub Cooking Converter is ingredient-aware, lets you choose a US or metric cup, covers oven temperatures, and includes a recipe scaler, all with no ads, no signup, and offline support for use in a kitchen.' },
+  { q: 'Is the Cooking Converter free and does it work offline?', a: 'Yes. The Best Answer Hub Cooking Converter is completely free with no usage limits and no signup, and after the page loads once it works with no internet connection because it runs entirely in your browser. That makes it dependable on a phone at the counter with messy hands and spotty kitchen Wi-Fi.' },
+];
+
+const seo = {
+  title: 'Cups to Grams: Why It Depends on the Ingredient',
+  description: 'Why a cup of flour and a cup of sugar weigh different amounts, how many grams are in a cup, US versus metric cups, the tablespoon gotcha, and oven temperatures.',
+  url: '/playbooks/cooking-converter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Cooking Converter', url: '/playbooks/cooking-converter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Calculators</span>
+        <div class="cav">A cup of flour is not a cup of sugar</div>
+        <h1>Cups to Grams, <em>and Whose Cup You Mean</em></h1>
+        <p class="dek">A plain guide to cooking measurements: why a cup of flour and a cup of sugar weigh different amounts, how many grams are really in a cup, the difference between a US cup and a metric cup, the tablespoon that trips up Australian recipes, and how to read oven temperatures. The Best Answer Hub Cooking Converter does it ingredient by ingredient, in your browser.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>Accuracy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Convert<small>volume and weight</small></div>
+          <div class="seg b2">Ingredient-aware<small>real densities</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">120g</div><div class="l">one cup of all-purpose flour</div><div class="src">King Arthur</div></div>
+      <div class="stat"><div class="n">198g</div><div class="l">one cup of granulated sugar</div><div class="src">King Arthur</div></div>
+      <div class="stat"><div class="n">240ml</div><div class="l">a US label cup; a metric cup is 250ml</div><div class="src">FDA, 21 CFR</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#density">Why flour is not sugar</a>
+        <a href="#weights">Grams in a cup</a>
+        <a href="#cups">Whose cup is it?</a>
+        <a href="#spoons">Tablespoons and teaspoons</a>
+        <a href="#oven">Oven temperatures</a>
+        <a href="#different">Versus other tools</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>A cup measures volume and a gram measures weight, so converting between them depends entirely on the ingredient: a cup of all-purpose flour is about 120 grams, a cup of granulated sugar about 198 grams, and a cup of water about 227 grams.</strong> The Best Answer Hub Cooking Converter uses the real density of each ingredient, and it lets you pick a US or a metric cup, so the answer matches your recipe. This guide covers why the ingredient matters, how many grams are in a cup, the different cup standards, the tablespoon gotcha, and oven temperatures.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Cooking Converter?</h2>
+        <p>The Best Answer Hub <a href="/calculators/cooking-converter/">Cooking Converter</a> is a single-page tool with two modes: an ingredient converter that moves between volume and weight using each ingredient's real density, so a cup of flour and a cup of sugar give different gram weights, and a recipe scaler that adjusts a recipe up or down and returns kitchen-friendly fractions like two-thirds and one and a half rather than awkward decimals. It runs entirely in your browser, so nothing is uploaded, it needs no account, shows no ads, and keeps working offline, which is handy on a phone at the counter. The converter sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The core idea</div>
+        <h2 id="density">Why does a cup of flour weigh less than a cup of sugar?</h2>
+        <p>Because they have different densities, so the same volume holds a different weight. A cup is a fixed amount of space; how much that space weighs depends on what fills it. King Arthur Baking's Ingredient Weight Chart, the reference bakers cite, puts one cup of all-purpose flour at 120 grams, one cup of granulated sugar at 198 grams, and one cup of water at 227 grams (<a href="https://www.kingarthurbaking.com/learn/ingredient-weight-chart" target="_blank" rel="noopener noreferrer">King Arthur Baking</a>). Same cup, three different weights. This is why a single "one cup equals X grams" rule is wrong for most ingredients, and why a converter has to know what you are measuring. The Best Answer Hub Cooking Converter asks for the ingredient first, then applies its real density.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">One cup, three weights</figcaption>
+          <svg viewBox="0 0 620 250" role="img" aria-label="One US cup weighs about 120 grams as flour, 198 grams as granulated sugar, and 227 grams as water. Same volume, different weight.">
+            <defs>
+              <linearGradient id="claybar" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#C6603F"></stop><stop offset="1" stop-color="#8a4429"></stop>
+              </linearGradient>
+            </defs>
+            <line x1="70" y1="205" x2="590" y2="205" stroke="#E1D4be" stroke-width="2"></line>
+            <rect x="118" y="120" width="94" height="85" rx="6" fill="url(#claybar)"></rect>
+            <rect x="266" y="65" width="94" height="140" rx="6" fill="url(#claybar)"></rect>
+            <rect x="414" y="45" width="94" height="160" rx="6" fill="url(#claybar)"></rect>
+            <text x="165" y="110" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="800" fill="#33302A">120 g</text>
+            <text x="313" y="55" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="800" fill="#33302A">198 g</text>
+            <text x="461" y="35" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="800" fill="#33302A">227 g</text>
+            <text x="165" y="226" text-anchor="middle" font-family="Karla, sans-serif" font-size="12.5" font-weight="700" fill="#33302A">Flour</text>
+            <text x="313" y="226" text-anchor="middle" font-family="Karla, sans-serif" font-size="12.5" font-weight="700" fill="#33302A">Sugar</text>
+            <text x="461" y="226" text-anchor="middle" font-family="Karla, sans-serif" font-size="12.5" font-weight="700" fill="#33302A">Water</text>
+            <text x="330" y="244" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#847B6B">one US cup of each</text>
+          </svg>
+          <p class="chart-src">One US cup weighs about 120 g as all-purpose flour, 198 g as granulated sugar, and 227 g as water. Source: King Arthur Baking Ingredient Weight Chart.</p>
+        </figure>
+
+        <div class="cav">The numbers</div>
+        <h2 id="weights">How many grams are in a cup?</h2>
+        <p>It depends on the ingredient, and the table below gives the common baking staples from King Arthur's chart. Note the flour figure: King Arthur uses 120 grams per cup, though many US recipes assume closer to 125, and a scooped cup can hit 140 or more once the flour packs down. That spread is exactly why weighing beats measuring by volume, and King Arthur says so directly: <a href="https://www.kingarthurbaking.com/learn/ingredient-weight-chart" target="_blank" rel="noopener noreferrer">"For best results, we recommend weighing your ingredients with a digital scale."</a> The Best Answer Hub Cooking Converter carries these densities so you can switch a recipe from cups to grams in a tap.</p>
+        <table>
+          <thead><tr><th>Ingredient</th><th>1 US cup</th><th>In ounces</th></tr></thead>
+          <tbody>
+            <tr><td class="band">All-purpose flour</td><td>120 g</td><td>4 1/4 oz</td></tr>
+            <tr><td class="band">Granulated sugar</td><td>198 g</td><td>7 oz</td></tr>
+            <tr><td class="band">Brown sugar (packed)</td><td>213 g</td><td>7 1/2 oz</td></tr>
+            <tr><td class="band">Butter</td><td>about 227 g (16 tbsp)</td><td>8 oz</td></tr>
+            <tr><td class="band">Water</td><td>227 g</td><td>8 oz</td></tr>
+          </tbody>
+        </table>
+        <blockquote>For best results, we recommend <span class="accent">weighing your ingredients with a digital scale.</span><cite>King Arthur Baking, Ingredient Weight Chart</cite></blockquote>
+
+        <div class="cav">The cup question</div>
+        <h2 id="cups">Whose cup is it, US or metric?</h2>
+        <p>A "cup" is not one size, and mixing them up shifts a recipe by up to about six percent. The US customary cup used by most American measuring cups is 236.588 milliliters, but the "legal" cup on US nutrition labels is rounded to 240 milliliters, which the FDA fixes in regulation: <a href="https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101/subpart-A/section-101.9" target="_blank" rel="noopener noreferrer">"a cup means 240 milliliters."</a> The metric cup used across Australia, New Zealand, and much of the Commonwealth is 250 milliliters, and the older imperial cup was about 284 milliliters (<a href="https://en.wikipedia.org/wiki/Cup_(unit)" target="_blank" rel="noopener noreferrer">Cup unit</a>). The Best Answer Hub Cooking Converter lets you choose the cup standard so the grams match the recipe's origin.</p>
+        <table>
+          <thead><tr><th>Cup type</th><th>Volume</th><th>Where it is used</th></tr></thead>
+          <tbody>
+            <tr><td class="band">US customary</td><td>236.6 ml</td><td>US measuring cups and recipes</td></tr>
+            <tr><td class="band">US legal (label)</td><td>240 ml</td><td>US nutrition labels</td></tr>
+            <tr><td class="band">Metric</td><td>250 ml</td><td>Australia, NZ, much of the Commonwealth</td></tr>
+            <tr><td class="band">Imperial (historical)</td><td>about 284 ml</td><td>Older UK recipes, now rare</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The spoon trap</div>
+        <h2 id="spoons">Tablespoons and teaspoons</h2>
+        <p>A US tablespoon is three teaspoons, about 14.79 milliliters, and a US teaspoon is about 4.93 milliliters (<a href="https://www.nist.gov/pml/owm/metric-si/unit-conversion/approximate-conversions-us-customary-measures-metric" target="_blank" rel="noopener noreferrer">NIST</a>). The international metric tablespoon used on labels and in most metric recipes is exactly 15 milliliters. The one that catches people out is the Australian tablespoon, which is 20 milliliters, or four teaspoons rather than three (<a href="https://en.wikipedia.org/wiki/Tablespoon" target="_blank" rel="noopener noreferrer">Tablespoon</a>). So an Australian recipe's tablespoon is a third larger than a US or metric one, which matters for potent ingredients like baking soda or salt. The Best Answer Hub Cooking Converter handles the spoon sizes so you do not over- or under-measure.</p>
+
+        <div class="cav">The oven dial</div>
+        <h2 id="oven">How do you convert oven temperatures?</h2>
+        <p>Convert Fahrenheit to Celsius with C equals F minus 32, times five, divided by nine. The catch is rounding: 350 degrees Fahrenheit is exactly 176.7 Celsius, but oven dials and European recipes usually round it to 180, so a converter should be clear about which it is showing. The table below lines up the common baking temperatures with their gas marks. One more note for fan or convection ovens: they typically run about 20 degrees Celsius cooler than the conventional setting, so drop the temperature accordingly. The Best Answer Hub Cooking Converter shows the exact conversion and the usual dial value together.</p>
+        <table>
+          <thead><tr><th>Fahrenheit</th><th>Celsius</th><th>Gas mark</th></tr></thead>
+          <tbody>
+            <tr><td class="band">325&deg;F</td><td>165&deg;C</td><td>3</td></tr>
+            <tr><td class="band">350&deg;F</td><td>180&deg;C (177 exact)</td><td>4</td></tr>
+            <tr><td class="band">375&deg;F</td><td>190&deg;C</td><td>5</td></tr>
+            <tr><td class="band">400&deg;F</td><td>205&deg;C</td><td>6</td></tr>
+            <tr><td class="band">425&deg;F</td><td>220&deg;C</td><td>7</td></tr>
+          </tbody>
+        </table>
+        <div class="callout peach"><div class="h">The Australian tablespoon, and the fan oven</div><p>Two gotchas worth a second look: an Australian tablespoon is 20 ml, a third bigger than the 15 ml used elsewhere, so watch it in salt, baking soda, and spice. And a fan or convection oven runs about 20 Celsius cooler than a conventional one at the same dial, so lower the temperature or shorten the time.</p></div>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from other converters?</h2>
+        <p>The difference is that the Best Answer Hub Cooking Converter is ingredient-aware and explicit about the cup standard, where many converters apply one generic density and quietly assume a US cup. Some good ones do handle density, so the wedge is the full package: per-ingredient weights, a US or metric cup choice, oven temperatures, and a recipe scaler, all free of ads and signups, and working offline in a kitchen. The table sets the usual experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical converter</th></tr></thead>
+          <tbody>
+            <tr><td>Ingredient-aware cups to grams</td><td class="band">Yes, pick the ingredient</td><td>Often one generic density</td></tr>
+            <tr><td>US vs metric cup clarity</td><td class="band">You choose</td><td>Usually assumes US, unstated</td></tr>
+            <tr><td>Tablespoon size differences</td><td class="band">Handled</td><td>Rarely mentioned</td></tr>
+            <tr><td>Oven temperatures</td><td class="band">Included</td><td>Often a separate tool</td></tr>
+            <tr><td>No ads, no signup</td><td class="band">Yes</td><td>Often ad-supported</td></tr>
+            <tr><td>Works offline</td><td class="band">Yes</td><td>Usually not</td></tr>
+          </tbody>
+        </table>
+        <div class="callout sage"><div class="h">Weigh when it counts</div><p>For baking, where ratios matter, a digital scale and grams beat cups every time, because a scooped cup of flour can vary by 20 percent or more. Use the converter to turn a cup recipe into grams once, then weigh from then on. For everyday cooking, the cup and spoon conversions are plenty.</p></div>
+        <div class="callout"><div class="h">Pair it with the rest of the hub</div><p>The Best Answer Hub <a href="/calculators/">Calculators hub</a> keeps the other everyday converters close, from a <a href="/calculators/unit-currency-converter/">Unit and Currency Converter</a> to a <a href="/calculators/data-storage-converter/">Data Storage Converter</a>, each running in the browser and sending nothing.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Convert it now</span>
+          <h3>Open the Cooking Converter</h3>
+          <p>Free, no signup, and calculated entirely in your browser. Pick the ingredient, choose your cup, and switch between cups, grams, milliliters, tablespoons, and ounces, or scale a whole recipe.</p>
+          <a class="btn" href="/calculators/cooking-converter/">Convert a measurement</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about cooking measurements</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, No Email Gate</a></b> The Calculators hub guide, from cooking to finance, all running in your browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/mortgage-calculator/">Work Out a Mortgage Payment, Honestly</a></b> Another everyday calculator, with the true monthly cost and no lead-gen.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>King Arthur Baking, <a href="https://www.kingarthurbaking.com/learn/ingredient-weight-chart" target="_blank" rel="noopener noreferrer">Ingredient Weight Chart</a> (per-ingredient cup weights: flour 120 g, granulated sugar 198 g, packed brown sugar 213 g, water 227 g; recommends weighing).</li>
+          <li>FDA, <a href="https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101/subpart-A/section-101.9" target="_blank" rel="noopener noreferrer">21 CFR 101.9</a> (for nutrition labeling, a teaspoon is 5 ml, a tablespoon 15 ml, a cup 240 ml).</li>
+          <li>NIST, <a href="https://www.nist.gov/pml/owm/metric-si/unit-conversion/approximate-conversions-us-customary-measures-metric" target="_blank" rel="noopener noreferrer">Approximate Conversions to Metric</a> (teaspoon 4.93 ml, tablespoon 14.79 ml, fluid ounce 29.57 ml, ounce 28.35 g).</li>
+          <li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Cup_(unit)" target="_blank" rel="noopener noreferrer">Cup (unit)</a> (US customary 236.6 ml, US legal 240 ml, metric 250 ml) and <a href="https://en.wikipedia.org/wiki/Tablespoon" target="_blank" rel="noopener noreferrer">Tablespoon</a> (US ~14.8 ml, metric 15 ml, Australian 20 ml).</li>
+          <li>The Calculator Site, <a href="https://www.thecalculatorsite.com/cooking/oven-temperatures.php" target="_blank" rel="noopener noreferrer">Oven Temperatures</a> (Fahrenheit, Celsius, and gas mark equivalents; fan ovens run cooler).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/calculators/cooking-converter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Cooking Converter</a>, <a href="/calculators/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Calculators</a>, <a href="/calculators/unit-currency-converter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Unit and Currency Converter</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-style:normal;font-size:.82rem;color:var(--label);margin-top:10px}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

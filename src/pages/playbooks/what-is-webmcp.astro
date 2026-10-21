@@ -1,0 +1,433 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-08-29T00:00:00+00:00';
+
+// RelatedPlaybooks omitted for now, per Playbook_HANDOFF sections 14.5 and 15.
+
+const faqs = [
+  { q: 'What is the Best Answer Hub guide to WebMCP?', a: 'This Best Answer Hub playbook explains WebMCP from the specification and browser documentation directly, rather than from other articles. It gives the current API name, a working code example, the real standards status, and an audit showing how much published material still teaches a name that no longer works.' },
+  { q: 'What is WebMCP in Chrome?', a: 'It is a browser API that lets a web page register named tools an AI agent can call, instead of the agent clicking through the interface. Each tool has a description and a JSON input schema. Chrome has run it as an origin trial since version 149, and behind a flag before that.' },
+  { q: 'Is it navigator.modelContext or document.modelContext?', a: 'It is document.modelContext. The getter moved from the Navigator interface to Document in pull request #184, merged on 27 May 2026, which scopes tools to a document rather than a window. Most published tutorials predate that move and still teach the navigator spelling, which will not resolve.' },
+  { q: 'How do you enable WebMCP in Chrome?', a: 'For local development, run Chromium 146.0.7672.0 or later and turn on the enable-webmcp-testing flag. For a real site, register for the origin trial, which Chrome opened at version 149 and has scheduled to end at milestone 156, with 157 listed as the expected shipping milestone.' },
+  { q: 'What is the difference between WebMCP and MCP?', a: 'MCP connects an agent to servers and services outside the browser. WebMCP lets the open page itself declare tools the agent can call, inside the user\'s existing session. Chrome describes WebMCP as MCP-inspired rather than a JavaScript implementation of it, and calls the two partners rather than opponents.' },
+  { q: 'What is the WebMCP declarative API?', a: 'It turns an ordinary HTML form into a tool using four attributes: toolname, tooldescription, toolparamdescription and toolautosubmit, all lowercase and unhyphenated. It suits pages whose actions already are forms. Note that the declarative section of the specification is currently marked as unfinished and points at a separate explainer.' },
+  { q: 'What does a minimal WebMCP tool look like?', a: 'Call document.modelContext.registerTool with an object carrying a name, a description, an inputSchema in JSON Schema form and an async execute function, then pass an AbortSignal as the second argument. The execute function returns a content array. That signal is how the tool is later removed.' },
+  { q: 'How do you unregister a WebMCP tool?', a: 'Abort the signal that was passed to registerTool. There is no unregisterTool method, although six of the guides audited for this article teach one. Chrome refined the behavior as of version 153, so unregistering no longer cancels and breaks tool executions that are still running.' },
+  { q: 'Is WebMCP a W3C standard?', a: 'No. It is a Draft Community Group Report from the W3C Web Machine Learning Community Group, and states plainly that it is neither a W3C Standard nor on the Standards Track. The TAG, security and privacy reviews are all still pending. Community Groups do not produce standards.' },
+  { q: 'Does WebMCP work with Claude or Claude Code?', a: 'WebMCP tools can only be read by an agent running inside the browser with the page open, so a terminal agent such as Claude Code never sees them. Terminal agents use MCP servers instead. The two approaches solve different halves of the same problem and are not substitutes.' },
+  { q: 'What is the difference between WebMCP and Playwright MCP?', a: 'Playwright MCP gives an agent the ability to drive a browser: click, type, navigate. WebMCP gives the page a way to declare what the agent may do without driving anything. One improvises against the interface and breaks when layouts change; the other follows a contract the site publishes.' },
+  { q: 'How do you debug WebMCP tools?', a: 'Call document.modelContext.getTools to list what the page currently registers, and executeTool to run one by name from the console. A toolchange event fires whenever the registered set changes, which is what tool inspector extensions listen for. Start there before assuming the agent is at fault.' },
+  { q: 'What does WebMCP stand for?', a: 'Web Model Context Protocol. The name borrows from the Model Context Protocol, and the specification says it shares that vocabulary of tools, schemas and parameters deliberately. Note the name collision in search results with the WebM video format, which is unrelated.' },
+  { q: 'Which browsers support WebMCP?', a: 'Chrome and Microsoft Edge, both as origin trials, and both built on Chromium. Position requests were filed with Mozilla and WebKit on 28 May 2026. Mozilla has since closed its issue as "position: neutral", and WebKit\'s carries concern labels but no stated position, so Chrome\'s own platform tracker still records Firefox and Safari as no signal.' },
+  { q: 'Can you reuse an existing MCP server with WebMCP?', a: 'Not directly, because they run in different places. A WebMCP tool is JavaScript in the page; an MCP server is a separate process. A page can call its own backend from inside a tool\'s execute function, which is usually the practical bridge, but the two are not interchangeable.' },
+];
+
+const seo = {
+  title: 'What Is WebMCP in Chrome, and Should You Ship It Yet?',
+  description: 'WebMCP lets a page hand an AI agent real tools instead of buttons to guess at. What it is, the API name that moved in May 2026, and what is safe to ship.',
+  url: '/playbooks/what-is-webmcp/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'What Is WebMCP', url: '/playbooks/what-is-webmcp/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+<div class="hero">
+  <span class="glow"></span>
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="masthead"><img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44"><span class="word">Best Answer Hub<i>.</i></span></div>
+      <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+    </div>
+    <span class="eyebrow">Best Answer Hub Playbooks &middot; AI Agent Skills</span>
+    <div class="cav">Check the name before you copy the code</div>
+    <h1>What Is WebMCP in Chrome, and <em>Should You Ship It Yet?</em></h1>
+    <p class="dek">A page can now hand an AI agent a list of things it is allowed to do, instead of leaving the agent to guess which button is the checkout button. The idea is sound. The API moved house in May 2026, and most of the guides teaching it never noticed.</p>
+    <div class="byline"><span><b>Best Answer Hub</b></span><span>~12 min read</span><span>Spec quoted at source</span><span>No signup</span></div>
+    <div class="bandstrip">
+      <div class="seg b1">Real<small>Shipping in Chrome and Edge trials</small></div>
+      <div class="seg b2">Draft<small>A Community Group report, not a standard</small></div>
+      <div class="seg b3">Careful<small>The agent arrives already logged in as your user</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat"><div class="n">18/22</div><div class="l">published WebMCP guides that teach an API name which no longer works</div><div class="src">Audited for this article, August 2026</div></div>
+  <div class="stat"><div class="n">27 May</div><div class="l">2026, the day the API moved off <code>navigator</code></div><div class="src">Spec pull request #184</div></div>
+  <div class="stat"><div class="n">149</div><div class="l">the first Chrome version with the WebMCP origin trial</div><div class="src">Chrome Platform Status</div></div>
+  <div class="stat"><div class="n">0</div><div class="l">positions stated by Firefox or Safari, three months after being asked</div><div class="src">Mozilla and WebKit standards-positions</div></div>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="On this page">
+    <div class="t">On this page</div>
+    <a href="#what">What is WebMCP?</a>
+    <a href="#name">navigator or document?</a>
+    <a href="#example">What a tool looks like</a>
+    <a href="#vsmcp">WebMCP vs MCP</a>
+    <a href="#standard">Is it a W3C standard?</a>
+    <a href="#browsers">Browsers, and the flag</a>
+    <a href="#using">Who is actually using it</a>
+    <a href="#risk">What changes about security</a>
+    <a href="#ship">Should you ship it yet?</a>
+    <a href="#faq">FAQs</a>
+  </nav>
+
+  <article>
+
+    <p class="lead"><strong>WebMCP is a browser API that lets a web page hand an AI agent a list of things it can do, rather than leaving the agent to work out where the buttons are.</strong> The page registers named tools, each with a plain-English description and a JSON schema for its inputs. An agent running inside that browser reads the list and calls them directly. The clicking, the waiting and the guessing come out, and the site decides what is on the menu.</p>
+
+    <div class="cav">The problem it was built for</div>
+    <h2 id="what">What is WebMCP, and what problem does it solve?</h2>
+
+    <p>Browser agents today mostly drive a site the way a person does, only worse: find an element, click it, wait for something to change, hope the layout did not shift. It works until a class name changes. WebMCP inverts the arrangement. Instead of the agent reverse-engineering the interface, the page publishes its own capabilities. The specification describes it as a <em>"form-fitting, client-safe solution designed natively for the web platform."</em></p>
+
+    <p>The practical difference is who holds the contract. A DOM-driving agent has no idea whether the button it just clicked cancelled an order or created one. A WebMCP tool has a name, a description, a typed input schema and a function the site itself wrote. The site can offer three tools and no more. It can mark the read-only ones as read-only. It can decline to expose anything that spends money.</p>
+
+    <p>One thing worth correcting early, because the press coverage is lopsided: this is not a Google project with Microsoft watching. The specification credits three Microsoft authors (Brandon Walderman, Leo Lee and Andrew Nolan) alongside three from Google (David Bokan, Khushal Sagar and Hannah Van Opstal), with Dominic Farolino driving the recent specification work. Edge is running the trial too.</p>
+
+    <div class="cav">The part that trips everyone up</div>
+    <h2 id="name">Is it <code>navigator.modelContext</code> or <code>document.modelContext</code>?</h2>
+
+    <p><strong>It is <code>document.modelContext</code>, and it has been since 27 May 2026.</strong> Pull request #184 in the specification repository, titled <em>"Move the <code>modelContext</code> getter to <code>Document</code>"</em>, did exactly what its title says: it took the getter off the <code>Navigator</code> interface and put it on <code>Document</code>, so tools are scoped to a document rather than a window. It was authored by Dominic Farolino, closed issue #173, and merged with three approvals.</p>
+
+    <p>That single move is why so much of the material on this subject is quietly broken. Twenty-two published guides with a clear position on the API were checked for this article. <strong>Eighteen of them teach <code>navigator.modelContext</code> or a method that has never existed in any version.</strong> Only four teach the current name, and all four were published or updated after July 2026. Every page dated before roughly July 2026 is wrong, including the ones ranking at the top of search for the obvious queries.</p>
+
+    <div class="chart">
+      <div class="chart-title">What 22 published WebMCP guides actually teach</div>
+      <svg viewBox="0 0 700 210" role="img" aria-label="Bar chart. Eighteen of twenty-two audited WebMCP guides teach the outdated navigator.modelContext name or a method that never existed. Four teach the current document.modelContext name.">
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/>
+          </linearGradient>
+        </defs>
+        <text x="8" y="30" font-family="Karla,sans-serif" font-size="13" font-weight="700" fill="#847B6B">Teaches an API that no longer works</text>
+        <rect x="8" y="40" width="558" height="38" rx="7" fill="url(#cg)"/>
+        <text x="580" y="65" font-family="Bricolage Grotesque,sans-serif" font-size="24" font-weight="800" fill="#33302A">18</text>
+        <text x="8" y="120" font-family="Karla,sans-serif" font-size="13" font-weight="700" fill="#847B6B">Teaches <tspan font-family="ui-monospace,monospace">document.modelContext</tspan></text>
+        <rect x="8" y="130" width="124" height="38" rx="7" fill="#E4EADD" stroke="#cfd9c6"/>
+        <text x="146" y="155" font-family="Bricolage Grotesque,sans-serif" font-size="24" font-weight="800" fill="#6F8A6A">4</text>
+        <line x1="8" y1="188" x2="692" y2="188" stroke="#E1D4be" stroke-width="2"/>
+        <text x="8" y="204" font-family="Karla,sans-serif" font-size="11" fill="#a89c87">22 guides with a determinable API stance. Pages teaching a third-party library rather than the browser API were excluded.</text>
+      </svg>
+      <p class="chart-src">Source: manual audit of the ranking results for the main WebMCP queries, August 2026.</p>
+    </div>
+
+    <p>The invented methods are their own problem. Across those pages you will find <code>navigator.registerTool</code>, <code>provideTools</code>, <code>listTools</code>, <code>clearContext</code>, <code>provideContext</code>, <code>unregisterTool</code> and <code>requestUserInteraction</code> presented as working code. None of them exist in the current specification. One guide teaches the declarative attribute as <code>tool-param-description</code>; the real attribute has no hyphens.</p>
+
+    <div class="callout"><div class="h">Where the confusion is coming from</div><p>Google's own systems still carry the old name. The Chrome Platform Status entry and the original blink-dev intent are both filed under "navigator.modelContext (WebMCP)", which predates the move and has never been retitled. Anyone checking the official tracker to confirm a tutorial gets the old name confirmed back at them.</p></div>
+
+    <div class="cav">Copy this, not the tutorials</div>
+    <h2 id="example">What does a WebMCP tool actually look like?</h2>
+
+    <p>A tool is an object with a name, a description, an input schema and an async <code>execute</code> function. It is registered against the document, and unregistered by aborting a signal you pass in at registration time. This example is the shape used in the specification repository itself.</p>
+
+<pre><span class="cm">// Current API. The getter lives on document, not navigator.</span>
+<span class="kw">const</span> controller = <span class="kw">new</span> AbortController();
+
+document.modelContext.registerTool(&#123;
+  name: <span class="kw">"add-todo"</span>,
+  description: <span class="kw">"Add a new item to the user's active todo list"</span>,
+  inputSchema: &#123;
+    type: <span class="kw">"object"</span>,
+    properties: &#123;
+      text: &#123; type: <span class="kw">"string"</span>, description: <span class="kw">"The text content of the todo item"</span> &#125;
+    &#125;,
+    required: [<span class="kw">"text"</span>]
+  &#125;,
+  <span class="kw">async</span> execute(&#123; text &#125;) &#123;
+    <span class="kw">await</span> addTodoItemToCollection(text);
+    <span class="kw">return</span> &#123; content: [&#123; type: <span class="kw">"text"</span>, text: `Added: $&#123;text&#125;` &#125;] &#125;;
+  &#125;
+&#125;, &#123; signal: controller.signal &#125;);
+
+<span class="cm">// To remove the tool later, abort the controller.</span>
+<span class="cm">// There is no unregisterTool() method, and there never was.</span>
+controller.abort();</pre>
+
+    <p>The <code>AbortSignal</code> pattern is the single most-missed detail. Six of the audited guides teach a call to <code>unregisterTool()</code>, which will throw. Chrome refined the behavior since: as of Chrome 153 a tool can be unregistered without cancelling and breaking executions that are still in flight.</p>
+
+    <p>There is also a declarative form, which annotates an existing HTML form so that submitting it becomes the tool. The attributes are <code>toolname</code>, <code>tooldescription</code>, <code>toolparamdescription</code> and <code>toolautosubmit</code>, all lowercase and unhyphenated. Be aware that this half is unfinished: section 4.3 of the specification currently reads, in full, <em>"This section is entirely a TODO. For now, refer to the Declarative API explainer."</em></p>
+
+    <p>For inspecting what a page is offering, <code>document.modelContext.getTools()</code> returns the registered set and <code>executeTool()</code> runs one by name. A <code>toolchange</code> event fires when the set changes, which is what a debugging extension listens for.</p>
+
+    <div class="cav">Three things people keep merging into one</div>
+    <h2 id="vsmcp">How is WebMCP different from MCP?</h2>
+
+    <p>They are different layers and they are not competing. Chrome states it plainly: <em>"WebMCP is not an extension or a replacement of MCP,"</em> and suggests treating it as <em>"a set of 'MCP-inspired' APIs, rather than a direct JavaScript implementation of MCP."</em> The same post calls the two <em>"partners, not opponents."</em> The specification repository agrees that WebMCP <em>"derives direct inspiration and shares a common vocabulary with MCP (e.g., tools, schemas, parameters)"</em> while being built for the web platform specifically.</p>
+
+    <p>The clearest way to hold the difference is to ask where the tool code runs and who is already authenticated.</p>
+
+    <table>
+      <thead><tr><th></th><th>WebMCP</th><th>An MCP server</th><th>A browser-driving agent</th></tr></thead>
+      <tbody>
+        <tr><td class="band">Where the tools live</td><td>In the page, registered in JavaScript</td><td>On a server or a local process</td><td>Nowhere: the agent improvises from the DOM</td></tr>
+        <tr><td class="band">Who wrote them</td><td>The site owner</td><td>The API owner or a third party</td><td>Whoever wrote the agent</td></tr>
+        <tr><td class="band">What the agent sees</td><td>A typed list of allowed actions</td><td>A typed list of allowed actions</td><td>Pixels and markup</td></tr>
+        <tr><td class="band">Authentication</td><td>Inherited: the user is already logged in</td><td>Separate credentials, usually a token</td><td>Inherited, through the browser session</td></tr>
+        <tr><td class="band">Breaks when</td><td>The site changes its tool contract</td><td>The API version changes</td><td>Anything on the page moves</td></tr>
+        <tr><td class="band">Needs the browser</td><td>Yes, and the page must be open</td><td>No</td><td>Yes</td></tr>
+      </tbody>
+    </table>
+
+    <p>So a WebMCP tool cannot replace an MCP server for anything that has to run when nobody has the tab open, and an MCP server cannot see the shopping cart the user is looking at right now. That is the whole division of labor.</p>
+
+    <div class="cav">The claim to stop repeating</div>
+    <h2 id="standard">Is WebMCP a W3C standard?</h2>
+
+    <p><strong>No.</strong> The document is published as a Draft Community Group Report by the W3C Web Machine Learning Community Group, and it carries the standard boilerplate: <em>"It is not a W3C Standard nor is it on the W3C Standards Track."</em> Chrome's own tracker records its maturity as a specification <em>"being incubated in a Community Group,"</em> and lists the TAG review, the security review and the privacy review as all still pending.</p>
+
+    <p>A Community Group is open to anyone and produces no standards. A Working Group produces Recommendations. The confusion is easy to explain, because there is a Web Machine Learning <em>Working</em> Group at the W3C, but its deliverable is WebNN, a neural network API, not this. Anything describing WebMCP as an official W3C standard has skipped that distinction.</p>
+
+    <div class="cav">Turning it on</div>
+    <h2 id="browsers">Which browsers support WebMCP, and how do you enable it?</h2>
+
+    <p>Two engines, both Chromium. Chrome runs an origin trial that began at <strong>Chrome 149</strong> and is scheduled to end at milestone 156, with 157 recorded as the expected shipping milestone. For local development the instruction is simpler: Chromium 146.0.7672.0 or later, with the <code>#enable-webmcp-testing</code> flag switched on. Microsoft Edge lists WebMCP in the origin trials section of its 151 release notes, described as a feature that <em>"enables your site to register tools for an in-browser agent to complete tasks on behalf of a user."</em></p>
+
+    <p>Note what is missing. Dominic Farolino filed position requests with both Mozilla and WebKit on 28 May 2026, the day after the rename landed. Three months later, <strong>neither has endorsed it</strong>. Mozilla has since closed its issue with a "position: neutral" label, which is a shrug rather than a commitment. The WebKit issue carries concern labels for API design, privacy, security, internationalization and portability, but no stated position. Chrome's tracker records Firefox and Safari as "No signal" apiece.</p>
+
+    <div class="callout sage"><div class="h">A small precision that saves an embarrassment</div><p>No calendar end date has been published for the origin trial, only the end milestone. Chrome was mid-transition to two-week releases when the trial was approved, which makes the usual milestone-to-date conversion tables unreliable. Quote the milestone, not a date.</p></div>
+
+    <div class="cav">Past the demos</div>
+    <h2 id="using">Is anyone actually using it in production?</h2>
+
+    <p>Yes, and at a scale that makes the common "nobody has shipped this" framing out of date. On <strong>5 August 2026</strong> Shopify turned WebMCP on across its storefronts. The changelog entry is unambiguous: <em>"Online stores now expose WebMCP tools that AI agents can call. Agents can search your catalog, manage the shopper's cart, and go to checkout on the shopper's behalf, all in the tab they're looking at."</em> For merchants, <em>"There's nothing to install or configure."</em></p>
+
+    <p>The tools exposed are the obvious commerce set: catalog search, store browsing, product and variant lookup, cart read and write, checkout, order management and a policy or FAQ search. It went live on every Liquid storefront and on the Hydrogen developer preview at the same time.</p>
+
+    <p>Beyond that, the record thins out fast. WordPress has an open issue proposing a WebMCP experiment, filed in April 2026 and still marked as needing a decision, and that issue itself takes care to note the specification is not a W3C standard. No second production adopter of comparable size turned up in this research. One large platform switching it on by default, and a long queue of people writing about it, is roughly the honest picture.</p>
+
+    <div class="cav">The part the tutorials skip</div>
+    <h2 id="risk">What changes about security when a page hands an agent tools?</h2>
+
+    <p>The threat model shifts, and the specification is candid about it. The section on security and privacy names prompt injection first: <em>"malicious instructions are embedded in tool metadata, inputs, or outputs to manipulate agent behavior or compromise systems."</em> Tool descriptions and return values, it warns, <em>"could be treated as trusted context by agents,"</em> which turns any user-generated content on the page into an injection surface.</p>
+
+    <p>Two further lines deserve to be read twice by anyone shipping this. On authority: <em>"Agents are able to inherit user identity and authentication context from the browser. When an agent visits a website, it carries the user's logged-in credentials and session state."</em> And on trust: <em>"There is no guarantee that a WebMCP tool's declared intent matches its actual behavior."</em> The document then concedes its own limit, stating that it <em>"cannot define precise mitigation strategies that agents or user agents must provide."</em></p>
+
+    <p>Chrome's guidance for tool authors is more practical and just as blunt. Tools that write <em>"should only be exposed to origins you decide can be trusted."</em> The <code>readOnlyHint</code> flag exists so an agent <em>"can make better decisions about when to ask for user confirmations."</em> And the underlying caveat: <em>"it's impossible to guarantee safety inside of a large language model."</em></p>
+
+    <div class="callout peach"><div class="h">A working rule for tool design</div><p>Treat every tool input and every tool output as untrusted text, the same way you would treat a query string. Mark read-only tools as read-only so the agent knows it does not need to ask. Keep anything that spends money, sends a message or deletes a record behind an explicit user confirmation. And do not expose a tool that does something you would not let an unknown script do with that user's session, because functionally that is what it is.</p></div>
+
+    <div class="cav">The honest answer</div>
+    <h2 id="ship">Should you ship WebMCP yet?</h2>
+
+    <p>It depends on which of three situations you are in, and only one of them calls for real work.</p>
+
+    <ul class="pillars">
+      <li><strong>On Shopify: it is already done.</strong> The tools are live on Liquid storefronts with nothing to install. The useful move is to check what the default tools expose and decide whether that matches how the store should behave.</li>
+      <li><strong>Building something agent-facing: prototype behind the flag.</strong> Two or three read-only tools, registered properly against <code>document.modelContext</code>, cost very little and teach a lot. Treat the write path as a later decision.</li>
+      <li><strong>Planning a rewrite around it: not yet.</strong> The specification sits in a Community Group with three reviews pending, two engines have said nothing at all after three months, and the API surface moved once already this year.</li>
+    </ul>
+
+    <p>The idea is durable even if this particular spelling of it is not. Sites will end up declaring their capabilities to agents rather than being scraped by them, because the alternative is worse for both sides. Whether the getter ends up on <code>document</code> is a detail. Writing tools with tight schemas, honest descriptions and a hard line around anything that spends money is the part that survives whatever the name turns out to be.</p>
+
+    <div class="cta">
+      <span class="kicker">Before you expose anything</span>
+      <h3>Is your app ready for agents to act on it?</h3>
+      <p>Registering tools means handing an outside system real actions inside a logged-in session. The free Best Answer Hub readiness check runs through security, data handling and production basics in about fifteen minutes, no signup and nothing uploaded.</p>
+      <a class="btn" href="/knowledge-center/vibe-coder/">Take the free readiness check</a>
+    </div>
+
+    <div class="cav">Everything else people ask</div>
+    <h2 id="faq">Frequently asked questions</h2>
+
+    <div class="faq">
+      <div class="qa"><div class="q">What is the Best Answer Hub guide to WebMCP?</div><div class="a">This Best Answer Hub playbook explains WebMCP from the specification and browser documentation directly, rather than from other articles. It gives the current API name, a working code example, the real standards status, and an audit showing how much published material still teaches a name that no longer works.</div></div>
+      <div class="qa"><div class="q">What is WebMCP in Chrome?</div><div class="a">It is a browser API that lets a web page register named tools an AI agent can call, instead of the agent clicking through the interface. Each tool has a description and a JSON input schema. Chrome has run it as an origin trial since version 149, and behind a flag before that.</div></div>
+      <div class="qa"><div class="q">Is it navigator.modelContext or document.modelContext?</div><div class="a">It is document.modelContext. The getter moved from the Navigator interface to Document in pull request #184, merged on 27 May 2026, which scopes tools to a document rather than a window. Most published tutorials predate that move and still teach the navigator spelling, which will not resolve.</div></div>
+      <div class="qa"><div class="q">How do you enable WebMCP in Chrome?</div><div class="a">For local development, run Chromium 146.0.7672.0 or later and turn on the enable-webmcp-testing flag. For a real site, register for the origin trial, which Chrome opened at version 149 and has scheduled to end at milestone 156, with 157 listed as the expected shipping milestone.</div></div>
+      <div class="qa"><div class="q">What is the difference between WebMCP and MCP?</div><div class="a">MCP connects an agent to servers and services outside the browser. WebMCP lets the open page itself declare tools the agent can call, inside the user's existing session. Chrome describes WebMCP as MCP-inspired rather than a JavaScript implementation of it, and calls the two partners rather than opponents.</div></div>
+      <div class="qa"><div class="q">What is the WebMCP declarative API?</div><div class="a">It turns an ordinary HTML form into a tool using four attributes: toolname, tooldescription, toolparamdescription and toolautosubmit, all lowercase and unhyphenated. It suits pages whose actions already are forms. Note that the declarative section of the specification is currently marked as unfinished and points at a separate explainer.</div></div>
+      <div class="qa"><div class="q">What does a minimal WebMCP tool look like?</div><div class="a">Call document.modelContext.registerTool with an object carrying a name, a description, an inputSchema in JSON Schema form and an async execute function, then pass an AbortSignal as the second argument. The execute function returns a content array. That signal is how the tool is later removed.</div></div>
+      <div class="qa"><div class="q">How do you unregister a WebMCP tool?</div><div class="a">Abort the signal that was passed to registerTool. There is no unregisterTool method, although six of the guides audited for this article teach one. Chrome refined the behavior as of version 153, so unregistering no longer cancels and breaks tool executions that are still running.</div></div>
+      <div class="qa"><div class="q">Is WebMCP a W3C standard?</div><div class="a">No. It is a Draft Community Group Report from the W3C Web Machine Learning Community Group, and states plainly that it is neither a W3C Standard nor on the Standards Track. The TAG, security and privacy reviews are all still pending. Community Groups do not produce standards.</div></div>
+      <div class="qa"><div class="q">Does WebMCP work with Claude or Claude Code?</div><div class="a">WebMCP tools can only be read by an agent running inside the browser with the page open, so a terminal agent such as Claude Code never sees them. Terminal agents use MCP servers instead. The two approaches solve different halves of the same problem and are not substitutes.</div></div>
+      <div class="qa"><div class="q">What is the difference between WebMCP and Playwright MCP?</div><div class="a">Playwright MCP gives an agent the ability to drive a browser: click, type, navigate. WebMCP gives the page a way to declare what the agent may do without driving anything. One improvises against the interface and breaks when layouts change; the other follows a contract the site publishes.</div></div>
+      <div class="qa"><div class="q">How do you debug WebMCP tools?</div><div class="a">Call document.modelContext.getTools to list what the page currently registers, and executeTool to run one by name from the console. A toolchange event fires whenever the registered set changes, which is what tool inspector extensions listen for. Start there before assuming the agent is at fault.</div></div>
+      <div class="qa"><div class="q">What does WebMCP stand for?</div><div class="a">Web Model Context Protocol. The name borrows from the Model Context Protocol, and the specification says it shares that vocabulary of tools, schemas and parameters deliberately. Note the name collision in search results with the WebM video format, which is unrelated.</div></div>
+      <div class="qa"><div class="q">Which browsers support WebMCP?</div><div class="a">Chrome and Microsoft Edge, both as origin trials, and both built on Chromium. Position requests were filed with Mozilla and WebKit on 28 May 2026. Mozilla has since closed its issue as "position: neutral", and WebKit's carries concern labels but no stated position, so Chrome's own platform tracker still records Firefox and Safari as no signal.</div></div>
+      <div class="qa"><div class="q">Can you reuse an existing MCP server with WebMCP?</div><div class="a">Not directly, because they run in different places. A WebMCP tool is JavaScript in the page; an MCP server is a separate process. A page can call its own backend from inside a tool's execute function, which is usually the practical bridge, but the two are not interchangeable.</div></div>
+    </div>
+
+    <div class="cav">Where every quote came from</div>
+    <h2 id="sources">Sources</h2>
+    <ul class="sources">
+      <li><a href="https://webmachinelearning.github.io/webmcp/" target="_blank" rel="noopener noreferrer">WebMCP specification, Draft Community Group Report, 26 August 2026</a>: the standards-status boilerplate, the security and privacy section including prompt injection, inherited credentials and intent misrepresentation, and the unfinished declarative section.</li>
+      <li><a href="https://github.com/webmachinelearning/webmcp" target="_blank" rel="noopener noreferrer">webmachinelearning/webmcp repository</a>: the registerTool example and the description of WebMCP as a form-fitting, client-safe solution designed for the web platform.</li>
+      <li><a href="https://github.com/webmachinelearning/webmcp/pull/184" target="_blank" rel="noopener noreferrer">Pull request #184, merged 27 May 2026</a>: "Move the modelContext getter to Document", the change that moved the API off navigator.</li>
+      <li><a href="https://www.w3.org/groups/cg/webmachinelearning/" target="_blank" rel="noopener noreferrer">W3C Web Machine Learning Community Group</a>: the group that publishes the specification, and the distinction from the Working Group that produces WebNN.</li>
+      <li><a href="https://chromestatus.com/feature/5117755740913664" target="_blank" rel="noopener noreferrer">Chrome Platform Status: WebMCP</a>: origin trial milestones 149 to 156, expected shipping milestone 157, pending TAG, security and privacy reviews, and the no-signal entries for Firefox and Safari.</li>
+      <li><a href="https://developer.chrome.com/docs/ai/webmcp/imperative-api" target="_blank" rel="noopener noreferrer">Chrome: the WebMCP imperative API</a> and <a href="https://developer.chrome.com/docs/ai/webmcp" target="_blank" rel="noopener noreferrer">the WebMCP documentation hub</a>: document.modelContext throughout, getTools, executeTool, the toolchange event, and the Chrome 153 unregistration change.</li>
+      <li><a href="https://developer.chrome.com/blog/webmcp-mcp-usage" target="_blank" rel="noopener noreferrer">Chrome: when to use WebMCP and MCP</a>: the statements that WebMCP is not an extension or replacement of MCP, that it is MCP-inspired, and that the two are partners rather than opponents.</li>
+      <li><a href="https://developer.chrome.com/docs/ai/webmcp/secure-tools" target="_blank" rel="noopener noreferrer">Chrome: securing WebMCP tools</a>: the trusted-origins guidance, the purpose of readOnlyHint, and the statement that safety cannot be guaranteed inside a large language model.</li>
+      <li><a href="https://github.com/GoogleChrome/modern-web-guidance/blob/main/skills/modern-web-guidance/guides/webmcp/webmcp.md" target="_blank" rel="noopener noreferrer">Google Chrome modern web guidance</a>: the Chromium 146.0.7672.0 minimum and the enable-webmcp-testing flag.</li>
+      <li><a href="https://github.com/MicrosoftDocs/edge-developer/blob/main/microsoft-edge/web-platform/release-notes/151.md" target="_blank" rel="noopener noreferrer">Microsoft Edge 151 release notes</a>: WebMCP listed under origin trials, with the quoted description.</li>
+      <li><a href="https://github.com/mozilla/standards-positions/issues/1412" target="_blank" rel="noopener noreferrer">Mozilla standards-positions #1412</a> and <a href="https://github.com/WebKit/standards-positions/issues/670" target="_blank" rel="noopener noreferrer">WebKit standards-positions #670</a>: both opened 28 May 2026, both still without a stated position.</li>
+      <li><a href="https://shopify.dev/changelog/webmcp-liquid-hydrogen" target="_blank" rel="noopener noreferrer">Shopify changelog, 5 August 2026</a> and <a href="https://shopify.dev/docs/api/web-mcp" target="_blank" rel="noopener noreferrer">the Shopify WebMCP tool reference</a>: what shipped, the nothing-to-install line, and the list of exposed tools.</li>
+      <li><a href="https://github.com/WordPress/ai/issues/448" target="_blank" rel="noopener noreferrer">WordPress AI issue #448</a>: the open, undecided proposal to experiment with WebMCP.</li>
+    </ul>
+
+    <p class="toolsrow">Related reading from Best Answer Hub: <a href="/playbooks/what-are-ai-agent-skills/">what AI agent skills are and what they are for</a>, <a href="/playbooks/vibe-coded-app-launch-readiness/">whether a vibe-coded app is ready to launch</a>, and the <a href="/developer-toolbox/">free Developer Toolbox</a>. Ready-made packs for coding agents live at <a href="/ai-agent-skills/">AI Agent Skills</a>.</p>
+  </article>
+</div>
+
+  </div>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 11px;border-radius:999px;display:inline-block;white-space:nowrap;font-family:'Bricolage Grotesque',sans-serif}
+  .pb .lv1{background:var(--sage)}
+  .pb .lv2{background:var(--clay)}
+  .pb .lv3{background:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+  .pb code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.86em;background:var(--sage-tint);color:var(--clay-deep);padding:1px 6px;border-radius:5px}
+  .pb pre{background:var(--ink);color:#f3ece0;border-radius:12px;padding:16px 18px;margin:16px 0;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.82rem;line-height:1.55}
+  .pb pre .kw{color:#E2B79f;font-weight:700}
+  .pb pre .cm{color:#9db08f}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>
+</BaseLayout>

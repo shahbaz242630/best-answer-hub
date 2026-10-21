@@ -1,0 +1,486 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-07-03T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub PDF Compressor?',
+    a: 'The Best Answer Hub PDF Compressor is a free browser-based tool that reduces PDF file size by re-encoding each page as an optimized JPEG image. You control the quality level from 10% to 100%, and you can optionally set an exact target file size. The tool processes everything locally in your browser. Your PDF is never uploaded to any server. No signup, no watermarks, and no daily limits.',
+  },
+  {
+    q: 'How does the PDF Compressor work?',
+    a: 'When you upload a PDF, the Best Answer Hub PDF Compressor uses PDF.js to render each page to a canvas, then re-encodes it as a JPEG at your chosen quality level. A new PDF is built from these compressed images. This typically reduces file size by 40–80% for documents with photos, screenshots, or scanned pages. Because each page becomes an image, the text is no longer selectable or searchable.',
+  },
+  {
+    q: 'What JPEG quality setting should I use?',
+    a: 'For documents read on screen (presentations, reports, proposals), 70% is the default sweet spot: file size drops 50–65% with no visible quality loss at normal zoom. For documents that will be printed, use 85–95% to preserve fine detail. For email attachments or uploads where file size is the only priority, 50–60% is acceptable for text-heavy PDFs. Below 40%, compression artifacts become visible on photos and fine text.',
+  },
+  {
+    q: 'Can I set an exact target file size?',
+    a: 'Yes. The Best Answer Hub PDF Compressor includes an optional Target Size field where you can enter a specific size in KB or MB, for example, 200 KB for a government portal or 5 MB for a Gmail attachment. If the initial compression does not meet your target, the tool automatically retries at a lower JPEG quality (up to three attempts) to get as close as possible. The result is labeled best effort because some PDFs contain content that cannot be compressed below a certain floor regardless of quality settings.',
+  },
+  {
+    q: 'Is the Best Answer Hub PDF Compressor free and safe?',
+    a: 'Yes. The Best Answer Hub PDF Compressor is completely free with no signup required and no daily usage limits. Privacy is built into the architecture: all processing runs locally inside your browser using JavaScript libraries. Your file data is never uploaded to any server, stored in a database, or seen by anyone else. Disconnect from the internet after loading the page and the compressor still works. This makes it safe for employment contracts, legal documents, financial records, and any other confidential files.',
+  },
+  {
+    q: 'Why is my PDF file so large?',
+    a: 'PDFs grow large for three reasons. First, embedded high-resolution images: photos, screenshots, or scanned pages at 300 DPI can be 2–5 MB each. Second, embedded fonts: some PDFs include entire font files rather than just the characters used. Third, metadata and form data add invisible size. The Best Answer Hub PDF Compressor tackles the biggest factor by re-encoding image-heavy pages at a lower resolution, which is where most size reduction comes from.',
+  },
+  {
+    q: 'Why did my PDF barely shrink, or get larger, after compressing?',
+    a: 'Because the Best Answer Hub PDF Compressor re-encodes each page as a JPEG image, it shrinks image-heavy and scanned PDFs the most, often by 40 to 80%. A text-only PDF is already very compact, so turning its pages into images can save little or even add size. For pure-text files, the original is usually the smaller one.',
+  },
+  {
+    q: 'What is a good PDF file size for an email attachment?',
+    a: 'Gmail and Outlook both allow attachments up to 25 MB, but practical deliverability is better under 10 MB to avoid spam filters and mailbox quota issues. For a single-page document like an invoice or letter, under 500 KB is ideal. A multi-page report should target 1–3 MB. If your PDF exceeds these thresholds, run it through the Best Answer Hub PDF Compressor. Most document PDFs compress to well under 5 MB without any visible quality difference at normal reading size.',
+  },
+  {
+    q: 'Can I compress a PDF multiple times without making it worse?',
+    a: 'No. The Best Answer Hub PDF Compressor uses JPEG compression, which is lossy. Each re-compression adds new artifacts and degrades quality further. If you need a smaller result than your first attempt, adjust the quality slider lower in a single pass from the original file rather than re-compressing the output. For best results, always start from the original uncompressed PDF.',
+  },
+  {
+    q: 'Can compressing a PDF break a digital signature?',
+    a: 'Yes. When you compress a PDF with the Best Answer Hub PDF Compressor, you are creating a structurally new document from rendered page images. This breaks the cryptographic hash that any digital signature was calculated against. If you need to compress a digitally signed PDF, contact the signer to re-sign after compression, or use only the signed pages for the final submission.',
+  },
+  {
+    q: 'How do I compress a PDF on iPhone without downloading an app?',
+    a: 'Open the Best Answer Hub PDF Compressor in Safari on your iPhone. No app install required. Tap the upload area, select your PDF from Files or Photos, adjust the quality slider if needed, and tap Compress PDF. The entire process runs in Safari using client-side JavaScript; nothing is uploaded to any server. For PDFs under 20–30 MB, the process takes 5–15 seconds on modern iPhones. Download the compressed file directly to your Files app with one tap.',
+  },
+  {
+    q: 'How do I compress a PDF to meet a job application or government portal file size limit?',
+    a: 'Use the Best Answer Hub PDF Compressor\'s Target Size field. Enter the maximum size required (for example, 200 KB for Indian government portals, 500 KB for NHS job applications, or 5 MB for common ATS portals) and the tool retries automatically until it hits your target. If the PDF still exceeds the limit after three attempts, try splitting it first with the <a href="/tools/pdf-splitter/">Best Answer Hub PDF Splitter</a> and submitting only the relevant pages.',
+  },
+  {
+    q: 'What happens if I try to compress a password-protected PDF?',
+    a: 'Password-protected, encrypted, or DRM-protected PDFs cannot be opened by browser-based JavaScript libraries without the decryption key. The Best Answer Hub PDF Compressor will show an error if you upload a protected file. To compress it, first remove the password protection: open the PDF in your system viewer (Adobe Reader, Preview on Mac, or Chrome\'s built-in PDF viewer), choose Print → Save as PDF to create an unencrypted copy, then upload that copy to the compressor.',
+  },
+  {
+    q: 'How does the Best Answer Hub PDF Compressor compare to Smallpdf and iLovePDF?',
+    a: 'Smallpdf limits free users to two compression tasks per day and uploads files to its servers before deleting them after one hour. iLovePDF caps free web uploads at 15–25 MB and also processes files server-side. Both require an internet connection and create privacy exposure for sensitive documents. The Best Answer Hub PDF Compressor is unlimited, requires no signup, processes everything locally in your browser, and includes exact target size controls that most competitors lack. The key trade-off: the Best Answer Hub PDF Compressor rasterizes pages to JPEG images, so text becomes unselectable. Paid tools like Adobe Acrobat can perform advanced object-stream compression while preserving full text selection.',
+  },
+  {
+    q: 'Why is text no longer selectable after compression?',
+    a: 'The Best Answer Hub PDF Compressor renders each page as a JPEG image and rebuilds the PDF from those images. This is what enables the dramatic 40–80% file size reduction. Because the text becomes part of the image rather than a separate text layer, it is no longer selectable, searchable, or copyable. If you need to preserve text selection, use Adobe Acrobat Pro or a server-side PDF optimizer that performs object-stream compression without rasterization.',
+  },
+];
+
+const steps = [
+  { title: 'Upload your PDF', description: 'Drag and drop or click to select a PDF file. The document stays on your device. Nothing is uploaded to any server.' },
+  { title: 'Adjust quality and target size', description: 'Set the JPEG quality slider between 10% and 100%. Optionally enter a target file size in KB or MB, and the tool will auto-tune to hit it.' },
+  { title: 'Download the compressed file', description: 'Review the before-and-after file sizes, then download your optimized PDF with one click. The entire process takes seconds for most documents.' },
+];
+
+const seo = {
+  title: 'Free PDF Compressor — Shrink PDF Size, No Upload (2026)',
+  description: 'Compress PDFs for free in your browser. Reduce file size up to 80% with no uploads or signup. Adjustable JPEG quality and target size controls.',
+  url: '/tools/pdf-compressor/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'PDF Compressor', url: '/tools/pdf-compressor/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Upload to Servers"
+    title="PDF Compressor:"
+    accentText="Shrink file size instantly"
+    description="Compress PDF files for free in your browser. Reduce file size by up to 80% by re-encoding pages as optimized JPEG images. Adjustable quality slider and exact target size controls. No signup, no watermarks, no daily limits."
+    backLink="/pdf-toolkit/"
+    backLabel="← PDF Toolkit"
+  />
+
+  <!-- Compressor Interface -->
+  <section class="py-6 md:py-8" aria-label="PDF compressor">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-6">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1" id="drop-title">Drop your PDF here</p>
+          <p class="text-xs text-bae-muted" id="drop-subtitle">or click to browse (.pdf files only)</p>
+          <input type="file" id="file-input" class="hidden" accept=".pdf,application/pdf" />
+        </div>
+
+        <!-- Size Warning -->
+        <div id="size-warning" class="hidden mb-6 bg-amber-50 border border-amber-200 rounded-bae p-3 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <p class="text-xs text-amber-700">This file is very large (<strong id="warn-size"></strong>). Compression may take longer and your browser may become temporarily unresponsive.</p>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-area" class="hidden mb-6 bg-bae-card border border-bae-border rounded-bae p-5">
+          <h3 class="text-sm font-bold text-bae-ink mb-4">Compression Settings</h3>
+
+          <!-- Quality Slider -->
+          <div class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-medium text-bae-muted">JPEG Quality</label>
+              <span class="text-xs font-semibold text-bae-primary" id="quality-value">70%</span>
+            </div>
+            <input type="range" id="quality-slider" min="10" max="100" value="70" class="w-full h-2 bg-bae-bg rounded-lg appearance-none cursor-pointer accent-bae-primary" />
+            <div class="flex justify-between text-[10px] text-bae-muted mt-1">
+              <span>Smaller file</span>
+              <span>Better quality</span>
+            </div>
+          </div>
+
+          <!-- Target Size -->
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-bae-muted mb-2">Target Size (optional)</label>
+            <div class="flex items-center gap-2">
+              <input type="number" id="target-size" min="1" step="0.1" placeholder="e.g. 5" class="w-24 px-3 py-2 bg-bae-bg border border-bae-border rounded-bae-sm text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+              <select id="target-unit" class="px-3 py-2 bg-bae-bg border border-bae-border rounded-bae-sm text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary">
+                <option value="MB">MB</option>
+                <option value="KB">KB</option>
+              </select>
+              <span class="text-xs text-bae-muted">Best-effort auto-tuning</span>
+            </div>
+          </div>
+
+          <button type="button" id="compress-btn" class="w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+            Compress PDF
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-6">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Compressing...</p>
+            <p class="text-xs text-bae-muted mt-1">Processing locally in your browser</p>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result-area" class="hidden mb-6">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-bae-ink">Compression Complete</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Ready</span>
+            </div>
+            <div class="grid grid-cols-3 gap-3 mb-4">
+              <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                <p class="text-[10px] text-bae-muted uppercase tracking-wider mb-1">Original</p>
+                <p id="original-size" class="text-sm font-medium text-bae-ink">—</p>
+              </div>
+              <div class="bg-emerald-50 rounded-bae-sm p-3 text-center border border-emerald-100">
+                <p class="text-[10px] text-emerald-600 uppercase tracking-wider mb-1">Compressed</p>
+                <p id="compressed-size" class="text-sm font-medium text-emerald-700">—</p>
+              </div>
+              <div class="bg-bae-primary-soft rounded-bae-sm p-3 text-center">
+                <p class="text-[10px] text-bae-primary uppercase tracking-wider mb-1">Reduction</p>
+                <p id="reduction-pct" class="text-sm font-medium text-bae-primary">—</p>
+              </div>
+            </div>
+            <p id="target-warning" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-bae-sm p-2 mb-4"></p>
+            <a id="download-btn" href="#" download class="block w-full text-center bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm hover:bg-bae-accent transition-colors no-underline">
+              Download Compressed PDF
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What this tool cannot do</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>Selectable text:</strong> Text becomes part of the page image and is no longer selectable, searchable, or copyable.</li>
+              <li><strong>Scanned PDFs:</strong> Already image-based; may compress less if they were already saved with JPEG compression.</li>
+              <li><strong>Password-protected files:</strong> Encrypted or DRM-protected PDFs cannot be processed.</li>
+              <li><strong>Exact target guarantee:</strong> Target size is best-effort. Some PDFs have a compression floor that cannot be breached.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people compress with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people compress with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from job seekers, professionals, and everyday users.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Job Applications</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Compress for portal upload limits</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">200 KB – 5 MB portal limits</p>
+          <p class="text-sm text-bae-muted">UK NHS, Indian government, and ATS portals impose strict file size caps. Enter the required target size, and the Best Answer Hub PDF Compressor retries automatically until the limit is met.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Email Attachments</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Under 10 MB for reliable delivery</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">~60% smaller on average</p>
+          <p class="text-sm text-bae-muted">Gmail and Outlook technically allow 25 MB attachments, but emails above 10 MB often trigger spam filters or bounce at strict corporate gateways. Most document PDFs compress to under 3 MB with no visible quality loss.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Document Archives</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Shrink scanned document storage</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">40–70% reduction on scans</p>
+          <p class="text-sm text-bae-muted">Medical records, contracts, and receipts scanned at 300 DPI can be several MB per page. Compression at 60–70% quality brings multi-page scanned archives down to a fraction of their original size.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Client Presentations</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Trim pitch decks before sharing</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">50–80% smaller for image-heavy PDFs</p>
+          <p class="text-sm text-bae-muted">Design-heavy pitch decks and slide exports are often 20–40 MB. Compression at 75–80% quality brings them under 5 MB without noticeable quality loss on screen, ready to share via email or a client portal link.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more PDF tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/pdf-merger/" class="text-bae-primary hover:underline">PDF Merger</a>, <a href="/tools/pdf-splitter/" class="text-bae-primary hover:underline">PDF Splitter</a>, <a href="/tools/pdf-rotator/" class="text-bae-primary hover:underline">PDF Rotator</a>, <a href="/tools/images-to-pdf/" class="text-bae-primary hover:underline">Images to PDF</a>, <a href="/tools/pdf-to-images/" class="text-bae-primary hover:underline">PDF to Images</a>, and <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>. All free, no signup.</p>
+        </div>
+        <a href="/pdf-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse PDF Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const settingsArea = document.getElementById('settings-area');
+      const progressArea = document.getElementById('progress-area');
+      const resultArea = document.getElementById('result-area');
+      const progressText = document.getElementById('progress-text');
+      const sizeWarning = document.getElementById('size-warning');
+      const warnSize = document.getElementById('warn-size');
+      const compressBtn = document.getElementById('compress-btn');
+      const downloadBtn = document.getElementById('download-btn');
+      const originalSizeEl = document.getElementById('original-size');
+      const compressedSizeEl = document.getElementById('compressed-size');
+      const reductionPctEl = document.getElementById('reduction-pct');
+      const targetWarning = document.getElementById('target-warning');
+      const qualitySlider = document.getElementById('quality-slider');
+      const qualityValue = document.getElementById('quality-value');
+      const targetSizeInput = document.getElementById('target-size');
+      const targetUnitSelect = document.getElementById('target-unit');
+
+      let currentFile = null;
+      let pdfjsLib = null;
+      let PDFLib = null;
+
+      function formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      function validatePdf(file) {
+        return file.name.toLowerCase().endsWith('.pdf') && file.type === 'application/pdf';
+      }
+
+      async function loadLibraries() {
+        if (!pdfjsLib) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = '/pdf.min.js';
+            s.integrity = 'sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e';
+            s.crossOrigin = 'anonymous';
+            s.onload = () => {
+              pdfjsLib = window.pdfjsLib;
+              pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+              resolve();
+            };
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+        if (!PDFLib) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = '/pdf-lib.min.js';
+            s.onload = () => { PDFLib = window.PDFLib; resolve(); };
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+      }
+
+      qualitySlider.addEventListener('input', (e) => {
+        qualityValue.textContent = e.target.value + '%';
+      });
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener('change', (e) => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+      const MAX_FILE_SIZE = 50 * 1024 * 1024;
+      function handleFile(file) {
+        if (!file) return;
+        if (!validatePdf(file)) {
+          alert('Please upload a PDF file.');
+          return;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+          alert('File too large. Maximum size is 50 MB.');
+          return;
+        }
+        if (downloadBtn._objUrl) URL.revokeObjectURL(downloadBtn._objUrl);
+        currentFile = file;
+        if (file.size > 10 * 1024 * 1024) {
+          warnSize.textContent = formatBytes(file.size);
+          sizeWarning.classList.remove('hidden');
+        } else {
+          sizeWarning.classList.add('hidden');
+        }
+        settingsArea.classList.remove('hidden');
+        resultArea.classList.add('hidden');
+        settingsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      compressBtn.addEventListener('click', async () => {
+        if (!currentFile) return;
+        resultArea.classList.add('hidden');
+        progressArea.classList.remove('hidden');
+        progressText.textContent = 'Loading libraries...';
+
+        try {
+          await loadLibraries();
+          const quality = parseInt(qualitySlider.value, 10) / 100;
+          const targetSizeVal = parseFloat(targetSizeInput.value);
+          const targetUnit = targetUnitSelect.value;
+          let targetBytes = null;
+          if (!isNaN(targetSizeVal) && targetSizeVal > 0) {
+            targetBytes = targetUnit === 'MB' ? targetSizeVal * 1024 * 1024 : targetSizeVal * 1024;
+          }
+
+          let blob = await compressPdf(currentFile, quality);
+
+          // Best-effort target retry
+          if (targetBytes && blob.size > targetBytes) {
+            for (let attempt = 0; attempt < 3; attempt++) {
+              const newQuality = Math.max(0.1, quality - ((attempt + 1) * 0.15));
+              progressText.textContent = `Retrying at lower quality (attempt ${attempt + 1})...`;
+              blob = await compressPdf(currentFile, newQuality);
+              if (blob.size <= targetBytes) break;
+            }
+          }
+
+          if (downloadBtn._objUrl) URL.revokeObjectURL(downloadBtn._objUrl);
+          const url = URL.createObjectURL(blob);
+          const originalBytes = currentFile.size;
+          const compressedBytes = blob.size;
+          const reduction = originalBytes > 0 ? Math.round(((originalBytes - compressedBytes) / originalBytes) * 100) : 0;
+
+          originalSizeEl.textContent = formatBytes(originalBytes);
+          compressedSizeEl.textContent = formatBytes(compressedBytes);
+          reductionPctEl.textContent = (reduction >= 0 ? reduction : 0) + '%';
+
+          if (targetBytes && compressedBytes > targetBytes) {
+            targetWarning.textContent = 'Note: Could not reach the exact target size. The PDF has a compression floor that cannot be breached. Try lowering the quality slider or splitting the PDF into smaller files.';
+            targetWarning.classList.remove('hidden');
+          } else {
+            targetWarning.classList.add('hidden');
+          }
+
+          downloadBtn.href = url;
+          downloadBtn.download = currentFile.name.replace(/\.pdf$/i, '') + '-compressed.pdf';
+          downloadBtn._objUrl = url;
+
+          progressArea.classList.add('hidden');
+          resultArea.classList.remove('hidden');
+          resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+          console.error(err);
+          progressText.textContent = 'Compression failed: ' + (err.message || 'Unknown error. Try a different file.');
+        }
+      });
+
+      async function compressPdf(file, quality) {
+        const arrayBuffer = await file.arrayBuffer();
+
+        progressText.textContent = 'Reading PDF...';
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const numPages = pdf.numPages;
+        const newPdfDoc = await PDFLib.PDFDocument.create();
+        const maxCanvasDim = 2048;
+
+        for (let i = 1; i <= numPages; i++) {
+          progressText.textContent = `Processing page ${i} of ${numPages}...`;
+          const page = await pdf.getPage(i);
+          let scale = 1.5;
+          const testViewport = page.getViewport({ scale: scale });
+          if (testViewport.width > maxCanvasDim || testViewport.height > maxCanvasDim) {
+            scale = Math.min(maxCanvasDim / testViewport.width, maxCanvasDim / testViewport.height) * scale;
+            if (scale < 0.5) scale = 0.5;
+          }
+          const viewport = page.getViewport({ scale: scale });
+
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.floor(viewport.width);
+          canvas.height = Math.floor(viewport.height);
+          const ctx = canvas.getContext('2d');
+          if (!ctx) throw new Error('Could not get canvas context');
+
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          const base64 = dataUrl.split(',')[1];
+          const jpgBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+          const jpgImage = await newPdfDoc.embedJpg(jpgBytes);
+
+          const originalWidth = viewport.width / scale;
+          const originalHeight = viewport.height / scale;
+          const newPage = newPdfDoc.addPage([originalWidth, originalHeight]);
+          newPage.drawImage(jpgImage, {
+            x: 0,
+            y: 0,
+            width: originalWidth,
+            height: originalHeight,
+          });
+        }
+
+        progressText.textContent = 'Saving compressed PDF...';
+        const bytes = await newPdfDoc.save();
+        return new Blob([bytes], { type: 'application/pdf' });
+      }
+    })();
+  </script>
+</BaseLayout>

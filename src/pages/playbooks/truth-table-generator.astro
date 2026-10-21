@@ -1,0 +1,419 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Truth Table Generator?', a: 'The Best Answer Hub Truth Table Generator is a free, browser-based digital logic tool that builds a truth table from a Boolean expression, plots a Karnaugh map, simplifies step by step, and converts to NAND-only or NOR-only form. It accepts multiple notations, with no signup and nothing uploaded.' },
+  { q: 'What is a truth table?', a: 'A truth table lists every possible combination of input values for a Boolean expression and the output each one produces. The Best Answer Hub Truth Table Generator builds it automatically, highlights the rows that output 1, and shows intermediate columns for compound expressions.' },
+  { q: 'How many rows does a truth table have?', a: 'A truth table for n distinct variables has 2 to the n rows, since each variable doubles the number of input combinations: 4 rows for two variables, 8 for three, 16 for four. The Best Answer Hub Truth Table Generator sizes the table automatically from the variables it detects.' },
+  { q: 'What does "if A then B" mean in logic?', a: 'The conditional A implies B is false only when A is true and B is false, and true in every other row, including when A is false. The Best Answer Hub Truth Table Generator evaluates implication directly so you can confirm which single row is false.' },
+  { q: 'What is the difference between OR and XOR?', a: 'Inclusive OR is true when at least one input is true, including when both are. Exclusive OR, or XOR, is true only when exactly one input is true. The Best Answer Hub Truth Table Generator supports both and shows the differing row where both inputs are true.' },
+  { q: 'What is operator precedence in Boolean logic?', a: 'By convention NOT binds tightest, then AND, then OR, and parentheses override the default order. The Best Answer Hub Truth Table Generator parses your expression with this precedence, so you can add parentheses to force a different grouping when needed.' },
+  { q: 'Can I type &amp;&amp;, two pipes, and ! instead of AND, OR, and NOT?', a: 'Yes. The Best Answer Hub Truth Table Generator accepts programming operators, English words, and mathematical symbols interchangeably, and even prime notation for NOT. You can mix notations in one expression and the parser detects which you are using.' },
+  { q: 'What are De Morgan\'s laws?', a: 'De Morgan\'s laws state that NOT(A AND B) equals (NOT A) OR (NOT B), and NOT(A OR B) equals (NOT A) AND (NOT B). The Best Answer Hub Truth Table Generator names this step whenever its simplifier applies it, so you can follow the reasoning.' },
+  { q: 'What is a tautology, contradiction, and contingency?', a: 'A tautology is true in every row, a contradiction is false in every row, and a contingency is true in some rows and false in others. The Best Answer Hub Truth Table Generator reports which category an expression falls into as a plain verdict.' },
+  { q: 'What is a Karnaugh map?', a: 'A Karnaugh map is a grid that groups the true rows of a truth table into the largest possible blocks to produce a minimal simplified expression with fewer gates. The Best Answer Hub Truth Table Generator plots interactive K-maps for 2 to 4 variables and uses Quine-McCluskey for larger ones.' },
+  { q: 'What is the difference between SOP and POS?', a: 'Sum of Products groups the rows that output 1, written as a sum of minterms, while Product of Sums groups the rows that output 0. The Best Answer Hub Truth Table Generator computes both forms so you can pick whichever needs fewer gates for your circuit.' },
+  { q: 'What are NAND and NOR universal gates?', a: 'A universal gate can build any Boolean function on its own, and both NAND and NOR qualify, so an entire circuit can be made from one gate type. The Best Answer Hub Truth Table Generator converts a simplified expression into NAND-only or NOR-only form for you.' },
+  { q: 'Can it handle don\'t-care conditions?', a: 'Yes. Don\'t-care conditions are input combinations that never occur, and they can be treated as 0 or 1 to form larger simplification groups. The Best Answer Hub Truth Table Generator lets you mark any row as a don\'t-care and uses it flexibly during K-map simplification.' },
+  { q: 'How is it different from Wolfram Alpha?', a: 'Wolfram Alpha often returns only a final answer and can reject common notations. The Best Answer Hub Truth Table Generator accepts every major notation, shows the full table and Karnaugh map, and names each simplification step, all free with no account.' },
+  { q: 'Is the Best Answer Hub Truth Table Generator free and private?', a: 'Yes. It is completely free with no signup and no ads, and every calculation runs in your browser, so no expressions are uploaded. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.' },
+];
+
+const seo = {
+  title: 'How to Build a Truth Table from Boolean Logic',
+  description: 'How to build a truth table from a Boolean expression: how the operators behave, the 2 to the n rows, De Morgan laws, Karnaugh maps, and NAND universality.',
+  url: '/playbooks/truth-table-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Truth Table Generator', url: '/playbooks/truth-table-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+  <div class="hero">
+    <span class="glow"></span>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div class="masthead">
+          <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+          <span class="word">Best Answer Hub<i>.</i></span>
+        </div>
+        <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+      </div>
+      <span class="eyebrow">Best Answer Hub Playbooks &middot; Digital Logic</span>
+      <div class="cav">Every input, every output</div>
+      <h1>How to Build a <em>Truth Table</em> from Boolean Logic</h1>
+      <p class="dek">A truth table lists every possible input to a Boolean expression and the output each one produces. It is how you prove two circuits are equivalent, spot a tautology, and turn a tangled expression into a simpler one. Here is how the operators behave, why the table has exactly the rows it does, and how it becomes a simplified circuit.</p>
+      <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Digital logic</span><span>No signup</span></div>
+      <div class="bandstrip">
+        <div class="seg b1">List inputs<small>2 to the n rows</small></div>
+        <div class="seg b2">Evaluate<small>every operator</small></div>
+        <div class="seg b3">Simplify<small>K-map, SOP, POS</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n">2<sup>n</sup></div><div class="l">rows for n input variables</div><div class="src">Wikipedia</div></div>
+    <div class="stat"><div class="n">1 of 4</div><div class="l">rows where "if A then B" is false</div><div class="src">LibreTexts</div></div>
+    <div class="stat"><div class="n">NAND</div><div class="l">a universal gate: it builds any function</div><div class="src">GeeksforGeeks</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">generated in your browser, nothing uploaded</div><div class="src">no upload</div></div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="On this page">
+      <div class="t">On this page</div>
+      <a href="#what">What it is</a>
+      <a href="#operators">The operators</a>
+      <a href="#conditional">The tricky one</a>
+      <a href="#rows">Rows and precedence</a>
+      <a href="#simplify">Simplifying</a>
+      <a href="#gates">Logic to circuits</a>
+      <a href="#different">Why this tool</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <article>
+      <p class="lead"><strong>A truth table lists every possible combination of input values for a Boolean expression and shows the output each combination produces.</strong> For n input variables it has 2 to the n rows, one for every way the inputs can be true or false. Build it and you can see at a glance whether an expression is always true, compare two expressions for equivalence, and read off the terms needed to simplify it. The Best Answer Hub <a href="/calculators/stem-suite/truth-table-generator/">Truth Table Generator</a> builds the table from an expression in any common notation, then simplifies it with a Karnaugh map and step-by-step Boolean algebra, all in your browser.</p>
+
+      <p>This guide covers how the logical operators behave, the one conditional that trips everyone up, why the table has exactly 2 to the n rows and how precedence is resolved, how a table becomes a minimal expression, and how the operators map onto physical logic gates. The tool sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> STEM suite, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+      <div class="cav">Start here</div>
+      <h2 id="what">What is the Best Answer Hub Truth Table Generator?</h2>
+      <p>The Best Answer Hub Truth Table Generator is a free, browser-based digital logic tool that turns a Boolean expression into a full truth table, then helps you understand and shrink it. It accepts multiple notations interchangeably, so you can type AND, &amp;&amp;, or the logic symbol and get the same result. It plots Karnaugh maps, simplifies to a minimal Sum of Products with each algebra law named, converts an expression to NAND-only or NOR-only form, and checks two expressions for equivalence, with no signup and nothing uploaded.</p>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">1</span><div><b>Speaks every dialect.</b> Type AND / &amp;&amp; / and the logic symbol, OR / two pipes / plus, NOT / exclamation / prime. The parser detects the notation.</div></li>
+          <li><span class="dot">2</span><div><b>Shows the simplification.</b> A Karnaugh map and step-by-step algebra with each law named, De Morgan's, absorption, consensus, and the rest.</div></li>
+          <li><span class="dot">3</span><div><b>Proves equivalence.</b> Enter two expressions and it lines up both tables row by row to confirm they match.</div></li>
+        </ul>
+      </div>
+
+      <div class="cav">The building blocks</div>
+      <h2 id="operators">How do the logical operators behave?</h2>
+      <p>Each operator has a fixed truth table. AND is true only when both inputs are true; OR is true when at least one is true; XOR (exclusive or) is true when exactly one is true; NAND and NOR are the negations of AND and OR (<a href="https://en.wikipedia.org/wiki/Truth_table" target="_blank" rel="noopener noreferrer">Truth table, Wikipedia</a>). The key contrast is inclusive OR against exclusive XOR: ordinary OR still counts the case where both are true, while XOR excludes it.</p>
+      <table class="mono">
+        <thead><tr><th>A</th><th>B</th><th>AND</th><th>OR</th><th>XOR</th><th>NAND</th><th>NOR</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <p>The Best Answer Hub Truth Table Generator evaluates all of these, plus implication and the biconditional, and shows intermediate columns so you can see how a compound expression is built up one operator at a time.</p>
+
+      <div class="cav">The one that trips people</div>
+      <h2 id="conditional">Why is "if A then B" true so often?</h2>
+      <p>The material conditional, A implies B, is false in only one case: when A is true and B is false. In every other row it is true, including both rows where A is false, where it is called vacuously true (<a href="https://math.libretexts.org/Bookshelves/Combinatorics_and_Discrete_Mathematics/A_Spiral_Workbook_for_Discrete_Mathematics_(Kwong)/02%3A_Logic/2.03%3A_Implications" target="_blank" rel="noopener noreferrer">Kwong, LibreTexts</a>). This is the single most counterintuitive cell in Boolean logic: a promise like "if it rains, I bring an umbrella" is only broken on the day it rains and you have no umbrella.</p>
+      <table class="mono">
+        <thead><tr><th>A</th><th>B</th><th>A implies B</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td class="f">0</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td></tr>
+        </tbody>
+      </table>
+      <p>The Best Answer Hub Truth Table Generator handles implication and the biconditional directly, so you can confirm this behavior instead of second-guessing which row should be false.</p>
+
+      <div class="cav">Size and order</div>
+      <h2 id="rows">How many rows, and in what order?</h2>
+      <p>A truth table for n distinct variables has exactly 2 to the n rows, because each variable doubles the number of input combinations (<a href="https://en.wikipedia.org/wiki/Truth_table" target="_blank" rel="noopener noreferrer">Wikipedia</a>). Two variables give 4 rows, three give 8, four give 16. Before evaluating, the parser also has to resolve precedence: NOT binds tightest, then AND, then OR, with parentheses overriding the default (<a href="https://en.wikipedia.org/wiki/Logical_connective" target="_blank" rel="noopener noreferrer">Logical connective, Wikipedia</a>).</p>
+      <figure class="chart">
+        <figcaption class="chart-title">Every variable doubles the rows</figcaption>
+        <svg viewBox="0 0 600 190" role="img" aria-label="A bar chart showing that a truth table has 2 rows for 1 variable, 4 for 2, 8 for 3, 16 for 4, and 32 for 5 variables.">
+          <defs><linearGradient id="tt" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+          <line x1="60" y1="158" x2="540" y2="158" stroke="#E1D4be" stroke-width="2"/>
+          <g>
+            <rect x="86" y="150" width="56" height="8" rx="3" fill="url(#tt)"/>
+            <text x="114" y="144" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">2</text>
+            <text x="114" y="174" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" fill="#847B6B">n = 1</text>
+          </g>
+          <g>
+            <rect x="182" y="142" width="56" height="16" rx="3" fill="url(#tt)"/>
+            <text x="210" y="136" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">4</text>
+            <text x="210" y="174" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" fill="#847B6B">n = 2</text>
+          </g>
+          <g>
+            <rect x="278" y="126" width="56" height="32" rx="3" fill="url(#tt)"/>
+            <text x="306" y="120" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">8</text>
+            <text x="306" y="174" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" fill="#847B6B">n = 3</text>
+          </g>
+          <g>
+            <rect x="374" y="94" width="56" height="64" rx="3" fill="url(#tt)"/>
+            <text x="402" y="88" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">16</text>
+            <text x="402" y="174" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" fill="#847B6B">n = 4</text>
+          </g>
+          <g>
+            <rect x="470" y="30" width="56" height="128" rx="3" fill="url(#tt)"/>
+            <text x="498" y="24" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">32</text>
+            <text x="498" y="174" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" fill="#847B6B">n = 5</text>
+          </g>
+        </svg>
+        <p class="chart-src">Rows equal 2 to the n, so each added variable doubles the table. Source: Wikipedia, Truth table.</p>
+      </figure>
+      <table>
+        <thead><tr><th>Operation</th><th>Logic</th><th>Programming</th><th>Boolean algebra</th></tr></thead>
+        <tbody>
+          <tr><td class="band">AND</td><td>&and;</td><td>&amp;&amp;</td><td>&middot; (or nothing)</td></tr>
+          <tr><td class="band">OR</td><td>&or;</td><td>two pipes</td><td>+</td></tr>
+          <tr><td class="band">NOT</td><td>&not;</td><td>!</td><td>prime or overbar</td></tr>
+          <tr><td class="band">XOR</td><td>&oplus;</td><td>^</td><td>&oplus;</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cav">Make it smaller</div>
+      <h2 id="simplify">How do you simplify a Boolean expression?</h2>
+      <p>You reduce it to the fewest gates that give the same truth table. Two expressions are logically equivalent when they share the same output in every row, and De Morgan's laws are the workhorse: NOT(A AND B) equals (NOT A) OR (NOT B), and NOT(A OR B) equals (NOT A) AND (NOT B) (<a href="https://math.libretexts.org/Bookshelves/Combinatorics_and_Discrete_Mathematics/A_Spiral_Workbook_for_Discrete_Mathematics_(Kwong)/02%3A_Logic/2.05%3A_Logical_Equivalences" target="_blank" rel="noopener noreferrer">Kwong, LibreTexts</a>). A Karnaugh map groups the 1-rows into the largest blocks to produce a minimal Sum of Products, while grouping the 0-rows gives a Product of Sums instead (<a href="https://www.allaboutcircuits.com/textbook/digital/chpt-8/karnaugh-maps-truth-tables-boolean-expressions/" target="_blank" rel="noopener noreferrer">All About Circuits</a>).</p>
+      <div class="callout sage"><div class="h">De Morgan's laws</div><p>NOT(A AND B) = (NOT A) OR (NOT B), and NOT(A OR B) = (NOT A) AND (NOT B). They let you push a negation inward and swap AND for OR, which is the move behind most hand simplifications and behind converting a circuit to NAND-only or NOR-only form. The Best Answer Hub Truth Table Generator names this step whenever it applies it.</p></div>
+      <table>
+        <thead><tr><th>Verdict</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td class="band">Tautology</td><td>True in every row</td></tr>
+          <tr><td class="band">Contradiction</td><td>False in every row</td></tr>
+          <tr><td class="band">Contingency</td><td>True in some rows, false in others</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cav">Off the page</div>
+      <h2 id="gates">From logic class to logic circuit</h2>
+      <p>Every connective is also a physical gate, so the same table describes a circuit. AND, OR, NOT, NAND, NOR, and XOR are the standard gates in digital electronics (<a href="https://www.geeksforgeeks.org/digital-logic/logic-gates/" target="_blank" rel="noopener noreferrer">GeeksforGeeks</a>). A striking consequence: NAND on its own is a universal gate, meaning any Boolean function at all can be built from NAND gates alone, and the same is true of NOR (<a href="https://www.geeksforgeeks.org/digital-logic/universal-logic-gates/" target="_blank" rel="noopener noreferrer">GeeksforGeeks</a>).</p>
+      <figure class="chart">
+        <figcaption class="chart-title">NAND alone can build every other gate</figcaption>
+        <svg viewBox="0 0 600 176" role="img" aria-label="A NAND gate can be wired to build NOT, AND, and OR gates, making it a universal gate.">
+          <rect x="234" y="20" width="132" height="48" rx="10" fill="#33302A"/>
+          <text x="300" y="42" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="16" font-weight="800" fill="#fff">NAND</text>
+          <text x="300" y="58" text-anchor="middle" font-family="Karla, sans-serif" font-size="9.5" fill="#e8e0d2">universal gate</text>
+          <path d="M262 68 L120 108" stroke="#C6603F" stroke-width="2"/><path d="M128 100 l-10 9 2 -13" fill="#C6603F"/>
+          <path d="M300 68 L300 108" stroke="#C6603F" stroke-width="2"/><path d="M300 100 l-6 10 12 0" fill="#C6603F"/>
+          <path d="M338 68 L480 108" stroke="#C6603F" stroke-width="2"/><path d="M472 100 l10 9 -2 -13" fill="#C6603F"/>
+          <rect x="60" y="110" width="120" height="44" rx="9" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+          <text x="120" y="138" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">NOT</text>
+          <rect x="240" y="110" width="120" height="44" rx="9" fill="#F3E2D6" stroke="#ecd6c5" stroke-width="2"/>
+          <text x="300" y="138" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#8a4429">AND</text>
+          <rect x="420" y="110" width="120" height="44" rx="9" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+          <text x="480" y="138" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">OR</text>
+        </svg>
+        <p class="chart-src">Because NAND is functionally complete, NOT, AND, OR, and every other gate can be wired from NAND gates alone. Source: GeeksforGeeks, Universal Logic Gates.</p>
+      </figure>
+      <p>The Best Answer Hub Truth Table Generator has a NAND-only and NOR-only conversion mode that applies De Morgan's laws to rewrite a simplified expression into a single-gate implementation, ready to draw as a circuit.</p>
+
+      <div class="cav">Why this one</div>
+      <h2 id="different">How is Best Answer Hub different from other generators?</h2>
+      <p>The difference is that it does the whole workflow in one place. Clean academic generators produce the raw table but never tell you whether an expression is a tautology or how to simplify it, while the tools that do simplify tend to drop the table and the Karnaugh map or bury the feature. The Best Answer Hub Truth Table Generator combines the table, a plain verdict, a K-map, step-by-step simplification, and NAND or NOR conversion, ad-free and with no signup.</p>
+      <table>
+        <thead><tr><th>Feature</th><th>Best Answer Hub</th><th>Typical generator</th></tr></thead>
+        <tbody>
+          <tr><td>Truth table</td><td class="band">Yes</td><td>Yes</td></tr>
+          <tr><td>Tautology / contradiction verdict</td><td class="band">Yes</td><td>Often not stated</td></tr>
+          <tr><td>Karnaugh map and simplifier</td><td class="band">Yes, with steps</td><td>Rare or separate</td></tr>
+          <tr><td>Multi-notation input</td><td class="band">Yes</td><td>Varies</td></tr>
+          <tr><td>Ads or signup</td><td class="band">Neither</td><td>Some carry ads</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cta">
+        <span class="kicker">From expression to simplified circuit</span>
+        <h3>Try the free Truth Table Generator</h3>
+        <p>Enter a Boolean expression in any notation and get the full truth table, a tautology verdict, a Karnaugh map, step-by-step simplification, and NAND or NOR conversion. No signup, in your browser.</p>
+        <a class="btn" href="/calculators/stem-suite/truth-table-generator/">Open the Truth Table Generator</a>
+      </div>
+
+      <div class="cav">Good questions</div>
+      <h2 id="faq">Frequently asked questions about truth tables</h2>
+      <div class="faq">
+        {faqs.map((f) => (
+          <div class="qa">
+            <div class="q" set:html={f.q}></div>
+            <div class="a" set:html={f.a}></div>
+          </div>
+        ))}
+      </div>
+
+      <div class="cav">People also read</div>
+      <h2>Keep going</h2>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/number-base-converter/">Binary, Hex, and Octal: How Base Conversion Works</a></b> The number systems behind digital logic.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/matrix-calculator/">The Matrix Rules That Trip People Up</a></b> Another STEM-suite explainer, for linear algebra.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, Nothing Uploaded</a></b> The Calculators hub guide, every tool client-side.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/ai-knowledge-test/">The Free AI Knowledge Test</a></b> A no-signup check of how well you really understand AI.</div></li>
+        </ul>
+      </div>
+
+      <h2>Sources</h2>
+      <ul class="sources">
+        <li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Truth_table" target="_blank" rel="noopener noreferrer">Truth table</a> (operator behavior, 2 to the n rows, inclusive OR vs XOR).</li>
+        <li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Logical_connective" target="_blank" rel="noopener noreferrer">Logical connective</a> (precedence NOT, AND, OR; notation symbols).</li>
+        <li>Harris Kwong, <a href="https://math.libretexts.org/Bookshelves/Combinatorics_and_Discrete_Mathematics/A_Spiral_Workbook_for_Discrete_Mathematics_(Kwong)/02%3A_Logic/2.03%3A_Implications" target="_blank" rel="noopener noreferrer">Implications</a> and <a href="https://math.libretexts.org/Bookshelves/Combinatorics_and_Discrete_Mathematics/A_Spiral_Workbook_for_Discrete_Mathematics_(Kwong)/02%3A_Logic/2.05%3A_Logical_Equivalences" target="_blank" rel="noopener noreferrer">Logical Equivalences</a>, LibreTexts (the conditional; De Morgan's laws).</li>
+        <li>Southworth and Swoyer, <a href="https://human.libretexts.org/Bookshelves/Philosophy/Logic_and_Reasoning/Critical_Reasoning:_A_User's_Manual_(Southworth_and_Swoyer)/33:_Truth_Tables/33.02:_Tautology_Contradiction_and_Contingencies" target="_blank" rel="noopener noreferrer">Tautology, Contradiction, and Contingencies</a>, LibreTexts.</li>
+        <li>All About Circuits, <a href="https://www.allaboutcircuits.com/textbook/digital/chpt-8/karnaugh-maps-truth-tables-boolean-expressions/" target="_blank" rel="noopener noreferrer">Karnaugh Maps</a> (minimizing to Sum of Products and Product of Sums).</li>
+        <li>GeeksforGeeks, <a href="https://www.geeksforgeeks.org/digital-logic/logic-gates/" target="_blank" rel="noopener noreferrer">Logic Gates</a> and <a href="https://www.geeksforgeeks.org/digital-logic/universal-logic-gates/" target="_blank" rel="noopener noreferrer">Universal Logic Gates</a> (gates; NAND and NOR are universal).</li>
+      </ul>
+      <p class="foot">More free calculators: <a href="/calculators/">Calculators hub</a>, <a href="/calculators/stem-suite/number-base-converter/">Number Base Converter</a>, <a href="/calculators/stem-suite/matrix-calculator/">Matrix Calculator</a>, and <a href="/tools/">all free tools</a>.</p>
+    </article>
+  </div>
+</div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.7rem;color:var(--clay);line-height:1}
+  .pb .stat .n sup{font-size:.6em}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb td.f{background:#f7e3da;color:#8a4429;font-weight:700;font-family:'Bricolage Grotesque',sans-serif}
+  .pb table.mono td{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-align:center}
+  .pb table.mono td:first-child,.pb table.mono td:nth-child(2){color:var(--label)}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote .cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-size:.82rem;color:var(--label);margin-top:10px;letter-spacing:0}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  .pb .foot{max-width:1080px;margin:0 auto;padding:0 24px 50px;font-size:.85rem;color:var(--muted)}
+  .pb .foot a{color:var(--clay-deep)}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

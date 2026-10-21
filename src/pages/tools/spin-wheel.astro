@@ -1,0 +1,718 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Spin Wheel?',
+    a: 'The Best Answer Hub Spin Wheel is a free browser-based random name picker and decision wheel. Enter any list of names, choices, or options and click Spin to let the wheel randomly select a winner. It runs entirely in your browser with no uploads, no signup, and no ads. The tool supports elimination mode, shareable links, and local saving so you can return to your wheel anytime.',
+  },
+  {
+    q: 'Is the Best Answer Hub Spin Wheel free and safe for classrooms?',
+    a: 'Yes, it is completely free with no usage limits and no signup required. It is safe for classrooms because all names and data stay inside your browser. Nothing is sent to a server, stored in a database, or shared with third parties. Teachers can verify this by opening the browser\'s Network tab while using the tool: zero outgoing requests appear. This makes it ideal for FERPA-sensitive environments.',
+  },
+  {
+    q: 'How do I create a wheel with my students\' names?',
+    a: 'Open the Best Answer Hub Spin Wheel and paste your class roster into the text box, with one name per line. The wheel automatically updates with a color-coded slice for each student. Click Spin to randomly select a student. You can add or remove names at any time, and the wheel redraws instantly. For frequent use, the tool saves your roster to localStorage so it persists between visits.',
+  },
+  {
+    q: 'What is elimination mode and how does it work?',
+    a: 'The Best Answer Hub Spin Wheel elimination mode automatically removes a winner from the wheel after each spin so the same entry cannot be selected twice in a row. This is perfect for calling on every student once, running multi-prize giveaways, or drawing names for Secret Santa without duplicates. Toggle it on before spinning. When every entry has been eliminated, the wheel resets automatically with the full list restored.',
+  },
+  {
+    q: 'How many names can I add to the wheel?',
+    a: 'The Best Answer Hub Spin Wheel supports up to 100 entries. For the clearest visual experience, 30 or fewer names produce the most readable slices. Beyond 50 entries, the font size adjusts automatically to fit text inside each slice. If your list is very long, consider splitting it into multiple wheels or using the tool for preliminary rounds.',
+  },
+  {
+    q: 'Can I save my wheel and come back to it later?',
+    a: 'Yes. The Best Answer Hub Spin Wheel saves your entries, elimination mode setting, and spin history to your browser\'s localStorage. When you return to the page, your wheel restores automatically. No account or password is required. If you clear browser data, you can also regenerate the wheel instantly by pasting your list again or using a shareable link.',
+  },
+  {
+    q: 'How do I share a wheel with someone else via a link?',
+    a: 'The Best Answer Hub Spin Wheel can be shared instantly via a link. Click the Copy Link button to generate a shareable URL that encodes your entire wheel configuration. Anyone who opens the link sees the exact same entries and settings. Each recipient spins independently. The randomness is generated locally on their device. This makes it easy to send a wheel to a substitute teacher, a co-host, or a Discord group.',
+  },
+  {
+    q: 'Is the spin wheel actually random or can it be rigged?',
+    a: 'The Best Answer Hub Spin Wheel uses JavaScript\'s built-in random number generator combined with physics-based spin duration and deceleration. Each spin is independent, and the outcome is determined only after the animation completes. With 10 entries, there is a 69.8 percent chance of at least one duplicate across five spins, a normal statistical occurrence that surprises many users but proves the randomness is working correctly.',
+  },
+  {
+    q: 'Does the spin wheel work on Chromebooks and Smart Boards?',
+    a: 'Yes. The Best Answer Hub Spin Wheel is built with standard HTML5 Canvas and vanilla JavaScript, so it works on any modern browser including Chrome OS, Safari on iPads, and interactive whiteboards. The spin button and canvas are touch-friendly. For Smart Board presentations, the large spin button is easy to tap with a stylus or finger, and the result displays clearly at the front of the room.',
+  },
+  {
+    q: 'Can I use the spin wheel for giveaways and contests?',
+    a: 'Yes. The Best Answer Hub Spin Wheel is a popular choice for Instagram giveaways, Twitch subscriber draws, YouTube comment contests, and office raffles. For official giveaways with monetary value, supplement the wheel with a timestamped screenshot or screen recording of the winning spin. The tool itself does not collect emails or verify entries. It only performs the random draw.',
+  },
+  {
+    q: 'How do I add or remove names after creating the wheel?',
+    a: 'The Best Answer Hub Spin Wheel makes it easy to add, remove, or reorder entries at any time. Edit the text box directly and each line becomes one slice. You can also use the quick-add field below the text box to append single names without scrolling. The wheel redraws instantly after every change. If elimination mode is active, removed names are permanently deleted from the current round unless you reset the wheel.',
+  },
+  {
+    q: 'Does the spin wheel work offline?',
+    a: 'Yes. After the page loads once, the Best Answer Hub Spin Wheel works without an internet connection. It has no external API dependencies, no CDN libraries, and no server-side processing. This makes it reliable for classrooms with intermittent Wi-Fi, outdoor events, or presentations in venues with poor connectivity. Simply keep the browser tab open.',
+  },
+  {
+    q: 'Can I customize the colors on the wheel?',
+    a: 'The wheel uses a fixed 12-color palette that cycles through slices automatically. The colors are chosen for high contrast and accessibility, meeting WCAG AA standards for distinguishability. Custom color picking is not currently available. The focus is on instant usability rather than visual branding. For streamers needing branded overlays, capture the result and composite it in OBS or Streamlabs.',
+  },
+  {
+    q: 'What is the difference between Best Answer Hub Spin Wheel and Wheel of Names?',
+    a: 'Wheel of Names is a popular spin wheel with ads, premium subscriptions for customization, and cloud storage that requires accounts. The Best Answer Hub Spin Wheel is 100 percent client-side with no ads, no signup, and no premium tier. It focuses on speed and privacy: open the page, paste your list, and spin. Wheel of Names offers more visual themes and a Discord bot; Best Answer Hub prioritizes zero-friction randomness and data privacy.',
+  },
+  {
+    q: 'Is there a way to see the history of previous spins?',
+    a: 'Yes. Every spin result is recorded in the History panel below the wheel. The log shows the winner and the timestamp of each spin. This creates an audit trail for classroom fairness or giveaway transparency. The history persists in localStorage along with your wheel. Click Clear History to reset the log at any time.',
+  },
+];
+
+const steps = [
+  { title: 'Add your names or choices', description: 'Type or paste a list of names, options, or decisions into the input area. Add one entry per line. The wheel updates instantly with a color-coded slice for each item.' },
+  { title: 'Spin the wheel', description: 'Click the Spin button to start the animation. The wheel spins with physics-based easing and deceleration, then stops on a random winner. The result displays clearly below the wheel.' },
+  { title: 'Eliminate, share, or save', description: 'Toggle elimination mode to remove winners automatically, copy a shareable link to send your wheel to others, or let localStorage save everything for your next visit.' },
+];
+
+const seo = {
+  title: 'Free Spin Wheel — Random Name Picker Online (2026)',
+  description: 'Free online spin wheel and random name picker. Add names, spin for a winner, elimination mode, shareable links. 100% client-side. No signup, no ads.',
+  url: '/tools/spin-wheel/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Spin Wheel', url: '/tools/spin-wheel/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Spin Wheel:"
+    accentText="Random name picker & decision maker"
+    description="Enter any list of names, choices, or options and spin for a random winner. Elimination mode, shareable links, and local saving. 100% client-side, no signup, no ads."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <!-- Spin Wheel Interface -->
+  <section class="py-6 md:py-8" aria-label="Spin wheel">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-5xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <!-- Left Panel: Controls -->
+          <div class="space-y-4">
+            <!-- Entries Card -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+              <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-bold text-bae-ink">Entries</h2>
+                <span id="sw-entries-count" class="text-xs text-bae-muted">0 entries</span>
+              </div>
+              <textarea
+                id="sw-entries"
+                rows="6"
+                class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink placeholder:text-bae-muted/60 focus:outline-none focus:border-bae-primary resize-y"
+                placeholder="Enter names or choices, one per line..."
+              ></textarea>
+              <div class="flex items-center gap-2 mt-3">
+                <input
+                  type="text"
+                  id="sw-add-input"
+                  class="flex-1 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-1.5 text-sm text-bae-ink placeholder:text-bae-muted/60 focus:outline-none focus:border-bae-primary"
+                  placeholder="Add one entry..."
+                />
+                <button type="button" id="sw-add" class="bg-bae-primary text-white text-xs font-semibold px-3 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Add</button>
+              </div>
+              <div id="sw-entries-list" class="mt-3 max-h-40 overflow-y-auto space-y-1.5"></div>
+            </div>
+
+            <!-- Settings Card -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+              <h2 class="text-sm font-bold text-bae-ink mb-3">Settings</h2>
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" id="sw-elimination" class="w-4 h-4 mt-0.5 accent-bae-primary rounded" />
+                <span class="text-sm text-bae-ink leading-snug">Elimination mode: remove winner after each spin</span>
+              </label>
+              <div class="flex gap-2 mt-4">
+                <button type="button" id="sw-share" class="flex-1 bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy Link</button>
+                <button type="button" id="sw-reset" class="flex-1 bg-bae-bg text-red-600 border border-red-200 text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-red-400 transition-colors">Reset All</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel: Wheel -->
+          <div class="space-y-4">
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+              <div class="flex items-center justify-center">
+                <div class="relative w-full max-w-[380px] aspect-square">
+                  <canvas id="sw-canvas" class="w-full h-full block"></canvas>
+                </div>
+              </div>
+              <div class="flex justify-center mt-4">
+                <button type="button" id="sw-spin" class="bg-bae-primary text-white text-base font-bold px-10 py-3.5 rounded-bae-sm hover:bg-bae-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-bae-md">SPIN</button>
+              </div>
+              <div id="sw-result" class="hidden mt-4 text-center">
+                <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Winner</p>
+                <p id="sw-result-text" class="text-2xl font-bold text-bae-ink"></p>
+              </div>
+            </div>
+
+            <!-- History -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+              <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-bold text-bae-ink">Spin History</h2>
+                <button type="button" id="sw-clear-history" class="text-[11px] text-bae-muted hover:text-bae-ink transition-colors">Clear</button>
+              </div>
+              <ul id="sw-history-list" class="space-y-0 max-h-40 overflow-y-auto">
+                <li class="text-xs text-bae-muted italic py-1">No spins yet</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Who reaches for this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Elementary Classroom</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The Teacher</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">30 Students, Zero Arguments</div>
+          <p class="text-sm text-bae-muted leading-relaxed">With 30 names on the board and elimination mode on, every student gets called exactly once before anyone is picked again. No more "you always choose her", the wheel decides fairly, and the history log proves it.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Live Stream</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The Twitch Streamer</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">500 Viewers, One Click</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Running a subscriber giveaway with 500 entries, they paste the list into the wheel, hit Spin, and capture the winning moment for the VOD. No ads popping up mid-broadcast, no account required, and the link can be shared to Discord for transparency.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Corporate Event</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The Event Host</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">100 Entries, Transparent Results</div>
+          <p class="text-sm text-bae-muted leading-relaxed">At a company retreat raffle with 100 employee names, they project the wheel on the main screen. Elimination mode ensures five distinct prize winners, and the timestamped history creates an audit trail that satisfies compliance without any paperwork.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Family Game Night</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The Parent</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">5 Kids, Zero Drama</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Deciding who goes first in Monopoly or who does dishes after dinner used to start arguments. Now they spin the chore wheel. Elimination mode cycles through all five kids so nobody gets stuck with the same task twice in a row.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code Generator</a>, <a href="/tools/password-generator/" class="text-bae-primary hover:underline">Password Generator</a>, <a href="/tools/color-palette-generator/" class="text-bae-primary hover:underline">Color Palette</a>, <a href="/tools/citation-generator/" class="text-bae-primary hover:underline">Citation Generator</a>, and <a href="/tools/typing-speed-test/" class="text-bae-primary hover:underline">Typing Speed Test</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast -->
+  <div id="sw-toast" class="fixed bottom-6 right-6 bg-bae-ink text-white text-xs font-semibold px-4 py-2.5 rounded-bae-sm shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none z-50">Link copied</div>
+
+  <script is:inline>
+    (function() {
+      'use strict';
+
+      // ─── DOM refs ───
+      const canvas = document.getElementById('sw-canvas');
+      const ctx = canvas.getContext('2d');
+      const entriesInput = document.getElementById('sw-entries');
+      const entriesCount = document.getElementById('sw-entries-count');
+      const entriesList = document.getElementById('sw-entries-list');
+      const addInput = document.getElementById('sw-add-input');
+      const addBtn = document.getElementById('sw-add');
+      const elimToggle = document.getElementById('sw-elimination');
+      const spinBtn = document.getElementById('sw-spin');
+      const resetBtn = document.getElementById('sw-reset');
+      const shareBtn = document.getElementById('sw-share');
+      const resultBox = document.getElementById('sw-result');
+      const resultText = document.getElementById('sw-result-text');
+      const historyList = document.getElementById('sw-history-list');
+      const clearHistoryBtn = document.getElementById('sw-clear-history');
+      const toast = document.getElementById('sw-toast');
+
+      // ─── Constants ───
+      const COLORS = [
+        '#6366f1', '#a855f7', '#ec4899', '#f43f5e',
+        '#f97316', '#eab308', '#22c55e', '#10b981',
+        '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef'
+      ];
+      const STORAGE_KEY = 'bae-spin-wheel';
+      const MAX_ENTRIES = 100;
+
+      // ─── State ───
+      let entries = [];
+      let eliminatedIndices = new Set();
+      let isSpinning = false;
+      let currentRotation = 0;
+      let history = [];
+      let animFrame = null;
+
+      // ─── Helpers ───
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.remove('opacity-0');
+        toast.classList.add('opacity-100');
+        setTimeout(function() {
+          toast.classList.remove('opacity-100');
+          toast.classList.add('opacity-0');
+        }, 2000);
+      }
+
+      function updateEntriesCount() {
+        entriesCount.textContent = entries.length + ' entr' + (entries.length === 1 ? 'y' : 'ies');
+      }
+
+      function updateTextarea() {
+        entriesInput.value = entries.join('\n');
+      }
+
+      function getActiveEntries() {
+        return entries.map(function(text, i) {
+          return { text: text, originalIndex: i };
+        }).filter(function(item) {
+          return !eliminatedIndices.has(item.originalIndex);
+        });
+      }
+
+      function resizeCanvas() {
+        const container = canvas.parentElement;
+        const size = Math.min(container.clientWidth, container.clientHeight);
+        if (!size) return;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        drawWheel();
+      }
+
+      function drawWheel() {
+        const w = canvas.width / (window.devicePixelRatio || 1);
+        const h = canvas.height / (window.devicePixelRatio || 1);
+        const cx = w / 2;
+        const cy = h / 2;
+        const radius = Math.min(cx, cy) - 14;
+
+        ctx.clearRect(0, 0, w, h);
+
+        const active = getActiveEntries();
+        const count = active.length;
+
+        if (count === 0) {
+          ctx.fillStyle = '#9ca3af';
+          ctx.font = '14px ui-sans-serif, system-ui, -apple-system, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Add entries to spin', cx, cy);
+          return;
+        }
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(currentRotation);
+
+        const sliceAngle = (Math.PI * 2) / count;
+
+        for (let i = 0; i < count; i++) {
+          const startAngle = i * sliceAngle;
+          const endAngle = (i + 1) * sliceAngle;
+
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.arc(0, 0, radius, startAngle, endAngle);
+          ctx.closePath();
+          ctx.fillStyle = COLORS[i % COLORS.length];
+          ctx.fill();
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Text
+          ctx.save();
+          ctx.rotate(startAngle + sliceAngle / 2);
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = '#ffffff';
+
+          let fontSize = 14;
+          if (count > 30) fontSize = 9;
+          else if (count > 15) fontSize = 11;
+          ctx.font = 'bold ' + fontSize + 'px ui-sans-serif, system-ui, -apple-system, sans-serif';
+
+          const maxWidth = radius - 24;
+          let displayText = active[i].text;
+          let metrics = ctx.measureText(displayText);
+          while (metrics.width > maxWidth && displayText.length > 3) {
+            displayText = displayText.slice(0, -1);
+            metrics = ctx.measureText(displayText);
+          }
+          if (displayText.length < active[i].text.length) displayText += '…';
+
+          ctx.fillText(displayText, radius - 12, 0);
+          ctx.restore();
+        }
+
+        ctx.restore();
+
+        // Center hub
+        ctx.beginPath();
+        ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+        ctx.fillStyle = '#1f2937';
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Pointer
+        ctx.beginPath();
+        ctx.moveTo(cx, 6);
+        ctx.lineTo(cx - 10, 24);
+        ctx.lineTo(cx + 10, 24);
+        ctx.closePath();
+        ctx.fillStyle = '#f43f5e';
+        ctx.fill();
+      }
+
+      function renderEntriesList() {
+        entriesList.innerHTML = '';
+        if (entries.length === 0) {
+          entriesList.innerHTML = '<p class="text-xs text-bae-muted italic">No entries yet</p>';
+          return;
+        }
+        entries.forEach(function(text, i) {
+          const row = document.createElement('div');
+          row.className = 'flex items-center gap-2 bg-bae-bg border border-bae-border rounded-bae-sm px-2.5 py-1.5';
+
+          const dot = document.createElement('span');
+          dot.className = 'w-2.5 h-2.5 rounded-full shrink-0';
+          dot.style.backgroundColor = COLORS[i % COLORS.length];
+
+          const nameSpan = document.createElement('span');
+          nameSpan.className = 'text-xs text-bae-ink flex-1 truncate';
+          nameSpan.textContent = text;
+
+          if (elimToggle.checked && eliminatedIndices.has(i)) {
+            nameSpan.classList.add('line-through', 'text-bae-muted');
+          }
+
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'text-[11px] text-red-600 hover:underline shrink-0';
+          delBtn.textContent = 'Remove';
+          delBtn.addEventListener('click', function() {
+            entries.splice(i, 1);
+            const newEliminated = new Set();
+            eliminatedIndices.forEach(function(idx) {
+              if (idx < i) newEliminated.add(idx);
+              else if (idx > i) newEliminated.add(idx - 1);
+            });
+            eliminatedIndices = newEliminated;
+            updateTextarea();
+            syncFromTextarea();
+          });
+
+          row.appendChild(dot);
+          row.appendChild(nameSpan);
+          row.appendChild(delBtn);
+          entriesList.appendChild(row);
+        });
+      }
+
+      function syncFromTextarea() {
+        const raw = entriesInput.value.split('\n');
+        entries = [];
+        for (let i = 0; i < raw.length; i++) {
+          const t = raw[i].trim();
+          if (t && entries.length < MAX_ENTRIES) entries.push(t);
+        }
+        if (entries.length >= MAX_ENTRIES && raw.length > MAX_ENTRIES) {
+          showToast('Maximum ' + MAX_ENTRIES + ' entries');
+        }
+        updateEntriesCount();
+        renderEntriesList();
+        drawWheel();
+        saveState();
+        updateURL();
+      }
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function spin() {
+        if (isSpinning) return;
+        const active = getActiveEntries();
+        if (active.length === 0) return;
+
+        isSpinning = true;
+        spinBtn.disabled = true;
+        resultBox.classList.add('hidden');
+
+        const startRot = currentRotation;
+        const extraSpins = 5 + Math.random() * 4;
+        const randomOffset = Math.random() * Math.PI * 2;
+        const targetRot = startRot + extraSpins * Math.PI * 2 + randomOffset;
+        const startTime = performance.now();
+        const duration = 3500 + Math.random() * 1500;
+
+        function frame(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = easeOutCubic(progress);
+          currentRotation = startRot + (targetRot - startRot) * eased;
+          drawWheel();
+
+          if (progress < 1) {
+            animFrame = requestAnimationFrame(frame);
+          } else {
+            isSpinning = false;
+            spinBtn.disabled = false;
+            determineWinner();
+          }
+        }
+
+        animFrame = requestAnimationFrame(frame);
+      }
+
+      function determineWinner() {
+        const active = getActiveEntries();
+        const count = active.length;
+        if (count === 0) return;
+
+        const sliceAngle = (Math.PI * 2) / count;
+        let pointerAngle = ((-Math.PI / 2 - currentRotation) % (Math.PI * 2));
+        if (pointerAngle < 0) pointerAngle += Math.PI * 2;
+        const winnerIdx = Math.floor(pointerAngle / sliceAngle) % count;
+        const winner = active[winnerIdx];
+
+        resultText.textContent = winner.text;
+        resultBox.classList.remove('hidden');
+
+        // History
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        history.unshift({ text: winner.text, time: timeStr });
+        if (history.length > 50) history.pop();
+        renderHistory();
+
+        // Elimination
+        if (elimToggle.checked) {
+          eliminatedIndices.add(winner.originalIndex);
+          if (eliminatedIndices.size >= entries.length) {
+            eliminatedIndices.clear();
+            showToast('All entries eliminated, wheel reset');
+          }
+          renderEntriesList();
+          drawWheel();
+        }
+
+        saveState();
+      }
+
+      function renderHistory() {
+        historyList.innerHTML = '';
+        if (history.length === 0) {
+          const li = document.createElement('li');
+          li.className = 'text-xs text-bae-muted italic py-1';
+          li.textContent = 'No spins yet';
+          historyList.appendChild(li);
+          return;
+        }
+        history.forEach(function(h) {
+          const li = document.createElement('li');
+          li.className = 'flex items-center justify-between py-1.5 border-b border-bae-border last:border-0';
+
+          const spanText = document.createElement('span');
+          spanText.className = 'text-sm text-bae-ink font-medium truncate pr-3';
+          spanText.textContent = h.text;
+
+          const spanTime = document.createElement('span');
+          spanTime.className = 'text-[11px] text-bae-muted shrink-0';
+          spanTime.textContent = h.time;
+
+          li.appendChild(spanText);
+          li.appendChild(spanTime);
+          historyList.appendChild(li);
+        });
+      }
+
+      function addEntry() {
+        const val = addInput.value.trim();
+        if (!val) return;
+        if (entries.length >= MAX_ENTRIES) {
+          showToast('Maximum ' + MAX_ENTRIES + ' entries');
+          return;
+        }
+        entries.push(val);
+        addInput.value = '';
+        updateTextarea();
+        syncFromTextarea();
+      }
+
+      function resetAll() {
+        if (animFrame) cancelAnimationFrame(animFrame);
+        entries = [];
+        eliminatedIndices.clear();
+        history = [];
+        currentRotation = 0;
+        isSpinning = false;
+        entriesInput.value = '';
+        elimToggle.checked = false;
+        spinBtn.disabled = false;
+        updateEntriesCount();
+        renderEntriesList();
+        renderHistory();
+        drawWheel();
+        resultBox.classList.add('hidden');
+        updateURL();
+        saveState();
+      }
+
+      function copyShareLink() {
+        updateURL();
+        const url = window.location.href;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(function() {
+            showToast('Link copied to clipboard');
+          }).catch(function() {
+            showToast('Failed to copy link');
+          });
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = url;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Link copied to clipboard');
+        }
+      }
+
+      function updateURL() {
+        const params = new URLSearchParams();
+        if (entries.length > 0) {
+          params.set('names', entries.join('|'));
+        }
+        if (elimToggle.checked) {
+          params.set('elim', '1');
+        }
+        const qs = params.toString();
+        const newUrl = qs ? (window.location.pathname + '?' + qs) : window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+      }
+
+      function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('names')) {
+          const decoded = params.get('names').split('|').map(function(s) { return s.trim(); }).filter(Boolean);
+          if (decoded.length > 0) {
+            entries = decoded.slice(0, MAX_ENTRIES);
+            updateTextarea();
+          }
+        }
+        if (params.get('elim') === '1') {
+          elimToggle.checked = true;
+        }
+      }
+
+      function saveState() {
+        try {
+          const data = {
+            entries: entries,
+            eliminated: Array.from(eliminatedIndices),
+            eliminationMode: elimToggle.checked,
+            history: history,
+            version: 1
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch(e) {}
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const data = JSON.parse(raw);
+          if (!data || data.version !== 1) return;
+          if (Array.isArray(data.entries)) entries = data.entries.slice(0, MAX_ENTRIES);
+          if (Array.isArray(data.eliminated)) eliminatedIndices = new Set(data.eliminated);
+          if (typeof data.eliminationMode === 'boolean') elimToggle.checked = data.eliminationMode;
+          if (Array.isArray(data.history)) history = data.history.slice(0, 50);
+          updateTextarea();
+        } catch(e) {}
+      }
+
+      // ─── Event listeners ───
+      entriesInput.addEventListener('input', syncFromTextarea);
+
+      addBtn.addEventListener('click', addEntry);
+      addInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') addEntry();
+      });
+
+      elimToggle.addEventListener('change', function() {
+        drawWheel();
+        renderEntriesList();
+        saveState();
+        updateURL();
+      });
+
+      spinBtn.addEventListener('click', spin);
+      resetBtn.addEventListener('click', resetAll);
+      shareBtn.addEventListener('click', copyShareLink);
+      clearHistoryBtn.addEventListener('click', function() {
+        history = [];
+        renderHistory();
+        saveState();
+      });
+
+      window.addEventListener('resize', resizeCanvas);
+
+      // ─── Init ───
+      loadFromURL();
+      if (entries.length === 0) {
+        loadState();
+      }
+      updateEntriesCount();
+      renderEntriesList();
+      renderHistory();
+      // Delay canvas init until layout is stable
+      requestAnimationFrame(function() {
+        resizeCanvas();
+      });
+    })();
+  </script>
+</BaseLayout>

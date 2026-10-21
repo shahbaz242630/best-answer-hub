@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bae-bg text-bae-fg font-sans antialiased;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Prevent iOS auto-zoom on inputs — critical for mobile UX */
+  input, textarea, select, button {
+    font-size: 16px;
+  }
+
+  /* Ensure media never overflows viewport */
+  img, canvas, video, svg, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Touch-friendly tap targets (WCAG 2.5.5) */
+  button, [role="button"], input[type="button"], input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent horizontal overflow on text */
+  p, h1, h2, h3, h4, h5, h6, li, td, th {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Smooth scrolling + momentum on iOS */
+  .overflow-auto, .overflow-y-auto, .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Tables scroll horizontally on small screens */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  /* Playbook (.pb) content tables are real, wrapping tables — they opt out of the
+     mobile-scroll block treatment above (which otherwise clips wide tables and leaves
+     a gap on narrow ones). Scoped to .pb, which is used ONLY on playbook pages, so no
+     other page, component, or Tailwind pb-* utility is affected. Any new .pb page is
+     fixed automatically by this rule — no per-page CSS needed. */
+  .pb table {
+    display: table;
+    white-space: normal;
+  }
+
+  /* Code blocks stay within bounds */
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Blueprint grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(var(--color-bae-border-light) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-bae-border-light) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.5;
+  }
+
+  /* Ensure content is above grid */
+  main, nav, footer, header, section {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-page mx-auto px-6;
+  }
+  
+  /* Prose overrides for article content */
+  .prose h2 {
+    @apply text-2xl md:text-[1.75rem] font-serif font-bold text-bae-ink mt-10 mb-4;
+  }
+  
+  .prose h3 {
+    @apply text-lg md:text-xl font-serif font-bold text-bae-ink mt-8 mb-3;
+  }
+  
+  .prose p {
+    @apply text-bae-fg leading-relaxed mb-4;
+  }
+  
+  .prose ul, .prose ol {
+    @apply mb-4 pl-5;
+  }
+  
+  .prose li {
+    @apply text-bae-fg mb-1.5;
+  }
+  
+  .prose a {
+    @apply text-bae-primary no-underline;
+  }
+  
+  .prose a:hover {
+    @apply underline;
+  }
+  
+  .prose strong {
+    @apply text-bae-ink font-semibold;
+  }
+  
+  .prose blockquote {
+    @apply border-l-4 border-bae-primary bg-bae-primary-soft py-3 px-4 rounded-r-bae-sm my-6;
+  }
+  
+  .prose blockquote p {
+    @apply mb-0 italic;
+  }
+  
+  .prose table {
+    @apply w-full border-collapse text-sm my-6;
+  }
+  
+  .prose th, .prose td {
+    @apply border border-bae-border px-3 py-2 text-left;
+  }
+  
+  .prose th {
+    @apply bg-bae-card font-semibold text-bae-ink;
+  }
+  
+  .prose td {
+    @apply bg-bae-card;
+  }
+  
+  .prose img {
+    @apply rounded-bae my-6;
+  }
+  
+  .prose hr {
+    @apply border-bae-border my-8;
+  }
+}
+
+@layer utilities {
+  .transition-top {
+    transition-property: top;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+}

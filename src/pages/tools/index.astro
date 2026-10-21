@@ -1,0 +1,283 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHubValueProp from '../../components/tools/ToolHubValueProp.astro';
+import { allTools, toolCountLabel } from '../../data/tools';
+
+// Themed hubs this master index gathers — drives the "Browse by toolkit" band.
+const toolkits = [
+  { href: '/calculators/', label: 'Calculators', desc: 'Finance, math, statistics, STEM, and everyday conversions.', icon: '🧮' },
+  { href: '/developer-toolbox/', label: 'Developer Toolbox', desc: 'Formatters, decoders, generators, converters, and testers.', icon: '⌨️' },
+  { href: '/pdf-toolkit/', label: 'PDF Toolkit', desc: 'Compress, merge, split, rotate, and convert PDFs in-browser.', icon: '📄' },
+  { href: '/career-toolkit/', label: 'Career Toolkit', desc: 'Resume builder, cover letters, and job-application tools.', icon: '💼' },
+  { href: '/calculators/statistics-suite/', label: 'Statistics Suite', desc: 'Z-score, confidence interval, p-value, and t-test calculators.', icon: '📊' },
+  { href: '/calculators/stem-suite/', label: 'STEM Suite', desc: 'Matrix, resistor, molar mass, logic, and base calculators.', icon: '🔬' },
+];
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is Best Answer Hub?',
+    a: `Best Answer Hub is a free, privacy-first collection of browser-based tools covering calculators, converters, generators, checkers, and developer utilities, ${toolCountLabel} in total. Every tool runs entirely in your browser, so your files, text, and data never leave your device. There is no account to create, no email to provide, and no subscription to manage. Tools span six categories: Calculators, PDF Toolkit, Developer Toolbox, Converters, Generators, and Checkers. Examples include the Best Answer Hub Mortgage Calculator, PDF Merger, Image Compressor, Password Generator, QR Code Generator, and Broken Link Checker. All free, all instant, all private.`,
+  },
+  {
+    q: 'Is there one website with all these tools so I do not have to register on multiple sites?',
+    a: `Yes. That is exactly what Best Answer Hub is. Instead of using one site for a calculator, another for a PDF merge, another for a QR code, and registering an account on each, all ${toolCountLabel} tools live on one hub with no signup on any of them. The tools are grouped into themed toolkits (Calculators, Developer Toolbox, PDF Toolkit, Career Toolkit, and the Statistics and STEM suites) and every one is free, runs in your browser, and needs no account. Best Answer Hub is built to be the one-stop shop: bookmark a single page instead of a dozen separate single-purpose websites.`,
+  },
+  {
+    q: 'Do Best Answer Hub tools upload my files to a server?',
+    a: 'No. Every Best Answer Hub tool runs entirely client-side: all processing happens in your browser, not on a remote server. When you compress an image, merge a PDF, or generate a QR code, the file stays on your device from start to finish. Nothing is transmitted to Best Answer Hub servers during processing. You can verify this: open browser DevTools (F12), go to the Network tab, and run a tool. You will see zero upload requests. This architecture makes Best Answer Hub tools safe for confidential documents, client work, and personal financial data.',
+  },
+  {
+    q: 'Are Best Answer Hub tools completely free, or is there a paywall?',
+    a: 'Every core function on Best Answer Hub is free with no paywall, no usage cap, and no credit system. You will not hit a mid-task payment prompt, receive a watermarked output, or be asked to upgrade to unlock results. Best Answer Hub tools are fully functional: there are no lite versions or locked features. The site covers operating costs through display advertising and optional affiliate links to relevant products, neither of which affects the tools themselves. Tools marked Coming Soon are in development and will launch free when ready.',
+  },
+  {
+    q: 'Do I need to create an account to use Best Answer Hub tools?',
+    a: 'No account, no email, no signup. None of it is required. Every Best Answer Hub tool is accessible instantly from the page with zero friction. There is no registration wall, no sign-in prompt, and no form to fill before using a tool. This is a deliberate design decision: account systems add friction, collect personal data, and create login dependency. At Best Answer Hub, you arrive on the page and use the tool. If you close the tab or clear your browser, there is no data left behind and no account to delete.',
+  },
+  {
+    q: 'Do Best Answer Hub tools work on mobile phones and tablets?',
+    a: 'Yes. All Best Answer Hub tools are fully responsive and tested across iOS Safari, Chrome on Android, and tablet browsers. Touch interfaces are supported, inputs and sliders are sized for finger interaction, and layouts adapt from a 375-pixel phone screen up to a widescreen monitor. Client-side processing means mobile browsers handle computation the same way a desktop does. There is no server round-trip adding latency. For tools that handle files, use the device native file picker to upload directly from Photos, Files, or cloud storage on iOS and Android.',
+  },
+  {
+    q: 'How do Best Answer Hub tools work without installing software?',
+    a: 'Best Answer Hub tools use two browser technologies to run complex tasks locally: JavaScript and WebAssembly (WASM). JavaScript handles the user interface and lightweight logic. For computationally intensive operations (PDF processing, image encoding, or cryptographic hashing) Best Answer Hub uses WebAssembly modules that run at near-native speed in the browser. This is the same technology powering Figma, AutoCAD Web, and Google Earth in browsers. You visit the page, the WASM module loads once, and every operation runs locally, no installation, no plugins, no extensions required.',
+  },
+  {
+    q: 'Are Best Answer Hub tools as accurate as paid software like Adobe Acrobat?',
+    a: 'For everyday tasks, yes. Best Answer Hub tools use the same underlying algorithms as many commercial products. The Best Answer Hub Image Compressor uses the Sharp WebAssembly build; PDF tools use PDF.js and PDF-lib (the same libraries used in VS Code); the Best Answer Hub QR Code Generator follows the ISO/IEC 18004:2015 standard. For standard tasks (compressing images for the web, merging PDFs for a client, generating QR codes for print) output quality matches Adobe and Microsoft. Paid software earns its premium for enterprise batch processing and AI-powered editing, not for core everyday file operations.',
+  },
+  {
+    q: 'Can I use Best Answer Hub tools offline after loading the page?',
+    a: 'Yes, for most tools. Once a page has fully loaded and the WebAssembly module has downloaded, Best Answer Hub tools continue working even if your internet connection drops. The page sits in your browser cache and since there are no server calls during processing, losing connectivity mid-task has no effect. This is useful on planes, in areas with poor signal, or on a metered mobile connection. To test it: load a Best Answer Hub tool page, disconnect from wifi, and run the tool. It works normally. Tools that query external data, such as the Best Answer Hub Broken Link Checker and IP Address Checker, require an active connection.',
+  },
+  {
+    q: 'Are there file size or usage limits on Best Answer Hub tools?',
+    a: 'Most Best Answer Hub tools process files up to 50MB per operation, which covers the vast majority of everyday tasks. The average JPEG is 2 to 5MB, a typical work PDF runs under 10MB, and most short video clips are well under 50MB. There are no daily usage limits, no monthly caps, and no rate limiting, you can run a Best Answer Hub tool 100 times in a row and it performs identically every time. For files above 50MB, such as high-resolution print scans or long video exports, desktop software is the more practical choice.',
+  },
+  {
+    q: 'Can I use Best Answer Hub tools for commercial and client projects?',
+    a: 'Yes, without restriction. When a Best Answer Hub tool processes your file, all rights to the output remain with you. The Best Answer Hub Favicon Generator, QR Code Generator, Invoice Generator, Color Palette Generator, and Image Compressor do not claim ownership of results, apply output licenses, or restrict commercial use in any way. A favicon you generate can go into a client website. A QR code can appear on printed packaging. An invoice you produce is your document. Best Answer Hub does not watermark output files, embed attribution text, or add tracking data to processed results.',
+  },
+  {
+    q: 'Why use a browser tool instead of installing desktop software?',
+    a: 'Browser tools remove the install-update-uninstall cycle that desktop software requires. No administrator privileges, no license keys, no operating system version requirements, no disk space. Best Answer Hub tools are always the current version, no update prompts, no compatibility warnings. For tasks performed occasionally (compressing a batch of images, generating a QR code for a flyer, merging two PDFs for a client) using Best Answer Hub is faster than launching a desktop application. Desktop software remains the better choice for daily professional use, large-scale batch processing, and workflows that need to run without an internet connection.',
+  },
+  {
+    q: 'Do Best Answer Hub tools add watermarks to output files?',
+    a: 'No. Best Answer Hub tools never add watermarks, logos, attribution text, or any unsolicited modification to output files. An image you compress returns as the compressed image, no Best Answer Hub banner added. A PDF you merge returns as a clean merged file, no footer appended. A favicon you generate downloads as a clean .ico or .png file. Watermarking is a freemium tactic used by tools that push users toward paid tiers. Best Answer Hub has no paid tier, which means there is no commercial incentive to degrade the quality or cleanliness of free output.',
+  },
+  {
+    q: 'How does Best Answer Hub make money if all the tools are free?',
+    a: 'Best Answer Hub covers running costs through two revenue sources: display advertising shown alongside tools, and affiliate links to relevant third-party products where appropriate, for example, linking to a domain registrar from the Best Answer Hub Favicon Generator, or to a hosting provider from the Website Speed Test. Affiliate links are clearly disclosed and never influence which tools are built or how they function. There is no data monetisation. Best Answer Hub does not collect, sell, or share user data, browsing behaviour, or processed file content. The business model is built on traffic volume, not user data.',
+  },
+  {
+    q: 'What types of free tools does Best Answer Hub offer?',
+    a: 'Best Answer Hub organises its tools into six sections. Calculators include a Mortgage Calculator, Compound Interest Calculator, Tax Calculator, ROI Calculator, Salary Converter, and AI Cost Calculator. The PDF Toolkit covers PDF Merge, PDF Split, PDF to Word, Word to PDF, and PDF Compress. The Developer Toolbox includes JSON Formatter, Regex Tester, Base64 Encoder, Hash Generator, JWT Decoder, and 10 more utilities. Generators cover Password Generator, QR Code Generator, Favicon Generator, Color Palette Generator, and Invoice Generator. Checkers include a Broken Link Checker, SEO Score Checker, and IP Address Checker. Converters handle units, data formats, and text transformations.',
+  },
+  {
+    q: 'How do I know Best Answer Hub tools are safe and trustworthy?',
+    a: 'Three things establish trust with any browser tool: verifiable client-side processing, no account requirement, and a transparent business model. Best Answer Hub publishes how each tool works: you can inspect the JavaScript source in any browser DevTools and confirm that no upload requests are made during operation. The site has no account system, which means there is no user database to breach and no credentials to steal. The advertising and affiliate revenue model means Best Answer Hub has no financial incentive to harvest or sell user data. Open the Network tab in Chrome or Firefox DevTools and run any Best Answer Hub tool. You will see zero outbound file transfers.',
+  },
+];
+
+const seo = {
+  title: 'Free Online Tools — Best Answer Hub',
+  description: 'Free calculators, converters, generators, and checkers. Client-side tools that work instantly in your browser. No signup or upload required.',
+  url: '/tools/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-25T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <div class="py-12 md:py-16">
+    <div class="container max-w-page mx-auto px-6">
+      <header class="mb-8">
+        <h1 class="font-serif text-3xl md:text-4xl font-bold text-bae-ink leading-tight mb-4">All Free Online Tools, One Place</h1>
+        <p class="text-lg text-bae-muted max-w-2xl">The entire Best Answer Hub toolbox: {toolCountLabel} calculators, converters, generators, checkers, and developer utilities in one place. Every tool runs instantly in your browser. No uploads to servers, no signup required, no juggling separate sites.</p>
+      </header>
+
+      <!-- Search Bar -->
+      <div class="mb-8">
+        <div class="relative max-w-md">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-bae-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input
+            type="text"
+            id="tool-search"
+            placeholder="Search tools... (e.g. PDF, SEO, image)"
+            class="w-full pl-11 pr-4 py-3 bg-bae-card border border-bae-border rounded-bae-sm text-sm text-bae-ink placeholder:text-bae-muted/60 focus:outline-none focus:border-bae-primary focus:ring-1 focus:ring-bae-primary transition-all"
+            aria-label="Search tools"
+          />
+        </div>
+        <p id="search-status" class="text-xs text-bae-muted mt-2 hidden"></p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="tools-grid">
+        {allTools.map((tool) => (
+          tool.live !== false ? (
+            <a href={tool.href} class="tool-card group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary" data-keywords={tool.keywords}>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{tool.badge}</span>
+                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-primary-soft text-bae-primary">Free Tool</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink mb-2">{tool.title}</h2>
+              <p class="text-sm text-bae-muted line-clamp-2">{tool.description}</p>
+              <p class="text-xs text-bae-muted mt-3 font-medium">{tool.meta}</p>
+            </a>
+          ) : (
+            <div class="tool-card group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed" data-keywords={tool.keywords}>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{tool.badge}</span>
+                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink/70 mb-2">{tool.title}</h2>
+              <p class="text-sm text-bae-muted/70 line-clamp-2">{tool.description}</p>
+              <p class="text-xs text-bae-muted/60 mt-3 font-medium">{tool.meta}</p>
+            </div>
+          )
+        ))}
+      </div>
+
+      <div id="no-results" class="hidden text-center py-12">
+        <p class="text-bae-muted text-sm">No tools match your search. Try <button type="button" id="clear-search" class="text-bae-primary font-semibold hover:underline">clearing the search</button>.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('tool-search');
+    const toolsGrid = document.getElementById('tools-grid');
+    const noResults = document.getElementById('no-results');
+    const searchStatus = document.getElementById('search-status');
+    const clearBtn = document.getElementById('clear-search');
+    const cards = toolsGrid?.querySelectorAll('.tool-card');
+
+    function filterTools(query) {
+      const q = query.trim().toLowerCase();
+      let visible = 0;
+
+      cards?.forEach(card => {
+        const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+        const text = card.textContent?.toLowerCase() || '';
+        const match = q === '' || keywords.includes(q) || text.includes(q);
+        card.classList.toggle('hidden', !match);
+        if (match) visible++;
+      });
+
+      if (visible === 0 && q !== '') {
+        noResults?.classList.remove('hidden');
+        toolsGrid?.classList.add('hidden');
+      } else {
+        noResults?.classList.add('hidden');
+        toolsGrid?.classList.remove('hidden');
+      }
+
+      if (searchStatus) {
+        if (q === '') {
+          searchStatus.classList.add('hidden');
+        } else {
+          searchStatus.textContent = `${visible} tool${visible !== 1 ? 's' : ''} found`;
+          searchStatus.classList.remove('hidden');
+        }
+      }
+    }
+
+    searchInput?.addEventListener('input', (e) => {
+      filterTools((e.target as HTMLInputElement).value);
+    });
+
+    clearBtn?.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        filterTools('');
+        searchInput.focus();
+      }
+    });
+  </script>
+
+  <!-- Browse by toolkit -->
+  <section class="py-10 md:py-14 border-t border-bae-border" aria-label="Browse tools by toolkit">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Browse by toolkit</h2>
+      <p class="text-sm text-bae-muted mb-8">Every tool is grouped into a themed hub, each one a one-stop shop for its category, all free and signup-free.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {toolkits.map((kit) => (
+          <a href={kit.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm flex items-center justify-center shrink-0">{kit.icon}</span>
+              <h3 class="text-base font-semibold text-bae-ink">{kit.label}</h3>
+            </div>
+            <p class="text-sm text-bae-muted">{kit.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolHubValueProp
+    hubName="toolbox"
+    count={toolCountLabel}
+    noun="free tools"
+    replaces="registering an account on a different single-purpose website for every small task"
+  />
+
+  <!-- Who uses these tools -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Who uses Best Answer Hub tools</h2>
+      <p class="text-sm text-bae-muted mb-8">Common scenarios from freelancers, developers, small business owners, and students.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Freelancer</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Client work, no Adobe subscription</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">≈ 5 minutes, 3 tools</p>
+          <p class="text-sm text-bae-muted">Compress product photos, generate a client invoice, and create a QR code for a business card before a 3pm call. No software installs, no subscription fees, and no watermarks on any output file.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Developer</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Quick debug tasks between deploys</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">0 context switches needed</p>
+          <p class="text-sm text-bae-muted">Format a raw JSON payload from an API, decode a JWT, test a regex, and run a Base64 encode, without leaving the browser or opening a separate application. The Best Answer Hub Developer Toolbox runs entirely client-side.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Small Business Owner</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Pre-launch checklist, one tab</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">3 tools, under 10 minutes</p>
+          <p class="text-sm text-bae-muted">Run a broken link scan before going live, generate a favicon from a logo file, and check page speed score. No account needed, results are instant, and nothing is uploaded to any server.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Student / Researcher</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Any device, no installs</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Works on Chromebook, tablet, and phone</p>
+          <p class="text-sm text-bae-muted">Check word count and reading time for an essay, merge PDF chapters before a submission, and convert a file format, from any device including a shared school Chromebook or an iPad, no installation required.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

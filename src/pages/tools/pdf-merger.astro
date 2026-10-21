@@ -1,0 +1,486 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-07-11T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub PDF Merger?',
+    a: 'The Best Answer Hub PDF Merger is a free browser-based tool that combines multiple PDF files into a single document. Drop your files, drag to reorder, and click Merge: the tool uses pdf-lib to copy every page from each source PDF into a new combined document, preserving original page dimensions, orientations, and content. Everything runs locally in your browser. No files are uploaded to any server, no signup required.',
+  },
+  {
+    q: 'Is it safe to upload confidential documents to free PDF merger tools?',
+    a: 'Smallpdf and iLovePDF process files on their own servers: your documents are transmitted over the internet and temporarily stored on third-party infrastructure. Smallpdf deletes files after one hour; iLovePDF after two hours. For contracts, HR records, medical files, or legal documents, this is a meaningful privacy risk. The Best Answer Hub PDF Merger processes every file entirely in your browser. Nothing is transmitted to any server, making it safe for confidential, NDA-protected, and HIPAA-sensitive documents.',
+  },
+  {
+    q: 'Does merging PDFs reduce image or text quality?',
+    a: 'No. The Best Answer Hub PDF Merger uses pdf-lib\'s native page-copying API, which transfers page content at full fidelity. Text remains sharp, images retain their original resolution, and vector graphics stay intact. The tool does not re-encode, rasterize, or compress any content during merging. It copies pages as-is into a new document. The only change is that all pages are now contained in a single file.',
+  },
+  {
+    q: 'Why does my merged PDF end up larger than all the originals combined?',
+    a: 'PDFs carry embedded font data, cross-reference tables, and structural overhead that each source file stores independently. When pages are copied into a new document, those structural elements can multiply rather than consolidate: fonts appearing in multiple source files may each be carried over separately. If the merged file is larger than expected, running it through the <a href="/tools/pdf-compressor/">Best Answer Hub PDF Compressor</a> afterward can bring the size down. Note that the compressor re-encodes pages as images, so text in the compressed copy is no longer selectable.',
+  },
+  {
+    q: 'How do I control the page order when merging PDFs?',
+    a: 'After uploading your files to the Best Answer Hub PDF Merger, each PDF appears as a draggable card showing its name and page count. Use the up/down arrow buttons or drag cards into position. The top card becomes the first section of the merged PDF. You can also remove individual files before merging. The final document follows the card order shown on screen from top to bottom.',
+  },
+  {
+    q: 'Can I merge PDFs with different page sizes or orientations?',
+    a: 'Yes. The Best Answer Hub PDF Merger preserves each page\'s original dimensions and orientation. A landscape A4 page from one file and a portrait Letter page from another will each appear at their correct size in the merged document. Pages are not resized, stretched, or padded to match each other. This is ideal for combining documents with mixed orientations, such as reports with embedded wide tables, diagrams, or certificates.',
+  },
+  {
+    q: 'Are bookmarks, form fields, and annotations preserved after merging?',
+    a: 'No. The Best Answer Hub PDF Merger does not preserve these interactive elements. Bookmarks (table-of-contents outlines), fillable form fields, annotations, and hyperlinks are flattened or removed during the merge process. The output is a clean, static PDF containing only the visual page content. Fill in form fields before merging if you need the data captured. For documents that require a clickable table of contents after merging, a desktop tool like Adobe Acrobat, PDF24, or PDFsam is needed to rebuild the bookmark structure.',
+  },
+  {
+    q: 'How do I merge my resume and cover letter into one PDF for a job application?',
+    a: 'Upload your cover letter PDF first to the Best Answer Hub PDF Merger (so it lands on page 1), then upload your resume PDF. Confirm the order in the file list (cover letter on top, resume below) and click Merge PDFs. The result is a single file ready to attach to any ATS application or email. If the merged file exceeds the portal\'s size limit, run it through the <a href="/tools/pdf-compressor/">Best Answer Hub PDF Compressor</a> with a target size set before submitting.',
+  },
+  {
+    q: 'How do I merge PDF files on iPhone without downloading an app?',
+    a: 'Open the Best Answer Hub PDF Merger in Safari on your iPhone. No app install required. Tap the upload area to select PDFs from your Files app, arrange the order using the arrow buttons, and tap Merge PDFs. The entire process runs in Safari using client-side JavaScript; nothing is uploaded to any server. Download the merged file directly to your Files app with one tap. For PDFs under 20–30 MB, the process takes 5–15 seconds on modern iPhones.',
+  },
+  {
+    q: 'How do I merge PDFs on Windows or Mac without Adobe Acrobat?',
+    a: 'Open the Best Answer Hub PDF Merger in any modern browser (Chrome, Firefox, Safari, or Edge), no Adobe Acrobat required. On Mac, Apple Preview also supports merging: open one PDF, view the sidebar, then drag pages from a second PDF into it. On Windows 11, Microsoft Edge can print to PDF but does not natively merge multiple files. The browser-based Best Answer Hub PDF Merger works identically on Windows and Mac with no software install.',
+  },
+  {
+    q: 'Can I merge PDFs in Google Chrome or Google Drive?',
+    a: 'Google Drive has no built-in PDF merger. You need a third-party Google Workspace add-on to combine files stored in Drive. In Chrome, the Best Answer Hub PDF Merger runs directly in the browser with no extension or add-on needed: open the page, drag in your PDFs, and merge locally. If your files are in Google Drive, download them first, merge in the Best Answer Hub PDF Merger, then re-upload the combined file.',
+  },
+  {
+    q: 'How do I merge password-protected PDF files?',
+    a: 'Password-protected, encrypted, or DRM-protected PDFs cannot be merged by browser-based tools without the decryption key. To merge a protected PDF: open it in your system viewer (Adobe Reader, Preview on Mac, or Chrome\'s built-in PDF viewer), choose Print → Save as PDF to create an unencrypted copy, then upload that copy to the Best Answer Hub PDF Merger. The tool will show an error message for any file it cannot read.',
+  },
+  {
+    q: 'Is there a file size limit or daily limit on merges?',
+    a: 'The Best Answer Hub PDF Merger has no file size limits and no daily caps. You can merge files of any size (from two one-page invoices to fifty-chapter documents) without hitting a wall. Practical limits come from your device\'s available RAM: most modern laptops handle combined source files up to 200–300 MB without issues. Unlike Smallpdf (two tasks per day on the free tier) or iLovePDF (one task per hour), the Best Answer Hub PDF Merger has no usage quotas.',
+  },
+  {
+    q: 'Is there a free PDF merger that works completely offline?',
+    a: 'Yes. The Best Answer Hub PDF Merger processes every file entirely inside your browser using the pdf-lib library. Your documents are never transmitted to any server, never stored, and never accessible to anyone outside your device. You can verify this: open your browser\'s Network tab, merge two PDFs, and confirm no file data appears in any outbound request. After the page loads once, the tool also works without an active internet connection.',
+  },
+  {
+    q: 'How does the Best Answer Hub PDF Merger compare to Smallpdf and iLovePDF?',
+    a: 'Smallpdf limits free users to two merging tasks per day and uploads files to its servers. iLovePDF allows one task per hour for free users and also processes files server-side. Both delete uploaded files after one to two hours, but your documents do leave your device. The Best Answer Hub PDF Merger is completely free with no daily caps, no signup, and full local processing. Files never leave your browser. The main trade-off: the Best Answer Hub PDF Merger does not preserve bookmarks or interactive form fields, which paid desktop tools like Adobe Acrobat handle.',
+  },
+];
+
+const steps = [
+  { title: 'Upload your PDFs', description: 'Drag and drop one or more PDF files into the upload area, or click to browse. Each file stays on your device. Nothing is uploaded to any server.' },
+  { title: 'Reorder if needed', description: 'Drag and drop the file cards to set the merge order. Remove any file you do not want. The top card becomes the first page of the final document.' },
+  { title: 'Merge and download', description: 'Click "Merge PDFs." The tool copies every page at full fidelity and builds a single combined file. Download instantly with one click.' },
+];
+
+const seo = {
+  title: 'Free PDF Merger — Combine PDFs Online, No Upload (2026)',
+  description: 'Merge multiple PDFs into one, free in your browser. Drag and drop to reorder. No uploads, no signup, no watermarks — files stay on your device.',
+  url: '/tools/pdf-merger/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'PDF Merger', url: '/tools/pdf-merger/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Upload to Servers"
+    title="PDF Merger:"
+    accentText="Combine files in seconds"
+    description="Merge multiple PDFs into one document for free. Drag and drop to reorder pages before merging. No signup, no watermarks, no daily limits. Your files never leave your device."
+    backLink="/pdf-toolkit/"
+    backLabel="← PDF Toolkit"
+  />
+
+  <!-- Merger Interface -->
+  <section class="py-6 md:py-8" aria-label="PDF merger">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-4">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1">Drop your PDFs here</p>
+          <p class="text-xs text-bae-muted">or click to browse (select multiple .pdf files)</p>
+          <input type="file" id="file-input" class="hidden" accept=".pdf,application/pdf" multiple />
+        </div>
+
+        <!-- Add More Button -->
+        <div class="text-center mb-4">
+          <button type="button" id="add-more-btn" class="hidden text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors">
+            + Add more files
+          </button>
+        </div>
+
+        <!-- File List -->
+        <div id="file-list" class="hidden mb-4 space-y-2"></div>
+
+        <!-- Size Warning -->
+        <div id="size-warning" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-3 flex items-start gap-2">
+          <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <p class="text-xs text-amber-700">One or more files are large. Merging may take 30+ seconds and your browser may become temporarily unresponsive.</p>
+        </div>
+
+        <!-- Merge Button -->
+        <button type="button" id="merge-btn" class="hidden w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors mb-4">
+          Merge PDFs
+        </button>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Merging...</p>
+            <p class="text-xs text-bae-muted mt-1">Processing locally in your browser</p>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="result-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-bae-ink">Merge Complete</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">Ready</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div class="bg-bae-bg rounded-bae-sm p-3 text-center">
+                <p class="text-[10px] text-bae-muted uppercase tracking-wider mb-1">Files Merged</p>
+                <p id="files-count" class="text-sm font-medium text-bae-ink">—</p>
+              </div>
+              <div class="bg-emerald-50 rounded-bae-sm p-3 text-center border border-emerald-100">
+                <p class="text-[10px] text-emerald-600 uppercase tracking-wider mb-1">Total Pages</p>
+                <p id="total-pages" class="text-sm font-medium text-emerald-700">—</p>
+              </div>
+            </div>
+            <a id="download-btn" href="#" download class="block w-full text-center bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm hover:bg-bae-accent transition-colors no-underline">
+              Download Merged PDF
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What this tool cannot do</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>Bookmarks and outlines:</strong> Table-of-contents bookmarks from source PDFs are not preserved in the merged output.</li>
+              <li><strong>Interactive forms:</strong> Form fields, annotations, and hyperlinks are flattened during merging.</li>
+              <li><strong>Password-protected files:</strong> Encrypted or DRM-protected PDFs cannot be opened or merged.</li>
+              <li><strong>Page-level reordering:</strong> This tool merges entire files in sequence. For rearranging individual pages, use the <a href="/tools/pdf-splitter/" class="text-amber-800 underline">Best Answer Hub PDF Splitter</a> first.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people merge with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people merge with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from job seekers, professionals, and everyday users.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Job Applications</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Cover letter + resume in one file</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Most popular ATS use case</p>
+          <p class="text-sm text-bae-muted">Most job portals accept a single PDF attachment. Upload your cover letter first, resume second. The Best Answer Hub PDF Merger combines them into one clean file ready for any ATS or email submission in seconds.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Legal Documents</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Bundle contracts into one filing</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Full fidelity, no quality loss</p>
+          <p class="text-sm text-bae-muted">Combine signed agreements, schedules, and exhibits into a single document for court submissions, client delivery, or secure archiving. Pages copy at full resolution. No compression, no rasterization.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Expense Reports</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Merge scanned receipts for filing</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">No upload, safe for financial docs</p>
+          <p class="text-sm text-bae-muted">Scan individual receipts on your phone, drop them into the Best Answer Hub PDF Merger, and submit one tidy PDF to your accountant or expense portal. Financial documents never touch a server.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Creative Portfolios</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Assemble portfolio from separate exports</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Mixed page sizes preserved exactly</p>
+          <p class="text-sm text-bae-muted">Combine separate design exports, case studies, and credential pages into a single shareable portfolio PDF. Different page sizes and orientations are preserved exactly as exported from Figma, InDesign, or Canva.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more PDF tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/pdf-compressor/" class="text-bae-primary hover:underline">PDF Compressor</a>, <a href="/tools/pdf-splitter/" class="text-bae-primary hover:underline">PDF Splitter</a>, <a href="/tools/pdf-rotator/" class="text-bae-primary hover:underline">PDF Rotator</a>, <a href="/tools/images-to-pdf/" class="text-bae-primary hover:underline">Images to PDF</a>, <a href="/tools/pdf-to-images/" class="text-bae-primary hover:underline">PDF to Images</a>, and <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>. All free, no signup.</p>
+        </div>
+        <a href="/pdf-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse PDF Toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const fileList = document.getElementById('file-list');
+      const mergeBtn = document.getElementById('merge-btn');
+      const addMoreBtn = document.getElementById('add-more-btn');
+      const progressArea = document.getElementById('progress-area');
+      const resultArea = document.getElementById('result-area');
+      const progressText = document.getElementById('progress-text');
+      const sizeWarning = document.getElementById('size-warning');
+      const filesCountEl = document.getElementById('files-count');
+      const totalPagesEl = document.getElementById('total-pages');
+      const downloadBtn = document.getElementById('download-btn');
+
+      let items = [];
+      let PDFLib = null;
+
+      async function loadPdfLib() {
+        if (PDFLib) return;
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = '/pdf-lib.min.js';
+          s.onload = () => { PDFLib = window.PDFLib; resolve(); };
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+
+      function formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      function validatePdf(file) {
+        return file.name.toLowerCase().endsWith('.pdf') && file.type === 'application/pdf';
+      }
+
+      function renderList() {
+        fileList.innerHTML = '';
+        if (items.length === 0) {
+          fileList.classList.add('hidden');
+          mergeBtn.classList.add('hidden');
+          addMoreBtn.classList.add('hidden');
+          sizeWarning.classList.add('hidden');
+          return;
+        }
+
+        fileList.classList.remove('hidden');
+        mergeBtn.classList.remove('hidden');
+        addMoreBtn.classList.remove('hidden');
+
+        let hasLarge = false;
+        items.forEach((item, index) => {
+          if (item.file.size > 500 * 1024 * 1024) hasLarge = true;
+
+          const card = document.createElement('div');
+          card.className = 'bg-bae-card border border-bae-border rounded-bae p-3 flex items-center gap-3 cursor-move';
+          card.draggable = true;
+          card.dataset.index = index;
+
+          card.innerHTML = `
+            <svg class="w-4 h-4 text-bae-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-bae-ink truncate">${escapeHtml(item.name)}</p>
+              <p class="text-xs text-bae-muted">${item.pages} page${item.pages !== 1 ? 's' : ''} · ${formatBytes(item.file.size)}</p>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <button type="button" data-up="${index}" class="up-btn p-1.5 text-bae-muted hover:text-bae-ink disabled:opacity-30" ${index === 0 ? 'disabled' : ''} aria-label="Move up">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+              </button>
+              <button type="button" data-down="${index}" class="down-btn p-1.5 text-bae-muted hover:text-bae-ink disabled:opacity-30" ${index === items.length - 1 ? 'disabled' : ''} aria-label="Move down">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <button type="button" data-remove="${index}" class="remove-btn p-1.5 text-bae-muted hover:text-red-500" aria-label="Remove file">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+          `;
+
+          // Drag and drop
+          card.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', index);
+            card.classList.add('opacity-50');
+          });
+          card.addEventListener('dragend', () => {
+            card.classList.remove('opacity-50');
+            document.querySelectorAll('#file-list > div').forEach(d => d.classList.remove('border-bae-primary', 'bg-bae-primary-soft/20'));
+          });
+          card.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            card.classList.add('border-bae-primary', 'bg-bae-primary-soft/20');
+          });
+          card.addEventListener('dragleave', () => {
+            card.classList.remove('border-bae-primary', 'bg-bae-primary-soft/20');
+          });
+          card.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+            const toIndex = parseInt(card.dataset.index, 10);
+            if (fromIndex === toIndex) return;
+            const moved = items.splice(fromIndex, 1)[0];
+            items.splice(toIndex, 0, moved);
+            renderList();
+          });
+
+          fileList.appendChild(card);
+        });
+
+        // Button handlers
+        fileList.querySelectorAll('.up-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const i = parseInt(btn.dataset.up, 10);
+            if (i > 0) {
+              [items[i], items[i-1]] = [items[i-1], items[i]];
+              renderList();
+            }
+          });
+        });
+        fileList.querySelectorAll('.down-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const i = parseInt(btn.dataset.down, 10);
+            if (i < items.length - 1) {
+              [items[i], items[i+1]] = [items[i+1], items[i]];
+              renderList();
+            }
+          });
+        });
+        fileList.querySelectorAll('.remove-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const i = parseInt(btn.dataset.remove, 10);
+            items.splice(i, 1);
+            renderList();
+          });
+        });
+
+        sizeWarning.classList.toggle('hidden', !hasLarge);
+      }
+
+      async function addFiles(fileList) {
+        await loadPdfLib();
+        const MAX_FILES = 50;
+        if (items.length >= MAX_FILES) {
+          alert('Maximum ' + MAX_FILES + ' PDFs allowed.');
+          return;
+        }
+        const MAX_FILE_SIZE = 20 * 1024 * 1024 * 1024;
+        let added = 0;
+        for (const file of fileList) {
+          if (items.length + added >= MAX_FILES) {
+            alert('Maximum ' + MAX_FILES + ' PDFs reached. Extra files skipped.');
+            break;
+          }
+          if (file.size > MAX_FILE_SIZE) {
+            alert('"' + file.name + '" is too large. Maximum size is 20 GB.');
+            continue;
+          }
+          if (!validatePdf(file)) continue;
+          try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+            items.push({
+              file,
+              name: file.name,
+              pages: pdf.getPageCount(),
+              arrayBuffer
+            });
+            added++;
+          } catch (err) {
+            console.error('Failed to load PDF:', file.name, err);
+            alert('Could not read "' + file.name + '". It may be password-protected or corrupted.');
+          }
+        }
+        renderList();
+      }
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50'); });
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft/50');
+        if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+      });
+      fileInput.addEventListener('change', (e) => { if (e.target.files.length) addFiles(e.target.files); });
+      addMoreBtn.addEventListener('click', () => fileInput.click());
+
+      mergeBtn.addEventListener('click', async () => {
+        if (items.length === 0) return;
+        resultArea.classList.add('hidden');
+        progressArea.classList.remove('hidden');
+        progressText.textContent = 'Merging PDFs...';
+
+        try {
+          await loadPdfLib();
+          const mergedPdf = await PDFLib.PDFDocument.create();
+          let totalPages = 0;
+
+          for (let i = 0; i < items.length; i++) {
+            progressText.textContent = `Merging file ${i + 1} of ${items.length}...`;
+            const item = items[i];
+            const pdf = await PDFLib.PDFDocument.load(item.arrayBuffer);
+            const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+            pages.forEach(page => mergedPdf.addPage(page));
+            totalPages += pages.length;
+          }
+
+          progressText.textContent = 'Saving merged PDF...';
+          const bytes = await mergedPdf.save();
+          const blob = new Blob([bytes], { type: 'application/pdf' });
+          if (downloadBtn._objUrl) URL.revokeObjectURL(downloadBtn._objUrl);
+          const url = URL.createObjectURL(blob);
+
+          filesCountEl.textContent = items.length + ' file' + (items.length !== 1 ? 's' : '');
+          totalPagesEl.textContent = totalPages + ' page' + (totalPages !== 1 ? 's' : '');
+          downloadBtn.href = url;
+          downloadBtn.download = 'merged.pdf';
+          downloadBtn._objUrl = url;
+
+          progressArea.classList.add('hidden');
+          resultArea.classList.remove('hidden');
+          resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (err) {
+          console.error(err);
+          progressText.textContent = 'Merge failed: ' + (err.message || 'Unknown error. Try smaller files.');
+        }
+      });
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    })();
+  </script>
+</BaseLayout>

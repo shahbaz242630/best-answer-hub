@@ -1,0 +1,351 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-10T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub JSON Formatter?', a: 'The Best Answer Hub JSON Formatter is a free, browser-based tool that beautifies, minifies, and validates JSON. It adds clean indentation, compresses JSON to one line, and flags syntax errors with the exact position. Every step runs on your own device using native JavaScript, so nothing is uploaded, and it needs no account.' },
+  { q: 'Is it safe to paste JSON into an online formatter?', a: 'It is safe only when the tool processes JSON on your own device, as the Best Answer Hub JSON Formatter does. Many online formatters upload what you paste to a server, and security researchers have found saved pastes exposed publicly. Because this tool sends nothing, there is no server copy to leak.' },
+  { q: 'Does the JSON Formatter send my data to a server?', a: 'No. The Best Answer Hub JSON Formatter parses and formats JSON entirely in your browser and transmits nothing. You can confirm it by opening the Network tab in your browser developer tools and seeing zero outgoing requests, or by turning off your internet: the tool keeps working because everything happens locally.' },
+  { q: 'What is the difference between beautifying and minifying JSON?', a: 'Beautifying adds indentation and line breaks so nested JSON is easy to read, while minifying strips every space and newline to make the smallest valid string for production. The data is identical either way, because whitespace is insignificant in JSON. The Best Answer Hub JSON Formatter does both with one click.' },
+  { q: 'How do I validate JSON and find the error?', a: 'Paste the JSON and format it. If the JSON is valid, the Best Answer Hub JSON Formatter shows the clean output. If not, it reports the parser message and the position, such as an unexpected token at a given index, so you can jump to the trailing comma, missing quote, or stray bracket.' },
+  { q: 'Why does my JSON show a syntax error?', a: 'Strict JSON is stricter than JavaScript. Trailing commas, single quotes, unquoted keys, comments, and values like NaN or undefined are all invalid under the JSON standard, RFC 8259. The Best Answer Hub JSON Formatter catches each one and points to the exact spot, which is usually a one-character fix.' },
+  { q: 'Why does my JSON with comments fail?', a: 'Because standard JSON does not allow comments. Formats like JSONC, used by Visual Studio Code settings files, and JSON5 add comments and trailing commas, but they are supersets, not strict JSON. The Best Answer Hub JSON Formatter validates against the JSON standard, so remove comment lines before formatting.' },
+  { q: 'Can I use the JSON Formatter offline?', a: 'Yes. After the page loads once, the Best Answer Hub JSON Formatter works with no internet connection, because it is built with plain JavaScript and browser-native methods. There are no external libraries and no server calls, which makes it useful on restricted or air-gapped machines where outbound network access is blocked.' },
+  { q: 'Is the JSON Formatter free, with no signup?', a: 'Yes. The Best Answer Hub JSON Formatter is completely free, with no account, no email, and no ads. There is no usage cap and no premium tier. Many online formatters are ad-supported or push a saved-link feature that can make your data public; this tool simply formats and gets out of the way.' },
+  { q: 'What is JSON used for?', a: 'JSON is the standard format for exchanging data between servers, APIs, and applications. It carries REST API responses, configuration files such as package.json, webhook payloads, and browser storage. It is language-independent and defined by an internet standard. The Best Answer Hub JSON Formatter helps you read and debug these payloads in seconds.' },
+  { q: 'Does the formatter handle large JSON files?', a: 'Yes. The Best Answer Hub JSON Formatter can handle objects and arrays several megabytes in size, limited mainly by your device memory. Files under a megabyte format instantly on any modern phone or laptop. Very large files may pause the page briefly, because parsing runs in the browser rather than on a server.' },
+  { q: 'Why do large numbers change or lose digits in JSON?', a: 'Because JavaScript reads JSON numbers as double-precision floats, which stay exact only up to 9,007,199,254,740,991, the maximum safe integer. Larger 64-bit IDs, like social media post IDs, get rounded silently. The fix is to store big IDs as strings. The Best Answer Hub JSON Formatter respects native parsing and does not hide this.' },
+  { q: 'Does this tool validate against a JSON Schema?', a: 'No. The Best Answer Hub JSON Formatter checks that JSON is syntactically valid using native parsing, but it does not test data against a JSON Schema, which defines required fields and value types. For schema validation, a dedicated validator such as Ajv is the right tool. For formatting and syntax checks, this tool is instant.' },
+  { q: 'How is it different from formatting in VS Code?', a: 'An editor like Visual Studio Code formats JSON well but needs the app open and a file created. The Best Answer Hub JSON Formatter works in any browser tab with no install, which suits quick checks of an API response, a shared machine, or a locked-down environment. The indentation matches the common two-space default.' },
+  { q: 'Can I convert JSON to CSV or XML here?', a: 'Not with this tool. The Best Answer Hub JSON Formatter focuses on beautifying, minifying, and validating JSON so it does one job well. For conversion to CSV or XML, a dedicated converter or a short script is better. The Best Answer Hub Developer Toolbox offers other data utilities you can pair with it.' },
+];
+
+const seo = {
+  title: 'How to Format and Validate JSON (Free, 2026)',
+  description: 'Format, validate, and minify JSON free in your browser, with nothing uploaded. What the JSON spec requires, and why online formatters can leak data.',
+  url: '/playbooks/json-formatter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'JSON Formatter', url: '/playbooks/json-formatter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · Developer Tools</span>
+        <div class="cav">Formatted in your browser, not on a server</div>
+        <h1>Format and Validate JSON, <em>Nothing Uploaded</em></h1>
+        <p class="dek">A plain guide to working with JSON: what makes it valid, why an online formatter can be a privacy risk, how beautifying and minifying differ, and why very large numbers change. The Best Answer Hub JSON Formatter does every step in your browser, so nothing is ever uploaded.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Privacy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Format<small>beautify or minify</small></div>
+          <div class="seg b2">Private<small>never uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">3</div><div class="l">jobs in one tool</div><div class="src">beautify, minify, validate</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">bytes sent to a server</div><div class="src">processed on your device</div></div>
+      <div class="stat"><div class="n">80,000+</div><div class="l">pastes exposed on online tools</div><div class="src">watchTowr, 2025</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#safe">Is it safe?</a>
+        <a href="#valid">What makes it valid</a>
+        <a href="#beautify">Beautify or minify</a>
+        <a href="#precision">Large numbers</a>
+        <a href="#different">Versus other tools</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub JSON Formatter is a free, browser-based tool that beautifies, minifies, and validates JSON, and it does every step on your own device so nothing is ever uploaded to a server.</strong> This guide explains why an online formatter can be a privacy risk, what the JSON standard actually requires, how beautifying and minifying differ, and why very large numbers can change when JSON is parsed.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub JSON Formatter?</h2>
+        <p>The Best Answer Hub <a href="/tools/json-formatter/">JSON Formatter</a> is a single-page tool that does three jobs. It beautifies raw or minified JSON into a clean, indented tree you can read. It minifies JSON down to one compact line for production. And it validates JSON by parsing it and reporting the exact position of any error. The tool uses the browser native <code>JSON.parse</code> and <code>JSON.stringify</code> methods, so the work happens in your browser as JavaScript: nothing is transmitted, nothing is stored, and it keeps working with the internet switched off. It needs no account and shows no ads. The tool sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The part that matters</div>
+        <h2 id="safe">Is it safe to paste JSON into an online formatter?</h2>
+        <p>Pasting JSON into an online formatter is safe only when the tool processes it on your own device, which is exactly how the Best Answer Hub JSON Formatter works. The risk with many other online formatters is that they upload what you paste to a server, and some save it to a public list. In November 2025, security researchers at watchTowr reported that more than 80,000 saved pastes, over five gigabytes in total, were publicly exposed through the "Recent Links" feature of two popular formatting sites, including database and cloud credentials, private keys, and personal data (<a href="https://www.bleepingcomputer.com/news/security/code-beautifiers-expose-credentials-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">BleepingComputer</a>). To show that attackers actively harvest these sites, the researchers planted fake credentials and watched them get tested within 48 hours. One of the named sites states plainly in its own help page that JSON saved without logging in will become public.</p>
+        <blockquote>The safest JSON tool is one that never sees your data. <span class="accent">Format it in your browser, and there is nothing to upload, save, or scrape.</span></blockquote>
+        <p>Developers paste sensitive data more often than they should. GitGuardian detected 28.65 million new hardcoded secrets in public code repositories in 2025 (<a href="https://blog.gitguardian.com/the-state-of-secrets-sprawl-2026/" target="_blank" rel="noopener noreferrer">State of Secrets Sprawl 2026</a>). The simplest way to avoid adding to that pile is to format JSON with a tool that sends nothing. The Best Answer Hub JSON Formatter uses the browser native JSON methods, so there is no upload, no saved link, and no server copy of your payload.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">Where your JSON goes</figcaption>
+          <svg viewBox="0 0 620 244" role="img" aria-label="Diagram: JSON pasted into this tool is parsed in your browser and nothing is uploaded; JSON pasted into many online formatters is uploaded to a server and saved, and some saved pastes were scraped within 48 hours.">
+            <rect x="200" y="14" width="220" height="46" rx="12" fill="#33302A"/>
+            <text x="310" y="42" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="700" fill="#fff">You paste a JSON payload</text>
+            <line x1="310" y1="60" x2="150" y2="96" stroke="#ddd0bb" stroke-width="2"/>
+            <line x1="310" y1="60" x2="470" y2="96" stroke="#ddd0bb" stroke-width="2"/>
+            <text x="150" y="86" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">This tool</text>
+            <rect x="40" y="96" width="220" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="150" y="124" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">Parsed in your browser</text>
+            <line x1="150" y1="142" x2="150" y2="176" stroke="#ddd0bb" stroke-width="2"/>
+            <rect x="40" y="176" width="220" height="54" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="150" y="200" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#5a7355">Nothing uploaded</text>
+            <text x="150" y="218" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">and it works offline</text>
+            <text x="470" y="86" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">Many online formatters</text>
+            <rect x="360" y="96" width="220" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="470" y="124" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">Uploaded to a server</text>
+            <line x1="470" y1="142" x2="470" y2="176" stroke="#ddd0bb" stroke-width="2"/>
+            <rect x="360" y="176" width="220" height="54" rx="10" fill="#F3E2D6" stroke="#ecd6c5" stroke-width="2"/>
+            <text x="470" y="200" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#8a4429">Saved, then scraped</text>
+            <text x="470" y="218" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#B0512F">some within 48 hours</text>
+          </svg>
+          <p class="chart-src">A client-side tool parses JSON in your browser and sends nothing. Many online formatters upload and save what you paste; watchTowr found more than 80,000 saved pastes exposed, some tested by attackers within 48 hours. Sources in the list below.</p>
+        </figure>
+        <div class="callout sage"><div class="h">How to check any online tool in ten seconds</div><p>Open your browser developer tools, switch to the Network tab, then format or validate a payload. If the data truly stays on your device, you will see zero outgoing requests. Do this once with the Best Answer Hub JSON Formatter and you can confirm the payload never leaves your machine.</p></div>
+
+        <div class="cav">The rules that trip people</div>
+        <h2 id="valid">What makes JSON valid, and why yours breaks</h2>
+        <p>JSON is valid when it follows a small, strict set of rules, and the Best Answer Hub JSON Formatter checks them the moment you format. JSON is not just a convention: it is an internet standard, defined by <a href="https://www.rfc-editor.org/rfc/rfc8259.html" target="_blank" rel="noopener noreferrer">RFC 8259</a> and the matching <a href="https://ecma-international.org/publications-and-standards/standards/ecma-404/" target="_blank" rel="noopener noreferrer">ECMA-404</a>, both settled in 2017. The rules that catch people out are the ones where JSON is stricter than JavaScript: strings must use double quotes, keys must be quoted, no comma may follow the last item, comments are not allowed, numbers cannot have leading zeros, and values like <code>NaN</code>, <code>Infinity</code>, and <code>undefined</code> are not valid. When any of these appears, the native parser throws a syntax error with the position, and the tool surfaces that message so the fix is usually a single character.</p>
+        <table>
+          <thead><tr><th>What you wrote</th><th>Why JSON rejects it</th><th>The fix</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Trailing comma</td><td>A comma only separates items, it cannot follow the final one</td><td>Remove the last comma</td></tr>
+            <tr><td class="band">Single quotes</td><td>JSON strings must use double quotes</td><td>Switch to double quotes</td></tr>
+            <tr><td class="band">Unquoted key</td><td>Every key must be a double-quoted string</td><td>Wrap the key in double quotes</td></tr>
+            <tr><td class="band">A comment</td><td>Standard JSON has no comment syntax</td><td>Delete it, or save the file as JSONC</td></tr>
+            <tr><td class="band">NaN or undefined</td><td>Only numbers, strings, booleans, null, objects, and arrays are allowed</td><td>Use a number, a string, or null</td></tr>
+          </tbody>
+        </table>
+        <p>A common surprise is JSON with comments. Editors and config files often use comment-friendly variants: Visual Studio Code uses <a href="https://code.visualstudio.com/docs/languages/json" target="_blank" rel="noopener noreferrer">JSONC, JSON with comments</a>, for its <code>settings.json</code> and <code>launch.json</code> files, and <a href="https://json5.org/" target="_blank" rel="noopener noreferrer">JSON5</a> adds comments, trailing commas, and single quotes. Those are supersets of JSON, not strict JSON, so a settings file that parses in your editor will fail in a strict validator. The Best Answer Hub JSON Formatter validates against the JSON standard, so strip comments and trailing commas before formatting, or keep them only in files your editor treats as JSONC.</p>
+
+        <div class="cav">Two views of one payload</div>
+        <h2 id="beautify">Beautify or minify: what is the difference?</h2>
+        <p>Beautifying and minifying are opposite operations on the same data, and the Best Answer Hub JSON Formatter does both with one click. Beautifying, also called prettifying, expands JSON with indentation and line breaks so you can scan nested objects and arrays; the common default is two spaces per level, the same as the popular <a href="https://prettier.io/docs/options" target="_blank" rel="noopener noreferrer">Prettier</a> formatter and the built-in <code>JSON.stringify</code> with a space argument. Minifying removes every space, tab, and newline to produce the smallest valid JSON on a single line, which is what you want for an API payload or a production config, since a smaller body uses less bandwidth. The data does not change between the two, because whitespace is insignificant in JSON: a minified string and a beautified tree parse to exactly the same values.</p>
+        <div class="callout peach"><div class="h">Which one to ship</div><p>Beautify while you read, debug, or diff a payload, when clarity matters most. Minify the version you send or store, so the transfer is as small as possible. With the Best Answer Hub JSON Formatter you can flip between the two and copy whichever you need, without changing a single value.</p></div>
+
+        <div class="cav">The silent rounding trap</div>
+        <h2 id="precision">Why do large numbers change in JSON?</h2>
+        <p>Large numbers can change in JSON because of how JavaScript reads them, and the Best Answer Hub JSON Formatter is honest about it rather than hiding the effect. JavaScript parses every JSON number as a double-precision float, which represents integers exactly only up to 9,007,199,254,740,991, known as the maximum safe integer (<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER" target="_blank" rel="noopener noreferrer">MDN</a>). Beyond that point, digits are rounded silently, with no error thrown. This bites when JSON carries 64-bit identifiers, such as social media post IDs or large database keys: the value looks fine but comes back subtly wrong. The JSON standard warns about this, noting that only integers within that range are read identically everywhere (<a href="https://www.rfc-editor.org/rfc/rfc8259.html" target="_blank" rel="noopener noreferrer">RFC 8259</a>). The standard fix is to store big IDs as strings, which is why the old Twitter API returned both a numeric <code>id</code> and a string <code>id_str</code>.</p>
+        <div class="callout sage"><div class="h">A one-line test you can run</div><p>Paste <code>&#123;"id": 9007199254740993&#125;</code> and format it. The value comes back as <code>9007199254740992</code>, because it sits one step past the safe range. That is native JavaScript behavior, not a tool bug. Store the ID as a string, <code>"9007199254740993"</code>, to keep every digit intact.</p></div>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from other JSON formatters?</h2>
+        <p>The difference is that the Best Answer Hub JSON Formatter is a plain, free utility that keeps your data in the browser, rather than an ad-supported site that uploads and may save what you paste. The table sets the usual online-formatter experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical online formatter</th></tr></thead>
+          <tbody>
+            <tr><td>Where JSON is processed</td><td class="band">In your browser</td><td>Often uploaded to a server</td></tr>
+            <tr><td>Saved or public links</td><td class="band">None</td><td>Common, sometimes public by default</td></tr>
+            <tr><td>Account or signup</td><td class="band">Not required</td><td>Sometimes pushed</td></tr>
+            <tr><td>Ads</td><td class="band">None</td><td>Common</td></tr>
+            <tr><td>Works offline</td><td class="band">Yes</td><td>Usually not</td></tr>
+            <tr><td>Cost</td><td class="band">Free, no limits</td><td>Free tier, often capped</td></tr>
+          </tbody>
+        </table>
+        <p>These contrasts come from the sites' own pages, observed in 2026. One widely used formatter offers a "Save Online" feature and a public "Recent Links" page, and its help text states that JSON saved without an account will become public. Another says in its own help that it does not offer an offline version. Both run ads. The Best Answer Hub JSON Formatter takes the opposite approach: it processes JSON in your browser with the native JSON methods, saves nothing, shows no ads, and keeps working with the internet off, so the data you format stays yours.</p>
+        <div class="callout"><div class="h">Pair it with the rest of the toolbox</div><p>Once your JSON is clean, the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> has the neighbors you reach for next: a Base64 encoder, a JWT decoder, and a hash generator, each running in the browser and sending nothing. Format here, then carry on without a single upload.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Format it now</span>
+          <h3>Open the JSON Formatter</h3>
+          <p>Free, no signup, and processed entirely in your browser. Paste your JSON, beautify or minify with one click, and catch any error with the exact position.</p>
+          <a class="btn" href="/tools/json-formatter/">Format your JSON</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about formatting JSON</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, from a JWT decoder to a hash generator, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/password-generator/">Create a Strong Password, Never Sent Anywhere</a></b> The same privacy-first approach, applied to generating strong passwords in your browser.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to PDFs.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc8259.html" target="_blank" rel="noopener noreferrer">RFC 8259, The JavaScript Object Notation (JSON) Data Interchange Format</a>, 2017 (double quotes only, no trailing commas, no comments, no NaN or Infinity, no leading zeros, and the safe-integer interoperability range).</li>
+          <li>Ecma International, <a href="https://ecma-international.org/publications-and-standards/standards/ecma-404/" target="_blank" rel="noopener noreferrer">ECMA-404, The JSON Data Interchange Syntax</a>, 2nd edition, 2017.</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER" target="_blank" rel="noopener noreferrer">Number.MAX_SAFE_INTEGER</a> (9,007,199,254,740,991) and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse" target="_blank" rel="noopener noreferrer">JSON.parse()</a> (native local parsing that throws on invalid JSON).</li>
+          <li>BleepingComputer, <a href="https://www.bleepingcomputer.com/news/security/code-beautifiers-expose-credentials-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">Code beautifiers expose credentials from banks, govt, tech orgs</a>, 25 November 2025 (watchTowr research: 80,000+ saved pastes exposed; planted credentials tested within 48 hours).</li>
+          <li>watchTowr Labs, <a href="https://labs.watchtowr.com/stop-putting-your-passwords-into-random-websites-yes-seriously-you-are-the-problem/" target="_blank" rel="noopener noreferrer">Stop Putting Your Passwords Into Random Websites</a>, 2025.</li>
+          <li>GitGuardian, <a href="https://blog.gitguardian.com/the-state-of-secrets-sprawl-2026/" target="_blank" rel="noopener noreferrer">The State of Secrets Sprawl 2026</a> (28.65 million new hardcoded secrets in public code in 2025).</li>
+          <li>Prettier, <a href="https://prettier.io/docs/options" target="_blank" rel="noopener noreferrer">Options</a> (default indentation is two spaces).</li>
+          <li>Visual Studio Code, <a href="https://code.visualstudio.com/docs/languages/json" target="_blank" rel="noopener noreferrer">Editing JSON</a> (JSONC allows comments and trailing commas; strict JSON does not).</li>
+          <li>The JSON5 Data Interchange Format, <a href="https://json5.org/" target="_blank" rel="noopener noreferrer">json5.org</a> (a superset of JSON that allows comments and trailing commas).</li>
+          <li>X (Twitter) Developer Platform, <a href="https://developer.twitter.com/en/docs/twitter-ids" target="_blank" rel="noopener noreferrer">Twitter IDs</a> (large IDs returned as a string id_str to survive 53-bit parsing).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/json-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">JSON Formatter</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, <a href="/tools/base64-encoder/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Base64 Encoder</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

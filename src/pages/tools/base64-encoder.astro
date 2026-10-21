@@ -1,0 +1,237 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Base64 Encoder/Decoder?',
+    a: 'The Best Answer Hub Base64 Encoder/Decoder is a free browser-based tool that converts plain text to Base64 format and decodes Base64 strings back to readable text. It supports full Unicode including emoji, Chinese characters, and Arabic script. Unlike many online tools that use deprecated escape() functions and corrupt non-ASCII data, this tool uses modern TextEncoder and TextDecoder APIs for perfect fidelity. Everything runs locally in your browser. No data is uploaded.',
+  },
+  {
+    q: 'Is the Base64 tool free and safe to use?',
+    a: 'Yes, the Best Answer Hub Base64 Encoder is completely free with no usage limits and no signup required. It is safe because all encoding and decoding happens locally inside your browser using native JavaScript APIs. Your text is never sent to a server, stored in a database, or logged anywhere. You can verify this by disconnecting from the internet after loading the page. The tool will continue to work perfectly.',
+  },
+  {
+    q: 'What is Base64 encoding used for?',
+    a: 'Base64 is a binary-to-text encoding scheme that converts binary data into a string of 64 ASCII characters. Developers use it to embed images directly into HTML or CSS data URIs, send binary attachments over email protocols that only support text, store small files in JSON or localStorage, transmit authentication headers in HTTP Basic Auth, and encode cryptographic keys or certificates in PEM format. The Best Answer Hub Base64 Encoder helps you test and verify all of these use cases directly in your browser.',
+  },
+  {
+    q: 'What is the difference between Base64 encoding and encryption?',
+    a: 'Base64 encoding is a reversible transformation that changes how data is represented, not who can read it. It provides zero security. Encryption, such as AES-256, scrambles data using a secret key so only authorized parties can read it. Use Base64 when transmitting binary data through text channels. Use encryption when protecting data from unauthorized access. The Best Answer Hub Base64 Encoder is a conversion utility only; never use Base64 to hide passwords or secrets.',
+  },
+  {
+    q: 'Can this tool handle Unicode and emoji?',
+    a: 'Yes, full Unicode support is a core feature of this tool. Many older Base64 converters use the deprecated escape() and unescape() functions, which corrupt emoji, Chinese characters, Cyrillic text, and other non-ASCII data. The Best Answer Hub Base64 Encoder uses the modern TextEncoder and TextDecoder APIs, which correctly handle every Unicode code point including emoji like 🚀, mathematical symbols like ∑, and right-to-left scripts like Arabic and Hebrew.',
+  },
+  {
+    q: 'How do I encode text to Base64?',
+    a: 'Paste your plain text into the Best Answer Hub Base64 Encoder input area on the left, then click the "Encode" button. The tool converts your text into a Base64 string using UTF-8 encoding and displays the result in the output area on the right. For example, the text "Hello World" becomes "SGVsbG8gV29ybGQ=". You can then click "Copy" to save the result to your clipboard.',
+  },
+  {
+    q: 'How do I decode Base64 back to text?',
+    a: 'Paste a Base64 string into the Best Answer Hub Base64 Encoder and click the "Decode" button. The tool validates the string, pads it if necessary, and converts it back to readable text using UTF-8 decoding. If the input is not valid Base64, the tool shows a clear error message in red below the buttons. For example, "SGVsbG8gV29ybGQ=" decodes back to "Hello World".',
+  },
+  {
+    q: 'Can I use the Base64 tool offline?',
+    a: 'Yes. The Best Answer Hub Base64 Encoder is built entirely with vanilla JavaScript and uses only browser-native APIs. After you load the page once, it works without an internet connection. There are no external library downloads, no CDN dependencies, and no server-side processing. This makes it ideal for working on sensitive data in restricted or air-gapped environments.',
+  },
+  {
+    q: 'Why does my decoded text look like garbage or mojibake?',
+    a: 'Mojibake happens when a Base64 string is decoded using the wrong character encoding. The most common cause is using an old tool that relies on escape() and unescape(), which assume Latin-1 instead of UTF-8. If you see garbled characters, try decoding the same string with the Best Answer Hub Base64 Encoder. It uses TextDecoder with explicit UTF-8 handling, which fixes mojibake for emoji, accented characters, and non-Latin scripts.',
+  },
+  {
+    q: 'What is Base64url and does this tool support it?',
+    a: 'Base64url is a URL-safe variant of Base64 that replaces the plus (+) character with a minus (-) and the slash (/) with an underscore (_), and omits padding equals signs. It is required for JWT tokens, OAuth 2.0 PKCE parameters, and URL query strings. The Best Answer Hub Base64 Encoder outputs standard RFC 4648 Base64. For Base64url decoding, paste the token into the <a href="/tools/jwt-decoder/">Best Answer Hub JWT Decoder</a>, which handles Base64url padding and character substitution automatically.',
+  },
+  {
+    q: 'Is my data sent to a server when I use this tool?',
+    a: 'No. Your text never leaves your browser. The Best Answer Hub Base64 Encoder uses only client-side JavaScript to transform your input. There are no network requests, no analytics pings containing your data, and no cloud processing. You can verify this by opening your browser\'s Network tab in Developer Tools. You will see zero outgoing requests when you encode or decode text.',
+  },
+  {
+    q: 'How long can the input text be?',
+    a: 'The Best Answer Hub Base64 Encoder can handle text up to several megabytes, limited only by your browser\'s memory and JavaScript engine string limits. Modern browsers support strings up to approximately 512 MB to 1 GB. For inputs under 1 MB, encoding and decoding are effectively instant. For very large inputs over 10 MB, performance depends on your device; the synchronous processing may cause a brief UI freeze.',
+  },
+  {
+    q: 'What are common use cases for Base64 in web development?',
+    a: 'Developers use Base64 to embed small images directly into HTML or CSS as data URIs, avoiding extra HTTP requests. It is used in HTTP Basic Authentication headers where "username:password" is Base64-encoded per RFC 7617. JWT tokens use Base64url to encode header and payload sections. Email protocols like SMTP use Base64 for attachments. localStorage and sessionStorage only support strings, so binary data must be Base64-encoded before storage. The Best Answer Hub Base64 Encoder lets you test all of these patterns from your browser.',
+  },
+  {
+    q: 'How does this tool compare to built-in browser Base64 functions?',
+    a: 'Browsers provide btoa() and atob() for Base64, but these functions only support Latin-1 characters and corrupt emoji or non-ASCII text. The Best Answer Hub Base64 Encoder wraps btoa() and atob() with TextEncoder and TextDecoder to add full Unicode support. It also provides a cleaner interface with copy and clear buttons, error handling with descriptive messages, and responsive design for mobile. If you only need ASCII, btoa() works fine. For real-world Unicode text, this tool is more reliable.',
+  },
+  {
+    q: 'What is Base64 padding and why do some tokens end with == or =?',
+    a: 'Base64 encodes every 3 input bytes as 4 characters (6 bits each). When input is not a multiple of 3, = pad characters fill the output to a 4-character boundary per RFC 4648 Section 3.2: one trailing byte produces ==, two trailing bytes produce =. RFC 4648 Section 5 defines Base64url, which omits all padding; JWT (RFC 7515) and OAuth 2.0 PKCE (RFC 7636) both use this padless form. Python\'s base64.b64decode() is strict: missing = raises binascii.Error; fix with s += "=" * (-len(s) % 4). The Best Answer Hub Base64 Encoder accepts both padded and unpadded strings and decodes correctly in either case.',
+  },
+];
+
+
+const steps = [
+  { title: 'Paste your text', description: 'Enter plain text or a Base64 string into the input area. The tool accepts any Unicode characters including emoji, symbols, and non-Latin scripts.' },
+  { title: 'Encode or decode', description: 'Click "Encode" to convert text to Base64, or "Decode" to convert Base64 back to readable text. Errors are shown instantly in red.' },
+  { title: 'Copy the result', description: 'Use the copy button to save the output to your clipboard for use in HTML data URIs, CSS, API headers, databases, or email attachments.' },
+];
+
+const seo = {
+  title: 'Free Base64 Encoder & Decoder — Unicode & Emoji (2026)',
+  description: 'Free online Base64 encoder and decoder with full Unicode and emoji support. Convert text to Base64 and back instantly in your browser. No signup, no server.',
+  url: '/tools/base64-encoder/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Base64 Encoder', url: '/tools/base64-encoder/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Base64 Encoder / Decoder:"
+    accentText="Full Unicode & emoji support"
+    description="Convert text to Base64 and decode Base64 back to text with perfect Unicode fidelity. Uses modern TextEncoder/TextDecoder, so it never corrupts emoji or non-ASCII characters."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <!-- Base64 Interface -->
+  <section class="py-6 md:py-8" aria-label="Base64 encoder decoder">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Base64 Encoder / Decoder</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Input</label>
+            <textarea id="b64-input" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Paste text to encode or Base64 to decode" spellcheck="false"></textarea>
+            <div class="flex flex-wrap gap-2 mt-3">
+              <button type="button" id="b64-encode" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Encode</button>
+              <button type="button" id="b64-decode" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Decode</button>
+              <button type="button" id="b64-copy" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy</button>
+              <button type="button" id="b64-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+            </div>
+            <p id="b64-error" class="text-xs text-red-500 mt-2 hidden"></p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Output</label>
+            <textarea id="b64-output" class="w-full h-56 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none resize-y" readonly spellcheck="false"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people encode with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from front-end developers and backend engineers.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">IMAGE EMBEDDING</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Inlining icons and images in HTML or CSS</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Eliminates extra HTTP requests for small SVG and PNG assets</p>
+          <p class="text-sm text-bae-muted">Front-end developers encode small icons and backgrounds as Base64 data URIs to embed them directly into HTML or CSS, removing a round-trip HTTP request and preventing flash-of-missing-content on first load.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">AUTHENTICATION</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Encoding HTTP Basic Auth credentials</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">RFC 7617 Authorization header requires Base64 of username:password</p>
+          <p class="text-sm text-bae-muted">Developers testing APIs manually encode "username:password" strings to build RFC 7617-compliant Authorization: Basic headers for curl, Postman, or Insomnia requests without writing a single line of code.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">JWT DEBUGGING</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Decoding JWT header and payload sections</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">JWT tokens are three Base64url segments joined by dots</p>
+          <p class="text-sm text-bae-muted">Engineers split a JWT token at the dots, paste each segment here, and decode it to inspect claims, expiry timestamps, and algorithm headers without needing jwt.io or any third-party service.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">DATA TRANSFER</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Encoding binary payloads for JSON and localStorage</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Converts binary blobs to strings for text-only channels</p>
+          <p class="text-sm text-bae-muted">Backend engineers encode binary payloads (PDFs, images, cryptographic keys) as Base64 strings before embedding them in JSON API responses or storing them in localStorage, which only supports string values.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, and <a href="/tools/timestamp-converter/" class="text-bae-primary hover:underline">Timestamp</a>. All free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+
+      function showError(el, msg) {
+        if (!msg) { el.classList.add('hidden'); el.textContent = ''; return; }
+        el.textContent = msg;
+        el.classList.remove('hidden');
+      }
+
+      const b64Input = document.getElementById('b64-input');
+      const b64Output = document.getElementById('b64-output');
+      const b64Error = document.getElementById('b64-error');
+
+      document.getElementById('b64-encode').addEventListener('click', () => {
+        try {
+          const text = b64Input.value;
+          const bytes = new TextEncoder().encode(text);
+          const binString = Array.from(bytes, b => String.fromCharCode(b)).join('');
+          b64Output.value = btoa(binString);
+          showError(b64Error, '');
+        } catch (e) { showError(b64Error, 'Encoding failed: ' + e.message); }
+      });
+
+      document.getElementById('b64-decode').addEventListener('click', () => {
+        try {
+          const text = b64Input.value.trim();
+          const binString = atob(text);
+          const bytes = Uint8Array.from(binString, c => c.charCodeAt(0));
+          b64Output.value = new TextDecoder().decode(bytes);
+          showError(b64Error, '');
+        } catch (e) { showError(b64Error, 'Invalid Base64: ' + e.message); }
+      });
+
+      document.getElementById('b64-copy').addEventListener('click', () => copyText(b64Output.value));
+      document.getElementById('b64-clear').addEventListener('click', () => { b64Input.value = ''; b64Output.value = ''; showError(b64Error, ''); });
+    })();
+  </script>
+</BaseLayout>

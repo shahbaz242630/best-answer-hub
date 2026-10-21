@@ -1,0 +1,779 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is a color palette generator?',
+    a: 'The Best Answer Hub Color Palette Generator creates harmonious sets of colors for design projects. You input a starting color (seed), and it generates lighter and darker shades, neutral grays, and semantic colors (success, warning, error) that work together visually. The Best Answer Hub Color Palette Generator also checks every combination against WCAG accessibility standards so your palette is beautiful and readable.',
+  },
+  {
+    q: 'What is WCAG and why does it matter for colors?',
+    a: 'WCAG stands for Web Content Accessibility Guidelines. It defines contrast ratio standards to ensure text is readable against its background for people with visual impairments, color blindness, or low vision. WCAG AA requires a 4.5:1 contrast ratio for normal text, and AAA requires 7:1. Meeting these standards makes your website usable by the widest possible audience and can also improve SEO.',
+  },
+  {
+    q: 'What is the difference between AA and AAA contrast ratios?',
+    a: 'WCAG AA is the minimum standard for accessibility. It requires a 4.5:1 contrast ratio for normal text and 3:1 for large text. WCAG AAA is the highest standard, requiring 7:1 for normal text and 4.5:1 for large text. Most commercial websites aim for AA compliance. AAA is ideal for government, healthcare, and education sites where maximum accessibility is critical.',
+  },
+  {
+    q: 'How does this tool generate color scales?',
+    a: 'The Best Answer Hub Color Palette Generator converts your seed color into the HSL color space (Hue, Saturation, Lightness) and generates scales by systematically varying lightness while preserving hue relationships. Lighter shades have higher lightness values with reduced saturation, while darker shades have lower lightness with concentrated saturation. This creates perceptually smooth gradients that feel natural and professional.',
+  },
+  {
+    q: 'What is a good contrast ratio for text and backgrounds?',
+    a: 'For normal body text (under 18pt or 14pt bold), aim for at least 4.5:1 (WCAG AA) or 7:1 (WCAG AAA). For large text (18pt+ or 14pt+ bold), 3:1 meets AA and 4.5:1 meets AAA. For user interface components like buttons and form fields, a 3:1 contrast ratio against adjacent colors is recommended. The Best Answer Hub Color Palette Generator checks all of these automatically.',
+  },
+  {
+    q: 'What are design tokens and why should I use them?',
+    a: 'Design tokens are named variables that store design decisions like colors, typography, and spacing. Instead of hardcoding hex codes throughout your project, you use semantic names like --color-primary-600 or primary-600. This makes your design system consistent, easier to maintain, and simpler to update. When your brand color changes, you update one token instead of hundreds of CSS rules.',
+  },
+  {
+    q: 'How do I export my palette to Tailwind CSS?',
+    a: 'After generating your palette, click the Export section and select the Tailwind tab. The tool outputs a Tailwind v4 compatible @theme block with all your colors named as primary, neutral, success, warning, and error scales. You can copy this directly into your CSS file. For Tailwind v3, use the CSS Variables export and reference them in your tailwind.config.js colors section.',
+  },
+  {
+    q: 'What is the difference between a primary color and a neutral color?',
+    a: 'A primary color is the main brand color that defines your visual identity: it appears in buttons, links, and key UI elements. A neutral color scale provides grayscale shades for text, backgrounds, borders, and dividers. A well-designed palette uses neutrals for 80% of the interface and the primary color for the 20% that needs emphasis. The Best Answer Hub Color Palette Generator generates both automatically from your seed color.',
+  },
+  {
+    q: 'How do I ensure my palette works in dark mode?',
+    a: 'The Best Answer Hub Color Palette Generator includes a live dark mode preview that shows how your palette looks on dark backgrounds. A good dark mode palette inverts the usage pattern: dark backgrounds use neutral-900 to neutral-800, text uses neutral-50 to neutral-200, and primary accents use lighter shades (primary-400 to primary-500) instead of darker ones. The built-in component lab lets you test both modes side by side before exporting.',
+  },
+  {
+    q: 'What is color blindness and how does it affect palette design?',
+    a: 'Color blindness affects approximately 8% of men and 0.5% of women worldwide. The most common type is red-green color blindness, where users cannot distinguish between red and green hues. This is why relying solely on color to convey meaning (like error states) is problematic. A safe palette uses distinct lightness differences, icons, and text labels in addition to color. High contrast ratios help colorblind users distinguish elements regardless of hue.',
+  },
+  {
+    q: 'What makes a color palette "accessible"?',
+    a: 'An accessible palette ensures that all text is readable against its background, that interactive elements are distinguishable from their surroundings, and that information is not conveyed by color alone. Specifically: normal text needs 4.5:1 contrast, large text needs 3:1, and UI components need 3:1 against adjacent colors. The Best Answer Hub Color Palette Generator checks every combination and flags failures with red badges so you can fix them before shipping.',
+  },
+  {
+    q: 'Can I use generated palettes for commercial projects?',
+    a: 'Yes. All palettes generated by the Best Answer Hub Color Palette Generator are free to use for both personal and commercial projects. There are no licensing restrictions, no attribution requirements, and no watermarks. The colors are mathematically generated and not derived from any proprietary source. Use them for websites, mobile apps, brand identities, presentations, or any design work.',
+  },
+  {
+    q: 'What is the difference between HEX, RGB, HSL, and CMYK color formats?',
+    a: 'HEX (#6366f1) is the standard format for web use, a six-digit code that browsers and CSS interpret directly. RGB (rgb(99, 102, 241)) expresses colors as red, green, and blue channel intensities from 0 to 255, which is useful for JavaScript color manipulation and CSS rgba() transparency. HSL (hsl(239, 84%, 67%)) describes colors using Hue (0–360°), Saturation (%), and Lightness (%), making it the most intuitive format for creating shades and tints: adjusting lightness produces natural-looking variations. CMYK is a print format used by designers working with physical materials and is not used for digital screens. The Best Answer Hub Color Palette Generator exports in HEX and CSS variable formats, which cover all standard web and app development workflows.',
+  },
+  {
+    q: 'What are complementary, analogous, and triadic color schemes?',
+    a: 'These are the three most common color harmony types in design. Complementary colors sit directly opposite each other on the color wheel (such as blue and orange), creating high contrast and visual energy, ideal for call-to-action buttons and highlights. Analogous colors are adjacent on the wheel (such as blue, blue-green, and green), producing a harmonious, cohesive feel widely used in calm UI designs. Triadic schemes use three colors equally spaced 120° apart (such as red, yellow, and blue), which are vibrant but require careful balance to avoid visual noise. Understanding which harmony type fits your brand helps you decide which secondary and accent colors to pair with your seed color when generating a palette with the Best Answer Hub Color Palette Generator.',
+  },
+  {
+    q: 'What is the 60-30-10 color rule and how does it apply to UI design?',
+    a: 'The 60-30-10 rule is a fundamental design principle that creates visual balance in any color scheme. Sixty percent of your design should use a dominant neutral, typically backgrounds, surfaces, and large text areas. Thirty percent should use a secondary color that complements the dominant, often applied to cards, sidebars, and secondary UI elements. Ten percent should use your accent or primary color, reserved for buttons, links, highlights, and interactive elements. Following this rule prevents visual overwhelm and ensures your primary brand color has maximum impact through intentional scarcity. A well-structured palette separates colors into these roles automatically, which is why the Best Answer Hub Color Palette Generator generates distinct primary, neutral, and semantic scales from a single seed color.',
+  },
+];
+
+const steps = [
+  { title: 'Enter your brand color', description: 'Type a hex code or use the color picker to set your starting seed color. This becomes the center of your primary scale.' },
+  { title: 'Generate and refine', description: 'Press spacebar or click Generate to create your palette. Lock colors you love, regenerate the rest. Every combination is checked for WCAG accessibility.' },
+  { title: 'Preview and export', description: 'Switch between light and dark mode previews to see your palette on real UI components. Export as CSS variables, Tailwind theme, or a plain hex list.' },
+];
+
+const seo = {
+  title: 'Free Color Palette Generator + WCAG Contrast Checker',
+  description: 'Generate accessible color palettes from one seed color. Check WCAG AA/AAA contrast ratios on live UI components. Export to CSS, Tailwind, or hex. No signup.',
+  url: '/tools/color-palette-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Color Palette Generator', url: '/tools/color-palette-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Signup"
+    title="Color Palette Generator:"
+    accentText="Accessible palettes from one color"
+    description="Generate a complete design system palette from a single seed color. Preview on real UI components in light and dark mode. Check WCAG AA/AAA contrast ratios instantly. Export to CSS, Tailwind, or hex."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <section class="py-6 md:py-8" aria-label="Color palette generator">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-6xl mx-auto space-y-5">
+
+        <!-- Controls -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-4 md:p-5">
+          <div class="flex flex-col sm:flex-row items-center gap-3">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <input type="color" id="seed-picker" value="#6366f1" class="w-12 h-10 rounded-bae-sm border border-bae-border cursor-pointer bg-transparent p-0.5" />
+              <input type="text" id="seed-input" value="#6366f1" maxlength="7" class="w-28 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm font-mono text-bae-ink focus:outline-none focus:border-bae-primary uppercase" />
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button type="button" id="generate-btn" class="flex-1 sm:flex-none bg-bae-primary text-white font-semibold text-sm px-5 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">
+                Generate Palette
+              </button>
+              <button type="button" id="random-btn" class="flex-1 sm:flex-none bg-bae-bg border border-bae-border text-bae-ink font-semibold text-sm px-4 py-2.5 rounded-bae-sm hover:bg-bae-primary-soft transition-colors">
+                Random
+              </button>
+            </div>
+            <p class="text-xs text-bae-muted hidden sm:block">Press <kbd class="px-1.5 py-0.5 bg-bae-bg border border-bae-border rounded text-[11px] font-mono">Space</kbd> to generate</p>
+          </div>
+        </div>
+
+        <!-- 2×2 Grid: Palette + Preview | WCAG + Export -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+          <!-- Palette Grid -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 md:p-5" id="palette-section">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-bae-ink">Generated Palette</h3>
+              <span class="text-xs text-bae-muted" id="palette-status">Click a swatch to copy</span>
+            </div>
+            <div id="palette-grid" class="space-y-3"></div>
+          </div>
+
+          <!-- Preview Tabs -->
+          <div class="bg-bae-card border border-bae-border rounded-bae overflow-hidden">
+            <div class="flex border-b border-bae-border">
+              <button type="button" id="tab-light" class="tab-btn flex-1 py-2.5 text-sm font-semibold bg-bae-primary text-white transition-colors">Light Mode</button>
+              <button type="button" id="tab-dark" class="tab-btn flex-1 py-2.5 text-sm font-semibold text-bae-muted hover:text-bae-ink transition-colors">Dark Mode</button>
+            </div>
+            <div id="preview-light" class="p-5"></div>
+            <div id="preview-dark" class="hidden p-5"></div>
+          </div>
+
+          <!-- WCAG Summary -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 md:p-5" id="wcag-section">
+            <h3 class="text-sm font-bold text-bae-ink mb-3">WCAG Contrast Summary</h3>
+            <div id="wcag-grid" class="grid grid-cols-2 gap-2"></div>
+          </div>
+
+          <!-- Export -->
+          <div class="bg-bae-card border border-bae-border rounded-bae overflow-hidden" id="export-section">
+            <div class="flex border-b border-bae-border">
+              <button type="button" id="export-css" class="export-tab flex-1 py-2.5 text-sm font-semibold bg-bae-primary text-white transition-colors">CSS Variables</button>
+              <button type="button" id="export-tailwind" class="export-tab flex-1 py-2.5 text-sm font-semibold text-bae-muted hover:text-bae-ink transition-colors">Tailwind</button>
+              <button type="button" id="export-hex" class="export-tab flex-1 py-2.5 text-sm font-semibold text-bae-muted hover:text-bae-ink transition-colors">Hex List</button>
+            </div>
+            <div class="p-4">
+              <textarea id="export-output" readonly class="w-full h-40 bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-xs font-mono text-bae-ink resize-y focus:outline-none"></textarea>
+              <button type="button" id="copy-export-btn" class="mt-3 text-sm font-semibold text-bae-primary hover:text-bae-accent transition-colors">
+                Copy to Clipboard
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Use Cases -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto">
+        <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-2">Common use cases</h2>
+        <p class="text-sm text-bae-muted mb-6">Who uses this color palette generator</p>
+        <div class="space-y-3">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold shrink-0">1</span>
+            <div>
+              <p class="text-sm font-semibold text-bae-ink">Brand identity design</p>
+              <p class="text-xs text-bae-muted mt-0.5">Start with one brand hex and generate a complete system of primary, neutral, and semantic colors ready for logos, websites, and marketing materials.</p>
+            </div>
+          </div>
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold shrink-0">2</span>
+            <div>
+              <p class="text-sm font-semibold text-bae-ink">Web and app development</p>
+              <p class="text-xs text-bae-muted mt-0.5">Export directly to CSS custom properties or Tailwind config. Every shade is pre-checked for WCAG accessibility so your interface works for all users.</p>
+            </div>
+          </div>
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold shrink-0">3</span>
+            <div>
+              <p class="text-sm font-semibold text-bae-ink">Dark mode implementation</p>
+              <p class="text-xs text-bae-muted mt-0.5">Preview your palette in both light and dark modes on real components before writing a single line of CSS. Catch contrast failures early.</p>
+            </div>
+          </div>
+          <div class="bg-bae-card border border-bae-border rounded-bae p-4 flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary text-xs font-bold shrink-0">4</span>
+            <div>
+              <p class="text-sm font-semibold text-bae-ink">Design system creation</p>
+              <p class="text-xs text-bae-muted mt-0.5">Generate production-ready design tokens with named scales. Use the exported tokens in Figma, Sketch, or code to maintain consistency across teams.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Who uses this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">CLIENT ONBOARDING</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Web Designer: client onboarding</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">AA-ready • 60s</div>
+          <p class="text-sm text-bae-muted leading-relaxed">I start every project with one brand hex and need a full, AA-checked palette before opening Figma. The Best Answer Hub Color Palette Generator gives me production-ready tokens in under a minute. No back-and-forth needed.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">DESIGN SYSTEM</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Front-End Developer: design system build</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Tailwind export</div>
+          <p class="text-sm text-bae-muted leading-relaxed">I paste the Tailwind export straight into my config and the color system is done. No more guessing which shade of blue the designer meant or manually checking contrast ratios line by line.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">ACCESSIBILITY AUDIT</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Brand Manager: accessibility audit</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">WCAG AA pass</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Before our site rebrand we needed to know if the new brand colors passed WCAG AA. The Best Answer Hub Color Palette Generator showed us exactly which text-background combinations failed and flagged the fixes, before a single page went live.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">CLIENT PROPOSALS</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Freelance Designer: client proposals</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Win more work</div>
+          <p class="text-sm text-bae-muted leading-relaxed">I generate a palette for every proposal now. It shows clients what their brand could look like across a real UI (buttons, cards, dark mode), not just a logo on a white background. It wins work.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/ip-address-checker/" class="text-bae-primary hover:underline">IP Address Checker</a>, <a href="/tools/website-speed-test/" class="text-bae-primary hover:underline">Speed Test</a>, <a href="/tools/password-generator/" class="text-bae-primary hover:underline">Password Generator</a>, <a href="/tools/seo-score-checker/" class="text-bae-primary hover:underline">SEO Checker</a>, <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code Generator</a>, <a href="/tools/broken-link-checker/" class="text-bae-primary hover:underline">Broken Link Checker</a>, <a href="/tools/invoice-generator/" class="text-bae-primary hover:underline">Invoice Generator</a>, <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>, and <a href="/developer-toolbox/" class="text-bae-primary hover:underline">Developer Toolbox</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      // === Color Math ===
+      function hexToRgb(hex) {
+        const n = hex.replace('#', '');
+        const bigint = parseInt(n, 16);
+        return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+      }
+      function rgbToHex(r, g, b) {
+        return '#' + [r, g, b].map(x => {
+          const hex = Math.round(x).toString(16);
+          return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+      }
+      function rgbToHsl(r, g, b) {
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+        if (max === min) { h = s = 0; }
+        else {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          switch (max) {
+            case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+            case g: h = ((b - r) / d + 2) / 6; break;
+            case b: h = ((r - g) / d + 4) / 6; break;
+          }
+        }
+        return { h: (h * 360) % 360, s: Math.max(0, Math.min(1, s)), l: Math.max(0, Math.min(1, l)) };
+      }
+      function hslToRgb(h, s, l) {
+        h = (h % 360) / 360;
+        let r, g, b;
+        if (s === 0) { r = g = b = l; }
+        else {
+          const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+          };
+          const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+          const p = 2 * l - q;
+          r = hue2rgb(p, q, h + 1/3);
+          g = hue2rgb(p, q, h);
+          b = hue2rgb(p, q, h - 1/3);
+        }
+        return { r: r * 255, g: g * 255, b: b * 255 };
+      }
+      function getLuminance(r, g, b) {
+        const a = [r, g, b].map(v => {
+          v /= 255;
+          return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+      }
+      function contrastRatio(hex1, hex2) {
+        const rgb1 = hexToRgb(hex1), rgb2 = hexToRgb(hex2);
+        const l1 = getLuminance(rgb1.r, rgb1.g, rgb1.b);
+        const l2 = getLuminance(rgb2.r, rgb2.g, rgb2.b);
+        const lighter = Math.max(l1, l2);
+        const darker = Math.min(l1, l2);
+        return (lighter + 0.05) / (darker + 0.05);
+      }
+      function hexToHsl(hex) {
+        const rgb = hexToRgb(hex);
+        return rgbToHsl(rgb.r, rgb.g, rgb.b);
+      }
+      function hslToHex(h, s, l) {
+        const rgb = hslToRgb(h, s, l);
+        return rgbToHex(rgb.r, rgb.g, rgb.b);
+      }
+
+      // === Palette Generation ===
+      const LABELS = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
+      const LIGHTNESS_STEPS = [0.97, 0.94, 0.88, 0.80, 0.71, 0.60, 0.50, 0.41, 0.32, 0.23, 0.14];
+      let palette = {};
+      let locked = {};
+
+      function generateScale(hue, sat, steps, labelPrefix) {
+        return steps.map((l, i) => {
+          const key = labelPrefix + '-' + LABELS[i];
+          if (locked[key]) return { label: LABELS[i], hex: locked[key] };
+          const s = i < 5 ? sat * (0.3 + i * 0.14) : (i === 5 ? sat : sat * (1.1 - (i - 5) * 0.08));
+          return { label: LABELS[i], hex: hslToHex(hue, Math.max(0, Math.min(1, s)), l) };
+        });
+      }
+
+      function generatePalette(seedHex) {
+        const hsl = hexToHsl(seedHex);
+        palette = {
+          primary: generateScale(hsl.h, hsl.s, LIGHTNESS_STEPS, 'primary'),
+          neutral: generateScale(hsl.h, 0.08, LIGHTNESS_STEPS, 'neutral'),
+          success: generateScale((hsl.h + 120) % 360, 0.55, [0.95, 0.90, 0.82, 0.72, 0.60, 0.48, 0.38, 0.30, 0.23, 0.16, 0.10], 'success'),
+          warning: generateScale((hsl.h + 45) % 360, 0.70, [0.97, 0.93, 0.86, 0.78, 0.68, 0.56, 0.46, 0.37, 0.29, 0.21, 0.13], 'warning'),
+          error: generateScale((hsl.h + 180) % 360, 0.60, [0.97, 0.93, 0.86, 0.77, 0.67, 0.55, 0.45, 0.36, 0.28, 0.20, 0.12], 'error'),
+        };
+      }
+
+      function getColor(name) {
+        const [scale, shade] = name.split('-');
+        const s = palette[scale];
+        if (!s) return '#000000';
+        const item = s.find(x => x.label === shade);
+        return item ? item.hex : '#000000';
+      }
+
+      // === UI Rendering ===
+      const paletteGrid = document.getElementById('palette-grid');
+      const previewLight = document.getElementById('preview-light');
+      const previewDark = document.getElementById('preview-dark');
+      const wcagGrid = document.getElementById('wcag-grid');
+      const exportOutput = document.getElementById('export-output');
+
+      function renderBadge(ratio) {
+        let cls = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        let text = 'AAA';
+        if (ratio < 4.5) { cls = 'bg-red-50 text-red-700 border-red-200'; text = 'Fail'; }
+        else if (ratio < 7) { cls = 'bg-amber-50 text-amber-700 border-amber-200'; text = 'AA'; }
+        const span = document.createElement('span');
+        span.className = 'inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ' + cls;
+        span.textContent = text + ' · ' + ratio.toFixed(1) + ':1';
+        return span;
+      }
+
+      function renderPalette() {
+        paletteGrid.textContent = '';
+        Object.keys(palette).forEach(scale => {
+          const row = document.createElement('div');
+          const title = scale.charAt(0).toUpperCase() + scale.slice(1);
+
+          const titleP = document.createElement('p');
+          titleP.className = 'text-[11px] font-semibold uppercase tracking-wider text-bae-muted mb-1.5';
+          titleP.textContent = title;
+          row.appendChild(titleP);
+
+          const flexWrap = document.createElement('div');
+          flexWrap.className = 'flex gap-1.5 flex-wrap';
+
+          palette[scale].forEach(item => {
+            const key = scale + '-' + item.label;
+            const isLocked = !!locked[key];
+            const isMain = item.label === '500';
+            const textColor = contrastRatio(item.hex, '#ffffff') >= 4.5 ? '#ffffff' : '#111827';
+            const ring = isLocked ? 'box-shadow:inset 0 0 0 2px ' + textColor : '';
+            const mainRing = isMain ? 'box-shadow:inset 0 0 0 2px ' + textColor + ',0 0 0 2px ' + item.hex + ',0 0 0 4px ' + textColor : ring;
+
+            const swatch = document.createElement('div');
+            swatch.className = 'swatch group relative w-14 h-[72px] rounded-bae-sm cursor-pointer flex flex-col items-center justify-end pb-1.5 transition-transform hover:scale-105' + (isMain ? ' main-swatch' : '');
+            swatch.dataset.key = key;
+            swatch.dataset.hex = item.hex;
+            swatch.title = isMain ? 'Click to set as seed color' : 'Click to copy hex';
+            swatch.style.cssText = 'background-color:' + item.hex + ';color:' + textColor + ';' + mainRing;
+
+            const lockIconSpan = document.createElement('span');
+            lockIconSpan.className = 'absolute top-1 right-1 lock-icon';
+
+            const lockSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            lockSvg.setAttribute('class', isLocked ? 'w-3 h-3 drop-shadow' : 'w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity');
+            lockSvg.setAttribute('fill', isLocked ? 'currentColor' : 'none');
+            lockSvg.setAttribute('viewBox', isLocked ? '0 0 20 20' : '0 0 24 24');
+            if (!isLocked) lockSvg.setAttribute('stroke', 'currentColor');
+
+            const lockPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            if (isLocked) {
+              lockPath.setAttribute('fill-rule', 'evenodd');
+              lockPath.setAttribute('d', 'M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z');
+              lockPath.setAttribute('clip-rule', 'evenodd');
+            } else {
+              lockPath.setAttribute('stroke-linecap', 'round');
+              lockPath.setAttribute('stroke-linejoin', 'round');
+              lockPath.setAttribute('stroke-width', '2');
+              lockPath.setAttribute('d', 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z');
+            }
+            lockSvg.appendChild(lockPath);
+            lockIconSpan.appendChild(lockSvg);
+            swatch.appendChild(lockIconSpan);
+
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'text-[10px] font-mono font-semibold';
+            labelSpan.textContent = item.label;
+            swatch.appendChild(labelSpan);
+
+            const hexSpan = document.createElement('span');
+            hexSpan.className = 'text-[9px] font-mono opacity-80';
+            hexSpan.textContent = item.hex;
+            swatch.appendChild(hexSpan);
+
+            swatch.addEventListener('click', (e) => {
+              if (e.target.closest('.lock-icon')) {
+                if (locked[key]) delete locked[key]; else locked[key] = swatch.dataset.hex;
+                renderPalette();
+                renderComponentLab();
+                return;
+              }
+              if (key === 'primary-500') {
+                setSeed(swatch.dataset.hex);
+                return;
+              }
+              navigator.clipboard.writeText(swatch.dataset.hex).then(() => {
+                const status = document.getElementById('palette-status');
+                const orig = status.textContent;
+                status.textContent = 'Copied ' + swatch.dataset.hex + '!';
+                setTimeout(() => status.textContent = orig, 1500);
+              });
+            });
+
+            flexWrap.appendChild(swatch);
+          });
+
+          row.appendChild(flexWrap);
+          paletteGrid.appendChild(row);
+        });
+      }
+
+      function renderComponentLab() {
+        const p = getColor;
+        const pri = p('primary-600'), priLight = p('primary-500');
+        const neu50 = p('neutral-50'), neu100 = p('neutral-100'), neu200 = p('neutral-200');
+        const neu300 = p('neutral-300'), neu700 = p('neutral-700'), neu800 = p('neutral-800');
+        const neu900 = p('neutral-900'), neu950 = p('neutral-950');
+        const white = '#ffffff';
+
+        // Light mode
+        previewLight.textContent = '';
+        const lightWrap = document.createElement('div');
+        lightWrap.className = 'rounded-bae-sm p-4 space-y-3';
+        lightWrap.style.background = neu50;
+
+        const lightTitle = document.createElement('p');
+        lightTitle.className = 'text-xs font-semibold mb-2';
+        lightTitle.style.color = neu700;
+        lightTitle.textContent = 'Component Preview';
+        lightWrap.appendChild(lightTitle);
+
+        const btn1 = document.createElement('button');
+        btn1.style.cssText = 'background:' + pri + ';color:' + white + ';border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;';
+        btn1.textContent = 'Get Started';
+        lightWrap.appendChild(compRow('Primary Button', btn1, pri, white));
+
+        const btn2 = document.createElement('button');
+        btn2.style.cssText = 'background:transparent;color:' + pri + ';border:1.5px solid ' + pri + ';padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;';
+        btn2.textContent = 'Learn More';
+        lightWrap.appendChild(compRow('Secondary Button', btn2, white, pri));
+
+        const card = document.createElement('div');
+        card.style.cssText = 'background:' + white + ';border:1px solid ' + neu200 + ';padding:12px;border-radius:8px;';
+        const cardTitle = document.createElement('p');
+        cardTitle.style.cssText = 'font-size:13px;font-weight:600;color:' + neu900 + ';margin:0 0 4px;';
+        cardTitle.textContent = 'Card Title';
+        const cardDesc = document.createElement('p');
+        cardDesc.style.cssText = 'font-size:12px;color:' + neu700 + ';margin:0;';
+        cardDesc.textContent = 'Card description text goes here.';
+        card.appendChild(cardTitle);
+        card.appendChild(cardDesc);
+        lightWrap.appendChild(compRow('Card', card, white, neu900, neu200));
+
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.value = 'Hello world';
+        inp.readOnly = true;
+        inp.style.cssText = 'background:' + white + ';border:1.5px solid ' + neu300 + ';color:' + neu900 + ';padding:8px 12px;border-radius:6px;font-size:13px;width:100%;max-width:240px;';
+        lightWrap.appendChild(compRow('Input', inp, white, neu900, neu300));
+
+        lightWrap.appendChild(badgeRow('Success', p('success-600'), p('success-100'), p('success-800')));
+        lightWrap.appendChild(badgeRow('Warning', p('warning-600'), p('warning-100'), p('warning-800')));
+        lightWrap.appendChild(badgeRow('Error', p('error-600'), p('error-100'), p('error-800')));
+
+        previewLight.appendChild(lightWrap);
+
+        // Dark mode
+        previewDark.textContent = '';
+        const darkWrap = document.createElement('div');
+        darkWrap.className = 'rounded-bae-sm p-4 space-y-3';
+        darkWrap.style.background = neu900;
+
+        const darkTitle = document.createElement('p');
+        darkTitle.className = 'text-xs font-semibold mb-2';
+        darkTitle.style.color = neu300;
+        darkTitle.textContent = 'Component Preview';
+        darkWrap.appendChild(darkTitle);
+
+        const dbtn1 = document.createElement('button');
+        dbtn1.style.cssText = 'background:' + priLight + ';color:' + white + ';border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;';
+        dbtn1.textContent = 'Get Started';
+        darkWrap.appendChild(compRow('Primary Button', dbtn1, priLight, white));
+
+        const dbtn2 = document.createElement('button');
+        dbtn2.style.cssText = 'background:transparent;color:' + priLight + ';border:1.5px solid ' + priLight + ';padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;';
+        dbtn2.textContent = 'Learn More';
+        darkWrap.appendChild(compRow('Secondary Button', dbtn2, neu900, priLight));
+
+        const dcard = document.createElement('div');
+        dcard.style.cssText = 'background:' + neu800 + ';border:1px solid ' + neu700 + ';padding:12px;border-radius:8px;';
+        const dcardTitle = document.createElement('p');
+        dcardTitle.style.cssText = 'font-size:13px;font-weight:600;color:' + neu50 + ';margin:0 0 4px;';
+        dcardTitle.textContent = 'Card Title';
+        const dcardDesc = document.createElement('p');
+        dcardDesc.style.cssText = 'font-size:12px;color:' + neu300 + ';margin:0;';
+        dcardDesc.textContent = 'Card description text goes here.';
+        dcard.appendChild(dcardTitle);
+        dcard.appendChild(dcardDesc);
+        darkWrap.appendChild(compRow('Card', dcard, neu800, neu50, neu700));
+
+        const dinp = document.createElement('input');
+        dinp.type = 'text';
+        dinp.value = 'Hello world';
+        dinp.readOnly = true;
+        dinp.style.cssText = 'background:' + neu800 + ';border:1.5px solid ' + neu700 + ';color:' + neu50 + ';padding:8px 12px;border-radius:6px;font-size:13px;width:100%;max-width:240px;';
+        darkWrap.appendChild(compRow('Input', dinp, neu800, neu50, neu700));
+
+        darkWrap.appendChild(badgeRow('Success', p('success-400'), p('success-900'), p('success-300')));
+        darkWrap.appendChild(badgeRow('Warning', p('warning-400'), p('warning-900'), p('warning-300')));
+        darkWrap.appendChild(badgeRow('Error', p('error-400'), p('error-900'), p('error-300')));
+
+        previewDark.appendChild(darkWrap);
+      }
+
+      function compRow(label, element, bg, text, border) {
+        const r = contrastRatio(bg, text);
+        const wrap = document.createElement('div');
+        wrap.className = 'flex items-center gap-3 flex-wrap';
+
+        const left = document.createElement('div');
+        left.className = 'flex-1 min-w-[200px]';
+        left.appendChild(element);
+
+        const right = document.createElement('div');
+        right.className = 'flex items-center gap-2 shrink-0';
+        right.appendChild(renderBadge(r));
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'text-[10px] text-bae-muted';
+        labelSpan.textContent = label;
+        right.appendChild(labelSpan);
+
+        wrap.appendChild(left);
+        wrap.appendChild(right);
+        return wrap;
+      }
+
+      function badgeRow(label, textColor, bgColor, borderColor) {
+        const r = contrastRatio(bgColor, textColor);
+        const wrap = document.createElement('div');
+        wrap.className = 'flex items-center gap-3';
+
+        const badge = document.createElement('span');
+        badge.style.cssText = 'background:' + bgColor + ';color:' + textColor + ';border:1px solid ' + (borderColor || bgColor) + ';padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;';
+        badge.textContent = label;
+
+        wrap.appendChild(badge);
+        wrap.appendChild(renderBadge(r));
+        return wrap;
+      }
+
+      function renderWCAG() {
+        const pairs = [
+          ['Primary text on bg', getColor('primary-600'), '#ffffff'],
+          ['Secondary text on bg', '#ffffff', getColor('primary-600')],
+          ['Body on white', getColor('neutral-900'), '#ffffff'],
+          ['Muted on white', getColor('neutral-600'), '#ffffff'],
+          ['Body on gray-50', getColor('neutral-900'), getColor('neutral-50')],
+          ['Body on gray-100', getColor('neutral-900'), getColor('neutral-100')],
+          ['Body on dark', getColor('neutral-50'), getColor('neutral-900')],
+          ['Muted on dark', getColor('neutral-400'), getColor('neutral-900')],
+          ['Success text', getColor('success-700'), getColor('success-50')],
+          ['Warning text', getColor('warning-700'), getColor('warning-50')],
+          ['Error text', getColor('error-700'), getColor('error-50')],
+          ['Primary on card', getColor('primary-700'), '#ffffff'],
+        ];
+        wcagGrid.textContent = '';
+        pairs.forEach(([label, text, bg]) => {
+          const r = contrastRatio(text, bg);
+          let cls = 'bg-emerald-50 border-emerald-200';
+          if (r < 4.5) cls = 'bg-red-50 border-red-200';
+          else if (r < 7) cls = 'bg-amber-50 border-amber-200';
+
+          const div = document.createElement('div');
+          div.className = 'rounded-bae-sm border p-2.5 ' + cls;
+
+          const p1 = document.createElement('p');
+          p1.className = 'text-[10px] font-medium text-bae-muted truncate';
+          p1.textContent = label;
+
+          const p2 = document.createElement('p');
+          p2.className = 'text-sm font-bold text-bae-ink';
+          p2.textContent = r.toFixed(1) + ':1';
+
+          div.appendChild(p1);
+          div.appendChild(p2);
+          wcagGrid.appendChild(div);
+        });
+      }
+
+      function renderExport(format) {
+        const p = getColor;
+        let out = '';
+        if (format === 'css') {
+          out = ':root {\n';
+          ['primary', 'neutral', 'success', 'warning', 'error'].forEach(scale => {
+            palette[scale].forEach(item => {
+              out += '  --color-' + scale + '-' + item.label + ': ' + item.hex + ';\n';
+            });
+          });
+          out += '}';
+        } else if (format === 'tailwind') {
+          out = '@theme {\n';
+          ['primary', 'neutral', 'success', 'warning', 'error'].forEach(scale => {
+            palette[scale].forEach(item => {
+              out += '  --color-' + scale + '-' + item.label + ': ' + item.hex + ';\n';
+            });
+          });
+          out += '}';
+        } else {
+          ['primary', 'neutral', 'success', 'warning', 'error'].forEach(scale => {
+            out += scale.toUpperCase() + ':\n';
+            palette[scale].forEach(item => {
+              out += '  ' + item.label + ': ' + item.hex + '\n';
+            });
+            out += '\n';
+          });
+        }
+        exportOutput.value = out;
+      }
+
+      function updateAll() {
+        renderPalette();
+        renderComponentLab();
+        renderWCAG();
+        const activeTab = document.querySelector('.export-tab.bg-bae-primary');
+        renderExport(activeTab ? activeTab.id.replace('export-', '') : 'css');
+      }
+
+      // === Event Handlers ===
+      const seedPicker = document.getElementById('seed-picker');
+      const seedInput = document.getElementById('seed-input');
+      const generateBtn = document.getElementById('generate-btn');
+      const randomBtn = document.getElementById('random-btn');
+
+      function setSeed(hex) {
+        hex = hex.toLowerCase();
+        if (!hex.startsWith('#')) hex = '#' + hex;
+        if (!/^#[0-9a-f]{6}$/.test(hex)) return;
+        seedPicker.value = hex;
+        seedInput.value = hex;
+        generatePalette(hex);
+        updateAll();
+      }
+
+      function randomSeed() {
+        const hex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+        setSeed(hex);
+      }
+
+      seedPicker.addEventListener('input', (e) => setSeed(e.target.value));
+      seedInput.addEventListener('change', (e) => setSeed(e.target.value));
+      generateBtn.addEventListener('click', () => setSeed(seedPicker.value));
+      randomBtn.addEventListener('click', randomSeed);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+          e.preventDefault();
+          randomSeed();
+        }
+      });
+
+      // Tabs
+      const tabLight = document.getElementById('tab-light');
+      const tabDark = document.getElementById('tab-dark');
+      tabLight.addEventListener('click', () => {
+        tabLight.classList.add('bg-bae-primary', 'text-white'); tabLight.classList.remove('text-bae-muted');
+        tabDark.classList.remove('bg-bae-primary', 'text-white'); tabDark.classList.add('text-bae-muted');
+        previewLight.classList.remove('hidden'); previewDark.classList.add('hidden');
+      });
+      tabDark.addEventListener('click', () => {
+        tabDark.classList.add('bg-bae-primary', 'text-white'); tabDark.classList.remove('text-bae-muted');
+        tabLight.classList.remove('bg-bae-primary', 'text-white'); tabLight.classList.add('text-bae-muted');
+        previewDark.classList.remove('hidden'); previewLight.classList.add('hidden');
+      });
+
+      // Export tabs
+      ['css', 'tailwind', 'hex'].forEach(fmt => {
+        document.getElementById('export-' + fmt).addEventListener('click', (e) => {
+          document.querySelectorAll('.export-tab').forEach(t => {
+            t.classList.remove('bg-bae-primary', 'text-white');
+            t.classList.add('text-bae-muted');
+          });
+          e.target.classList.add('bg-bae-primary', 'text-white');
+          e.target.classList.remove('text-bae-muted');
+          renderExport(fmt);
+        });
+      });
+
+      document.getElementById('copy-export-btn').addEventListener('click', () => {
+        navigator.clipboard.writeText(exportOutput.value).then(() => {
+          const btn = document.getElementById('copy-export-btn');
+          btn.textContent = 'Copied!';
+          setTimeout(() => btn.textContent = 'Copy to Clipboard', 1500);
+        });
+      });
+
+      // Init
+      generatePalette('#6366f1');
+      updateAll();
+      renderExport('css');
+    })();
+  </script>
+</BaseLayout>

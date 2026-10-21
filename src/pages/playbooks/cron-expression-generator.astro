@@ -1,0 +1,378 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-12T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Cron Expression Generator?', a: 'The Best Answer Hub Cron Expression Generator is a free, browser-based tool that builds cron schedules from click-to-set fields and presets, explains them in plain English, and previews the next run times. It supports standard 5-field, 6-field, and Quartz cron, needs no account, and calculates everything on your device so nothing is uploaded.' },
+  { q: 'What do the five fields in a cron expression mean?', a: 'A standard cron expression has five fields, read left to right: minute (0-59), hour (0-23), day of month (1-31), month (1-12), and day of week (0-7, where 0 and 7 are Sunday). Each field accepts a value, a list, a range, or a step. The Best Answer Hub generator labels and validates every field as you type.' },
+  { q: 'What does the asterisk mean in a cron expression?', a: 'An asterisk means every valid value for that field. An asterisk in the minute field means every minute, and in the hour field it means every hour. So the expression with five asterisks runs once every minute. The Best Answer Hub Cron Expression Generator shows the plain-English meaning so an asterisk never has to be guessed.' },
+  { q: 'What does */15 mean in cron?', a: 'A slash sets a step, so */15 in the minute field means every 15 minutes, at minutes 0, 15, 30, and 45. A step is only an even cadence when it divides its range, so */15 works cleanly because 15 divides 60. The Best Answer Hub generator previews the actual run times so uneven steps are obvious.' },
+  { q: 'How do I write a cron job for every day at midnight?', a: 'Use 0 0 * * *, which reads as minute 0, hour 0, every day of month, every month, every day of week, so it runs once a day at midnight. Vixie cron also accepts the shortcut @daily. The Best Answer Hub Cron Expression Generator has a preset button for this exact schedule.' },
+  { q: 'How do I schedule a cron job on weekdays only?', a: 'Use a range in the day-of-week field: 0 9 * * 1-5 runs at 9:00 AM Monday through Friday, because 1 to 5 covers Monday to Friday. Weekends are excluded automatically. The Best Answer Hub generator confirms this by listing the next ten run dates, all of which fall on weekdays.' },
+  { q: 'Why does my cron job run on the wrong day of the month?', a: 'When both the day-of-month and day-of-week fields are set to something other than an asterisk, standard cron runs when either field matches, not both. So 0 0 13 * 5 fires on the 13th of every month and every Friday. The Best Answer Hub generator spells out exactly which days fire, catching this trap early.' },
+  { q: 'Is Sunday 0 or 7 in cron?', a: 'In standard Vixie cron, Sunday can be written as either 0 or 7 in the day-of-week field, and Saturday is 6. POSIX defines 0 to 6 with Sunday as 0. Note that Quartz and AWS EventBridge count Sunday as 1 instead, which is a common source of off-by-one schedules across systems.' },
+  { q: 'What is the difference between standard cron and Quartz cron?', a: 'Standard Unix cron uses five fields. Quartz cron adds a leading seconds field and an optional trailing year, making six or seven fields, and it uses a question mark character that plain cron does not have. A Quartz string will not paste into a Linux crontab. The Best Answer Hub generator lets you pick the flavor before building.' },
+  { q: 'Why will a cron expression not paste into crontab?', a: 'The usual reason is field count. Linux crontab expects five fields, but generators built for Quartz or Spring emit six or seven, so every field lands in the wrong slot and the line is rejected. Pick the standard 5-field flavor in the Best Answer Hub Cron Expression Generator to produce a string a Unix crontab accepts.' },
+  { q: 'Do cron expressions use UTC or local time?', a: 'Classic cron runs on the machine local time zone, not UTC, so the same expression fires at different wall-clock times on differently configured hosts. Many teams schedule production jobs in UTC to avoid this. Kubernetes CronJobs support a timeZone field to name an explicit zone. The Best Answer Hub generator previews run times against your browser clock.' },
+  { q: 'Why do cron jobs run at the wrong time after daylight saving?', a: 'Cron runs on local time, so daylight-saving shifts move when a job fires. When clocks spring forward, a job in the skipped hour runs immediately; when they fall back, cron avoids running it twice. Scheduling in UTC sidesteps this entirely, because UTC never observes daylight saving.' },
+  { q: 'What does @daily or @reboot mean in cron?', a: 'These are nickname macros in Vixie cron that replace the five fields. @daily equals 0 0 * * *, @hourly equals 0 * * * *, @weekly, @monthly, and @yearly follow the same pattern, and @reboot runs once at startup. They are convenient but not part of POSIX, so some schedulers reject them.' },
+  { q: 'How is the Best Answer Hub generator different from crontab.guru?', a: 'Crontab.guru is a bare editor for a single standard expression and funnels toward a paid monitoring product. The Best Answer Hub Cron Expression Generator adds a click-to-build interface, preset schedules, a next-ten-runs preview, and support for 6-field and Quartz cron, all calculated in your browser with no signup and no ads.' },
+  { q: 'Is the Cron Expression Generator free and does it work offline?', a: 'Yes. The Best Answer Hub Cron Expression Generator is completely free with no usage limits and no signup, and after the page loads once it works with no internet connection because it uses only browser-native JavaScript. That makes it useful on restricted or air-gapped machines where online tools are blocked.' },
+];
+
+const seo = {
+  title: 'How to Read and Write a Cron Expression (2026)',
+  description: 'What the five cron fields mean, what the symbols do, the day-of-week trap that runs jobs on the wrong days, and why a cron string breaks on another system.',
+  url: '/playbooks/cron-expression-generator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Cron Expression Generator', url: '/playbooks/cron-expression-generator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Developer Tools</span>
+        <div class="cav">Get the schedule right the first time</div>
+        <h1>Write a Cron Expression <em>That Runs When You Expect</em></h1>
+        <p class="dek">A plain guide to cron: what the five fields mean, what the symbols do, the day-of-week trap that silently runs jobs on the wrong days, and why an expression that works on your laptop can break on the server. The Best Answer Hub Cron Expression Generator builds the string, explains it in plain English, and previews the next run times, entirely in your browser.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Accuracy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Build<small>click to schedule</small></div>
+          <div class="seg b2">Explain<small>in plain English</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">5</div><div class="l">fields in a standard cron expression</div><div class="src">POSIX, crontab(5)</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">special characters: * , - /</div><div class="src">crontab(5), 2026</div></div>
+      <div class="stat"><div class="n">OR</div><div class="l">both day fields match with OR, not AND</div><div class="src">crontab(5), 2026</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#fields">The five fields</a>
+        <a href="#chars">The symbols</a>
+        <a href="#or">The wrong-day trap</a>
+        <a href="#examples">Common schedules</a>
+        <a href="#flavors">Why it won't run</a>
+        <a href="#timezone">Timezones and DST</a>
+        <a href="#different">Versus crontab.guru</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>A cron expression is a short string of five fields that tells a scheduler when to run a job, and the Best Answer Hub Cron Expression Generator builds it, explains it in plain English, and shows the next run times so you can confirm the schedule before it ships.</strong> This guide explains what each field means, what the asterisk, comma, hyphen, and slash do, the day-of-month and day-of-week trap that runs jobs on days you never intended, why the same expression can be rejected on a different system, and how timezones and daylight saving quietly shift when a job fires.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Cron Expression Generator?</h2>
+        <p>The Best Answer Hub <a href="/developer-toolbox/cron-expression-generator/">Cron Expression Generator</a> is a single-page tool that builds a cron schedule from click-to-set fields and preset buttons, then shows a plain-English description and the next ten times the job will run. You can switch between standard 5-field cron, a 6-field variant with seconds, and Quartz 7-field cron, and you can paste an existing expression to have it explained. Every calculation runs in your browser with plain JavaScript, so nothing is sent to a server and it keeps working with the internet switched off. It needs no account and shows no ads. The tool sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The anatomy</div>
+        <h2 id="fields">What do the five fields in a cron expression mean?</h2>
+        <p>A standard cron expression has five fields separated by spaces, read left to right as minute, hour, day of month, month, and day of week. The allowed ranges are minute 0 to 59, hour 0 to 23, day of month 1 to 31, month 1 to 12 (or the names JAN to DEC), and day of week 0 to 7, where both 0 and 7 mean Sunday (or the names SUN to SAT). These ranges are defined in the Linux <a href="https://man7.org/linux/man-pages/man5/crontab.5.html" target="_blank" rel="noopener noreferrer">crontab(5)</a> manual page and the <a href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html" target="_blank" rel="noopener noreferrer">POSIX crontab</a> specification. The Best Answer Hub Cron Expression Generator labels every field and validates the values as you type, so an out-of-range entry like 25 in the hour field is caught before you copy the string.</p>
+        <div class="cronbox">
+          <div class="dt">Anatomy of a cron expression</div>
+          <div class="cronline">30&nbsp;&nbsp;4&nbsp;&nbsp;1,15&nbsp;&nbsp;*&nbsp;&nbsp;5</div>
+          <div class="cronmap">
+            <div><b>30</b>minute<br>(0-59)</div>
+            <div><b>4</b>hour<br>(0-23)</div>
+            <div><b>1,15</b>day of month<br>(1-31)</div>
+            <div><b>*</b>month<br>(1-12)</div>
+            <div><b>5</b>day of week<br>(0-7, Sun=0/7)</div>
+          </div>
+          <p class="cronnote">This is the example from the crontab(5) man page. It reads: at 4:30 AM on the 1st and 15th of each month, plus every Friday. Note the "plus", it is the trap covered below.</p>
+        </div>
+
+        <div class="cav">Reading the symbols</div>
+        <h2 id="chars">What do the asterisk, comma, hyphen, and slash mean?</h2>
+        <p>Four symbols do almost all the work in a cron field. An asterisk means every valid value, so an asterisk in the minute field means every minute. A hyphen sets an inclusive range, so <code>9-17</code> in the hour field means 9 AM through 5 PM. A comma lists separate values, so <code>1,15</code> in the day-of-month field means the 1st and the 15th. A slash sets a step, so <code>*/15</code> in the minute field means every 15 minutes. These definitions come straight from <a href="https://man7.org/linux/man-pages/man5/crontab.5.html" target="_blank" rel="noopener noreferrer">crontab(5)</a>. One catch worth knowing: a step is only an even cadence when it divides its range cleanly. <code>*/15</code> works because 15 divides 60, but <code>*/40</code> fires at minute 0 and minute 40, then resets at the top of the next hour, a 20-minute gap rather than a steady 40 (<a href="https://en.wikipedia.org/wiki/Cron" target="_blank" rel="noopener noreferrer">Wikipedia</a>).</p>
+        <table>
+          <thead><tr><th>Symbol</th><th>Meaning</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td class="band">*</td><td>Every valid value</td><td><code>* * * * *</code> runs every minute</td></tr>
+            <tr><td class="band">,</td><td>A list of values</td><td><code>0 8,12,17 * * *</code> runs at 8 AM, noon, and 5 PM</td></tr>
+            <tr><td class="band">-</td><td>An inclusive range</td><td><code>0 9 * * 1-5</code> runs 9 AM on weekdays</td></tr>
+            <tr><td class="band">/</td><td>A step through the range</td><td><code>*/15 * * * *</code> runs every 15 minutes</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">The classic trap</div>
+        <h2 id="or">Why does my cron job run on the wrong day of the month?</h2>
+        <p>The usual cause is the day-of-month and day-of-week rule: when both of those fields are set to something other than an asterisk, standard cron runs the job when either one matches, not when both match. The crontab(5) man page states it plainly: <a href="https://man7.org/linux/man-pages/man5/crontab.5.html" target="_blank" rel="noopener noreferrer">"If both fields are restricted (i.e., do not contain the '*' character), the command will be run when either field matches the current time."</a> The POSIX standard specifies the same OR behavior. So <code>0 0 13 * 5</code> does not mean "Friday the 13th"; it means midnight on the 13th of every month, and also midnight every Friday. To get a true "Friday the 13th", one of the two day fields has to stay unrestricted and the logic handled another way.</p>
+        <blockquote>Cron will not warn you that a schedule runs more often than you meant. <span class="accent">The plain-English preview is what catches the wrong-day trap before it reaches production.</span></blockquote>
+        <div class="callout peach"><div class="h">The mistake in one line</div><p>If you set both the day-of-month and the day-of-week fields, you are asking for either day, not both. The Best Answer Hub Cron Expression Generator spells out exactly which days an expression will fire on, so this trap shows up on screen instead of in your logs a week later.</p></div>
+
+        <div class="cav">Copy-ready schedules</div>
+        <h2 id="examples">What are the most common cron schedules?</h2>
+        <p>Most real schedules are variations on a handful of patterns, and each maps to a plain-English sentence you can check at a glance. The table below lists the ones people reach for most, all in standard 5-field form. Every row is a valid expression you can paste into a Linux crontab, a Kubernetes CronJob, or a GitHub Actions schedule. The Best Answer Hub Cron Expression Generator carries preset buttons for these exact cases, and it prints the next ten run times so you can confirm the cadence rather than trust the string.</p>
+        <table>
+          <thead><tr><th>Expression</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td class="band"><code>*/15 * * * *</code></td><td>Every 15 minutes</td></tr>
+            <tr><td class="band"><code>0 * * * *</code></td><td>At the top of every hour</td></tr>
+            <tr><td class="band"><code>0 0 * * *</code></td><td>Every day at midnight</td></tr>
+            <tr><td class="band"><code>0 9 * * 1-5</code></td><td>9:00 AM, Monday through Friday</td></tr>
+            <tr><td class="band"><code>0 2 * * 0</code></td><td>2:00 AM every Sunday</td></tr>
+            <tr><td class="band"><code>0 0 1 * *</code></td><td>Midnight on the 1st of every month</td></tr>
+            <tr><td class="band"><code>15 14 1 * *</code></td><td>2:15 PM on the 1st of every month</td></tr>
+            <tr><td class="band"><code>0 0 1 1 *</code></td><td>Midnight on January 1st</td></tr>
+          </tbody>
+        </table>
+        <div class="callout sage"><div class="h">Shortcuts for the common ones</div><p>Vixie cron accepts nickname macros in place of the five fields: <code>@hourly</code>, <code>@daily</code>, <code>@weekly</code>, <code>@monthly</code>, <code>@yearly</code>, and <code>@reboot</code> for run-at-startup. These are convenient but not part of POSIX, so a scheduler that expects five fields may reject them (<a href="https://man7.org/linux/man-pages/man5/crontab.5.html" target="_blank" rel="noopener noreferrer">crontab(5)</a>).</p></div>
+
+        <div class="cav">Why it breaks elsewhere</div>
+        <h2 id="flavors">Why won't my cron expression run on another system?</h2>
+        <p>The usual reason is field count: standard Unix cron uses five fields, but several popular schedulers add fields, so an expression that is valid in one place is rejected in another. The Quartz scheduler used across Java and .NET expects six or seven fields, adding a leading seconds field and an optional trailing year, and it uses a <code>?</code> character that plain cron does not have (<a href="https://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html" target="_blank" rel="noopener noreferrer">Quartz docs</a>). Spring uses six fields with leading seconds (<a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html" target="_blank" rel="noopener noreferrer">Spring docs</a>). AWS EventBridge uses six fields with a trailing year and forbids an asterisk in both day fields at once (<a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-scheduled-rule-pattern.html" target="_blank" rel="noopener noreferrer">AWS docs</a>). Kubernetes CronJobs, by contrast, use plain 5-field cron (<a href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/" target="_blank" rel="noopener noreferrer">Kubernetes docs</a>). The day-of-week numbers differ too: Unix counts Sunday as 0, while Quartz and EventBridge count Sunday as 1.</p>
+        <table>
+          <thead><tr><th>System</th><th>Fields</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Unix / Linux crontab</td><td>5</td><td>Minute to day-of-week; Sunday = 0 or 7</td></tr>
+            <tr><td class="band">Kubernetes CronJob</td><td>5</td><td>Standard cron; optional timeZone field</td></tr>
+            <tr><td class="band">Spring @Scheduled</td><td>6</td><td>Adds leading seconds</td></tr>
+            <tr><td class="band">AWS EventBridge</td><td>6</td><td>Adds trailing year; needs <code>?</code> in one day field</td></tr>
+            <tr><td class="band">Quartz Scheduler</td><td>6 or 7</td><td>Adds seconds and optional year; Sunday = 1</td></tr>
+          </tbody>
+        </table>
+        <p>The Best Answer Hub Cron Expression Generator handles this by letting you pick the flavor before you build, so the string you copy matches the system you are pasting into. If a schedule that worked locally suddenly errors on deploy, the field count is the first thing to check.</p>
+
+        <div class="cav">The clock question</div>
+        <h2 id="timezone">Do cron jobs use UTC, and what happens at daylight saving?</h2>
+        <p>Classic cron runs on the machine local time zone, not UTC, which is why the same expression fires at a different wall-clock moment on differently configured hosts. Around daylight saving transitions the behavior is specific: the <a href="https://man7.org/linux/man-pages/man8/cron.8.html" target="_blank" rel="noopener noreferrer">cron(8)</a> man page notes that when clocks move forward, a specific-time job in the skipped hour runs immediately, and when clocks move back, cron avoids running the same job twice. Jobs that run more often than hourly are unaffected. To sidestep the whole issue, many teams schedule production jobs in UTC, which never observes daylight saving. Kubernetes supports a <code>.spec.timeZone</code> field so a CronJob can name an explicit IANA zone rather than inheriting the controller local time (<a href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/" target="_blank" rel="noopener noreferrer">Kubernetes docs</a>).</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from crontab.guru?</h2>
+        <p>The difference is that crontab.guru is a bare editor for a single standard expression, while the Best Answer Hub Cron Expression Generator adds a click-to-build interface, presets, next-run previews, and support for the 6-field and Quartz flavors, all without leaving your browser. Crontab.guru describes itself as "the quick and simple editor for cron schedule expressions by Cronitor" and funnels toward Cronitor's paid monitoring product (<a href="https://crontab.guru/" target="_blank" rel="noopener noreferrer">crontab.guru</a>). Other popular generators emit Quartz strings by default: CronMaker states its output is "based on Quartz cron format" (<a href="http://www.cronmaker.com/" target="_blank" rel="noopener noreferrer">CronMaker</a>), which will not paste into a normal Linux crontab. The table sets the usual experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical online cron tool</th></tr></thead>
+          <tbody>
+            <tr><td>Click-to-build interface</td><td class="band">Yes</td><td>Editors are type-only</td></tr>
+            <tr><td>Plain-English explanation</td><td class="band">Yes</td><td>Form generators often skip it</td></tr>
+            <tr><td>Next run-time preview</td><td class="band">Next 10 shown</td><td>Varies</td></tr>
+            <tr><td>Targets standard 5-field cron</td><td class="band">Yes, by default</td><td>Some emit Quartz that breaks in crontab</td></tr>
+            <tr><td>Flags the wrong-day trap</td><td class="band">Yes</td><td>Rarely surfaced</td></tr>
+            <tr><td>Runs in your browser, works offline</td><td class="band">Yes</td><td>Usually not</td></tr>
+            <tr><td>No signup, no ads, no upsell</td><td class="band">Yes</td><td>Often tied to a paid product</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolbox</div><p>Once the schedule is set, the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> has the neighbors you reach for next: a <a href="/tools/json-formatter/">JSON Formatter</a>, a <a href="/developer-toolbox/diff-checker/">Diff Checker</a>, and a hash generator, each running in the browser and sending nothing. Build the cron string here, then carry on without a single upload.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Build it now</span>
+          <h3>Open the Cron Expression Generator</h3>
+          <p>Free, no signup, and calculated entirely in your browser. Click to build a schedule, read it in plain English, and preview the next ten run times before you deploy.</p>
+          <a class="btn" href="/developer-toolbox/cron-expression-generator/">Build your cron expression</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about cron expressions</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, from a JSON formatter to a hash generator, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/diff-checker/">Compare Text and Code, Nothing Uploaded</a></b> How to read a diff and why an online diff tool can leak what you paste.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to PDFs.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>Linux man-pages, <a href="https://man7.org/linux/man-pages/man5/crontab.5.html" target="_blank" rel="noopener noreferrer">crontab(5)</a> (five fields and ranges; special characters; the day-of-month/day-of-week OR rule; @-string macros).</li>
+          <li>Linux man-pages, <a href="https://man7.org/linux/man-pages/man8/cron.8.html" target="_blank" rel="noopener noreferrer">cron(8)</a> (local time zone; daylight-saving behavior for skipped and repeated hours).</li>
+          <li>The Open Group Base Specifications Issue 7 (POSIX), <a href="https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html" target="_blank" rel="noopener noreferrer">crontab</a> (field definitions; the either-matches day rule).</li>
+          <li>Quartz Scheduler, <a href="https://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html" target="_blank" rel="noopener noreferrer">CronTrigger tutorial</a> (six or seven fields; seconds and year; the <code>?</code> character; Sunday = 1).</li>
+          <li>Spring Framework, <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html" target="_blank" rel="noopener noreferrer">CronExpression</a> (six fields with leading seconds).</li>
+          <li>AWS, <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-scheduled-rule-pattern.html" target="_blank" rel="noopener noreferrer">EventBridge schedule expressions</a> (six fields with year; asterisk not allowed in both day fields).</li>
+          <li>Kubernetes, <a href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/" target="_blank" rel="noopener noreferrer">CronJob</a> (standard 5-field cron; optional <code>.spec.timeZone</code>).</li>
+          <li>Cronitor, <a href="https://crontab.guru/" target="_blank" rel="noopener noreferrer">crontab.guru</a> (the quick and simple editor for cron schedule expressions).</li>
+          <li>CronMaker, <a href="http://www.cronmaker.com/" target="_blank" rel="noopener noreferrer">CronMaker</a> (output based on Quartz cron format).</li>
+          <li>Wikipedia, <a href="https://en.wikipedia.org/wiki/Cron" target="_blank" rel="noopener noreferrer">Cron</a> (step values are an even cadence only when they divide the range).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/developer-toolbox/cron-expression-generator/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Cron Expression Generator</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, <a href="/tools/json-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">JSON Formatter</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  .pb .cronbox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .cronbox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .cronline{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1.5rem;font-weight:700;color:var(--clay-deep);letter-spacing:.12em;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-align:center}
+  .pb .cronmap{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+  .pb .cronmap div{text-align:center;font-size:.72rem;color:var(--label);font-weight:600;line-height:1.3}
+  .pb .cronmap div b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:.86rem;color:var(--ink);margin-bottom:2px}
+  .pb .cronnote{font-size:.74rem;color:var(--muted);margin:12px 0 0;font-weight:600}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}.pb .cronmap{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

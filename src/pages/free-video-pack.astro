@@ -1,0 +1,350 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolFAQ from '../components/tools/ToolFAQ.astro';
+
+// Fixed, never computed. `new Date()` in build code makes the build non-deterministic and
+// re-pings IndexNow for pages that did not change (HANDOFF: the sitemap/lastmod system is locked).
+const today = '2026-10-08T00:00:00+00:00';
+// Real content change: the 8 Oct 2026 pack upgrade (new kit, alba house voice, the reel) and the
+// offer going from a 48-hour window to free with no deadline (Malik, 8 Oct 2026).
+const updated = '2026-10-08T00:00:00+00:00';
+
+// No countdown any more. Whether a byte leaves is decided by paddle-server/kc-web/free.php, by
+// whether the archive is on disk — the page never decided it, and now it does not pretend to.
+
+const FB_PROFILE = 'https://www.facebook.com/shahbaz.malik.77715/';
+const FB_COMMUNITY = 'https://www.facebook.com/share/g/19awqyrMc4/';
+
+// Stated BEFORE the button, on purpose. This is a real toolkit that needs Python and Node, not
+// an app. A thousand downloads and nine hundred failed installs is a worse outcome than four
+// hundred downloads that work — so the page lets people self-select rather than discovering it
+// after the zip has landed.
+const requirements = [
+  // Added after research: this is the expectation gap most likely to produce an angry comment.
+  // The pack is free; the agent that drives it usually is not. Say it before the download, not after.
+  { k: 'An AI agent', v: 'The skills are written to the Agent Skills standard and are proven on Claude Code, which needs a paid Claude plan — it is not on the free tier. The Python tools underneath run on their own from the command line if you would rather drive it yourself.' },
+  { k: 'Python 3.11+ and Node.js 20+', v: 'Installed before you start. If you have never installed either, the pack\'s own install guide walks it, but budget an hour rather than ten minutes.' },
+  { k: 'Graphics card', v: 'None needed. No GPU, no CUDA, no VRAM. The voice runs on your processor and the picture is animated rather than generated.' },
+  { k: 'Disk space', v: 'About 1.5 GB free, plus roughly 50 MB per finished video. The optional house voice adds about 1.2 GB.' },
+  { k: 'Internet', v: 'For the install and a one-time voice-model download of about 350 MB, or about 1.2 GB more for the optional house voice. After that the pipeline runs offline.' },
+  { k: 'Seven motion skills', v: 'The playbook\'s picture-building steps expect seven third-party agent skills for animation and charts. They are not part of the pack; it names each one and where to install it.' },
+  { k: 'Operating system', v: 'Built and proven on Windows. The Python and Node stack is cross-platform; macOS and Linux should work, but they have not been through the same testing.' },
+];
+
+const contents = [
+  { t: 'Five agent skills', d: 'Setup, research, script-writing, animation and publishing. Plain readable Markdown — you can see exactly what your agent is being told.' },
+  { t: 'The complete toolkit', d: 'Speech, captions, clips, timing, loudness, sound design, image generation and the render pipeline. More than thirty Python tools.' },
+  { t: 'An animation kit', d: 'Three looks and about forty animated scenes — graphs, charts, scans, prompts and sixteen diagram moves — each laid out for 16:9 and 9:16, so every video gets its reel. Five labs show every move before you write a word.' },
+  { t: 'The gates', d: 'A dozen checks that run before an expensive render, so a wrong decision costs a minute on paper instead of half an hour on screen.' },
+  { t: 'An install that proves itself', d: 'It speaks a real sentence, measures the audio, renders a real frame, and exits non-zero if any of that is wrong.' },
+  { t: 'Commercial use of everything you make', d: 'The house voice is CC BY 4.0, with one credit line the publishing skill writes for you; the baseline voice is Apache-2.0. Sell what you produce, monetise it, put it anywhere.' },
+];
+
+// ── FAQ ─────────────────────────────────────────────────────────────────────────────────────
+// Researched 8 Sep 2026, two passes: one on real search demand, one verifying every third-party
+// claim against a primary source. Deliberately does NOT repeat the 15 on /ai-agent-skills/
+// video-voiceover/ — two pages on one domain answering the same questions compete with each
+// other. That page owns the product questions; this one owns the free offer, the pre-download
+// objections, and the four things a downloader can get legally wrong.
+//
+// Every licence, policy and platform claim below is traceable. Nothing is estimated. The render
+// figures are this project's own measurements, named as such.
+const faqs = [
+  {
+    q: 'What is in the Best Answer Hub free AI video and voice-over pack?',
+    a: 'The complete studio: five agent skills covering setup, research, scripting, animation and publishing, more than thirty Python tools for speech, captions, clips, timing, loudness and rendering, and an animation kit of about forty scenes in three looks. It is the same download listed at $99, free, with upgrades included.',
+  },
+  {
+    q: 'Is the free download the complete product, or a cut-down trial?',
+    a: 'It is the complete product. Identical files, no watermark, no feature locked behind a key, no expiry and nothing that phones home. The Best Answer Hub AI Video &amp; Voice-Over Skill Pack has no trial edition, so the only difference between this download and the paid one is the price paid for it.',
+  },
+  {
+    q: 'Does this generate realistic AI footage like Sora, or animated graphics?',
+    a: 'Animated graphics. It composes video from code — typography, cards, charts, diagrams and motion — rather than generating footage from a prompt. It will not invent photoreal video of a place or a person. That distinction is the whole reason it runs without a graphics card.',
+  },
+  {
+    q: 'Can I make AI videos without a GPU?',
+    a: 'Yes, because composing is not generating. Diffusion video models typically need a dedicated GPU with 8–16 GB of VRAM, which is why almost every guide answers no. Drawing frames from code and narrating them with a small speech model runs on an ordinary processor instead. It was built on a laptop with integrated graphics only.',
+  },
+  {
+    q: 'Do I need a paid Claude subscription to use this?',
+    a: 'To drive it with an agent, yes. The skills follow the Agent Skills standard and are proven on Claude Code, which requires a paid Claude plan rather than the free tier. The Python tools underneath are ordinary command-line scripts and run on their own without any agent, subscription or API key.',
+  },
+  {
+    q: 'Do I need to know how to code to use it?',
+    a: 'Not to make videos, but the install is a terminal job. An agent reads the skills and runs the pipeline. Comfort with copying three commands into a terminal, and roughly an hour the first time, is the honest entry requirement. The pack includes an install guide written for people who have never used Python.',
+  },
+  {
+    q: 'Does it run offline, and is my script sent to the cloud?',
+    a: 'Nothing written is uploaded. After a one-time download of the speech model, about 350 MB for the baseline voice, the narration and rendering run entirely on the machine with no account and no API key. Only the AI agent driving the pipeline talks to the internet, and the Python tools do not need one.',
+  },
+  {
+    q: 'How long does a video take to render on a normal laptop?',
+    a: 'Measured on this project’s own laptop with integrated graphics, the pack budgets twenty-five to thirty-five minutes for a full narrated episode with memory free, and about forty-five without. Free memory moves that number far more than the processor does, which is why the checks run before a render rather than after it.',
+  },
+  {
+    q: 'What voices are included, and does the AI voice sound robotic?',
+    a: 'Two local voice models, both cleared for commercial use. The house voice is alba, voiced by Alba MacKenna for Kyutai’s Pocket TTS, under CC BY 4.0: an optional install whose credit line, naming both, the publishing skill writes. Kokoro-82M installs with the core as an Apache-2.0 baseline with fifty-four voices. Both read clean narration well; dramatic range is weaker.',
+  },
+  {
+    q: 'Why does the AI voice mispronounce years, numbers or acronyms?',
+    a: 'Small speech models normalise text before speaking, so a year like 1999 can be read as a whole number and short acronyms can be spelled out letter by letter. It is a known behaviour rather than a fault, and it is fixable: with Kokoro, supply the pronunciation in IPA in brackets; with the house voice, respell the word in the script.',
+  },
+  {
+    q: 'Will YouTube demonetize videos made with AI tools?',
+    a: 'No. YouTube states plainly that channels using AI in their content remain eligible to monetize, and that its guidelines apply regardless of how content was made. What it does refuse to monetize is content that “looks like it’s made with a template” and channels where videos feel interchangeable from one to the next.',
+  },
+  {
+    q: 'Does an animated explainer with an AI voice need an AI disclosure label?',
+    a: 'It depends on the platform, and they genuinely differ. YouTube’s trigger is realism, and its exemption list covers fully animated work, so an obviously animated explainer normally sits outside it. Meta is broader: its own examples name “a reel narrated with a realistic AI-generated voiceover” as requiring a label. Label it on Meta.',
+  },
+  {
+    q: 'Do I need a Remotion licence to sell videos made with this?',
+    a: 'Individuals, non-profits and for-profit companies of up to three employees use Remotion free, and that free use explicitly covers commercial work. From four people upward a company licence applies, currently $25 per seat per month, paid to Remotion and not included in this pack. Check the tier before building on it.',
+  },
+  {
+    q: 'Is there a free offline alternative to NotebookLM’s Video Overview?',
+    a: 'This is close to one. NotebookLM caps Video Overviews per day by plan and runs in the cloud; this pipeline composes narrated, animated video locally with no daily limit and no account. The trade is control for convenience: the script, the pacing and the visuals are decisions rather than a single button.',
+  },
+  {
+    q: 'Does the free download include future upgrades?',
+    a: 'Yes. The download always serves the current version, so the October 2026 upgrade of the Best Answer Hub AI Video &amp; Voice-Over Skill Pack, with its new animation kit, the CC BY house voice and a 9:16 reel of every video, is the file here now. Anyone with an earlier copy can download again to get it. Nothing expires.',
+  },
+];
+
+const seo = {
+  title: 'The AI Video Skill Pack — Free Download',
+  description: 'The complete AI Video & Voice-Over Skill Pack, free, upgrades included. A topic in, a narrated animated video out, on your laptop. No GPU, no subscription.',
+  url: '/free-video-pack/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: updated,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Free Video Pack', url: '/free-video-pack/' },
+  ],
+  // Schema carries plain text: the entities above render as glyphs on the page but must not
+  // reach JSON-LD as raw markup.
+  faq: faqs.map(f => ({
+    question: f.q,
+    answer: f.a.replace(/&amp;/g, '&').replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim(),
+  })),
+};
+---
+
+<!-- Indexed on purpose (Malik, 8 Oct 2026): search may find this page. The $99 page, hub,
+     llms.txt and playbooks still do not link here — the free offer is promoted on social only. -->
+<BaseLayout seo={seo}>
+  <!-- ── Hero. ONE job: say what it does, then hand over the download. ──────────
+       Restructured 8 Sep 2026 on Malik's read of the conversion hierarchy: the page was
+       asking a visitor to process seven things (download, community, follow, requirements,
+       product education, FAQ, a future $99 sale) before the core action settled. Everything
+       except the download now happens BELOW it. -->
+  <section class="pt-10 pb-8 md:pt-16 md:pb-10">
+    <div class="container max-w-page mx-auto px-6 text-center">
+      <p class="inline-block text-xs font-semibold tracking-widest uppercase text-bae-primary bg-bae-primary-soft border border-bae-primary/15 rounded-full px-4 py-1.5 mb-6">
+        <span id="offer-badge">Free download · normally $99</span>
+      </p>
+      <h1 class="font-serif text-3xl md:text-5xl font-bold tracking-tight text-bae-ink leading-tight mb-5">
+        Complete AI Video + Voice-Over Pack<br class="hidden md:block" />
+        <span class="text-bae-primary" id="headline-accent">free to download</span>
+      </h1>
+
+      <!-- The outcome, not the inventory. "Thirty Python tools" is what it IS; this is what
+           it DOES, and only one of those makes somebody download it. -->
+      <p class="text-lg md:text-xl text-bae-ink max-w-2xl mx-auto mb-9">
+        Create narrated, animated videos on your own laptop &mdash;
+        <strong>no GPU, no API fees, no cloud rendering</strong> and no subscription.
+      </p>
+
+      <div id="dl-slot">
+        <a
+          href="/kc/free.php"
+          class="inline-block bg-bae-primary text-white font-semibold text-base md:text-lg rounded-bae px-9 py-4 no-underline hover:opacity-90 transition-opacity"
+          data-free-download
+        >
+          Download Free · 0.6 MB
+        </a>
+        <p class="text-xs text-bae-muted mt-3">
+          No email, no account, no checkout. It is a toolkit rather than an app and needs
+          Python and Node &mdash; <a href="#requirements" class="text-bae-primary no-underline hover:underline">full requirements below</a>.
+        </p>
+      </div>
+
+      <!-- Replaced the 48-hour countdown (8 Oct 2026). Return visitors from the post are the
+           people most likely to hold an old copy, so the upgrade is said here, next to the button. -->
+      <p class="inline-block text-sm text-bae-muted mt-7 bg-bae-card border border-bae-border rounded-bae px-5 py-3 max-w-xl">
+        <strong class="text-bae-ink">Upgraded October 2026:</strong> a new animation kit, a
+        CC&nbsp;BY house voice and a 9:16 reel of every video. Already have it? Download again
+        to get the upgrade, free.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── The natural next step, not a toll gate. Sits AFTER the download because that is
+         the moment somebody has a reason to join: they have the thing and will need help
+         with it. Nothing here is required, and nothing is gated behind it. ────────────── -->
+  <section class="pb-10 md:pb-14 border-t border-bae-border-light pt-10 md:pt-12">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-tight text-bae-ink mb-2 text-center">
+          Downloaded it? Join the community
+        </h2>
+        <p class="text-center text-base text-bae-muted max-w-2xl mx-auto mb-7">
+          For help getting it running, for what other people are building, and for updates
+          when the next release lands.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-[1.45fr_1fr] gap-5 items-stretch">
+
+          <a href={FB_COMMUNITY} target="_blank" rel="noopener noreferrer"
+             class="group block bg-bae-card border border-bae-border rounded-bae overflow-hidden no-underline hover:border-bae-primary/50 transition-colors">
+            <picture>
+              <source srcset="/facebook-community.webp" type="image/webp" />
+              <img src="/facebook-community.jpg" width="1200" height="626"
+                   alt="Claude vs ChatGPT Community — comparisons, debates, prompts, benchmarks, new model releases, coding tests and automations"
+                   class="block w-full h-auto" decoding="async" />
+            </picture>
+            <div class="p-5">
+              <span class="block font-serif text-lg md:text-xl font-bold text-bae-ink mb-1.5">
+                Join our Facebook community
+              </span>
+              <span class="block text-sm text-bae-muted mb-3">
+                <strong class="text-bae-ink">Built something with the pack? Post it here.</strong>
+                I will be sharing the best builds and improvements in the group &mdash; along with
+                comparisons, benchmarks, prompts and coding tests from people running this on
+                real work.
+              </span>
+              <span class="inline-block text-sm font-semibold text-bae-primary group-hover:underline">
+                Join the Claude vs ChatGPT Community →
+              </span>
+            </div>
+          </a>
+
+          <a href={FB_PROFILE} target="_blank" rel="noopener noreferrer"
+             class="group flex flex-col justify-center bg-bae-primary-soft border border-bae-primary/20 rounded-bae p-6 no-underline hover:border-bae-primary/50 transition-colors">
+            <!-- A face on a "follow a person" card does more work than any copy on it, and it
+                 has to be the SAME face they will land on. This is Malik's current Facebook
+                 photo, square-cropped from the top edge rather than the centre — the face sits
+                 in the upper two-thirds, so a centre crop takes the forehead off. -->
+            <picture>
+              <source srcset="/founder/shahbaz-facebook.webp" type="image/webp" />
+              <img src="/founder/shahbaz-facebook.jpg" width="320" height="320"
+                   alt="Shahbaz Malik"
+                   class="w-16 h-16 rounded-full object-cover mb-3 border border-bae-primary/25"
+                   decoding="async" loading="lazy" />
+            </picture>
+            <span class="block text-xs font-semibold uppercase tracking-widest text-bae-primary mb-2">
+              Shahbaz Malik
+            </span>
+            <span class="block font-serif text-lg md:text-xl font-bold text-bae-ink mb-2">
+              Follow on Facebook for more updates
+            </span>
+            <span class="block text-sm text-bae-muted mb-4">
+              New releases, what is being built next, and the things that broke on the way.
+              This is where the post that started all this came from.
+            </span>
+            <span class="inline-block text-sm font-semibold text-bae-primary group-hover:underline">
+              Follow on Facebook →
+            </span>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Now the detail. Below the fold, where somebody who has already decided goes. ─── -->
+  <section id="requirements" class="pb-10 md:pb-12 scroll-mt-24">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl mx-auto bg-bae-card border border-bae-border rounded-bae p-6 md:p-8">
+        <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">
+          Before you install it
+        </h2>
+        <p class="text-sm text-bae-muted mb-5">
+          <strong class="text-bae-ink">This is a real toolkit, not an app.</strong> There is no
+          installer and no button that makes a video. It runs on your machine, and it needs a
+          couple of things already there.
+        </p>
+        <dl class="grid grid-cols-1 gap-y-3 text-sm m-0">
+          {requirements.map((r) => (
+            <div class="grid grid-cols-1 sm:grid-cols-[190px_1fr] gap-x-5 gap-y-1">
+              <dt class="font-semibold text-bae-ink">{r.k}</dt>
+              <dd class="text-bae-muted m-0">{r.v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── What is actually in it ──────────────────────────────────────────── -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-tight text-bae-ink mb-2 text-center">
+        What you are getting
+      </h2>
+      <p class="text-sm text-bae-muted text-center max-w-2xl mx-auto mb-9">
+        Not a demo and not a cut-down version. This is the product.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {contents.map((c) => (
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h3 class="font-semibold text-bae-ink mb-1.5 text-sm">{c.t}</h3>
+            <p class="text-sm text-bae-muted m-0">{c.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- ── Tell me it worked (or that it didn't) ───────────────────────────── -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-tight text-bae-ink mb-4">
+          If it works for you, that is the only payment I want
+        </h2>
+        <p class="text-base text-bae-muted mb-4">
+          There is no team here and no marketing budget — it is one person, a laptop, and an
+          unreasonable number of evenings.
+        </p>
+        <p class="text-base text-bae-muted mb-7">
+          So if you get a video out of it, or even just get the install to go green:
+          <strong class="text-bae-ink">come and say so.</strong> And if it breaks, say that
+          instead — the broken ones are more useful. Every check in this pack exists because
+          something went wrong twice.
+        </p>
+        <!-- ONE button, not two. The community and the follow are both offered in full three
+             sections up; repeating the pair here was the page asking for the same two things a
+             third time, which is the hierarchy problem in miniature. Somebody who has read this
+             far should not have to scroll back, so one link stays — the primary one. -->
+        <a href={FB_COMMUNITY} target="_blank" rel="noopener noreferrer"
+           class="inline-block bg-bae-primary text-white font-semibold rounded-bae px-7 py-3.5 no-underline hover:opacity-90 transition-opacity">
+          Post what you built in the community
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── What you keep ───────────────────────────────────────────────────── -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-3">
+          What you keep
+        </h2>
+        <p class="text-sm text-bae-muted mb-6">
+          Nothing changes for anyone who already has the pack — no licence check, no expiry,
+          no activation, no phone-home. What you downloaded is yours permanently, including
+          commercial use of everything you make with it, and upgrades land here for free.
+        </p>
+        <a href="/ai-agent-skills/video-voiceover/" class="text-bae-primary font-semibold no-underline hover:underline">
+          See the full pack page →
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

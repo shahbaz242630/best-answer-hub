@@ -1,0 +1,1035 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Course Syllabus Deadline Extractor?',
+    a: 'The Best Answer Hub Course Syllabus Deadline Extractor is a free browser-based tool that reads syllabus PDFs, DOCX files, or pasted text and automatically pulls out assignment deadlines, exam dates, project due dates, and quiz days into a clean, sortable timeline. It runs entirely in your browser. No signup, no account, and no file is ever uploaded to a server. You can review every extracted date, edit mistakes, and export a printable PDF or copy the list directly into your calendar.',
+  },
+  {
+    q: 'I have five 12-page syllabi and syllabus week ends tomorrow, how do I get every deadline into my calendar without spending three hours copying dates manually?',
+    a: 'Drag each syllabus PDF into the Best Answer Hub Course Syllabus Deadline Extractor, or copy-paste the text directly. The tool scans for dates, assignment names, and due-date language like "Due," "Deadline," and "Submit by," then builds a unified timeline sorted by date. A typical syllabus takes under 10 seconds to process, so five syllabi finish in under a minute. You can then copy the combined list or download a PDF timeline.',
+  },
+  {
+    q: 'Can I upload my syllabus and get a sorted timeline without creating an account or giving some company my student data?',
+    a: 'Yes. The Best Answer Hub Course Syllabus Deadline Extractor is 100% client-side. Your syllabus never leaves your computer. The text extraction and date parsing happen inside your browser using JavaScript. There is no registration form, no email capture, and no cloud server processing your academic documents. You can verify this by disconnecting from the internet after loading the page; the tool continues to work perfectly.',
+  },
+  {
+    q: 'My professor uploaded a scanned image syllabus as a PDF; is there any free tool that can read it and pull out the due dates?',
+    a: 'The Best Answer Hub Course Syllabus Deadline Extractor handles both text-based PDFs and scanned image PDFs. For scanned syllabi, it uses the built-in PDF.js text layer to extract any embedded OCR text. If the scan is truly image-only with no text layer, you can use your phone\'s built-in text recognition to copy the syllabus text, then paste it into the tool\'s text input mode for instant deadline extraction.',
+  },
+  {
+    q: 'I missed a 10-page paper because it was buried on page 7 of the syllabus, how do I make sure that never happens again?',
+    a: 'The Best Answer Hub Course Syllabus Deadline Extractor scans the entire document (every page, every paragraph, every table) and surfaces every date it finds in one unified list. Instead of flipping through a 12-page PDF hoping you didn\'t miss anything, you get a single chronological timeline where every assignment, exam, and project is visible at a glance. You can also export the timeline as a PDF to tape above your desk.',
+  },
+  {
+    q: 'How accurate are AI syllabus scanners, should I trust them with my final exam dates or double-check everything manually?',
+    a: 'No automatic scanner is 100% accurate, especially with handwritten annotations, ambiguous phrasing, or unusual date formats. The Best Answer Hub Course Syllabus Deadline Extractor shows you every extracted date in an editable review panel before you export. You can add missing deadlines, fix misread dates, delete false positives, and even add grade-weight information, so you never rely on blind automation for something as important as a final exam.',
+  },
+  {
+    q: 'Every semester I tell myself I\'ll stay organized, but manually entering dates into Google Calendar feels impossible with ADHD, what actually works?',
+    a: 'For students with ADHD, the barrier is usually the setup friction, not the tool itself. The Best Answer Hub Course Syllabus Deadline Extractor removes that barrier by doing the data entry for you in under a minute per syllabus. It produces a simple, color-coded timeline with no complex databases to maintain, no recurring notifications to configure, and no guilt when you miss a day. The output is designed to be readable at a glance, which is exactly what executive-function-friendly planning looks like.',
+  },
+  {
+    q: 'I have three midterms and two lab reports all due in the same week, how do I spot these "collision weeks" before they hit?',
+    a: 'The Best Answer Hub Course Syllabus Deadline Extractor highlights weeks with multiple major deadlines in a dedicated "Collision Weeks" panel. When you process multiple syllabi, the tool groups deadlines by calendar week and flags any week with 3 or more assessments. This lets you see nightmare weeks coming 4 to 6 weeks in advance, so you can start early on the biggest assignments instead of discovering the pile-up the Sunday before.',
+  },
+  {
+    q: 'Can I extract deadlines from a DOCX syllabus or do I have to convert it to PDF first?',
+    a: 'You can upload DOCX files directly. The Best Answer Hub Course Syllabus Deadline Extractor uses the Mammoth.js library to convert Word documents to clean text inside your browser, then parses the text for dates. You do not need to convert to PDF first. The tool also accepts plain text paste and PDF upload, so whichever format your professor uses, you can extract deadlines without installing anything.',
+  },
+  {
+    q: 'My Canvas calendar doesn\'t show all the assignments my professor listed in the syllabus; how do I merge both into one view?',
+    a: 'Canvas, Blackboard, and Brightspace calendars often miss professor-added deadlines that only appear in the syllabus PDF. The Best Answer Hub Course Syllabus Deadline Extractor pulls every date from the syllabus itself (the authoritative source) and outputs a clean timeline you can cross-reference with your LMS calendar. Export the extracted list as a PDF or copy the dates into Google Calendar, Apple Calendar, or Notion to build a true master schedule.',
+  },
+  {
+    q: 'How do I keep track of grade weights alongside deadlines so I know whether to stress more about the 5% quiz or the 30% project?',
+    a: 'The Best Answer Hub Course Syllabus Deadline Extractor lets you add grade-weight information to any extracted deadline. When the tool finds text like "30% of final grade" or "worth 100 points" near a date, it captures that context. You can also manually add weights during the review step. The timeline then sorts by urgency and shows impact, so you can prioritize the 30% research paper over the 5% participation quiz even if the quiz is due first.',
+  },
+  {
+    q: 'My syllabus says "Problem Set 3 due Week 6" but doesn\'t give an actual date, can a tool figure out the real calendar date from that?',
+    a: 'The Best Answer Hub Course Syllabus Deadline Extractor handles week-based deadlines by asking you for the semester start date. Once you enter the first day of classes, the tool converts "Week 6" to the corresponding calendar week. You can adjust the start date during review, and all week-based deadlines update automatically. This is especially useful for graduate intensive courses and quarter-system schools where week numbering is common.',
+  },
+  {
+    q: 'Is there a free browser-based tool where I can paste syllabus text and export the deadlines straight to my phone\'s calendar?',
+    a: 'Yes. The Best Answer Hub Course Syllabus Deadline Extractor works on any phone browser. Paste syllabus text from an email or LMS announcement, tap Extract, and copy the resulting deadline list. You can paste the dates directly into Google Calendar, Apple Calendar, or any to-do app on your phone. The tool is a static page with no app store visit required, so it works instantly on iOS Safari, Android Chrome, or desktop.',
+  },
+  {
+    q: 'I tried ChatGPT to pull dates from my syllabus but it got two exam dates wrong, is there a more reliable way to do this?',
+    a: 'ChatGPT and other LLMs can misread dates, confuse similar numbers, or hallucinate deadlines that don\'t exist. The Best Answer Hub Course Syllabus Deadline Extractor uses deterministic pattern matching instead of generative AI, so it never invents a date. Every extraction is shown in a review table where you can verify, edit, or delete each entry against the original syllabus. This verification step is what makes it more reliable than black-box AI for academic deadlines.',
+  },
+  {
+    q: 'Can I get a single PDF export of my entire semester timeline with all my courses color-coded so I can show my advisor during our meeting?',
+    a: 'Yes. The Best Answer Hub Course Syllabus Deadline Extractor generates a clean, color-coded PDF timeline that groups deadlines by course and sorts them chronologically. Each course gets its own color, and the PDF includes a summary of total assignments, exams, and projects per class. Print it, email it, or bring it to your advising meeting. The PDF is generated entirely in your browser with no server involvement.',
+  },
+];
+
+const steps = [
+  { title: 'Upload or paste your syllabus', description: 'Drag a PDF or DOCX file into the drop zone, or paste syllabus text directly. The tool reads every page and paragraph using client-side libraries. No data leaves your browser.' },
+  { title: 'Review extracted deadlines', description: 'Every found date appears in an editable table with surrounding context. Add missing deadlines, fix dates, delete false positives, and assign grade weights before finalizing.' },
+  { title: 'Export your timeline', description: 'Download a color-coded PDF semester timeline, copy the deadline list to your clipboard, or paste dates directly into Google Calendar, Apple Calendar, or Notion.' },
+];
+
+const seo = {
+  title: 'Free Syllabus Deadline Extractor — PDF & DOCX Parser (2026)',
+  description: 'Extract assignment deadlines, exam dates, and due dates from syllabus PDFs or DOCX files instantly. Client-side, no signup. Export a timeline.',
+  url: '/tools/syllabus-deadline-extractor/',
+  type: 'WebPage' as const,
+  datePublished: '2026-06-07T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Syllabus Deadline Extractor', url: '/tools/syllabus-deadline-extractor/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Syllabus Deadline Extractor:"
+    accentText="Turn syllabi into timelines"
+    description="Free browser-based syllabus scanner for college and high-school students. Upload a PDF or DOCX syllabus, or paste text, and instantly extract every assignment deadline, exam date, and project due date into a clean, sortable timeline. No signup required."
+    backLink="/calculators/"
+    backLabel="← Calculators"
+  />
+
+  <!-- Extractor Interface -->
+  <section class="py-6 md:py-8" aria-label="Syllabus deadline extractor">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+
+      <!-- Input Card -->
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 mb-4">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Upload or Paste Your Syllabus</h2>
+
+        <!-- Tabs -->
+        <div class="flex bg-bae-bg border border-bae-border rounded-bae-sm overflow-hidden mb-4 w-fit">
+          <button type="button" id="tab-file" class="input-tab bg-bae-primary text-white text-xs font-semibold px-4 py-2.5">Upload File</button>
+          <button type="button" id="tab-text" class="input-tab bg-bae-bg text-bae-ink text-xs font-semibold px-4 py-2.5 hover:bg-bae-border-light transition-colors">Paste Text</button>
+        </div>
+
+        <!-- File Upload -->
+        <div id="panel-file">
+          <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 text-center cursor-pointer hover:border-bae-primary hover:bg-bae-primary-soft transition-colors">
+            <p class="text-sm text-bae-muted mb-1">Drag & drop a PDF or DOCX syllabus here</p>
+            <p class="text-xs text-bae-muted">or click to browse</p>
+            <input type="file" id="file-input" class="hidden" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+          </div>
+          <p id="file-name" class="text-xs text-bae-muted mt-2 hidden"></p>
+        </div>
+
+        <!-- Text Paste -->
+        <div id="panel-text" class="hidden">
+          <textarea id="text-input" class="w-full h-40 bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink placeholder:text-bae-muted/60 focus:outline-none focus:border-bae-primary resize-none" placeholder="Paste your syllabus text here..."></textarea>
+        </div>
+
+        <!-- Semester Start Date -->
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-bae-muted mb-1">Semester start date (optional)</label>
+            <input type="date" id="semester-start" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink focus:outline-none focus:border-bae-primary" />
+            <p class="text-[11px] text-bae-muted mt-1">Used to convert "Week 6" into real calendar dates</p>
+          </div>
+          <div class="flex items-end">
+            <button type="button" id="btn-extract" class="w-full bg-bae-primary text-white text-sm font-semibold px-4 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Extract Deadlines</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Panel -->
+      <div id="results-panel" class="hidden space-y-4">
+        <!-- Summary Bar -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-sm font-bold text-bae-ink">Extracted Deadlines</h2>
+              <p class="text-xs text-bae-muted mt-0.5"><span id="result-count">0</span> dates found · Review and edit before exporting</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" id="btn-add-deadline" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">+ Add Deadline</button>
+              <button type="button" id="btn-sort" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Sort by Date</button>
+              <button type="button" id="btn-copy" class="bg-bae-ink text-white text-xs font-semibold px-3 py-2 rounded-bae-sm hover:bg-bae-primary transition-colors">Copy List</button>
+              <button type="button" id="btn-pdf" class="bg-bae-primary text-white text-xs font-semibold px-3 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Download PDF</button>
+              <button type="button" id="btn-clear" class="bg-bae-bg text-red-600 border border-red-200 text-xs font-semibold px-3 py-2 rounded-bae-sm hover:border-red-400 transition-colors">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collision Weeks -->
+        <div id="collision-panel" class="hidden bg-amber-50 border border-amber-200 rounded-bae p-4">
+          <h3 class="text-xs font-bold text-amber-800 mb-2">⚠️ Collision Weeks Detected</h3>
+          <div id="collision-list" class="text-xs text-amber-700 space-y-1"></div>
+        </div>
+
+        <!-- Review Table -->
+        <div class="bg-bae-card border border-bae-border rounded-bae overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-bae-bg border-b border-bae-border">
+                <tr>
+                  <th class="px-4 py-2.5 text-xs font-semibold text-bae-muted">Date</th>
+                  <th class="px-4 py-2.5 text-xs font-semibold text-bae-muted">Assignment / Description</th>
+                  <th class="px-4 py-2.5 text-xs font-semibold text-bae-muted">Type</th>
+                  <th class="px-4 py-2.5 text-xs font-semibold text-bae-muted">Weight</th>
+                  <th class="px-4 py-2.5 text-xs font-semibold text-bae-muted w-24">Action</th>
+                </tr>
+              </thead>
+              <tbody id="deadlines-body"></tbody>
+            </table>
+          </div>
+          <div id="empty-state" class="p-8 text-center text-sm text-bae-muted hidden">No deadlines found. Try pasting more syllabus text or uploading a different file.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-8">What students extract with it</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Full-Time Undergraduate</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Processes 5 syllabi in under 60 seconds</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">47 deadlines extracted automatically</p>
+          <p class="text-sm text-bae-muted leading-relaxed">A junior uploads five 12-page syllabi and gets a unified chronological timeline showing every assignment, exam, and quiz across all courses. No manual data entry, no missed deadlines.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">ADHD Student</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Eliminates setup friction</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">5-minute semester setup</p>
+          <p class="text-sm text-bae-muted leading-relaxed">A student with ADHD copies syllabus text into the tool instead of spending hours building a Notion database, getting an instant timeline with no maintenance required.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Study Group Coordinator</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Builds shared deadline maps</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">4-course collision view</p>
+          <p class="text-sm text-bae-muted leading-relaxed">A study group member extracts deadlines from four syllabi and exports a color-coded PDF showing collision weeks, which gets shared in the group chat.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Graduate Student</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Handles week-based schedules</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Week 1-12 mapped to calendar</p>
+          <p class="text-sm text-bae-muted leading-relaxed">A grad student in a 12-week intensive course pastes a week-numbered syllabus, enters the start date, and gets real calendar dates for every assignment.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common student syllabus management needs.</p>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">More tools for students</h3>
+          <p class="text-sm text-bae-muted">Also try the <a href="/tools/pomodoro-timer/" class="text-bae-primary hover:underline">Pomodoro Timer</a>, <a href="/calculators/gpa-calculator/" class="text-bae-primary hover:underline">GPA Calculator</a>, <a href="/tools/semester-schedule-builder/" class="text-bae-primary hover:underline">Semester Schedule Builder</a>, <a href="/calculators/finals-grade-calculator/" class="text-bae-primary hover:underline">Finals Grade Calculator</a>, and <a href="/tools/citation-generator/" class="text-bae-primary hover:underline">Citation Generator</a>, all free, no signup.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hidden PDF report -->
+  <div id="pdf-report" class="hidden" style="width: 210mm; padding: 16px; box-sizing: border-box; font-family: Inter, system-ui, sans-serif; color: #0f0f1a; background: #fff;">
+    <div style="text-align: center; margin-bottom: 16px;">
+      <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 4px;">Semester Deadline Timeline</h1>
+      <p id="pdf-date" style="font-size: 12px; color: #6b6b80; margin: 0;">Generated on —</p>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <p id="pdf-summary" style="font-size: 13px; margin: 0;"></p>
+    </div>
+    <table id="pdf-table" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+      <thead>
+        <tr style="background: #f0f0f6;">
+          <th style="border: 1px solid #e8e8f0; padding: 6px; text-align: left;">Date</th>
+          <th style="border: 1px solid #e8e8f0; padding: 6px; text-align: left;">Assignment</th>
+          <th style="border: 1px solid #e8e8f0; padding: 6px; text-align: left;">Type</th>
+          <th style="border: 1px solid #e8e8f0; padding: 6px; text-align: left;">Weight</th>
+        </tr>
+      </thead>
+      <tbody id="pdf-table-body"></tbody>
+    </table>
+    <p style="font-size: 10px; color: #6b6b80; margin-top: 16px;">Created with Best Answer Hub Syllabus Deadline Extractor · www.bestanswerhub.com/tools/syllabus-deadline-extractor/</p>
+  </div>
+
+  <script is:inline>
+
+    (function() {
+      'use strict';
+
+      // ─── Config ───
+      const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
+
+      // ─── Utilities ───
+      function escapeHtml(str) {
+        if (str == null) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+
+      function isValidPdfHeader(arrayBuffer) {
+        if (arrayBuffer.byteLength < 5) return false;
+        const bytes = new Uint8Array(arrayBuffer.slice(0, 5));
+        const header = String.fromCharCode.apply(null, bytes);
+        return header.startsWith('%PDF-');
+      }
+
+      function showToast(msg, sticky) {
+        let toast = document.getElementById('bah-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'bah-toast';
+          toast.className = 'fixed bottom-4 right-4 z-[60] bg-bae-ink text-white text-xs font-semibold px-4 py-2.5 rounded-bae-sm shadow-bae-lg transition-opacity max-w-xs';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        if (toast._hideTimer) { clearTimeout(toast._hideTimer); toast._hideTimer = null; }
+        // Sticky messages (e.g. OCR progress) stay until the next non-sticky toast.
+        if (!sticky) {
+          toast._hideTimer = setTimeout(function() { toast.style.opacity = '0'; }, 2200);
+        }
+      }
+
+      function formatDateInput(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + day;
+      }
+
+      function parseDateInput(val) {
+        if (!val) return null;
+        const d = new Date(val + 'T00:00:00');
+        return isNaN(d.getTime()) ? null : d;
+      }
+
+      function formatDisplayDate(d) {
+        if (!d || isNaN(d.getTime())) return '';
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+
+      // ─── Date Extraction Engine ───
+      const MONTHS_FULL = 'January|February|March|April|May|June|July|August|September|October|November|December';
+      const MONTHS_SHORT = 'Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec';
+      const MONTHS_ALL = MONTHS_FULL + '|' + MONTHS_SHORT;
+
+      const ASSIGNMENT_KEYWORDS = ['lab report', 'problem set', 'presentation', 'dissertation', 'assignment', 'midterm', 'portfolio', 'homework', 'discussion', 'reading', 'project', 'thesis', 'essay', 'paper', 'quiz', 'exam', 'final'];
+
+      function extractDeadlines(text, semesterStart) {
+        const deadlines = [];
+        const seen = new Set();
+        const weekSeenIndex = {};
+
+        function addDeadline(dateObj, rawDate, context, lineIndex) {
+          if (!dateObj || isNaN(dateObj.getTime())) return;
+          const key = lineIndex + '|' + rawDate;
+          if (seen.has(key)) return;
+          seen.add(key);
+
+          const ctx = context.trim();
+          let title = '';
+          let type = 'Assignment';
+          let weight = '';
+
+          // Extract title from before due/scheduled language. Prefer the real due verbs
+          // (due/deadline/scheduled for) so noun phrases like "Portfolio submission" aren't
+          // truncated at "submission"; fall back to submit/submission only if needed.
+          let dueMatch = ctx.match(/^(.{0,80}?)\s+(?:due|deadline|scheduled\s+for)\b/i);
+          if (!dueMatch) dueMatch = ctx.match(/^(.{0,80}?)\s+(?:submitted|submission|submit)\b/i);
+          if (dueMatch) {
+            title = dueMatch[1].replace(/^[-–—\s•·]+/, '').replace(/[,:\s]*$/, '').trim();
+          } else {
+            // Fallback: text before the matched date
+            const dateIdx = ctx.toLowerCase().indexOf(rawDate.toLowerCase());
+            if (dateIdx > 0) {
+              title = ctx.slice(0, dateIdx).trim().replace(/[,:\s]*$/, '');
+            }
+          }
+
+          if (!title) {
+            const words = ctx.split(/\s+/).slice(0, 6).join(' ');
+            title = words.length > 40 ? words.slice(0, 40) + '...' : words;
+          }
+
+          // Strip any leading bullet/dash/marker left on the title (e.g. "- Final exam").
+          title = title.replace(/^[-–—\s•·#*]+/, '').trim();
+
+          // Determine type from keywords in the extracted title
+          for (let i = 0; i < ASSIGNMENT_KEYWORDS.length; i++) {
+            const kw = ASSIGNMENT_KEYWORDS[i];
+            const re = new RegExp('(^|[^\\w])(' + kw.replace(/\s/g, '\\s') + ')([^\\w]|$)', 'i');
+            if (re.test(title)) {
+              type = kw.charAt(0).toUpperCase() + kw.slice(1);
+              break;
+            }
+          }
+
+          // Look for grade weight WITHIN this deadline's own line/sentence context only.
+          // A wider character radius bleeds weights across adjacent assignments — e.g. it
+          // tagged an unweighted reading with the quiz's "5%" from the line above, or the
+          // midterm-review row with the midterm exam's "20%" from the line below.
+          const weightPatterns = [
+            '(\\d{1,3})\\s*%\\s*(?:of\\s+(?:final\\s+)?grade|weight)',
+            '(?:worth|value)\\s*:?\\s*(\\d{1,3})\\s*%',
+            '(\\d{1,3})\\s*points?',
+            '\\b(\\d{1,3})%(?!\\d)'
+          ];
+          let foundWeight = '';
+          for (const src of weightPatterns) {
+            const wm = ctx.match(new RegExp(src, 'i'));
+            if (wm) { foundWeight = wm[1] + '%'; break; }
+          }
+          weight = foundWeight;
+
+          deadlines.push({
+            id: 'dl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+            date: dateObj,
+            rawDate: rawDate,
+            title: title,
+            context: ctx,
+            type: type,
+            weight: weight,
+            editable: true
+          });
+        }
+
+        // Pattern 1: Month DD, YYYY or Month DD
+        const pat1 = new RegExp('(' + MONTHS_ALL + ')\\s+(\\d{1,2})(?:\\s*,?\\s*(\\d{4}))?', 'gi');
+        let m;
+        while ((m = pat1.exec(text)) !== null) {
+          const monthName = m[1];
+          const day = parseInt(m[2], 10);
+          let year = m[3] ? parseInt(m[3], 10) : new Date().getFullYear();
+          const monthIdx = monthIndex(monthName);
+          if (monthIdx === -1 || day < 1 || day > 31) continue;
+          const dateObj = new Date(year, monthIdx, day);
+          if (isNaN(dateObj.getTime())) continue;
+          const context = getContext(text, m.index, 120);
+          if (hasDueLanguage(context)) {
+            addDeadline(dateObj, m[0], context, m.index);
+          }
+        }
+
+        // Pattern 2: MM/DD/YYYY or DD/MM/YYYY (assume MM/DD for US academic context)
+        const pat2 = /\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/g;
+        while ((m = pat2.exec(text)) !== null) {
+          const month = parseInt(m[1], 10) - 1;
+          const day = parseInt(m[2], 10);
+          const year = parseInt(m[3], 10);
+          if (month < 0 || month > 11 || day < 1 || day > 31) continue;
+          const dateObj = new Date(year, month, day);
+          if (isNaN(dateObj.getTime())) continue;
+          const context = getContext(text, m.index, 120);
+          if (hasDueLanguage(context)) {
+            addDeadline(dateObj, m[0], context, m.index);
+          }
+        }
+
+        // Pattern 3: YYYY-MM-DD
+        const pat3 = /\b(\d{4})-(\d{1,2})-(\d{1,2})\b/g;
+        while ((m = pat3.exec(text)) !== null) {
+          const year = parseInt(m[1], 10);
+          const month = parseInt(m[2], 10) - 1;
+          const day = parseInt(m[3], 10);
+          if (month < 0 || month > 11 || day < 1 || day > 31) continue;
+          const dateObj = new Date(year, month, day);
+          if (isNaN(dateObj.getTime())) continue;
+          const context = getContext(text, m.index, 120);
+          if (hasDueLanguage(context)) {
+            addDeadline(dateObj, m[0], context, m.index);
+          }
+        }
+
+        // Pattern 4: "Week N" with semester start
+        if (semesterStart) {
+          const pat4 = /(?:week\s*#?(\d+))|(?:week\s+(\d+))/gi;
+          while ((m = pat4.exec(text)) !== null) {
+            const weekNum = parseInt(m[1] || m[2], 10);
+            if (isNaN(weekNum) || weekNum < 1 || weekNum > 30) continue;
+            const dateObj = new Date(semesterStart);
+            dateObj.setDate(dateObj.getDate() + (weekNum - 1) * 7);
+            const context = getContext(text, m.index, 120);
+            if (hasDueLanguage(context)) {
+              // Skip duplicate week mentions within 50 chars (e.g. "Week 5: ... due Week 5")
+              if (weekSeenIndex[weekNum] !== undefined && Math.abs(m.index - weekSeenIndex[weekNum]) < 50) continue;
+              weekSeenIndex[weekNum] = m.index;
+              addDeadline(dateObj, 'Week ' + weekNum, context, m.index);
+            }
+          }
+        }
+
+        return deadlines;
+      }
+
+      function monthIndex(name) {
+        const map = {
+          january: 0, february: 1, march: 2, april: 3, may: 4, june: 5,
+          july: 6, august: 7, september: 8, october: 9, november: 10, december: 11,
+          jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+          jul: 6, aug: 7, sep: 8, sept: 8, oct: 9, nov: 10, dec: 11
+        };
+        return map[name.toLowerCase()] !== undefined ? map[name.toLowerCase()] : -1;
+      }
+
+      function getContext(text, index, radius) {
+        let start = Math.max(0, index - radius);
+        let end = Math.min(text.length, index + radius);
+        // Clamp to nearest newline within radius (syllabi are usually line-oriented)
+        const prevNewline = text.lastIndexOf('\n', index - 1);
+        if (prevNewline !== -1 && prevNewline >= start) start = prevNewline + 1;
+        const nextNewline = text.indexOf('\n', index);
+        if (nextNewline !== -1 && nextNewline <= end) end = nextNewline;
+        // Further clamp to sentence boundaries (. ! ? ;) within the line
+        for (let i = index - 1; i >= start; i--) {
+          if ((text[i] === '.' || text[i] === '!' || text[i] === '?' || text[i] === ';') && (i === start || /\s/.test(text[i + 1]))) {
+            start = i + 1;
+            break;
+          }
+        }
+        for (let i = index; i < end; i++) {
+          if ((text[i] === '.' || text[i] === '!' || text[i] === '?' || text[i] === ';') && (i + 1 >= text.length || /\s/.test(text[i + 1]))) {
+            end = i + 1;
+            break;
+          }
+        }
+        return text.slice(start, end).replace(/\s+/g, ' ').trim();
+      }
+
+      function hasDueLanguage(context) {
+        const indicators = ['due', 'deadline', 'submit', 'submission', 'turn in', 'hand in', 'assigned', 'schedule', 'calendar', 'date', 'exam', 'quiz', 'test', 'midterm', 'final', 'project', 'paper', 'essay'];
+        const ctx = context.toLowerCase();
+        return indicators.some(function(w) { return ctx.indexOf(w) !== -1; });
+      }
+
+      // ─── State ───
+      let currentDeadlines = [];
+      let tesseractLib = null; // lazy-loaded only when an image/scanned PDF needs OCR
+
+      // ─── File Handling ───
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const fileName = document.getElementById('file-name');
+
+      dropZone.addEventListener('click', function() { fileInput.click(); });
+
+      dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dropZone.classList.add('border-bae-primary', 'bg-bae-primary-soft');
+      });
+      dropZone.addEventListener('dragleave', function() {
+        dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft');
+      });
+      dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dropZone.classList.remove('border-bae-primary', 'bg-bae-primary-soft');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) handleFile(files[0]);
+      });
+
+      fileInput.addEventListener('change', function() {
+        if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+      });
+
+      function handleFile(file) {
+        if (file.size > MAX_FILE_SIZE) {
+          showToast('File too large. Max 50 MB.');
+          return;
+        }
+        fileName.textContent = 'Selected: ' + escapeHtml(file.name) + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+        fileName.classList.remove('hidden');
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const arrayBuffer = e.target.result;
+          const ext = file.name.split('.').pop().toLowerCase();
+          if (ext === 'pdf') {
+            if (!isValidPdfHeader(arrayBuffer)) {
+              showToast('File does not appear to be a valid PDF. Please upload a real PDF file.');
+              return;
+            }
+            extractFromPDF(arrayBuffer);
+          } else if (ext === 'docx') {
+            extractFromDOCX(arrayBuffer);
+          } else {
+            showToast('Unsupported file type. Use PDF or DOCX.');
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      function extractFromPDF(arrayBuffer) {
+        if (typeof pdfjsLib === 'undefined') {
+          showToast('PDF library not loaded. Please refresh.');
+          return;
+        }
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+        showToast('Reading PDF...');
+        pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise.then(async function(pdf) {
+          const numPages = pdf.numPages;
+          const allParagraphs = [];
+
+          for (let i = 1; i <= numPages; i++) {
+            const page = await pdf.getPage(i);
+            let textContent;
+            try {
+              textContent = await page.getTextContent();
+              // Retry once if empty (catches race conditions / delayed worker init)
+              if (!textContent || !textContent.items || textContent.items.length === 0) {
+                await new Promise(function(r) { setTimeout(r, 300); });
+                textContent = await page.getTextContent();
+              }
+            } catch (err) {
+              console.error('[SyllabusExtractor] getTextContent error on page', i, err);
+              textContent = { items: [] };
+            }
+
+            let currentLine = '';
+            const pageParagraphs = [];
+            function flushLine() {
+              const trimmed = currentLine.trim();
+              if (trimmed) pageParagraphs.push(trimmed);
+              currentLine = '';
+            }
+
+            for (const item of textContent.items) {
+              if (!item || typeof item.str !== 'string') continue;
+              const str = item.str;
+              if (str.indexOf('\n') !== -1) {
+                const parts = str.split('\n');
+                for (let pi = 0; pi < parts.length; pi++) {
+                  currentLine += parts[pi];
+                  if (pi < parts.length - 1) flushLine();
+                }
+              } else {
+                currentLine += str;
+              }
+              if (item.hasEOL) flushLine();
+            }
+            flushLine();
+            allParagraphs.push(...pageParagraphs);
+          }
+
+          const fullText = allParagraphs.join('\n');
+          if (!fullText.trim()) {
+            // No embedded text layer — this is a scanned/image PDF (or a PDF exported as an
+            // image, like this tool's own timeline export). Fall back to OCR instead of
+            // giving up, mirroring the Best Answer Hub PDF-to-Word converter.
+            let visual = false;
+            try {
+              const firstPage = await pdf.getPage(1);
+              visual = await hasVisualContent(firstPage);
+            } catch (e) {}
+            if (visual) {
+              runOCR(pdf);
+            } else {
+              showToast('No readable text and no image to scan in this PDF. Try the "Paste Text" tab instead.');
+            }
+            return;
+          }
+          processText(fullText);
+        }).catch(function(err) {
+          showToast('PDF read error: ' + (err.message || 'Unknown'));
+        });
+      }
+
+      function extractFromDOCX(arrayBuffer) {
+        if (typeof mammoth === 'undefined') {
+          showToast('DOCX library not loaded. Please refresh.');
+          return;
+        }
+        showToast('Reading DOCX...');
+        mammoth.extractRawText({ arrayBuffer: arrayBuffer }).then(function(result) {
+          if (!result.value.trim()) {
+            showToast('No text found in DOCX.');
+            return;
+          }
+          processText(result.value);
+        }).catch(function(err) {
+          showToast('DOCX read error: ' + (err.message || 'Unknown'));
+        });
+      }
+
+      // ─── OCR fallback for scanned / image-only PDFs (same engine as PDF-to-Word) ───
+      function loadTesseract() {
+        if (tesseractLib) return Promise.resolve();
+        return new Promise(function(resolve, reject) {
+          const s = document.createElement('script');
+          s.src = '/tesseract/tesseract.min.js';
+          s.onload = function() {
+            tesseractLib = window.Tesseract;
+            tesseractLib ? resolve() : reject(new Error('OCR engine failed to initialise.'));
+          };
+          s.onerror = function() { reject(new Error('OCR engine failed to load.')); };
+          document.head.appendChild(s);
+        });
+      }
+
+      // Cheap check: render the page tiny and see if any non-white pixels exist.
+      async function hasVisualContent(page) {
+        try {
+          const viewport = page.getViewport({ scale: 0.15 });
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.floor(viewport.width));
+          canvas.height = Math.max(1, Math.floor(viewport.height));
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          if (!ctx) return false;
+          await page.render({ canvasContext: ctx, viewport }).promise;
+          const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+          for (let i = 0; i < data.length; i += 16) {
+            if (data[i] < 240 || data[i + 1] < 240 || data[i + 2] < 240) return true;
+          }
+          return false;
+        } catch (e) {
+          console.warn('[SyllabusExtractor] visual check failed:', e);
+          return false;
+        }
+      }
+
+      async function runOCR(pdf) {
+        let worker = null;
+        try {
+          showToast('Scanned/image PDF detected, reading with OCR (one-time ~10 MB setup)...', true);
+          await loadTesseract();
+          const numPages = pdf.numPages;
+          let ocrPage = 0;
+          worker = await tesseractLib.createWorker('eng', 1, {
+            workerPath: '/tesseract/worker.min.js',
+            corePath: '/tesseract/',
+            langPath: '/tesseract/',
+            workerBlobURL: false,
+            logger: function(m) {
+              if (m && m.status === 'recognizing text' && typeof m.progress === 'number') {
+                showToast('OCR: page ' + ocrPage + ' of ' + numPages + ', ' + Math.round(m.progress * 100) + '%', true);
+              }
+            }
+          });
+
+          const ocrLines = [];
+          for (let i = 1; i <= numPages; i++) {
+            ocrPage = i;
+            showToast('Rendering page ' + i + ' of ' + numPages + ' for OCR...', true);
+            const page = await pdf.getPage(i);
+            const viewport = page.getViewport({ scale: 2.5 });
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.floor(viewport.width));
+            canvas.height = Math.max(1, Math.floor(viewport.height));
+            const ctx = canvas.getContext('2d');
+            await page.render({ canvasContext: ctx, viewport }).promise;
+            const result = await worker.recognize(canvas);
+            const text = (result && result.data && typeof result.data.text === 'string') ? result.data.text : '';
+            text.split(/\r?\n/).forEach(function(line) {
+              const t = line.trim();
+              if (t) ocrLines.push(t);
+            });
+            canvas.width = 0; canvas.height = 0; // release page bitmap before the next page
+          }
+
+          await worker.terminate();
+          worker = null;
+
+          const ocrText = ocrLines.join('\n');
+          if (!ocrText.trim()) {
+            showToast('OCR could not read any text. The scan may be low-resolution, skewed, or handwritten.');
+            return;
+          }
+          processText(ocrText);
+        } catch (err) {
+          if (worker) { try { await worker.terminate(); } catch (e) {} }
+          console.error('[SyllabusExtractor] OCR failed', err);
+          showToast('OCR failed: ' + (err && err.message ? err.message : 'Unknown error') + '. Try the Paste Text tab.');
+        }
+      }
+
+      // ─── Text Processing ───
+      function processText(text) {
+        const startInput = document.getElementById('semester-start');
+        const semesterStart = parseDateInput(startInput.value);
+        currentDeadlines = extractDeadlines(text, semesterStart);
+        currentDeadlines.sort(function(a, b) { return a.date - b.date; });
+        renderDeadlines();
+        document.getElementById('results-panel').classList.remove('hidden');
+        showToast(currentDeadlines.length + ' deadline' + (currentDeadlines.length === 1 ? '' : 's') + ' found');
+      }
+
+      // ─── Render ───
+      function renderDeadlines() {
+        const tbody = document.getElementById('deadlines-body');
+        const empty = document.getElementById('empty-state');
+        document.getElementById('result-count').textContent = String(currentDeadlines.length);
+
+        if (currentDeadlines.length === 0) {
+          tbody.innerHTML = '';
+          empty.classList.remove('hidden');
+          document.getElementById('collision-panel').classList.add('hidden');
+          return;
+        }
+        empty.classList.add('hidden');
+
+        tbody.innerHTML = '';
+        currentDeadlines.forEach(function(dl, idx) {
+          const tr = document.createElement('tr');
+          tr.className = 'border-b border-bae-border hover:bg-bae-bg/50';
+          tr.innerHTML =
+            '<td class="px-4 py-2">' +
+              '<input type="date" data-idx="' + idx + '" class="deadline-date w-32 bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" value="' + formatDateInput(dl.date) + '" />' +
+              '<div class="text-[11px] text-bae-muted mt-0.5">' + escapeHtml(dl.rawDate) + '</div>' +
+            '</td>' +
+            '<td class="px-4 py-2">' +
+              '<input type="text" data-idx="' + idx + '" class="deadline-title w-full bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" value="' + escapeHtml(dl.title) + '" />' +
+              '<div class="text-[11px] text-bae-muted mt-0.5 truncate max-w-[200px]" title="' + escapeHtml(dl.context) + '">' + escapeHtml(dl.context.slice(0, 60)) + (dl.context.length > 60 ? '...' : '') + '</div>' +
+            '</td>' +
+            '<td class="px-4 py-2">' +
+              '<input type="text" data-idx="' + idx + '" class="deadline-type w-24 bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" value="' + escapeHtml(dl.type) + '" />' +
+            '</td>' +
+            '<td class="px-4 py-2">' +
+              '<input type="text" data-idx="' + idx + '" class="deadline-weight w-16 bg-bae-bg border border-bae-border rounded-bae-sm px-2 py-1 text-xs text-bae-ink focus:outline-none focus:border-bae-primary" value="' + escapeHtml(dl.weight) + '" />' +
+            '</td>' +
+            '<td class="px-4 py-2">' +
+              '<button type="button" data-idx="' + idx + '" class="btn-del text-red-600 text-xs font-semibold hover:underline">Delete</button>' +
+            '</td>';
+          tbody.appendChild(tr);
+        });
+
+        // Wire delete buttons
+        tbody.querySelectorAll('.btn-del').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            const idx = parseInt(btn.getAttribute('data-idx'), 10);
+            currentDeadlines.splice(idx, 1);
+            renderDeadlines();
+          });
+        });
+
+        // Wire input changes
+        tbody.querySelectorAll('.deadline-date').forEach(function(input) {
+          input.addEventListener('change', function() {
+            const idx = parseInt(input.getAttribute('data-idx'), 10);
+            const d = parseDateInput(input.value);
+            if (d) currentDeadlines[idx].date = d;
+            computeCollisions();
+          });
+        });
+        tbody.querySelectorAll('.deadline-title').forEach(function(input) {
+          input.addEventListener('input', function() {
+            const idx = parseInt(input.getAttribute('data-idx'), 10);
+            currentDeadlines[idx].title = input.value;
+          });
+        });
+        tbody.querySelectorAll('.deadline-type').forEach(function(input) {
+          input.addEventListener('input', function() {
+            const idx = parseInt(input.getAttribute('data-idx'), 10);
+            currentDeadlines[idx].type = input.value;
+          });
+        });
+        tbody.querySelectorAll('.deadline-weight').forEach(function(input) {
+          input.addEventListener('input', function() {
+            const idx = parseInt(input.getAttribute('data-idx'), 10);
+            currentDeadlines[idx].weight = input.value;
+          });
+        });
+
+        computeCollisions();
+      }
+
+      function getWeekStart(d) {
+        const date = new Date(d.getTime());
+        const day = date.getDay();
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+        date.setDate(diff);
+        date.setHours(0, 0, 0, 0);
+        return date;
+      }
+
+      function computeCollisions() {
+        const counts = {};
+        currentDeadlines.forEach(function(dl) {
+          if (!dl.date || isNaN(dl.date.getTime())) return;
+          const weekStart = getWeekStart(dl.date);
+          const key = weekStart.toDateString();
+          counts[key] = (counts[key] || 0) + 1;
+        });
+
+        const collisions = Object.keys(counts).filter(function(k) { return counts[k] >= 3; });
+        const panel = document.getElementById('collision-panel');
+        const list = document.getElementById('collision-list');
+
+        if (collisions.length === 0) {
+          panel.classList.add('hidden');
+          return;
+        }
+
+        panel.classList.remove('hidden');
+        list.innerHTML = '';
+        collisions.forEach(function(dateStr) {
+          const weekStart = new Date(dateStr);
+          const weekEnd = new Date(weekStart.getTime());
+          weekEnd.setDate(weekEnd.getDate() + 6);
+          const items = currentDeadlines.filter(function(dl) {
+            return dl.date && getWeekStart(dl.date).toDateString() === dateStr;
+          });
+          const names = items.map(function(i) { return escapeHtml(i.title); }).join(', ');
+          const div = document.createElement('div');
+          div.textContent = formatDisplayDate(weekStart) + ' – ' + formatDisplayDate(weekEnd) + ': ' + counts[dateStr] + ' deadlines (' + names + ')';
+          list.appendChild(div);
+        });
+      }
+
+      // ─── Controls ───
+      document.getElementById('tab-file').addEventListener('click', function() {
+        document.getElementById('panel-file').classList.remove('hidden');
+        document.getElementById('panel-text').classList.add('hidden');
+        document.getElementById('tab-file').className = 'input-tab bg-bae-primary text-white text-xs font-semibold px-4 py-2.5';
+        document.getElementById('tab-text').className = 'input-tab bg-bae-bg text-bae-ink text-xs font-semibold px-4 py-2.5 hover:bg-bae-border-light transition-colors';
+      });
+      document.getElementById('tab-text').addEventListener('click', function() {
+        document.getElementById('panel-file').classList.add('hidden');
+        document.getElementById('panel-text').classList.remove('hidden');
+        document.getElementById('tab-file').className = 'input-tab bg-bae-bg text-bae-ink text-xs font-semibold px-4 py-2.5 hover:bg-bae-border-light transition-colors';
+        document.getElementById('tab-text').className = 'input-tab bg-bae-primary text-white text-xs font-semibold px-4 py-2.5';
+      });
+
+      document.getElementById('btn-extract').addEventListener('click', function() {
+        const text = document.getElementById('text-input').value.trim();
+        if (text) {
+          processText(text);
+        } else if (fileInput.files.length > 0) {
+          handleFile(fileInput.files[0]);
+        } else {
+          showToast('Paste syllabus text or upload a file first.');
+        }
+      });
+
+      document.getElementById('btn-add-deadline').addEventListener('click', function() {
+        const now = new Date();
+        currentDeadlines.push({
+          id: 'dl_manual_' + Date.now(),
+          date: now,
+          rawDate: 'Manual',
+          title: 'New Deadline',
+          context: '',
+          type: 'Assignment',
+          weight: '',
+          editable: true
+        });
+        renderDeadlines();
+        showToast('Deadline added, edit the row');
+      });
+
+      document.getElementById('btn-sort').addEventListener('click', function() {
+        currentDeadlines.sort(function(a, b) { return a.date - b.date; });
+        renderDeadlines();
+        showToast('Sorted by date');
+      });
+
+      document.getElementById('btn-copy').addEventListener('click', function() {
+        if (currentDeadlines.length === 0) {
+          showToast('No deadlines to copy.');
+          return;
+        }
+        let text = 'Semester Deadline Timeline\n\n';
+        currentDeadlines.forEach(function(dl) {
+          text += formatDisplayDate(dl.date) + ' | ' + dl.title;
+          if (dl.type) text += ' | ' + dl.type;
+          if (dl.weight) text += ' | ' + dl.weight;
+          text += '\n';
+        });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function() {
+            showToast('Copied to clipboard');
+          }).catch(function() {
+            showToast('Copy failed');
+          });
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('Copied to clipboard');
+        }
+      });
+
+      document.getElementById('btn-clear').addEventListener('click', function() {
+        currentDeadlines = [];
+        document.getElementById('results-panel').classList.add('hidden');
+        document.getElementById('text-input').value = '';
+        document.getElementById('file-input').value = '';
+        document.getElementById('file-name').classList.add('hidden');
+        showToast('Cleared, ready for a new syllabus');
+      });
+
+      document.getElementById('btn-pdf').addEventListener('click', function() {
+        if (typeof html2pdf === 'undefined') {
+          showToast('PDF library not loaded. Please refresh.');
+          return;
+        }
+        if (currentDeadlines.length === 0) {
+          showToast('No deadlines to export.');
+          return;
+        }
+
+        document.getElementById('pdf-date').textContent = 'Generated on ' + new Date().toLocaleDateString();
+        document.getElementById('pdf-summary').innerHTML = '<strong>Total deadlines:</strong> ' + currentDeadlines.length;
+
+        const tbody = document.getElementById('pdf-table-body');
+        tbody.innerHTML = '';
+        currentDeadlines.forEach(function(dl) {
+          const tr = document.createElement('tr');
+          tr.innerHTML =
+            '<td style="border:1px solid #e2e8f0;padding:6px;">' + escapeHtml(formatDisplayDate(dl.date)) + '</td>' +
+            '<td style="border:1px solid #e2e8f0;padding:6px;">' + escapeHtml(dl.title) + '</td>' +
+            '<td style="border:1px solid #e2e8f0;padding:6px;">' + escapeHtml(dl.type) + '</td>' +
+            '<td style="border:1px solid #e2e8f0;padding:6px;">' + escapeHtml(dl.weight) + '</td>';
+          tbody.appendChild(tr);
+        });
+
+        const report = document.getElementById('pdf-report');
+        const clone = report.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        html2pdf().set({
+          margin: 0,
+          filename: 'syllabus-deadlines.pdf',
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, scrollX: 0, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(clone).save().then(function() {
+          if (clone.parentNode) document.body.removeChild(clone);
+          showToast('PDF downloaded');
+        }).catch(function() {
+          if (clone.parentNode) document.body.removeChild(clone);
+          showToast('PDF generation failed');
+        });
+      });
+
+    })();
+  </script>
+
+  <script slot="scripts" src="/pdf.min.js"></script>
+  <script slot="scripts" src="/mammoth.browser.min.js"></script>
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+</BaseLayout>

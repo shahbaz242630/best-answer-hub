@@ -1,0 +1,130 @@
+---
+const categories = [
+  { id: 'analytics', label: 'Analytics', desc: 'Help us understand how visitors use our site so we can improve it.', default: false },
+  { id: 'marketing', label: 'Marketing', desc: 'Used to deliver relevant advertisements and measure their performance.', default: false },
+  { id: 'affiliate', label: 'Affiliate', desc: 'Track clicks and conversions from our partner links so we earn commissions.', default: false },
+];
+---
+
+<!-- Cookie Banner -->
+<div id="cookie-banner" class="fixed bottom-0 left-0 right-0 z-[999] bg-bae-card border-t border-bae-border shadow-bae-lg py-5 translate-y-full transition-transform duration-400" role="dialog" aria-label="Cookie consent" aria-live="polite">
+  <div class="container max-w-page mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <p class="text-sm text-bae-muted leading-relaxed text-center md:text-left max-w-xl">
+      <strong class="text-bae-ink block mb-0.5">We value your privacy</strong>
+      We use cookies to improve your experience, analyze traffic, and track affiliate conversions. You can choose which cookies you accept. <a href="/cookie-policy/" class="text-bae-primary hover:underline">Learn more</a>.
+    </p>
+    <div class="flex gap-2 flex-shrink-0">
+      <button id="cookie-manage" class="px-4 py-2 text-xs font-semibold text-bae-muted bg-transparent hover:text-bae-ink transition-colors">Manage</button>
+      <button id="cookie-reject" class="px-4 py-2 text-xs font-semibold text-bae-ink bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-muted transition-colors">Reject all</button>
+      <button id="cookie-accept" class="px-4 py-2 text-xs font-semibold text-white bg-bae-primary rounded-bae-sm hover:bg-[#4f46e5] transition-colors">Accept all</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cookie Modal -->
+<div id="cookie-modal" class="fixed inset-0 z-[1000] bg-bae-ink/40 backdrop-blur-sm hidden items-center justify-center p-5" role="dialog" aria-label="Cookie preferences" aria-modal="true">
+  <div class="bg-bae-card border border-bae-border rounded-bae max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-bae-lg">
+    <div class="p-6 pb-0 flex justify-between items-start">
+      <h3 class="text-base font-bold text-bae-ink">Manage cookie preferences</h3>
+      <button id="cookie-modal-close" class="w-8 h-8 flex items-center justify-center text-bae-muted hover:text-bae-ink hover:bg-bae-bg rounded-bae-sm transition-colors text-xl leading-none" aria-label="Close cookie preferences">×</button>
+    </div>
+    <div class="p-6">
+      <p class="text-sm text-bae-muted leading-relaxed mb-4">You can customize which cookies you allow. Essential cookies are always active because they are required for the site to function.</p>
+      
+      <div class="border-t border-bae-border-light py-4 flex items-start justify-between gap-4">
+        <div>
+          <h4 class="text-sm font-semibold text-bae-ink">Essential</h4>
+          <p class="text-xs text-bae-muted mt-1">Required for the website to function properly. Cannot be disabled.</p>
+        </div>
+        <input type="checkbox" checked disabled class="appearance-none w-10 h-[22px] rounded-full bg-bae-primary relative cursor-not-allowed opacity-50 flex-shrink-0" aria-label="Essential cookies - always on" />
+      </div>
+      
+      {categories.map((cat) => (
+        <div class="border-t border-bae-border-light py-4 flex items-start justify-between gap-4">
+          <div>
+            <h4 class="text-sm font-semibold text-bae-ink">{cat.label}</h4>
+            <p class="text-xs text-bae-muted mt-1">{cat.desc}</p>
+          </div>
+          <input type="checkbox" id={`toggle-${cat.id}`} class="cookie-toggle appearance-none w-10 h-[22px] rounded-full bg-bae-border relative cursor-pointer flex-shrink-0 transition-colors checked:bg-bae-primary" checked={cat.default} aria-label={`${cat.label} cookies`} />
+        </div>
+      ))}
+    </div>
+    <div class="p-6 pt-0 flex justify-end gap-2">
+      <button id="modal-reject" class="px-4 py-2 text-xs font-semibold text-bae-ink bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-muted transition-colors">Reject all</button>
+      <button id="modal-save" class="px-4 py-2 text-xs font-semibold text-white bg-bae-primary rounded-bae-sm hover:bg-[#4f46e5] transition-colors">Save preferences</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookie-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease;
+  }
+  .cookie-toggle:checked::after {
+    transform: translateX(18px);
+  }
+</style>
+
+<script>
+  (function() {
+    const STORAGE_KEY = 'bae_cookie_consent_v1';
+    const banner = document.getElementById('cookie-banner');
+    const modal = document.getElementById('cookie-modal');
+    
+    function getConsent() {
+      try { const d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : null; } catch(e) { return null; }
+    }
+    
+    function setConsent(essential, analytics, marketing, affiliate) {
+      const consent = { essential: true, analytics, marketing, affiliate, timestamp: new Date().toISOString(), version: '1.0' };
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(consent)); } catch(e) {}
+      applyConsent(consent);
+      window.dispatchEvent(new CustomEvent('bae-consent-updated', { detail: consent }));
+      hideBanner(); hideModal();
+    }
+    
+    function applyConsent(consent) {
+      if (!consent) return;
+      document.body.setAttribute('data-consent-analytics', consent.analytics ? 'true' : 'false');
+      document.body.setAttribute('data-consent-marketing', consent.marketing ? 'true' : 'false');
+      document.body.setAttribute('data-consent-affiliate', consent.affiliate ? 'true' : 'false');
+    }
+    
+    function showBanner() { banner?.classList.add('active'); banner?.classList.remove('translate-y-full'); }
+    function hideBanner() { banner?.classList.remove('active'); banner?.classList.add('translate-y-full'); }
+    function showModal() { modal?.classList.remove('hidden'); modal?.classList.add('flex'); banner?.classList.add('translate-y-full'); }
+    function hideModal() { modal?.classList.add('hidden'); modal?.classList.remove('flex'); }
+    
+    document.getElementById('cookie-accept')?.addEventListener('click', () => setConsent(true, true, true, true));
+    document.getElementById('cookie-reject')?.addEventListener('click', () => setConsent(true, false, false, false));
+    document.getElementById('cookie-manage')?.addEventListener('click', showModal);
+    document.getElementById('footer-manage-cookies')?.addEventListener('click', (e) => { e.preventDefault(); showModal(); });
+    document.getElementById('cookie-modal-close')?.addEventListener('click', hideModal);
+    document.getElementById('modal-reject')?.addEventListener('click', () => setConsent(true, false, false, false));
+    document.getElementById('modal-save')?.addEventListener('click', () => {
+      setConsent(true, document.getElementById('toggle-analytics')?.checked, document.getElementById('toggle-marketing')?.checked, document.getElementById('toggle-affiliate')?.checked);
+    });
+    
+    modal?.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal?.classList.contains('hidden')) hideModal(); });
+    
+    const existing = getConsent();
+    if (existing) {
+      applyConsent(existing);
+      document.getElementById('toggle-analytics') && (document.getElementById('toggle-analytics').checked = existing.analytics);
+      document.getElementById('toggle-marketing') && (document.getElementById('toggle-marketing').checked = existing.marketing);
+      document.getElementById('toggle-affiliate') && (document.getElementById('toggle-affiliate').checked = existing.affiliate);
+    } else {
+      setTimeout(showBanner, 1000);
+    }
+  })();
+</script>

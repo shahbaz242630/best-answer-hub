@@ -1,0 +1,289 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../components/tools/ToolRelatedCTA.astro';
+import ToolHubValueProp from '../../components/tools/ToolHubValueProp.astro';
+import { stemSuiteTools } from '../../data/tools';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub STEM Calculator Suite?',
+    a: 'The Best Answer Hub STEM Calculator Suite is a free collection of six browser-based calculators for science, technology, engineering, and mathematics. It is part of the <a href="/calculators/">Best Answer Hub Calculators collection</a> and includes a Matrix Calculator, Resistor Color Code Calculator, Molecular Weight Calculator, Truth Table Generator, Number Base Converter, and Normal Distribution Calculator. Every tool runs entirely in the browser using client-side JavaScript, so no data is uploaded to any server.',
+  },
+  {
+    q: 'Which calculators are included in the Best Answer Hub STEM Calculator Suite?',
+    a: 'The suite includes six calculators. The Matrix Calculator handles determinants, inverses, eigenvalues, and multiplication with step-by-step work for matrices up to 4x4. The Resistor Color Code Calculator decodes 4-band, 5-band, and 6-band resistors and includes an Ohm\'s Law solver and LED resistor calculator. The Molecular Weight Calculator parses chemical formulas with nested parentheses and hydrates. The Truth Table Generator evaluates Boolean expressions and simplifies them with Karnaugh maps. The Number Base Converter transforms binary, octal, decimal, and hexadecimal with ASCII and bit visualization. The Normal Distribution Calculator computes probabilities with an interactive shaded bell curve.',
+  },
+  {
+    q: 'How do I calculate the inverse of a 3x3 matrix step by step?',
+    a: 'To find the inverse of a 3x3 matrix, first calculate the determinant. If the determinant is zero, the matrix has no inverse. If it is non-zero, find the matrix of minors, apply the checkerboard pattern of signs to get the cofactor matrix, transpose it to get the adjugate, and divide each element by the determinant. The Best Answer Hub Matrix Calculator performs all of these steps automatically and displays the minor matrix, cofactor matrix, adjugate, and final inverse with substituted values.',
+  },
+  {
+    q: 'Is there a free matrix calculator that shows eigenvalues and eigenvectors step by step?',
+    a: 'Yes. The Best Answer Hub Matrix Calculator computes eigenvalues by solving the characteristic equation det(A minus lambda I) = 0, then finds eigenvectors by solving (A minus lambda I)v = 0 for each eigenvalue. For a 2x2 matrix, the characteristic equation is a quadratic that yields two eigenvalues. For 3x3 matrices, the calculator uses the cubic formula or numerical methods and shows the factorization steps. Many online math calculators hide full step-by-step solutions behind monthly subscriptions costing $5 to $10 per month as of June 2026. The Best Answer Hub Matrix Calculator shows every step at no cost.',
+  },
+  {
+    q: 'What is the difference between a 4-band, 5-band, and 6-band resistor?',
+    a: 'A 4-band resistor uses the first two bands for significant digits, the third band for the multiplier, and the fourth for tolerance. A 5-band resistor uses three significant digits, a multiplier, and tolerance, giving more precise values such as 10.0 kOhm instead of just 10 kOhm. A 6-band resistor adds a temperature coefficient band that indicates how much the resistance changes per degree Celsius, typically measured in parts per million per degree. The Best Answer Hub Resistor Color Code Calculator supports all three formats and highlights the tolerance and temperature coefficient automatically.',
+  },
+  {
+    q: 'How do I calculate what resistor I need for an LED without burning it out?',
+    a: 'Use the formula R = (V_supply minus V_forward) divided by I, where V_supply is your power source voltage, V_forward is the LED\'s forward voltage drop, and I is the desired current. For a standard 5V Arduino pin driving a red LED with a 2V forward voltage and 20mA current, the calculation is (5 minus 2) divided by 0.020 = 150 ohms. A 220 ohm resistor is the common safe choice. The Best Answer Hub Resistor Color Code Calculator includes a dedicated LED resistor mode where you select your LED color and power source voltage to get the exact resistor value and nearest standard value instantly.',
+  },
+  {
+    q: 'How do I calculate the molar mass of a compound with parentheses, like Ca(NO3)2 or CuSO4.5H2O?',
+    a: 'Multiply the atomic weight of each element inside the parentheses by its subscript, then multiply that entire result by the parentheses multiplier. For Ca(NO3)2, calcium contributes 40.08 g/mol, each NO3 group contributes 14.01 plus (3 times 16.00) = 62.00 g/mol, and the subscript 2 outside the parentheses means 2 times 62.00 = 124.00 g/mol. The total is 40.08 plus 124.00 = 164.08 g/mol. For hydrates like CuSO4.5H2O, add the mass of five water molecules, which is 5 times 18.02 = 90.10 g/mol. The Best Answer Hub Molecular Weight Calculator parses nested parentheses and hydrates automatically and shows a per-element breakdown table.',
+  },
+  {
+    q: 'Is molecular weight the same as molar mass?',
+    a: 'Yes. In practice, molecular weight and molar mass refer to the same quantity and are used interchangeably in chemistry classrooms and textbooks. Strictly speaking, molecular weight is a dimensionless ratio relative to one-twelfth of a carbon-12 atom, while molar mass has units of grams per mole. Numerically, they are identical. For example, the molecular weight of water is 18.015 and its molar mass is 18.015 g/mol. The Best Answer Hub Molecular Weight Calculator returns the value in g/mol, which is the standard unit used in stoichiometry calculations and solution preparation.',
+  },
+  {
+    q: 'Is there a tool that generates a truth table from a Boolean expression automatically?',
+    a: 'Yes. The Best Answer Hub Truth Table Generator accepts Boolean expressions using AND, OR, NOT, XOR, NAND, and NOR operators and generates the complete truth table instantly. Enter an expression such as (A AND B) OR (NOT C), and the calculator evaluates all 2 to the power of n input combinations, where n is the number of variables. For three variables, that is 8 rows. The tool also displays the simplified Sum of Products and Product of Sums forms, making it useful for digital logic homework and circuit design.',
+  },
+  {
+    q: 'What are "don\'t care" conditions in a Karnaugh map?',
+    a: '"Don\'t care" conditions are input combinations that never occur in a real circuit or are irrelevant to the desired output. In a Karnaugh map, they are marked with an X and can be treated as either 0 or 1, whichever helps create the largest possible groups of adjacent 1s. This produces a simpler Boolean expression with fewer logic gates. For example, in a BCD-to-seven-segment decoder, the input combinations 1010 through 1111 are don\'t cares because BCD only uses 0000 through 1001. The Best Answer Hub Truth Table Generator treats don\'t cares as flexible cells during Karnaugh map simplification.',
+  },
+  {
+    q: 'Is there a quick way to convert binary to hex without going through decimal first?',
+    a: 'Yes. Group the binary digits into sets of four starting from the right, then replace each group with its corresponding hexadecimal digit. For example, the binary number 11110101 becomes 1111 0101, which is F 5 in hex, so the result is 0xF5. Each 4-bit group maps directly to one hex digit: 0000 is 0, 1010 is A, and 1111 is F. The Best Answer Hub Number Base Converter performs this instantly and shows the 4-bit grouping visually so you can see exactly which bits map to which hex digit.',
+  },
+  {
+    q: 'How do I convert a negative decimal number to binary two\'s complement?',
+    a: 'First, find the binary representation of the positive number using the bit width of your system, typically 8 or 16 bits. Then invert every bit, changing 0s to 1s and 1s to 0s. Finally, add 1 to the result. For example, negative 5 in 8-bit two\'s complement is: 00000101, then invert to 11111010, then add 1 to get 11111011. The Best Answer Hub Number Base Converter handles two\'s complement automatically and shows the sign bit, inverted bits, and final result for any bit width from 4 to 32 bits.',
+  },
+  {
+    q: 'What is the 68-95-99.7 rule and how do I calculate probability between two z-scores?',
+    a: 'The 68-95-99.7 rule, also called the empirical rule, states that approximately 68% of values in a normal distribution fall within one standard deviation of the mean, 95% within two, and 99.7% within three. To find the probability between two z-scores, calculate the cumulative probability for each z-score using the standard normal cumulative distribution function, then subtract the smaller from the larger. For z = minus 1 and z = plus 1, the area is 0.8413 minus 0.1587 = 0.6826, or 68.26%. The Best Answer Hub Normal Distribution Calculator performs this calculation instantly and shades the area between the two z-scores on an interactive bell curve. For more statistical tools, see the <a href="/calculators/statistics-suite/">Best Answer Hub Statistics Calculator Suite</a>.',
+  },
+  {
+    q: 'Is there one place with all these STEM calculators instead of a different site for each subject?',
+    a: 'Yes. The Best Answer Hub STEM Calculator Suite gathers matrix, resistor color code, molecular weight, truth table, number base, and normal distribution calculators in one place, so there is no need for one site for chemistry, another for electronics, and another for linear algebra. Every calculator is free, runs entirely in the browser, shows step-by-step working, and needs no signup. It is built to be the one-stop shop for math, engineering, chemistry, and computer-science coursework from a single hub.',
+  },
+  {
+    q: 'Is the Best Answer Hub STEM Calculator Suite free to use?',
+    a: 'Yes. The entire suite is completely free with no usage limits, no signup, no email capture, and no premium tiers. Many online math and engineering calculators hide step-by-step solutions behind monthly subscriptions costing $5 to $10 per month as of June 2026. The Best Answer Hub STEM Calculator Suite displays all results, formulas, and step-by-step working immediately with no account required.',
+  },
+  {
+    q: 'Is my data private when using the STEM calculators?',
+    a: 'Yes. All calculations run entirely in the browser using client-side JavaScript. No formulas, matrices, resistor values, chemical formulas, or probability inputs are uploaded, stored, or logged on any server. This is a technical architecture decision, not just a privacy policy. To verify it, disconnect from the internet after loading any calculator page and the tool will continue working perfectly. Sensitive research data, homework, and circuit designs can be calculated with complete privacy.',
+  },
+];
+
+const steps = [
+  { title: 'Choose a calculator', description: 'Select from Matrix, Resistor Color Code, Molecular Weight, Truth Table, Number Base, or Normal Distribution calculators. Each has its own dedicated page optimized for mobile and desktop.' },
+  { title: 'Enter your data', description: 'Input matrix values, resistor bands, chemical formulas, Boolean expressions, or probability ranges. Everything happens instantly in your browser with no uploads to any server.' },
+  { title: 'Get instant results', description: 'See determinants, resistance values, molar masses, truth tables, base conversions, or probability results immediately. Clear formula display shows exactly how each value is calculated.' },
+];
+
+const seo = {
+  title: 'STEM Calculator Suite — Matrix, Chemistry & Logic',
+  description: 'Free STEM calculator suite: matrix, resistor color codes, molecular weight, truth tables, number bases, and normal distribution. No signup.',
+  url: '/calculators/stem-suite/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'STEM Suite', url: '/calculators/stem-suite/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    backLink="/calculators/"
+    backLabel="← Calculators"
+    badge="Free Tools · Science, Technology, Engineering & Math"
+    title="STEM Calculator Suite:"
+    accentText="Matrix, Electronics, Chemistry & Logic"
+    description="Free STEM calculator suite for students, engineers, and researchers. Calculate matrix operations, decode resistor color bands, find molecular weights, generate truth tables, convert number bases, and compute normal distribution probabilities. No signup. Your data never leaves your device."
+  />
+
+  <!-- STEM Calculator Cards -->
+  <section class="py-6 md:py-8" aria-label="STEM calculators">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Matrix Calculator -->
+        <a href="/calculators/stem-suite/matrix-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Math</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">🔢</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">Matrix Calculator</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Calculate determinants, inverses, eigenvalues, and matrix multiplication with step-by-step work. Supports matrices up to 6x6 with exact fractions.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">Determinant • Inverse • RREF • Eigenvalues • Multiply • PDF export</p>
+        </a>
+        <!-- Resistor Color Code Calculator -->
+        <a href="/calculators/stem-suite/resistor-color-code-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Electronics</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">🔌</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">Resistor Color Code Calculator</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Decode resistor color bands to resistance values and tolerances. Includes Ohm\'s Law solver and LED resistor calculator for Arduino and Raspberry Pi circuits.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">4-band • 5-band • Ohm\'s Law • LED resistor • Tolerance</p>
+        </a>
+        <!-- Molecular Weight Calculator -->
+        <a href="/calculators/stem-suite/molecular-weight-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Chemistry</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">🧪</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">Molecular Weight Calculator</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Calculate molar mass from chemical formulas with atomic weight breakdown. Supports hydrates, parentheses, and common organic compounds.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">Formula parser • Atomic weights • Element breakdown • PDF export</p>
+        </a>
+        <!-- Truth Table Generator -->
+        <a href="/calculators/stem-suite/truth-table-generator/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Computer Science</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">🔣</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">Truth Table Generator</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Generate truth tables from Boolean expressions and simplify with Karnaugh maps. Supports AND, OR, NOT, XOR, NAND, and NOR.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">Boolean logic • Karnaugh maps • Expression simplifier • PDF export</p>
+        </a>
+        <!-- Number Base Converter -->
+        <a href="/calculators/stem-suite/number-base-converter/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Computer Science</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">🔢</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">Number Base Converter</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Convert between any bases 2–36 with BigInt precision. Auto-detects 0x, 0b, 0o prefixes. Includes two's complement, ASCII mapping, and step-by-step working.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">Binary • Hex • Decimal • Octal • Bases 2-36 • BigInt • Two's complement</p>
+        </a>
+        <!-- Normal Distribution Calculator -->
+        <a href="/calculators/stem-suite/normal-distribution-calculator/" class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Statistics</span>
+            <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">📈</span>
+          </div>
+          <h2 class="text-base font-semibold text-bae-ink mb-2">Normal Distribution Calculator</h2>
+          <p class="text-sm text-bae-muted line-clamp-2">Calculate left-tail, right-tail, between, and outside probabilities with an interactive shaded bell curve. Includes z-scores, empirical rule, and reverse solve.</p>
+          <p class="text-xs text-bae-muted mt-3 font-medium">Probability • Z-score • Shaded SVG • Left/right/between • Empirical rule • PDF export</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <ToolHubValueProp
+    hubName="STEM Calculator Suite"
+    count={stemSuiteTools.length}
+    noun="STEM calculators"
+    replaces="using one site for chemistry, another for electronics, and another for linear algebra"
+  />
+
+  <!-- Why STEM Calculators -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Why use the STEM Calculator Suite?</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from engineering students, chemistry majors, computer science students, and electronics hobbyists.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Engineering Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify linear algebra and circuit calculations</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Matrix ops + Resistor codes</p>
+          <p class="text-sm text-bae-muted">Use the Matrix Calculator to verify hand-computed determinants and eigenvalues for 3x3 and 4x4 systems. Switch to the Resistor Color Code Calculator to decode bands for lab circuits and calculate LED current-limiting resistors for microcontroller projects.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Chemistry Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Calculate molar mass for stoichiometry problems</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Molecular weight + element breakdown</p>
+          <p class="text-sm text-bae-muted">Paste any chemical formula into the Molecular Weight Calculator to get exact molar mass with per-element atomic weight breakdown. Essential for AP Chemistry worksheets, university lab prep, and predicting reaction yields before starting an experiment.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Computer Science Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify Boolean logic and number base conversions</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Truth tables + Number bases</p>
+          <p class="text-sm text-bae-muted">Generate truth tables for digital logic homework and simplify expressions with automatic Karnaugh map reduction. Use the Number Base Converter to verify binary, hex, and octal conversions for assembly language and memory addressing coursework.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Hobbyists & Makers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Quick lookup for Arduino, Raspberry Pi, and 3D printing</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Resistor codes + Ohm\'s Law</p>
+          <p class="text-sm text-bae-muted">Decode resistor bands without a reference chart and calculate the right resistor for any LED and power supply combination. The Ohm\'s Law solver handles voltage, current, resistance, and power calculations for breadboard circuits and sensor interfacing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Which Calculator Should I Use? -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light" aria-label="Calculator selection guide">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">Which calculator should I use?</h2>
+      <p class="text-sm text-bae-muted mb-8">Not sure which STEM tool fits your problem? Use this quick decision guide.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">1</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I need to multiply matrices or find a determinant</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">Matrix Calculator</strong>. It handles multiplication, determinants, inverses, and eigenvalues with visible row operations and step-by-step work.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">2</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I have a resistor with colored bands and need its value</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">Resistor Color Code Calculator</strong>. Select 4-band or 5-band mode, click the colors, and get the resistance value, tolerance, and temperature coefficient instantly.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">3</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I need the molar mass of a chemical formula</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">Molecular Weight Calculator</strong>. Enter formulas like H2SO4 or C6H12O6 and get exact molar mass with a per-element breakdown table.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">4</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I have a Boolean expression and need a truth table</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">Truth Table Generator</strong>. Enter expressions with AND, OR, NOT, XOR, NAND, and NOR operators. Get the full truth table plus simplified Boolean form via Karnaugh maps.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">5</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I need to convert between binary, hex, and decimal</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">Number Base Converter</strong>. Type in any base from 2 to 36 and see instant conversions plus ASCII/Unicode character mapping and bit visualization.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="w-8 h-8 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-sm font-bold flex items-center justify-center shrink-0">6</span>
+            <h3 class="text-sm font-semibold text-bae-ink">I need normal distribution probabilities or z-scores</h3>
+          </div>
+          <p class="text-sm text-bae-muted ml-11">→ Use the <strong class="text-bae-ink">Normal Distribution Calculator</strong>. Calculate left-tail, right-tail, between, and outside probabilities with an interactive shaded bell curve.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Back to Calculators CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6 text-center">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-3">Explore more calculators</h2>
+      <p class="text-sm text-bae-muted mb-6 max-w-xl mx-auto">Browse the full collection of financial, mathematical, statistical, and STEM calculators on Best Answer Hub.</p>
+      <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-primary text-white px-6 py-3 rounded-bae-sm font-medium text-sm no-underline hover:bg-bae-primary-dark transition-colors">
+        <span>View all calculators</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+</BaseLayout>

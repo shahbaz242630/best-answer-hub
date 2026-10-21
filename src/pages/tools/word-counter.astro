@@ -1,0 +1,456 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Word Counter?',
+    a: 'The Best Answer Hub Word Counter is a free, browser-based tool that counts words, characters (with and without spaces), sentences, paragraphs, and reading time instantly. Everything runs inside your browser. Nothing is sent to any server and no account is required. Paste from Microsoft Word, Google Docs, Notion, or any editor and the count updates in real time.',
+  },
+  {
+    q: 'Why does my word count differ between Google Docs, Microsoft Word, and online tools?',
+    a: 'The gap usually comes down to how each tool handles abbreviations, punctuation, and special characters. Google Docs treats periods in abbreviations like "U.K." as word separators, counting it as two words; Microsoft Word does not. Hyphenated compounds, em dashes, and formatted lists can also produce slight discrepancies. For most standard prose the difference is fewer than five words per thousand.',
+  },
+  {
+    q: 'Do hyphenated words count as one word or two words?',
+    a: 'In most tools (including Microsoft Word, Google Docs, and the Best Answer Hub Word Counter) a hyphenated compound like "well-being" or "follow-up" counts as one word. The entire hyphenated string is treated as a single whitespace-delimited token. This matches the convention used by most academic style guides and ATS resume parsers, though a handful of academic submission platforms may count them as two.',
+  },
+  {
+    q: 'Does word count include spaces, numbers, and punctuation?',
+    a: 'Spaces and punctuation are not counted as words. Only whitespace-delimited tokens are. Numbers count as words: "2025" and "10:15" each count as one word. Punctuation attached to a word does not create a separate token. The Best Answer Hub Word Counter displays characters with spaces and without spaces in separate fields so you always know exactly what the platform or academic system is measuring.',
+  },
+  {
+    q: 'What is the ideal word count for a blog post to rank on Google in 2026?',
+    a: 'For competitive informational keywords, 1,500–2,500 words is the current sweet spot, thorough enough to satisfy search intent, concise enough to hold attention. Cornerstone pillar posts targeting high-value topics often run 3,000–5,000 words. Word count alone does not drive rankings; comprehensiveness, E-E-A-T signals, and topical authority matter more. Use the Best Answer Hub Word Counter to track draft length and hit your target before publishing.',
+  },
+  {
+    q: 'How many words can the Common App essay be, and does using a different tool change the count?',
+    a: 'The Common App enforces a hard maximum of 650 words. The submit button is disabled above this limit. Most applicants aim for 620–650 words to demonstrate they can write to a constraint. Word count can differ by 3–7 words between Google Docs, Microsoft Word, and the Common App\'s own counter due to how each handles abbreviations and whitespace. Always count in the tool you plan to paste into, not the one you drafted in. Paste a copy into the Best Answer Hub Word Counter as a final check. Its count is consistent with most academic submission platforms.',
+  },
+  {
+    q: 'How long does it take to read 1,000 words?',
+    a: 'At an average reading speed of 200 words per minute, 1,000 words takes approximately 5 minutes to read. Slow readers at 150 wpm take around 6–7 minutes; faster readers at 250 wpm take about 4 minutes. For a spoken presentation at a natural delivery pace of 130 wpm, 1,000 words takes roughly 7–8 minutes. The Best Answer Hub Word Counter displays all four time estimates simultaneously so you can plan both reading and speaking time.',
+  },
+  {
+    q: 'How many words fit on a double-spaced page?',
+    a: 'A standard double-spaced page (12pt Times New Roman, 1-inch margins) holds approximately 250–275 words. Single-spaced, the same formatting fits roughly 500–550 words per page. A 5-page double-spaced paper is approximately 1,250–1,375 words; a 10-page paper is approximately 2,500–2,750 words. These figures assume standard academic formatting. Non-standard fonts or margins produce different results.',
+  },
+  {
+    q: 'What is the Twitter/X character limit, and how many words is that?',
+    a: 'Standard Twitter/X accounts have a 280-character limit, approximately 40–55 words depending on average word length. X Premium subscribers can post up to 25,000 characters, equivalent to a short article. URLs always count as 23 characters regardless of actual length. Because X counts characters not words, paste your draft into the Best Answer Hub Word Counter to check both word count and character count before posting.',
+  },
+  {
+    q: 'What is the LinkedIn post character limit, and where does the feed cut to "see more"?',
+    a: 'LinkedIn posts have a 3,000-character limit. However, the feed truncates posts to approximately 210 characters, roughly 35–40 words, before showing a "see more" link. Posts that lead with a hook or key insight in the first 210 characters consistently generate higher engagement because readers see value before clicking. LinkedIn articles allow up to 125,000 characters. Use the Best Answer Hub Word Counter\'s character count panel to place your hook precisely.',
+  },
+  {
+    q: 'What is the meta title and meta description character limit for SEO?',
+    a: 'Google displays meta titles up to approximately 60 characters, roughly 8–10 words, before truncating in search results. Meta descriptions are shown up to 155–160 characters, approximately 25–28 words. Going over does not directly harm rankings, but truncated titles and descriptions get fewer clicks because searchers cannot read the full message. Use the Best Answer Hub Word Counter\'s character count field to check both fields before publishing any new page.',
+  },
+  {
+    q: 'How many words should a cover letter be?',
+    a: 'The ideal cover letter is 250–400 words, three to four focused paragraphs. Most recruiters spend under 30 seconds scanning a cover letter, so brevity is an advantage over length. One page is the absolute maximum; anything longer is routinely skimmed or skipped. The Best Answer Hub Cover Letter Builder includes a live word count so you can see exactly where you stand as you draft and trim to the right length.',
+  },
+  {
+    q: 'How many words is a 5-minute speech?',
+    a: 'At an average conversational speaking pace of 130 words per minute, a 5-minute speech is approximately 650 words. A faster presenter at 150 wpm delivers around 750 words; a slower, more deliberate speaker at 110 wpm covers roughly 550 words. Presentations that include pauses, emphasis, or audience interaction run shorter than a raw word count suggests. Paste your script into the Best Answer Hub Word Counter and check the speaking time estimate before rehearsals.',
+  },
+  {
+    q: 'What is the Instagram caption character limit, and how much shows before "more"?',
+    a: 'Instagram allows up to 2,200 characters in captions, approximately 350–400 words. The feed truncates captions after approximately 125 characters, about 20–25 words, on mobile before showing a "more" prompt. Most engagement research recommends placing the core message or call to action within the first 125 characters to capture readers who never tap through. Hashtags count against the 2,200-character limit but do not affect the visible truncation point.',
+  },
+  {
+    q: 'How many words is a short story, novella, and novel?',
+    a: 'Industry conventions: flash fiction is under 1,000 words; short stories range from 1,000 to 7,500 words; novelettes are 7,500–17,500 words; novellas are 17,500–40,000 words; novels begin at 40,000 words. Commercial adult fiction typically targets 80,000–100,000 words. Science fiction and fantasy often run 100,000–120,000 words. Debut literary novels targeting traditional publishers are usually 80,000–90,000 words. Use the Best Answer Hub Word Counter to track your manuscript length as you draft.',
+  },
+];
+
+const steps = [
+  { title: 'Paste or type your text', description: 'Drop your essay, article, resume, or social media draft into the text area. Paste from Word, Google Docs, or any editor.' },
+  { title: 'Watch stats update live', description: 'Word count, character count, sentences, paragraphs, reading time, and speaking time update instantly as you type.' },
+  { title: 'Copy or download PDF', description: 'Copy the formatted stats to your clipboard with one click, or download a PDF report for your records.' },
+];
+
+const seo = {
+  title: 'Free Word Counter — Words, Characters & Read Time (2026)',
+  description: 'Count words, characters, sentences, and paragraphs instantly. Reading time and speaking time included. 100% client-side, no signup, no data stored.',
+  url: '/tools/word-counter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Word Counter', url: '/tools/word-counter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Stored on Servers"
+    title="Word Counter:"
+    accentText="Count words, characters & reading time"
+    description="Paste or type any text to see word count, character count (with and without spaces), sentences, paragraphs, reading time, and speaking time. No signup, no uploads, no data stored."
+    backLink="/career-toolkit/"
+    backLabel="← Career Toolkit"
+  />
+
+  <section class="py-6 md:py-8" aria-label="Word counter">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <!-- Text Area -->
+        <div class="lg:col-span-2 bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-bold text-bae-ink">Your Text</h2>
+            <div class="flex gap-2">
+              <button type="button" id="paste-btn" class="text-xs text-bae-primary hover:text-bae-accent transition-colors font-medium">Paste from Clipboard</button>
+              <button type="button" id="clear-btn" class="text-xs text-bae-muted hover:text-bae-ink transition-colors">Clear</button>
+            </div>
+          </div>
+          <textarea id="text-input" rows="16" placeholder="Start typing or paste your text here..." spellcheck="true" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y"></textarea>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 flex flex-col gap-3">
+          <h2 class="text-sm font-bold text-bae-ink mb-1">Statistics</h2>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p id="stat-words" class="text-2xl font-bold text-bae-primary">0</p>
+              <p class="text-[11px] text-bae-muted font-medium">Words</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p id="stat-chars" class="text-2xl font-bold text-bae-ink">0</p>
+              <p class="text-[11px] text-bae-muted font-medium">Characters</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p id="stat-chars-no-space" class="text-2xl font-bold text-bae-ink">0</p>
+              <p class="text-[11px] text-bae-muted font-medium">Characters (no spaces)</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p id="stat-sentences" class="text-2xl font-bold text-bae-ink">0</p>
+              <p class="text-[11px] text-bae-muted font-medium">Sentences</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p id="stat-paragraphs" class="text-2xl font-bold text-bae-ink">0</p>
+              <p class="text-[11px] text-bae-muted font-medium">Paragraphs</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+              <p id="stat-avg-word" class="text-2xl font-bold text-bae-ink">0</p>
+              <p class="text-[11px] text-bae-muted font-medium">Avg Word Length</p>
+            </div>
+          </div>
+
+          <div class="border-t border-bae-border pt-3 mt-1">
+            <p class="text-xs font-semibold text-bae-ink mb-2">Reading & Speaking Time</p>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-bae-muted">Slow read (150 wpm)</span>
+                <span id="read-slow" class="font-semibold text-bae-ink">0 min</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-bae-muted">Average read (200 wpm)</span>
+                <span id="read-avg" class="font-semibold text-bae-ink">0 min</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-bae-muted">Fast read (250 wpm)</span>
+                <span id="read-fast" class="font-semibold text-bae-ink">0 min</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-bae-muted">Speaking (130 wpm)</span>
+                <span id="speak-time" class="font-semibold text-bae-ink">0 min</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mt-2">
+            <button type="button" id="copy-stats-btn" class="flex-1 min-w-[100px] bg-bae-primary text-white font-semibold text-sm px-4 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors" disabled>
+              Copy Stats
+            </button>
+            <button type="button" id="download-pdf-btn" class="flex-1 min-w-[100px] bg-bae-ink text-white font-semibold text-sm px-4 py-2.5 rounded-bae-sm hover:bg-bae-primary transition-colors" disabled>
+              Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people count with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink mb-2">What people count with it</h2>
+      <p class="text-bae-muted mb-8 max-w-xl">Real scenarios where hitting the exact word count actually matters.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">College Application</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">Final-draft Common App essay</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">643 words</p>
+          <p class="text-sm text-bae-muted">Priya had 643 words, 7 under the 650-word hard cap. One tight paragraph and she submitted with zero risk of the submit button greying out.</p>
+        </div>
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Content Marketing</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">SEO pillar post before publishing</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">2,340 words</p>
+          <p class="text-sm text-bae-muted">Marcus's brief called for 2,000–2,500 words. He pasted the draft, confirmed 2,340 words and an 11-minute read time, and published without a manual recount.</p>
+        </div>
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Social Media</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">LinkedIn post hook placement</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">207 characters</p>
+          <p class="text-sm text-bae-muted">Jasmine's opening line was 207 characters, just inside the 210-character "see more" cutoff. She knew her key stat would show in the feed without a tap.</p>
+        </div>
+
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <span class="inline-block text-xs font-semibold text-bae-primary uppercase tracking-wide mb-3">Job Application</span>
+          <h3 class="font-serif text-lg font-bold text-bae-ink mb-1">Cover letter over the limit</h3>
+          <p class="text-2xl font-bold text-bae-primary mb-2">Trimmed to 384 words</p>
+          <p class="text-sm text-bae-muted">Ryan's cover letter was 512 words, too long. He counted, identified the overrun, cut one paragraph, and landed at 384 words in a single editing pass.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more text tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/case-converter/" class="text-bae-primary hover:underline">Case Converter</a>, <a href="/tools/job-keyword-matcher/" class="text-bae-primary hover:underline">Job Keyword Matcher</a>, <a href="/tools/resume-builder/" class="text-bae-primary hover:underline">Resume Builder</a>, and <a href="/tools/cover-letter-builder/" class="text-bae-primary hover:underline">Cover Letter Builder</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script src="/html2pdf.bundle.min.js" is:inline></script>
+  <script is:inline>
+    (function() {
+      'use strict';
+
+      const textarea = document.getElementById('text-input');
+      const copyBtn = document.getElementById('copy-stats-btn');
+      const pdfBtn = document.getElementById('download-pdf-btn');
+
+      function countWords(text) {
+        return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+      }
+
+      function countChars(text) {
+        return text.length;
+      }
+
+      function countCharsNoSpace(text) {
+        return text.replace(/\s/g, '').length;
+      }
+
+      function countSentences(text) {
+        if (!text.trim()) return 0;
+        // Simple sentence split with abbreviation handling
+        const cleaned = text
+          .replace(/\b(Dr|Mr|Mrs|Ms|Prof|Jr|Sr|vs|Vol|vol|pp|et al|i\.e|e\.g|a\.m|p\.m|A\.M|P\.M|Inc|Ltd|Corp|Co)\./gi, '$1\u0000')
+          .replace(/\.{3}/g, '\u0001'); // ellipsis
+        const sentences = cleaned.split(/[.!?]+/).filter(s => s.trim().length > 0);
+        return sentences.length;
+      }
+
+      function countParagraphs(text) {
+        if (!text.trim()) return 0;
+        return text.split(/\n\s*\n/).filter(p => p.trim().length > 0).length;
+      }
+
+      function avgWordLength(text) {
+        const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+        if (!words.length) return 0;
+        const totalChars = words.join('').length;
+        return Math.round((totalChars / words.length) * 10) / 10;
+      }
+
+      function formatTime(words, wpm) {
+        if (words === 0) return '0 min';
+        const minutes = words / wpm;
+        if (minutes < 1) {
+          return Math.round(minutes * 60) + ' sec';
+        }
+        const wholeMins = Math.floor(minutes);
+        const secs = Math.round((minutes - wholeMins) * 60);
+        if (secs === 0) return wholeMins + ' min';
+        return wholeMins + ' min ' + secs + ' sec';
+      }
+
+      document.getElementById('clear-btn')?.addEventListener('click', () => {
+        textarea.value = '';
+        updateStats();
+        textarea.focus();
+      });
+
+      document.getElementById('paste-btn')?.addEventListener('click', async () => {
+        try {
+          const text = await navigator.clipboard.readText();
+          textarea.value = text;
+          updateStats();
+        } catch (err) {
+          alert('Clipboard access denied. Please paste manually (Ctrl+V / Cmd+V).');
+        }
+      });
+
+      function buildReportHtml() {
+        const text = textarea.value;
+        const words = countWords(text);
+        const chars = countChars(text);
+        const charsNoSpace = countCharsNoSpace(text);
+        const sentences = countSentences(text);
+        const paragraphs = countParagraphs(text);
+        const avgLen = avgWordLength(text);
+
+        let html = '<div id="word-counter-pdf-content" style="padding: 40px 48px; max-width: 210mm; margin: 0 auto; color: #1f2937; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.6; box-sizing: border-box;">';
+        html += '<h1 style="font-size: 20px; font-weight: 700; margin: 0 0 16px 0; color: #111827;">Word Counter Report</h1>';
+        html += '<p style="margin: 0 0 24px 0; color: #6b7280; font-size: 11px;">Generated by Best Answer Hub Word Counter</p>';
+
+        html += '<div style="margin-bottom: 24px;">';
+        html += '<h2 style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #111827; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; margin: 0 0 12px 0;">Statistics</h2>';
+        html += '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
+        const rows = [
+          ['Words', words.toLocaleString()],
+          ['Characters (with spaces)', chars.toLocaleString()],
+          ['Characters (without spaces)', charsNoSpace.toLocaleString()],
+          ['Sentences', sentences.toLocaleString()],
+          ['Paragraphs', paragraphs.toLocaleString()],
+          ['Average Word Length', avgLen.toString()],
+        ];
+        rows.forEach(([label, value], i) => {
+          const bg = i % 2 === 0 ? '#f9fafb' : '#ffffff';
+          html += '<tr style="background: ' + bg + ';"><td style="padding: 8px 12px; border: 1px solid #e5e7eb; color: #4b5563;">' + label + '</td><td style="padding: 8px 12px; border: 1px solid #e5e7eb; font-weight: 600; color: #111827; text-align: right;">' + value + '</td></tr>';
+        });
+        html += '</table>';
+        html += '</div>';
+
+        html += '<div style="margin-bottom: 24px;">';
+        html += '<h2 style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #111827; border-bottom: 1px solid #d1d5db; padding-bottom: 4px; margin: 0 0 12px 0;">Reading & Speaking Time</h2>';
+        html += '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
+        const timeRows = [
+          ['Slow read (150 wpm)', formatTime(words, 150)],
+          ['Average read (200 wpm)', formatTime(words, 200)],
+          ['Fast read (250 wpm)', formatTime(words, 250)],
+          ['Speaking time (130 wpm)', formatTime(words, 130)],
+        ];
+        timeRows.forEach(([label, value], i) => {
+          const bg = i % 2 === 0 ? '#f9fafb' : '#ffffff';
+          html += '<tr style="background: ' + bg + ';"><td style="padding: 8px 12px; border: 1px solid #e5e7eb; color: #4b5563;">' + label + '</td><td style="padding: 8px 12px; border: 1px solid #e5e7eb; font-weight: 600; color: #111827; text-align: right;">' + value + '</td></tr>';
+        });
+        html += '</table>';
+        html += '</div>';
+
+        html += '</div>';
+        return html;
+      }
+
+      copyBtn?.addEventListener('click', () => {
+        const text = textarea.value;
+        const words = countWords(text);
+        const chars = countChars(text);
+        const charsNoSpace = countCharsNoSpace(text);
+        const sentences = countSentences(text);
+        const paragraphs = countParagraphs(text);
+
+        const report = [
+          'Word Count: ' + words.toLocaleString(),
+          'Characters (with spaces): ' + chars.toLocaleString(),
+          'Characters (without spaces): ' + charsNoSpace.toLocaleString(),
+          'Sentences: ' + sentences.toLocaleString(),
+          'Paragraphs: ' + paragraphs.toLocaleString(),
+          'Reading time (avg 200 wpm): ' + formatTime(words, 200),
+          'Speaking time (130 wpm): ' + formatTime(words, 130),
+        ].join('\n');
+
+        navigator.clipboard.writeText(report).then(() => {
+          const original = copyBtn.textContent;
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = original, 1500);
+        });
+      });
+
+      pdfBtn?.addEventListener('click', async () => {
+        if (!textarea.value.trim()) { alert('Please enter some text first.'); return; }
+
+        const btn = pdfBtn;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const reportDiv = document.createElement('div');
+        reportDiv.innerHTML = buildReportHtml();
+        const content = reportDiv.firstElementChild;
+        content.style.width = '210mm';
+        content.style.maxWidth = 'none';
+        content.style.margin = '0';
+        document.body.appendChild(content);
+
+        try {
+          await html2pdf().set({
+            margin: 0,
+            filename: 'word-counter-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' }
+          }).from(content).save();
+        } catch (err) {
+          console.error(err);
+          alert('PDF generation failed. Please try again.');
+        } finally {
+          if (content.parentNode) document.body.removeChild(content);
+          btn.textContent = 'Download PDF';
+          btn.disabled = false;
+        }
+      });
+
+      function updateStats() {
+        const text = textarea.value;
+        const words = countWords(text);
+        const chars = countChars(text);
+        const charsNoSpace = countCharsNoSpace(text);
+        const sentences = countSentences(text);
+        const paragraphs = countParagraphs(text);
+        const avgLen = avgWordLength(text);
+
+        document.getElementById('stat-words').textContent = words.toLocaleString();
+        document.getElementById('stat-chars').textContent = chars.toLocaleString();
+        document.getElementById('stat-chars-no-space').textContent = charsNoSpace.toLocaleString();
+        document.getElementById('stat-sentences').textContent = sentences.toLocaleString();
+        document.getElementById('stat-paragraphs').textContent = paragraphs.toLocaleString();
+        document.getElementById('stat-avg-word').textContent = avgLen;
+
+        document.getElementById('read-slow').textContent = formatTime(words, 150);
+        document.getElementById('read-avg').textContent = formatTime(words, 200);
+        document.getElementById('read-fast').textContent = formatTime(words, 250);
+        document.getElementById('speak-time').textContent = formatTime(words, 130);
+
+        copyBtn.disabled = words === 0;
+        pdfBtn.disabled = words === 0;
+      }
+
+      textarea?.addEventListener('input', updateStats);
+
+      // Initialise stats in case the browser restores textarea text (bfcache / refresh).
+      updateStats();
+    })();
+  </script>
+</BaseLayout>

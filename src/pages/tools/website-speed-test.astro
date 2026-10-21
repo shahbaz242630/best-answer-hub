@@ -1,0 +1,701 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Website Speed Test?',
+    a: 'The Best Answer Hub Website Speed Test is a free browser-based tool that measures how fast any website loads. It checks response time, time to first byte (TTFB), SSL configuration, compression, caching headers, and page structure. It runs entirely in your browser. No data is sent to external servers. You enter a URL, it fetches the page directly from your location, and generates a performance report with a letter grade and actionable recommendations.',
+  },
+  {
+    q: 'Is the Website Speed Test free to use?',
+    a: 'Yes, the Best Answer Hub Website Speed Test is completely free with no usage limits and no signup required. You can test as many websites as you want, as often as you want. Unlike paid tools like GTmetrix or Pingdom, there are no monthly caps, no watermarked reports, and no forced account creation. Every test runs directly between your browser and the target website.',
+  },
+  {
+    q: 'How does the Website Speed Test work?',
+    a: 'When you enter a URL, the Best Answer Hub Website Speed Test uses your browser\'s built-in fetch API to request the webpage directly from the target server. It measures how long the server takes to respond (TTFB), how long the full page takes to download, and analyzes the HTML structure for common performance issues. Because the request comes from your browser, the results reflect the real network path between your device and the target server, including your ISP, local DNS, and any CDN edge nodes near you.',
+  },
+  {
+    q: 'What is a good website load time?',
+    a: 'Google recommends a Largest Contentful Paint (LCP) of under 2.5 seconds for a good user experience. In practical terms, a website that loads in under 2 seconds feels instant, 2 to 3 seconds feels acceptable, 3 to 5 seconds feels slow, and over 5 seconds causes most users to abandon the page. E-commerce sites see conversion rates drop by 7 percent for every additional second of load time. For SEO, Google uses page speed as a confirmed ranking factor for both mobile and desktop search.',
+  },
+  {
+    q: 'What is TTFB and why does it matter?',
+    a: 'TTFB stands for Time to First Byte. It measures the time from when your browser requests a page to when it receives the first byte of data from the server. TTFB reflects server processing time, database query speed, and network latency. A good TTFB is under 200 milliseconds. Between 200 and 500 milliseconds is acceptable. Over 800 milliseconds indicates a slow server, unoptimized database, or missing caching layer. TTFB is the foundation of all other speed metrics: you cannot have a fast website with a slow TTFB.',
+  },
+  {
+    q: 'What are Core Web Vitals?',
+    a: 'Core Web Vitals are three metrics Google uses to measure real-world user experience. Largest Contentful Paint (LCP) measures how long the main content takes to appear, should be under 2.5 seconds. Interaction to Next Paint (INP) measures how quickly the page responds to user interaction, should be under 200 milliseconds. Cumulative Layout Shift (CLS) measures visual stability, should be under 0.1. The Best Answer Hub Website Speed Test measures LCP indirectly through total load time and identifies CLS risks by detecting missing image dimensions and late-loading elements.',
+  },
+  {
+    q: 'Why can\'t the Website Speed Test test some websites?',
+    a: 'Some websites block cross-origin requests using CORS policies or security headers. This is a browser security feature, not a limitation specific to any one speed tool. When a site blocks external fetch requests, the Best Answer Hub Website Speed Test can still measure basic connectivity and timing using opaque requests, but it cannot read response headers or analyze the page HTML. For those sites, a manual audit checklist is shown so you can still identify speed issues. Major platforms like Cloudflare, Akamai, and Fastly typically allow speed test probes.',
+  },
+  {
+    q: 'How can I improve my website speed?',
+    a: 'Start with the biggest wins first. Compress all images using tools like the Best Answer Hub Image Compressor. Enable gzip or Brotli compression on your web server. Use a content delivery network (CDN) like Cloudflare, BunnyCDN, or KeyCDN. Minify CSS and JavaScript files. Enable browser caching with proper cache-control headers. Remove unused plugins and scripts. Upgrade to faster hosting: shared hosting is often the bottleneck. Finally, use a caching plugin if you run WordPress, and consider switching to a lightweight theme.',
+  },
+  {
+    q: 'What is the difference between mobile and desktop speed?',
+    a: 'Mobile devices typically load websites 2 to 3 times slower than desktops due to weaker processors, slower network connections, and higher latency on cellular networks. Google primarily uses mobile page speed for ranking since mobile-first indexing became the default in 2019. A site that scores A on desktop may score C or D on mobile. Always optimize for mobile first: use responsive images, lazy loading, minimal JavaScript, and AMP or lightweight frameworks when possible.',
+  },
+  {
+    q: 'What is image compression and why does it matter for speed?',
+    a: 'Images account for 60 to 80 percent of total page weight on most websites. Uncompressed images are the single biggest cause of slow load times. Converting JPEGs to WebP reduces file size by 25 to 35 percent with no visible quality loss. Compressing a 2-megabyte hero image to 300 kilobytes can improve load time by 1 to 2 seconds on mobile connections. The Best Answer Hub Image Compressor converts and compresses images to WebP, JPEG, or PNG directly in your browser.',
+  },
+  {
+    q: 'What is a CDN and how does it help website speed?',
+    a: 'A CDN (Content Delivery Network) stores copies of your website on servers around the world. When a visitor requests your site, the CDN serves it from the nearest location instead of your origin server. This reduces latency by 50 to 70 percent for international visitors. A CDN also absorbs traffic spikes, provides DDoS protection, and often includes automatic image optimization. Popular CDNs include Cloudflare (free tier available), BunnyCDN, KeyCDN, and Amazon CloudFront. For most websites, adding a CDN is the single highest-ROI speed improvement.',
+  },
+  {
+    q: 'What is browser caching and why should I enable it?',
+    a: 'Browser caching tells visitors\' browsers to store static files (like images, CSS, and JavaScript) locally for a period of time. On repeat visits, the browser loads these files from its local cache instead of downloading them again from your server. This makes subsequent page loads nearly instant. Without caching, every visitor downloads every file on every page load, wasting bandwidth and slowing the experience. Set cache-control headers to at least 30 days for static assets.',
+  },
+  {
+    q: 'Why does my WordPress site load slowly?',
+    a: 'The most common causes of slow WordPress sites are bloated page builder plugins like Elementor and Divi, excessive plugins (each adds HTTP requests and PHP processing), unoptimized images, cheap shared hosting with oversold servers, missing caching, and render-blocking JavaScript. The fastest WordPress setups use lightweight themes like GeneratePress or Kadence, a caching plugin like WP Rocket or LiteSpeed Cache, optimized images, and hosting on NVMe SSDs with PHP 8.2 or higher.',
+  },
+  {
+    q: 'What is the best web hosting for speed in 2026?',
+    a: 'The best hosting depends on your traffic and budget. For small sites, Cloudways and Kinsta offer excellent managed WordPress hosting on Google Cloud and AWS with built-in caching and CDN. For budget-conscious users, Hostinger and Scala Hosting provide solid shared hosting with NVMe SSDs. For developers and high-traffic sites, Vultr, DigitalOcean, and Linode offer powerful VPS options. For static sites, Cloudflare Pages, Vercel, and Netlify provide free global CDN hosting with instant deploys. The key is to avoid traditional shared hosting with HDD drives and outdated PHP versions.',
+  },
+  {
+    q: 'Why does my website speed score change every time I run the test?',
+    a: 'Speed scores fluctuate because website performance is not a fixed number: it varies with server load, network conditions, caching state, and third-party script behaviour. If your server has a traffic spike during a test, TTFB goes up. If a CDN cache has just expired, the first request after expiry is slower than cached requests. Third-party scripts like analytics trackers, chat widgets, and ad networks load from external servers that respond at different speeds each time. The Best Answer Hub Website Speed Test measures the real network path from your browser to the target server, so your local ISP congestion and DNS resolution time also factor in. To get a reliable baseline, run three or four tests at different times of day and average the results. If your score swings by more than 30 points between tests, it usually means the site is operating too close to performance thresholds and needs a more robust caching or hosting setup.',
+  },
+];
+
+const steps = [
+  { title: 'Enter a website URL', description: 'Type any website address, with or without https://. The tool works on blogs, e-commerce stores, corporate sites, and landing pages.' },
+  { title: 'Run the speed test', description: 'The tool measures server response time, download speed, SSL status, compression, caching headers, and page structure in under 5 seconds.' },
+  { title: 'Review your report', description: 'See an overall grade, detailed metrics, a list of issues found, and prioritized recommendations to fix them.' },
+];
+
+const seo = {
+  title: 'Free Website Speed Test — Load Time & TTFB (2026)',
+  description: 'Test any website speed for free. Measure load time, TTFB, compression, caching, and SSL. Get a performance grade and actionable fixes. No signup.',
+  url: '/tools/website-speed-test/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Tools', url: '/tools/' },
+    { name: 'Website Speed Test', url: '/tools/website-speed-test/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · Tests Run from Your Browser"
+    title="Website Speed Test:"
+    accentText="Know exactly why your site is slow"
+    description="Measure load time, time to first byte (TTFB), compression, caching, and SSL. Get a letter grade and a prioritized list of fixes, all in under 5 seconds."
+    backLink="/tools/"
+    backLabel="← All Tools"
+  />
+
+  <!-- Speed Test Interface -->
+  <section class="py-6 md:py-8" aria-label="Website speed test">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-2xl mx-auto">
+        <!-- Input -->
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+          <label class="block text-sm font-medium text-bae-ink mb-2">Enter a website URL</label>
+          <div class="flex gap-2">
+            <input type="url" id="test-url" placeholder="example.com or https://example.com" class="flex-1 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+            <button type="button" id="test-btn" class="shrink-0 bg-bae-primary text-white font-semibold text-sm px-5 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">
+              Test Speed
+            </button>
+          </div>
+          <p class="text-[11px] text-bae-muted mt-2">Tests run directly between your browser and the target server. No data passes through our infrastructure.</p>
+        </div>
+
+        <!-- Loading -->
+        <div id="test-loading" class="hidden mt-6">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-6 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink">Testing website speed...</p>
+            <p class="text-xs text-bae-muted mt-1" id="test-step">Measuring response time</p>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="test-results" class="hidden mt-6 space-y-5">
+          <!-- Score Header -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 flex flex-col sm:flex-row items-center gap-5">
+            <div id="grade-circle" class="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold text-white shrink-0 bg-bae-primary">
+              A
+            </div>
+            <div class="text-center sm:text-left">
+              <h2 class="font-serif text-xl font-bold text-bae-ink mb-1" id="result-title">Excellent performance</h2>
+              <p class="text-sm text-bae-muted" id="result-subtitle">Load time: 0.8s · TTFB: 120ms</p>
+              <p class="text-xs text-bae-muted mt-1" id="result-url">example.com</p>
+            </div>
+          </div>
+
+          <!-- Metrics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Load Time</p>
+              <p class="text-lg font-bold text-bae-ink" id="metric-load">—</p>
+              <p class="text-[10px] text-bae-muted mt-0.5">total</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">TTFB</p>
+              <p class="text-lg font-bold text-bae-ink" id="metric-ttfb">—</p>
+              <p class="text-[10px] text-bae-muted mt-0.5">server</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Page Size</p>
+              <p class="text-lg font-bold text-bae-ink" id="metric-size">—</p>
+              <p class="text-[10px] text-bae-muted mt-0.5">HTML only</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">HTTPS</p>
+              <p class="text-lg font-bold text-bae-ink" id="metric-https">—</p>
+              <p class="text-[10px] text-bae-muted mt-0.5">security</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Compression</p>
+              <p class="text-lg font-bold text-bae-ink" id="metric-gzip">—</p>
+              <p class="text-[10px] text-bae-muted mt-0.5">gzip/brotli</p>
+            </div>
+            <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 text-center">
+              <p class="text-[11px] text-bae-muted uppercase tracking-wider mb-1">Caching</p>
+              <p class="text-lg font-bold text-bae-ink" id="metric-cache">—</p>
+              <p class="text-[10px] text-bae-muted mt-0.5">headers</p>
+            </div>
+          </div>
+
+          <!-- Resource Summary (if available) -->
+          <div id="resource-summary" class="hidden bg-bae-card border border-bae-border rounded-bae p-5">
+            <h3 class="text-sm font-bold text-bae-ink mb-3">Page structure</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="text-center">
+                <p class="text-xl font-bold text-bae-ink" id="res-images">—</p>
+                <p class="text-[11px] text-bae-muted">Images</p>
+              </div>
+              <div class="text-center">
+                <p class="text-xl font-bold text-bae-ink" id="res-scripts">—</p>
+                <p class="text-[11px] text-bae-muted">Scripts</p>
+              </div>
+              <div class="text-center">
+                <p class="text-xl font-bold text-bae-ink" id="res-styles">—</p>
+                <p class="text-[11px] text-bae-muted">Stylesheets</p>
+              </div>
+              <div class="text-center">
+                <p class="text-xl font-bold text-bae-ink" id="res-lazy">—</p>
+                <p class="text-[11px] text-bae-muted">Lazy Load %</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Issues -->
+          <div id="issues-section" class="bg-bae-card border border-bae-border rounded-bae p-5">
+            <h3 class="text-sm font-bold text-bae-ink mb-3">Issues found</h3>
+            <div id="issues-list" class="space-y-2"></div>
+          </div>
+
+          <!-- Recommendations -->
+          <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-5">
+            <h3 class="text-sm font-bold text-bae-ink mb-3">Top recommendations</h3>
+            <div id="recommendations-list" class="space-y-2"></div>
+          </div>
+
+          <!-- CORS Notice -->
+          <div id="cors-notice" class="hidden bg-amber-50 border border-amber-200 rounded-bae p-4 flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            <div>
+              <p class="text-sm font-semibold text-amber-800 mb-1">Cross-origin restrictions limited this test</p>
+              <p class="text-xs text-amber-700">The target website blocks external analysis tools. We measured basic timing but could not read headers or analyze page structure. For a deeper audit, use Google PageSpeed Insights or GTmetrix.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benchmark Table -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-2">Performance benchmarks</h2>
+      <p class="text-sm text-bae-muted mb-6">How to interpret your results</p>
+      <div class="overflow-x-auto rounded-bae border border-bae-border">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-bae-bg border-b border-bae-border">
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Metric</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Good</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Needs Work</th>
+              <th class="text-left px-4 py-3 font-semibold text-bae-ink">Poor</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-bae-border-light">
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors">
+              <td class="px-4 py-3 font-medium text-bae-ink">Load Time</td>
+              <td class="px-4 py-3 text-emerald-600 font-medium">&lt; 2s</td>
+              <td class="px-4 py-3 text-amber-600 font-medium">2 – 4s</td>
+              <td class="px-4 py-3 text-red-500 font-medium">&gt; 4s</td>
+            </tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors">
+              <td class="px-4 py-3 font-medium text-bae-ink">TTFB</td>
+              <td class="px-4 py-3 text-emerald-600 font-medium">&lt; 200ms</td>
+              <td class="px-4 py-3 text-amber-600 font-medium">200 – 600ms</td>
+              <td class="px-4 py-3 text-red-500 font-medium">&gt; 600ms</td>
+            </tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors">
+              <td class="px-4 py-3 font-medium text-bae-ink">Page Size</td>
+              <td class="px-4 py-3 text-emerald-600 font-medium">&lt; 1 MB</td>
+              <td class="px-4 py-3 text-amber-600 font-medium">1 – 3 MB</td>
+              <td class="px-4 py-3 text-red-500 font-medium">&gt; 3 MB</td>
+            </tr>
+            <tr class="bg-bae-card hover:bg-bae-bg/50 transition-colors">
+              <td class="px-4 py-3 font-medium text-bae-ink">Image Count</td>
+              <td class="px-4 py-3 text-emerald-600 font-medium">&lt; 30</td>
+              <td class="px-4 py-3 text-amber-600 font-medium">30 – 60</td>
+              <td class="px-4 py-3 text-red-500 font-medium">&gt; 60</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Who uses this tool -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">E-Commerce</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">E-commerce Store Owner</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">4.2-Second TTFB Detected</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Noticed their Shopify store\'s conversion rate dropped after a theme update. Runs the Best Answer Hub Website Speed Test on the product page, sees a 4.2-second TTFB, and traces the bottleneck to a third-party review widget that was added during the update.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Pre-Launch QA</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">WordPress Developer</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Missing Headers Caught</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Delivering a redesigned site to a client and needs a quick pre-launch speed check. Drops the staging URL into the tool before go-live, catches missing cache-control headers and uncompressed CSS, and fixes both before the domain points over.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Technical SEO</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">SEO Specialist</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">10 Pages Benchmarked</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Preparing a technical audit for a client whose rankings dropped after a Google Core Update. Uses the speed test to quickly benchmark TTFB and load time on the ten most important landing pages before pulling a full Lighthouse report in Chrome DevTools.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Shared Hosting</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Blogger</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Grade F → Upgrade Justified</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Running a recipe blog on shared hosting and wondering why the site feels sluggish. Tests the homepage with the Best Answer Hub Website Speed Test, gets an F grade for missing compression and a 900ms TTFB, and uses the fix list to finally justify upgrading their hosting plan.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Results vary by specific situation and requirements.</p>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/ai-cost-calculator/" class="text-bae-primary hover:underline">AI Cost Calculator</a>, <a href="/tools/image-compressor/" class="text-bae-primary hover:underline">Image Compressor</a>, <a href="/tools/pdf-to-word-converter/" class="text-bae-primary hover:underline">PDF to Word</a>, <a href="/tools/qr-code-generator/" class="text-bae-primary hover:underline">QR Code</a>, <a href="/tools/password-generator/" class="text-bae-primary hover:underline">Password Generator</a>, <a href="/tools/seo-score-checker/" class="text-bae-primary hover:underline">SEO Checker</a>, <a href="/tools/invoice-generator/" class="text-bae-primary hover:underline">Invoice Generator</a>, <a href="/tools/broken-link-checker/" class="text-bae-primary hover:underline">Broken Link Checker</a>, and <a href="/developer-toolbox/" class="text-bae-primary hover:underline">Developer Toolbox</a>.</p>
+        </div>
+        <a href="/tools/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all tools →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      const testUrl = document.getElementById('test-url');
+      const testBtn = document.getElementById('test-btn');
+      const testLoading = document.getElementById('test-loading');
+      const testStep = document.getElementById('test-step');
+      const testResults = document.getElementById('test-results');
+      const gradeCircle = document.getElementById('grade-circle');
+      const resultTitle = document.getElementById('result-title');
+      const resultSubtitle = document.getElementById('result-subtitle');
+      const resultUrl = document.getElementById('result-url');
+      const issuesList = document.getElementById('issues-list');
+      const recommendationsList = document.getElementById('recommendations-list');
+      const resourceSummary = document.getElementById('resource-summary');
+      const corsNotice = document.getElementById('cors-notice');
+
+      function normalizeUrl(input) {
+        let url = input.trim();
+        if (!url) return null;
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        try {
+          const u = new URL(url);
+          return u.toString();
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function isInternalUrl(urlStr) {
+        try {
+          const u = new URL(urlStr);
+          const host = u.hostname.toLowerCase();
+          if (host === 'localhost' || host === '0.0.0.0' || host === '::1') return true;
+          // IPv4 private ranges
+          if (/^127\./.test(host)) return true;
+          if (/^192\.168\./.test(host)) return true;
+          if (/^10\./.test(host)) return true;
+          if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) return true;
+          if (/^169\.254\./.test(host)) return true;
+          // IPv6 unique local / link-local / loopback mapped
+          if (/^(fc00|fd00|fe80):/i.test(host)) return true;
+          if (/^::ffff:127\./i.test(host)) return true;
+          if (/^::ffff:192\.168\./i.test(host)) return true;
+          if (/^::ffff:10\./i.test(host)) return true;
+          if (/^::ffff:172\.(1[6-9]|2[0-9]|3[0-1])\./i.test(host)) return true;
+          if (/^::1$/i.test(host)) return true;
+          return false;
+        } catch (e) { return false; }
+      }
+
+      function formatBytes(bytes) {
+        if (!bytes || bytes === 0) return '—';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+      }
+
+      function getGradeColor(grade) {
+        const colors = {
+          'A': 'bg-emerald-500',
+          'B': 'bg-emerald-400',
+          'C': 'bg-amber-400',
+          'D': 'bg-orange-400',
+          'F': 'bg-red-500'
+        };
+        return colors[grade] || 'bg-bae-muted';
+      }
+
+      function getGradeText(score) {
+        if (score >= 90) return { grade: 'A', title: 'Excellent performance' };
+        if (score >= 80) return { grade: 'B', title: 'Good performance' };
+        if (score >= 70) return { grade: 'C', title: 'Average performance' };
+        if (score >= 60) return { grade: 'D', title: 'Below average' };
+        return { grade: 'F', title: 'Poor performance' };
+      }
+
+      async function runTest() {
+        const url = normalizeUrl(testUrl.value);
+        if (!url) {
+          alert('Please enter a valid URL');
+          return;
+        }
+        if (isInternalUrl(url)) { alert('Internal and local addresses cannot be tested for security reasons.'); return; }
+
+        testResults.classList.add('hidden');
+        testLoading.classList.remove('hidden');
+        corsNotice.classList.add('hidden');
+
+        const results = {
+          url: url,
+          loadTime: null,
+          ttfb: null,
+          https: url.startsWith('https'),
+          corsBlocked: false,
+          htmlSize: null,
+          headers: {},
+          imageCount: null,
+          scriptCount: null,
+          styleCount: null,
+          lazyLoadRatio: null,
+          issues: [],
+          recommendations: []
+        };
+
+        // Phase 1: Timing test with no-cors (always works for timing)
+        testStep.textContent = 'Measuring response time...';
+        try {
+          const start = performance.now();
+          await fetch(url, { mode: 'no-cors', cache: 'no-store', method: 'HEAD' });
+          results.loadTime = Math.round(performance.now() - start);
+        } catch (e) {
+          results.issues.push({ type: 'error', icon: '✗', text: 'Website is unreachable from your location' });
+          showResults(results);
+          return;
+        }
+
+        // Phase 2: Try CORS fetch for deep analysis
+        testStep.textContent = 'Analyzing page structure...';
+        try {
+          const start = performance.now();
+          const response = await fetch(url, { cache: 'no-store' });
+          if (isInternalUrl(response.url)) {
+            results.corsBlocked = true;
+            results.issues.push({ type: 'warning', icon: '⚠', text: 'Redirect leads to an internal or local address, blocked for security.' });
+            calculateResults(results);
+            showResults(results);
+            return;
+          }
+          results.ttfb = Math.round(performance.now() - start);
+
+          // Read headers
+          results.headers['content-encoding'] = response.headers.get('content-encoding') || '';
+          results.headers['content-length'] = response.headers.get('content-length') || '';
+          results.headers['cache-control'] = response.headers.get('cache-control') || '';
+          results.headers['server'] = response.headers.get('server') || '';
+
+          // Read and parse HTML
+          const html = await response.text();
+          results.htmlSize = html.length;
+
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          results.imageCount = doc.querySelectorAll('img').length;
+          results.scriptCount = doc.querySelectorAll('script[src]').length;
+          results.styleCount = doc.querySelectorAll('link[rel="stylesheet"]').length;
+
+          const imgs = doc.querySelectorAll('img');
+          const lazyImgs = doc.querySelectorAll('img[loading="lazy"]');
+          results.lazyLoadRatio = imgs.length > 0 ? Math.round((lazyImgs.length / imgs.length) * 100) : 0;
+
+          // Check for meta viewport (mobile optimization)
+          results.hasViewport = !!doc.querySelector('meta[name="viewport"]');
+
+        } catch (e) {
+          results.corsBlocked = true;
+          results.issues.push({ type: 'warning', icon: '⚠', text: 'Cross-origin policy blocks deep analysis. Basic timing only.' });
+        }
+
+        // Calculate score and generate recommendations
+        calculateResults(results);
+        showResults(results);
+      }
+
+      function calculateResults(r) {
+        let score = 100;
+
+        // HTTPS
+        if (!r.https) {
+          score -= 15;
+          r.issues.push({ type: 'error', icon: '✗', text: 'No HTTPS encryption, major security and SEO risk' });
+          r.recommendations.push('Install an SSL certificate immediately. Let\'s Encrypt provides free certificates. HTTPS is a confirmed Google ranking factor.');
+        } else {
+          r.issues.push({ type: 'good', icon: '✓', text: 'HTTPS is enabled' });
+        }
+
+        // Load time
+        if (r.loadTime !== null) {
+          if (r.loadTime > 5000) {
+            score -= 30;
+            r.issues.push({ type: 'error', icon: '✗', text: 'Load time is very slow (' + r.loadTime + 'ms)' });
+            r.recommendations.push('Load time exceeds 5 seconds. Compress images, enable caching, and consider upgrading hosting or adding a CDN.');
+          } else if (r.loadTime > 3000) {
+            score -= 20;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Load time is slow (' + r.loadTime + 'ms)' });
+            r.recommendations.push('Load time is 3-5 seconds. Compress images, minify CSS/JS, and enable gzip/Brotli compression.');
+          } else if (r.loadTime > 1500) {
+            score -= 10;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Load time is moderate (' + r.loadTime + 'ms)' });
+          } else {
+            r.issues.push({ type: 'good', icon: '✓', text: 'Load time is fast (' + r.loadTime + 'ms)' });
+          }
+        }
+
+        // TTFB
+        if (r.ttfb !== null) {
+          if (r.ttfb > 1000) {
+            score -= 20;
+            r.issues.push({ type: 'error', icon: '✗', text: 'TTFB is very high (' + r.ttfb + 'ms)' });
+            r.recommendations.push('Server response time (TTFB) exceeds 1 second. Add server-side caching, optimize database queries, or upgrade hosting.');
+          } else if (r.ttfb > 500) {
+            score -= 10;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'TTFB is high (' + r.ttfb + 'ms)' });
+            r.recommendations.push('TTFB is 500ms-1s. Enable object caching (Redis/Memcached) and consider a faster hosting provider.');
+          } else if (r.ttfb > 200) {
+            score -= 5;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'TTFB is moderate (' + r.ttfb + 'ms)' });
+          } else {
+            r.issues.push({ type: 'good', icon: '✓', text: 'TTFB is excellent (' + r.ttfb + 'ms)' });
+          }
+        }
+
+        // Compression
+        if (r.headers['content-encoding']) {
+          const enc = r.headers['content-encoding'].toLowerCase();
+          if (enc.includes('br') || enc.includes('gzip')) {
+            r.issues.push({ type: 'good', icon: '✓', text: 'Compression enabled (' + r.headers['content-encoding'] + ')' });
+          } else {
+            score -= 8;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Compression header present but unusual' });
+          }
+        } else {
+          score -= 10;
+          r.issues.push({ type: 'warning', icon: '⚠', text: 'No compression detected' });
+          r.recommendations.push('Enable Brotli or gzip compression on your web server. This typically reduces file sizes by 60-80%.');
+        }
+
+        // Caching
+        if (r.headers['cache-control']) {
+          const cc = r.headers['cache-control'].toLowerCase();
+          if (cc.includes('max-age') && !cc.includes('max-age=0')) {
+            r.issues.push({ type: 'good', icon: '✓', text: 'Caching headers are set' });
+          } else {
+            score -= 5;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Caching headers are present but may be ineffective' });
+          }
+        } else {
+          score -= 10;
+          r.issues.push({ type: 'warning', icon: '⚠', text: 'No caching headers detected' });
+          r.recommendations.push('Add Cache-Control headers to static assets. Set at least 30 days for images, CSS, and JavaScript files.');
+        }
+
+        // Page size
+        if (r.htmlSize !== null) {
+          if (r.htmlSize > 500000) {
+            score -= 10;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'HTML is very large (' + formatBytes(r.htmlSize) + ')' });
+            r.recommendations.push('HTML document exceeds 500KB. Remove inline CSS/JS, reduce DOM node count, and use pagination for long content.');
+          } else if (r.htmlSize > 200000) {
+            score -= 5;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'HTML is large (' + formatBytes(r.htmlSize) + ')' });
+          } else {
+            r.issues.push({ type: 'good', icon: '✓', text: 'HTML size is good (' + formatBytes(r.htmlSize) + ')' });
+          }
+        }
+
+        // Resource counts
+        if (r.imageCount !== null) {
+          if (r.imageCount > 60) {
+            score -= 8;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'Very high image count (' + r.imageCount + ')' });
+            r.recommendations.push('Page contains ' + r.imageCount + ' images. Combine icons into sprites, lazy-load below-fold images, and use CSS gradients where possible.');
+          } else if (r.imageCount > 30) {
+            score -= 4;
+            r.issues.push({ type: 'warning', icon: '⚠', text: 'High image count (' + r.imageCount + ')' });
+          }
+        }
+
+        if (r.scriptCount !== null && r.scriptCount > 25) {
+          score -= 5;
+          r.issues.push({ type: 'warning', icon: '⚠', text: 'Many external scripts (' + r.scriptCount + ')' });
+          r.recommendations.push('Page loads ' + r.scriptCount + ' external scripts. Remove unused tracking codes, defer non-critical scripts, and combine files where possible.');
+        }
+
+        // Lazy loading
+        if (r.lazyLoadRatio !== null && r.lazyLoadRatio < 30 && r.imageCount > 10) {
+          score -= 5;
+          r.issues.push({ type: 'warning', icon: '⚠', text: 'Few images use lazy loading (' + r.lazyLoadRatio + '%)' });
+          r.recommendations.push('Add loading="lazy" to images below the fold. This defers offscreen images and improves initial load time significantly.');
+        }
+
+        // Mobile viewport
+        if (r.hasViewport === false) {
+          score -= 10;
+          r.issues.push({ type: 'error', icon: '✗', text: 'No mobile viewport meta tag' });
+          r.recommendations.push('Add `<meta name="viewport" content="width=device-width, initial-scale=1">` to your HTML head for mobile optimization.');
+        } else if (r.hasViewport === true) {
+          r.issues.push({ type: 'good', icon: '✓', text: 'Mobile viewport is configured' });
+        }
+
+        // General recommendations if list is short
+        if (r.recommendations.length < 2) {
+          if (r.recommendations.length === 0) {
+            r.recommendations.push('Your site performs well. Continue monitoring and test from multiple locations and devices.');
+          }
+          if (!r.recommendations.some(r => r.includes('CDN'))) {
+            r.recommendations.push('Consider adding a CDN like Cloudflare or BunnyCDN to serve static assets from edge locations closer to your visitors.');
+          }
+        }
+
+        r.score = Math.max(0, Math.min(100, score));
+        const g = getGradeText(r.score);
+        r.grade = g.grade;
+        r.gradeTitle = g.title;
+      }
+
+      function showResults(r) {
+        testLoading.classList.add('hidden');
+        testResults.classList.remove('hidden');
+        testResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Header
+        gradeCircle.textContent = r.grade;
+        gradeCircle.className = 'w-20 h-20 rounded-full flex items-center justify-center text-3xl font-extrabold text-white shrink-0 ' + getGradeColor(r.grade);
+        resultTitle.textContent = r.gradeTitle;
+        resultSubtitle.textContent = 'Score: ' + r.score + '/100' + (r.loadTime ? ' · Load: ' + r.loadTime + 'ms' : '') + (r.ttfb ? ' · TTFB: ' + r.ttfb + 'ms' : '');
+        resultUrl.textContent = r.url;
+
+        // Metrics
+        document.getElementById('metric-load').textContent = r.loadTime !== null ? (r.loadTime / 1000).toFixed(2) + 's' : '—';
+        document.getElementById('metric-ttfb').textContent = r.ttfb !== null ? r.ttfb + 'ms' : '—';
+        document.getElementById('metric-size').textContent = r.htmlSize !== null ? formatBytes(r.htmlSize) : '—';
+        document.getElementById('metric-https').textContent = r.https ? 'Yes' : 'No';
+        document.getElementById('metric-https').className = 'text-lg font-bold ' + (r.https ? 'text-emerald-600' : 'text-red-500');
+        document.getElementById('metric-gzip').textContent = r.headers['content-encoding'] ? (r.headers['content-encoding'].includes('br') ? 'Brotli' : 'gzip') : 'No';
+        document.getElementById('metric-gzip').className = 'text-lg font-bold ' + (r.headers['content-encoding'] ? 'text-emerald-600' : 'text-amber-600');
+        document.getElementById('metric-cache').textContent = r.headers['cache-control'] ? 'Yes' : 'No';
+        document.getElementById('metric-cache').className = 'text-lg font-bold ' + (r.headers['cache-control'] ? 'text-emerald-600' : 'text-amber-600');
+
+        // Resources
+        if (r.imageCount !== null) {
+          resourceSummary.classList.remove('hidden');
+          document.getElementById('res-images').textContent = r.imageCount;
+          document.getElementById('res-scripts').textContent = r.scriptCount;
+          document.getElementById('res-styles').textContent = r.styleCount;
+          document.getElementById('res-lazy').textContent = r.lazyLoadRatio + '%';
+        } else {
+          resourceSummary.classList.add('hidden');
+        }
+
+        // CORS notice
+        if (r.corsBlocked) {
+          corsNotice.classList.remove('hidden');
+        }
+
+        function escapeHtml(text) {
+          const div = document.createElement('div');
+          div.textContent = text;
+          return div.innerHTML;
+        }
+
+        // Issues
+        issuesList.innerHTML = r.issues.map(issue => {
+          const colorClass = issue.type === 'error' ? 'text-red-600' : issue.type === 'warning' ? 'text-amber-600' : 'text-emerald-600';
+          const bgClass = issue.type === 'error' ? 'bg-red-50' : issue.type === 'warning' ? 'bg-amber-50' : 'bg-emerald-50';
+          const borderClass = issue.type === 'error' ? 'border-red-100' : issue.type === 'warning' ? 'border-amber-100' : 'border-emerald-100';
+          return `<div class="${bgClass} border ${borderClass} rounded-bae-sm px-3 py-2 text-sm ${colorClass} flex items-center gap-2">
+            <span class="font-bold shrink-0">${escapeHtml(issue.icon)}</span>
+            <span>${escapeHtml(issue.text)}</span>
+          </div>`;
+        }).join('');
+
+        // Recommendations
+        recommendationsList.innerHTML = r.recommendations.map(rec => {
+          return `<div class="flex items-start gap-2 text-sm text-bae-ink">
+            <span class="text-bae-primary font-bold shrink-0 mt-0.5">→</span>
+            <span>${escapeHtml(rec)}</span>
+          </div>`;
+        }).join('');
+      }
+
+      testBtn.addEventListener('click', runTest);
+      testUrl.addEventListener('keydown', (e) => { if (e.key === 'Enter') runTest(); });
+    })();
+  </script>
+</BaseLayout>

@@ -1,0 +1,376 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub SQL Formatter?', a: 'The Best Answer Hub SQL Formatter is a free, browser-based tool that beautifies, minifies, and validates SQL for PostgreSQL, MySQL, SQLite, and SQL Server. It adds indentation, line breaks, and keyword casing, and flags unbalanced parentheses or quotes. It runs entirely on your device, so no query is uploaded.' },
+  { q: 'Is it safe to paste SQL into an online formatter?', a: 'It is safe only if the tool formats in your browser rather than on a server. A query can carry table names, IDs, and credentials, so a server-side tool exposes them. The Best Answer Hub SQL Formatter processes everything locally, which you can confirm by watching the browser Network tab show zero requests.' },
+  { q: 'What is the difference between formatting and validating SQL?', a: 'Formatting changes only how a query looks: indentation, line breaks, and keyword case. Validating checks whether it is well-formed, such as balanced parentheses and quotes. The Best Answer Hub SQL Formatter does both, though a syntax check cannot confirm a table exists without your actual database schema.' },
+  { q: 'Does the SQL Formatter run the query?', a: 'No. The Best Answer Hub SQL Formatter only reads and reshapes the text of your query. It never connects to a database or executes anything, so it cannot change, drop, or read your data. Running SQL requires a live database engine, which this tool deliberately does not include.' },
+  { q: 'What is the difference between beautifying and minifying SQL?', a: 'Beautifying expands a query into an indented, multi-line structure a person can read. Minifying does the opposite, stripping whitespace to produce the smallest valid one-line string for embedding in code or logs. The Best Answer Hub SQL Formatter switches between both with a single click.' },
+  { q: 'Which SQL dialects does the formatter support?', a: 'The Best Answer Hub SQL Formatter supports PostgreSQL, MySQL, SQLite, and Microsoft SQL Server (T-SQL). Because there is no universal SQL grammar, selecting the matching dialect keeps backticks, square brackets, and dialect-specific functions from being mangled. PostgreSQL mode also covers most Redshift and standard Snowflake syntax.' },
+  { q: 'Why does the dialect matter?', a: 'Because databases quote identifiers and limit rows differently: MySQL uses backticks and LIMIT, SQL Server uses square brackets and TOP, PostgreSQL uses double quotes and LIMIT. No engine fully conforms to the SQL:2023 standard, so the Best Answer Hub SQL Formatter needs the dialect to format correctly.' },
+  { q: 'Is my SQL query sent to a server?', a: 'No. In the Best Answer Hub SQL Formatter your query never leaves the browser. There are no network requests, no analytics containing your query text, and no cloud processing. This is the core difference from server-side formatters, some of which have exposed saved user submissions.' },
+  { q: 'Can I use the SQL Formatter offline?', a: 'Yes. Once the Best Answer Hub SQL Formatter page has loaded, it works with no internet connection because formatting is pure text processing bundled into the page. That makes it well suited to sensitive queries and restricted or air-gapped environments where nothing should be transmitted.' },
+  { q: 'What happened with the online formatter data leak in 2025?', a: 'Researchers found two popular formatting and beautifier sites had exposed more than 80,000 saved user pastes, over five gigabytes, containing live credentials and personal data. A public save feature made the URLs guessable. The Best Answer Hub SQL Formatter avoids this by never saving or uploading your query.' },
+  { q: 'Does the formatter validate my whole database schema?', a: 'No. The Best Answer Hub SQL Formatter checks structural syntax, mainly balanced parentheses and quotes. It cannot confirm that a table or column exists, because that is a semantic check requiring your real schema. For that, test the query against your actual database in a safe environment.' },
+  { q: 'Can it format stored procedures and triggers?', a: 'The Best Answer Hub SQL Formatter handles standard statements like SELECT, INSERT, UPDATE, DELETE, and DDL well across all dialects. For procedural blocks such as PL/pgSQL or T-SQL with DECLARE and BEGIN and END, it formats the SQL parts but may not perfectly handle control-flow syntax. A database IDE can help there.' },
+  { q: 'How does it compare to formatting SQL in an IDE?', a: 'IDEs like DataGrip and DBeaver format SQL well but require installing software and opening a project. The Best Answer Hub SQL Formatter works instantly in any browser with zero setup, which suits quick formatting, reviewing queries from logs, or machines where you cannot install anything. Output quality is comparable for the supported dialects.' },
+  { q: 'What are the most common SQL syntax errors?', a: 'The most frequent are unbalanced parentheses and unclosed string quotes, both of which the Best Answer Hub SQL Formatter detects. Missing commas between columns, a missing table after FROM or JOIN, and a stray semicolon are also common. Structural issues are caught here; missing-table errors need a real database to surface.' },
+  { q: 'Is the SQL Formatter free?', a: 'Yes. The Best Answer Hub SQL Formatter is completely free with no usage limits, no watermarks, and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so it carries no ads and never gates formatting behind an upgrade.' },
+];
+
+const seo = {
+  title: 'Is It Safe to Paste SQL Into an Online Formatter?',
+  description: 'Some online SQL formatters send your query to a server. Here is how formatting and validating SQL in the browser keeps table names and credentials private.',
+  url: '/playbooks/sql-formatter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'SQL Formatter', url: '/playbooks/sql-formatter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; Developer Tools</span>
+        <div class="cav">Read this before you paste</div>
+        <h1>Is It Safe to Paste Your SQL Into an <em>Online Formatter?</em></h1>
+        <p class="dek">A messy query is easy to fix, but the tool you fix it in matters. Some online SQL formatters send your query to a server, table names, credentials, business logic and all. Here is what formatting and validation actually do, which dialect to pick, and why the Best Answer Hub SQL Formatter runs entirely in your browser.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Developer tools</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Format<small>readable in one click</small></div>
+          <div class="seg b2">Validate<small>catch broken syntax</small></div>
+          <div class="seg b3">Private<small>nothing leaves the browser</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">80,000+</div><div class="l">user pastes exposed on two online formatter sites</div><div class="src">watchTowr / BleepingComputer, 2025</div></div>
+      <div class="stat"><div class="n">23.8M</div><div class="l">new secrets leaked on public GitHub in 2024</div><div class="src">GitGuardian, 2025</div></div>
+      <div class="stat"><div class="n">55.6%</div><div class="l">of developers use PostgreSQL, the top database</div><div class="src">Stack Overflow, 2025</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">formatted and validated in your browser</div><div class="src">no upload</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#does">Format vs validate</a>
+        <a href="#paste">The paste risk</a>
+        <a href="#dialect">Which dialect</a>
+        <a href="#style">Readable SQL</a>
+        <a href="#different">Versus other tools</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>Yes, it is safe to format SQL in a tool that runs in your browser, and risky in one that sends your query to a server.</strong> A SQL formatter re-indents and re-cases a query so you can read it; a validator checks that the syntax holds together. Neither job requires uploading anything. The Best Answer Hub <a href="/developer-toolbox/sql-formatter/">SQL Formatter</a> does both on your own device, so table names, column names, and any credentials in the query never leave your machine.</p>
+
+        <p>That distinction is not academic. In November 2025, security researchers found that two popular online formatting tools had quietly exposed more than 80,000 saved user pastes, over five gigabytes, built up over five years and full of live credentials (<a href="https://labs.watchtowr.com/stop-putting-your-passwords-into-random-websites-yes-seriously-you-are-the-problem/" target="_blank" rel="noopener noreferrer">watchTowr Labs, 2025</a>). This guide walks through what a formatter and validator really do, which SQL dialect to pick, what clean SQL looks like, and how a browser-only tool keeps your query yours. It sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">Start with the basics</div>
+        <h2 id="what">What is the Best Answer Hub SQL Formatter?</h2>
+        <p>The Best Answer Hub SQL Formatter is a free, browser-based tool that beautifies, minifies, and validates SQL queries instantly. It supports the PostgreSQL, MySQL, SQLite, and Microsoft SQL Server (T-SQL) dialects, adds consistent indentation, line breaks, and keyword casing to compressed or tangled SQL, and flags structural errors like unbalanced parentheses or an unclosed quote. It is built on the open-source <code>sql-formatter</code> library and runs entirely in your browser, so no query is uploaded to any server.</p>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">1</span><div><b>Beautify.</b> Turn a single-line query into an indented, readable structure so nested subqueries, JOINs, CTEs, and window functions are easy to follow.</div></li>
+            <li><span class="dot">2</span><div><b>Minify.</b> Strip whitespace back out to a compact one-line string for embedding in code or logs.</div></li>
+            <li><span class="dot">3</span><div><b>Validate.</b> Check that parentheses and string quotes are balanced, and point to the spot where they are not.</div></li>
+          </ul>
+        </div>
+
+        <div class="cav">Two different jobs</div>
+        <h2 id="does">What is the difference between formatting and validating SQL?</h2>
+        <p>Formatting changes only how the query looks; validation checks whether it is well-formed. A formatter, in the words of the library the Best Answer Hub tool is built on, "pretty-prints SQL queries" and does not run them (<a href="https://github.com/sql-formatter-org/sql-formatter" target="_blank" rel="noopener noreferrer">sql-formatter, 2026</a>). It re-indents, breaks lines, and normalizes keyword case so a human can read the logic. Minifying is the reverse: it removes the whitespace again to produce the smallest valid string.</p>
+        <p>Validation is a separate step, and it comes in two depths. A syntax check can be done from the text alone: it confirms the grammar holds, that every opening parenthesis closes and every quote is matched. A semantic check, whether a table or column actually exists, cannot be done from text alone; it needs the real database schema. That is why an in-browser validator can tell you a query is syntactically sound but cannot promise it will run against your production database. The honest framing matters, and the Best Answer Hub SQL Formatter sticks to the structural checks it can verify.</p>
+        <div class="callout sage"><div class="h">Handy to know</div><p>Because formatting is pure text work, it can run with no internet connection at all. Once the Best Answer Hub SQL Formatter page has loaded, you can go offline and it keeps working, which is exactly what you want when the query touches sensitive data.</p></div>
+
+        <div class="cav">The part most people miss</div>
+        <h2 id="paste">Why should you never paste production SQL into a random web tool?</h2>
+        <p>Because a real query is rarely just logic. It carries your table names, column names, sometimes hard-coded IDs, connection strings, or credentials, and the structure of your database itself. Paste that into a tool that processes it on a server, and you have handed a third party a map of your data. The risk stopped being theoretical in late 2025.</p>
+        <p>Researchers at watchTowr Labs found that two widely used online formatting and beautifier sites had exposed more than 80,000 user pastes totaling over five gigabytes, accumulated across five years. The saved submissions contained Active Directory credentials, database and cloud keys, private keys, repository tokens, and personal data belonging to organizations in government, banking, insurance, healthcare, and critical infrastructure (<a href="https://labs.watchtowr.com/stop-putting-your-passwords-into-random-websites-yes-seriously-you-are-the-problem/" target="_blank" rel="noopener noreferrer">watchTowr Labs, 2025</a>). The cause was mundane: a public "Recent Links" save feature generated guessable URLs that anyone could enumerate and scrape (<a href="https://www.bleepingcomputer.com/news/security/code-beautifiers-expose-credentials-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">BleepingComputer, 2025</a>). One of the two platforms, CodeBeautify, hosts its own SQL formatter alongside the tools that leaked, so an SQL query pasted there sat in the same category of exposure.</p>
+
+        <blockquote>Never transmit secrets via plaintext. <span class="accent">In this day and age, there is no excuse.</span><cite>OWASP Secrets Management Cheat Sheet</cite></blockquote>
+        <p>The working rule that follows: any secret that reaches an untrusted third party should be treated as compromised and rotated (<a href="https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP, 2026</a>). The scale of the wider problem explains why this keeps happening. GitGuardian detected 23.8 million new secrets leaked on public GitHub repositories in 2024 alone, a 25% jump on the year before (<a href="https://blog.gitguardian.com/the-state-of-secrets-sprawl-2025/" target="_blank" rel="noopener noreferrer">GitGuardian, 2025</a>). Pasting a query into a server-side tool is a smaller, quieter version of the same mistake. The Best Answer Hub SQL Formatter avoids the whole category by never sending the query anywhere: you can open your browser Network tab, format a query, and watch zero requests go out.</p>
+
+        <div class="cav">Pick the right mode</div>
+        <h2 id="dialect">Which SQL dialect should you format for?</h2>
+        <p>Pick the dialect your database actually speaks, because there is no single universal SQL. There is a formal standard, ISO/IEC 9075, whose current edition is SQL:2023, but implementations diverge enough that, as the PostgreSQL documentation puts it, "no current version of any database management system claims full conformance to Core SQL:2023" (<a href="https://www.postgresql.org/docs/current/features.html" target="_blank" rel="noopener noreferrer">PostgreSQL docs, 2026</a>). Keywords, identifier quoting, and row-limit syntax all differ, which is why a formatter has to be told which grammar to assume.</p>
+        <table>
+          <thead><tr><th>Dialect</th><th>Quotes identifiers with</th><th>Limits rows with</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td class="band">ANSI (SQL:2023)</td><td><code>"double quotes"</code></td><td><code>FETCH FIRST n ROWS</code></td><td>The standard; no engine fully conforms</td></tr>
+            <tr><td class="band">PostgreSQL</td><td><code>"double quotes"</code></td><td><code>LIMIT n</code></td><td>Aims at the latest standard</td></tr>
+            <tr><td class="band">MySQL</td><td><code>`backticks`</code></td><td><code>LIMIT n</code></td><td>Standard-aligned, with deviations</td></tr>
+            <tr><td class="band">SQL Server (T-SQL)</td><td><code>[square brackets]</code></td><td><code>TOP n</code></td><td>Microsoft dialect</td></tr>
+            <tr><td class="band">SQLite</td><td><code>"double"</code> or <code>[brackets]</code></td><td><code>LIMIT n</code></td><td>Lightweight, embedded</td></tr>
+          </tbody>
+        </table>
+        <p>MySQL frames its own position plainly: "We try to make MySQL Server follow the ANSI SQL standard and the ODBC SQL standard, but MySQL Server performs operations differently in some cases" (<a href="https://dev.mysql.com/doc/refman/8.4/en/differences-from-ansi.html" target="_blank" rel="noopener noreferrer">MySQL 8.4 Reference Manual, 2026</a>). Microsoft SQL Server communicates entirely through its own dialect, Transact-SQL (<a href="https://learn.microsoft.com/en-us/sql/t-sql/language-reference" target="_blank" rel="noopener noreferrer">Microsoft Learn, 2026</a>). Selecting the matching dialect in the Best Answer Hub SQL Formatter is what keeps backticks, square brackets, and dialect-specific functions from being mangled.</p>
+
+        <figure class="chart">
+          <figcaption class="chart-title">The databases developers actually use (2025)</figcaption>
+          <svg viewBox="0 0 600 280" role="img" aria-label="Bar chart of database usage in the 2025 Stack Overflow Developer Survey: PostgreSQL 55.6 percent, MySQL 40.5 percent, SQLite 37.5 percent, SQL Server 30.1 percent">
+            <defs><linearGradient id="dbgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <line x1="60" y1="232" x2="565" y2="232" stroke="#E1D4be" stroke-width="2"/>
+            <rect x="80" y="87" width="90" height="145" rx="8" fill="url(#dbgrad)"/>
+            <text x="125" y="77" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="22" font-weight="800" fill="#33302A">55.6%</text>
+            <text x="125" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">PostgreSQL</text>
+            <rect x="205" y="127" width="90" height="105" rx="8" fill="url(#dbgrad)" opacity="0.9"/>
+            <text x="250" y="117" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="22" font-weight="800" fill="#33302A">40.5%</text>
+            <text x="250" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">MySQL</text>
+            <rect x="330" y="134" width="90" height="98" rx="8" fill="url(#dbgrad)" opacity="0.82"/>
+            <text x="375" y="124" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="22" font-weight="800" fill="#33302A">37.5%</text>
+            <text x="375" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">SQLite</text>
+            <rect x="455" y="154" width="90" height="78" rx="8" fill="url(#dbgrad)" opacity="0.74"/>
+            <text x="500" y="144" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="22" font-weight="800" fill="#33302A">30.1%</text>
+            <text x="500" y="252" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">SQL Server</text>
+          </svg>
+          <p class="chart-src">Source: Stack Overflow Developer Survey, 2025 (all respondents, database section). PostgreSQL 55.6%, MySQL 40.5%, SQLite 37.5%, Microsoft SQL Server 30.1%.</p>
+        </figure>
+
+        <div class="cav">What good looks like</div>
+        <h2 id="style">What does clean, readable SQL look like?</h2>
+        <p>Readable SQL is consistent, not clever: uppercase keywords, one clause per line, and steady indentation so the shape of the query matches its logic. A widely used reference, the SQL style guide by Simon Holywell, recommends uppercasing reserved words like <code>SELECT</code> and <code>WHERE</code>, aligning root keywords so they "form a river down the middle," and using <code>snake_case</code> identifiers (<a href="https://www.sqlstyle.guide/" target="_blank" rel="noopener noreferrer">sqlstyle.guide, 2026</a>). These are conventions, not rules, but applying one consistently is what makes a query reviewable.</p>
+        <div class="codebox">
+          <div class="dt">The same query, formatted</div>
+          <div class="codelines">-- before: valid, but hard to scan
+select id,name,email from users where active=1 and created_at&gt;'2026-01-01' order by name;
+
+-- after: same query, formatted
+SELECT id, name, email
+FROM users
+WHERE active = 1
+  AND created_at &gt; '2026-01-01'
+ORDER BY name;</div>
+          <p class="codenote">Both versions run identically. The formatted one is the version you can review in a pull request or return to in six months. The Best Answer Hub SQL Formatter produces it in one click, and minifies it straight back for embedding in code.</p>
+        </div>
+
+        <div class="cav">Why this one</div>
+        <h2 id="different">How is Best Answer Hub different from other SQL formatters?</h2>
+        <p>The difference is where your query is processed. Several well-known formatters run in the browser, and several send your text to a server. The table below reflects what each tool states about itself; the safe default is a tool that never transmits the query at all.</p>
+        <table>
+          <thead><tr><th>Tool</th><th>Processes your query</th><th>What the page says</th></tr></thead>
+          <tbody>
+            <tr><td class="band">Best Answer Hub</td><td>In your browser</td><td>Nothing uploaded; works offline after load</td></tr>
+            <tr><td class="band">sqlformat.org</td><td>In your browser</td><td>"processed in your browser and never leave your computer" (vendor claim)</td></tr>
+            <tr><td class="band">Poor Man's T-SQL Formatter</td><td>In your browser</td><td>"all formatting is done within your browser"; open source</td></tr>
+            <tr><td class="band">FreeFormatter.com</td><td>On a server</td><td>Input held "in transient memory (RAM)" (vendor claim)</td></tr>
+            <tr><td class="band">CodeBeautify SQL Formatter</td><td>On a server</td><td>Platform whose saved pastes were exposed in 2025</td></tr>
+          </tbody>
+        </table>
+        <p>Beyond privacy, the Best Answer Hub SQL Formatter asks for no signup, sets no usage limits, shows no ads, and works on any device with a browser, including a locked-down or air-gapped machine where you cannot install an IDE. It is a quick, private way to make a query readable, not a lead-capture funnel.</p>
+
+        <div class="cta">
+          <span class="kicker">Format it without sending it anywhere</span>
+          <h3>Try the free SQL Formatter</h3>
+          <p>Beautify, minify, and validate SQL for PostgreSQL, MySQL, SQLite, and SQL Server, entirely in your browser. No signup, no upload, no limits.</p>
+          <a class="btn" href="/developer-toolbox/sql-formatter/">Open the SQL Formatter</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Frequently asked questions about SQL formatting</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/markdown-editor/">Where Does Your Text Go in a Markdown Editor?</a></b> The other browser-only writing tool, with live preview and nothing synced.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/json-formatter/">The JSON Formatter That Never Uploads Your Data</a></b> The same client-side principle, for JSON.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>watchTowr Labs, <a href="https://labs.watchtowr.com/stop-putting-your-passwords-into-random-websites-yes-seriously-you-are-the-problem/" target="_blank" rel="noopener noreferrer">Stop putting your passwords into random websites</a>, 2025 (80,000+ pastes, 5GB+ exposed).</li>
+          <li>BleepingComputer, <a href="https://www.bleepingcomputer.com/news/security/code-beautifiers-expose-credentials-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">Code beautifiers expose credentials from banks, govt, tech orgs</a>, 2025.</li>
+          <li>OWASP, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">Secrets Management Cheat Sheet</a>, 2026.</li>
+          <li>GitGuardian, <a href="https://blog.gitguardian.com/the-state-of-secrets-sprawl-2025/" target="_blank" rel="noopener noreferrer">The State of Secrets Sprawl 2025</a>, 2025 (23.8M secrets leaked in 2024).</li>
+          <li>Stack Overflow, <a href="https://survey.stackoverflow.co/2025/technology" target="_blank" rel="noopener noreferrer">Developer Survey 2025, Technology</a>, 2025 (database usage).</li>
+          <li>PostgreSQL, <a href="https://www.postgresql.org/docs/current/features.html" target="_blank" rel="noopener noreferrer">SQL Conformance</a>, 2026.</li>
+          <li>MySQL, <a href="https://dev.mysql.com/doc/refman/8.4/en/differences-from-ansi.html" target="_blank" rel="noopener noreferrer">Differences from Standard SQL</a>, 2026.</li>
+          <li>Microsoft Learn, <a href="https://learn.microsoft.com/en-us/sql/t-sql/language-reference" target="_blank" rel="noopener noreferrer">Transact-SQL reference</a>, 2026.</li>
+          <li>sql-formatter, <a href="https://github.com/sql-formatter-org/sql-formatter" target="_blank" rel="noopener noreferrer">Project README</a>, 2026.</li>
+          <li>Simon Holywell, <a href="https://www.sqlstyle.guide/" target="_blank" rel="noopener noreferrer">SQL style guide</a>, 2026.</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">More free developer tools: <a href="/developer-toolbox/sql-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">SQL Formatter</a>, <a href="/developer-toolbox/markdown-editor/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Markdown Editor</a>, <a href="/tools/json-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">JSON Formatter</a>, and <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">the Developer Toolbox</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-style:normal;font-size:.82rem;color:var(--label);margin-top:10px}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.7;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

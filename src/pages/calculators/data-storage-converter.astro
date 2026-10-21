@@ -1,0 +1,720 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HowToSchema from '../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Data Storage Converter?',
+    a: 'The Best Answer Hub Data Storage Converter is a free, privacy-first browser tool that converts between data storage units and data rate units. It handles both decimal (SI) units like GB and TB that manufacturers use, and binary (IEC) units like GiB and TiB that operating systems use. It also converts internet speeds from Mbps to MB/s so you understand your real download speeds. Everything runs in your browser with no data collection.',
+  },
+  {
+    q: 'Why does my 1 TB hard drive only show 931 GB?',
+    a: 'Your drive is labeled in decimal terabytes where 1 TB equals 1,000,000,000,000 bytes. Windows displays capacity in binary gibibytes where 1 GiB equals 1,073,741,824 bytes. When you divide 1,000,000,000,000 by 1,073,741,824, you get approximately 931. Your drive is not defective. Windows is simply using a different counting system and displaying GiB while labeling it as GB. The Best Answer Hub Data Storage Converter shows this exact conversion instantly. Enter 1 TB and select GiB to see the 931 figure yourself.',
+  },
+  {
+    q: 'What is the difference between GB and GiB?',
+    a: 'GB stands for gigabyte and uses decimal counting where 1 GB equals 1,000,000,000 bytes. GiB stands for gibibyte and uses binary counting where 1 GiB equals 1,073,741,824 bytes. The difference is about 7.4%. Hard drive manufacturers advertise in GB because the numbers are larger. Windows and macOS report storage in GiB but label it as GB, which causes confusion. The IEC introduced GiB in 1998 to fix this ambiguity.',
+  },
+  {
+    q: 'How many MB are in a GB exactly?',
+    a: 'In the decimal system used by manufacturers, 1 GB equals exactly 1,000 MB. In the binary system used by operating systems, 1 GiB equals 1,024 MiB. This 2.4% difference compounds as you move up the scale. At the gigabyte level the gap is 74 MB, but at the terabyte level it grows to 99 GB. Always check whether a spec sheet uses GB or GiB before comparing capacities.',
+  },
+  {
+    q: 'How do I convert Mbps to MB/s?',
+    a: 'Divide the megabits per second by 8 to get megabytes per second. For example, 100 Mbps equals 12.5 MB/s. This is because there are 8 bits in 1 byte. Internet service providers advertise speeds in megabits because the numbers are eight times larger and sound more impressive. The Best Answer Hub Data Storage Converter handles this automatically and also shows you the theoretical download time for a 1 GB file.',
+  },
+  {
+    q: 'Why is my internet speed 100 Mbps but downloads are only 12.5 MB/s?',
+    a: '100 Mbps is 100 megabits per second. Dividing by 8 gives 12.5 megabytes per second. This is the correct theoretical maximum. Your actual downloads are often slower because of protocol overhead, network congestion, server limitations, and Wi-Fi interference. A realistic sustained download speed is typically 70% to 90% of the theoretical maximum, so 100 Mbps usually delivers 9 to 11 MB/s in practice.',
+  },
+  {
+    q: 'What is the difference between bits and bytes?',
+    a: 'A bit is the smallest unit of digital information: a single 0 or 1. A byte is a group of 8 bits. Network speeds are measured in bits per second because data travels one bit at a time over wires and radio waves. File sizes are measured in bytes because computers process data in 8-bit chunks. This is why you always divide internet speed by 8 to estimate download speed in bytes.',
+  },
+  {
+    q: 'How many gigabytes are in a terabyte exactly?',
+    a: 'In the decimal system, 1 terabyte equals exactly 1,000 gigabytes. In the binary system, 1 tebibyte equals 1,024 gibibytes. The confusion arises because Windows labels binary tebibytes as terabytes. So when Windows says a drive has 931 GB, it actually means 931 GiB, which equals exactly 1 decimal TB. The Best Answer Hub Data Storage Converter lets you switch between both systems instantly.',
+  },
+  {
+    q: 'What is a tebibyte (TiB)?',
+    a: 'A tebibyte is a binary unit of digital information equal to 1,099,511,627,776 bytes, or 1,024 gibibytes. The International Electrotechnical Commission introduced tebibyte in 1998 to distinguish binary multiples from decimal multiples. Before that, both systems were called terabytes, which caused widespread confusion. macOS switched to displaying decimal gigabytes in 2009, but Windows still uses binary gibibytes while labeling them as gigabytes.',
+  },
+  {
+    q: 'Why do hard drive manufacturers use decimal but Windows uses binary?',
+    a: 'Manufacturers use decimal because it produces larger advertised capacities: a 1 TB drive sounds bigger than a 0.91 TiB drive. Windows uses binary because computers operate in base-2, so memory and file systems are naturally organized in powers of 2. This mismatch has existed since the 1980s. Apple switched macOS to decimal reporting in 2009, which is why a 1 TB drive shows as 1 TB on a Mac but 931 GB on Windows.',
+  },
+  {
+    q: 'How do I calculate file transfer time?',
+    a: 'Divide the file size in bytes by the transfer speed in bytes per second. For example, a 10 GB file is 10,000,000,000 bytes. At 100 MB/s, which is 100,000,000 bytes per second, the transfer takes 100 seconds or about 1 minute 40 seconds. At 100 Mbps, first convert to 12.5 MB/s, then divide: 10,000,000,000 ÷ 12,500,000 = 800 seconds or about 13 minutes. The Best Answer Hub Data Storage Converter shows theoretical transfer times automatically.',
+  },
+  {
+    q: 'What is the difference between KB and KiB?',
+    a: 'KB stands for kilobyte and equals 1,000 bytes in the decimal system. KiB stands for kibibyte and equals 1,024 bytes in the binary system. The difference is 2.4%. While small at the kilobyte level, it compounds to about 7.4% at the gigabyte level and 9.9% at the terabyte level. The IEC introduced kibibyte and the other binary prefixes in 1998 to remove this ambiguity.',
+  },
+  {
+    q: 'Why does my 500 GB cloud storage hold less than 500 GB?',
+    a: 'Cloud providers like Google Drive, Dropbox, and iCloud measure storage in decimal gigabytes where 1 GB equals 1,000,000,000 bytes. If you upload files from a Windows PC, Windows reports file sizes in binary gibibytes where 1 GiB equals 1,073,741,824 bytes. A 500 GB cloud plan can hold approximately 465 GiB of Windows-reported files. The space is not missing. The units are simply different.',
+  },
+  {
+    q: 'How do I convert between storage units quickly?',
+    a: 'Use the Best Answer Hub Data Storage Converter. Select your starting unit (for example, TB for a drive label or GiB for a Windows report) and select your target unit. The tool handles both decimal and binary units and shows the exact formula. For quick mental math, remember that binary units are about 2.4% larger at each step, compounding to roughly 7.4% at the GB level and 9.9% at the TB level.',
+  },
+  {
+    q: 'What is data rate and bandwidth?',
+    a: 'Data rate is the speed at which data is transferred, measured in bits or bytes per second. Bandwidth is the maximum capacity of a connection to carry data, also measured in bits per second. A 100 Mbps internet connection has a bandwidth of 100 megabits per second and a data rate of approximately 12.5 megabytes per second. Higher bandwidth allows more data to flow simultaneously, which is why multiple users on the same connection slow everyone down.',
+  },
+];
+
+const seo = {
+  title: 'Data Storage Converter — TB to GB & Data Rates (2026)',
+  description: 'Free data storage converter with binary vs decimal toggle. Convert TB, GB, MB, and understand why your 1TB drive shows 931GB. Plus Mbps to MB/s converter.',
+  url: '/calculators/data-storage-converter/',
+  type: 'WebPage' as const,
+  datePublished: '2026-05-24T00:00:00+00:00',
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'Data Storage Converter', url: '/calculators/data-storage-converter/' }
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated 2026 · Binary vs Decimal
+          </div>
+          <a href="/calculators/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Calculators
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Data Storage<br/>
+          <em class="italic text-bae-primary">Converter & Data Rates</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Convert between TB, GB, MB, and binary units like GiB and TiB. Understand why your 1TB drive shows 931GB. Plus convert internet speeds from Mbps to MB/s with real download time estimates.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Data storage converter">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Mode Tabs -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-1.5 shadow-bae-sm">
+            <div class="flex gap-1" id="mode-tabs">
+              <button type="button" data-mode="storage" class="mode-btn active flex-1 text-sm font-semibold py-2 px-4 rounded-bae-sm bg-bae-primary text-white transition-colors">Data Storage</button>
+              <button type="button" data-mode="rate" class="mode-btn flex-1 text-sm font-semibold py-2 px-4 rounded-bae-sm text-bae-muted hover:text-bae-ink transition-colors">Data Rate</button>
+            </div>
+          </div>
+
+          <!-- Data Storage Panel -->
+          <div id="storage-panel" class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <!-- From -->
+            <div class="mb-4">
+              <label class="text-sm font-semibold text-bae-ink block mb-2">From</label>
+              <div class="flex gap-3">
+                <input type="number" id="store-from-value" value="1" step="any" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary" />
+                <select id="store-from-unit" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary"></select>
+              </div>
+            </div>
+
+            <!-- To -->
+            <div>
+              <label class="text-sm font-semibold text-bae-ink block mb-2">To</label>
+              <select id="store-to-unit" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary"></select>
+            </div>
+
+            <!-- Quick Explanation -->
+            <div class="mt-4 pt-4 border-t border-bae-border">
+              <p class="text-xs text-bae-muted leading-relaxed" id="storage-tip">Decimal units use multiples of 1000. Binary units use multiples of 1024. Windows labels binary units as GB, TB, etc.</p>
+            </div>
+          </div>
+
+          <!-- Data Rate Panel -->
+          <div id="rate-panel" class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm hidden">
+            <!-- From -->
+            <div class="mb-2">
+              <label class="text-sm font-semibold text-bae-ink block mb-2">From</label>
+              <div class="flex gap-3">
+                <input type="number" id="rate-from-value" value="100" step="any" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary" />
+                <select id="rate-from-unit" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary"></select>
+              </div>
+            </div>
+
+            <!-- Swap -->
+            <div class="flex justify-center py-2">
+              <button type="button" id="rate-swap-btn" class="w-9 h-9 rounded-full bg-bae-primary text-white flex items-center justify-center hover:bg-bae-accent transition-colors shadow-bae-sm" aria-label="Swap units">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+              </button>
+            </div>
+
+            <!-- To -->
+            <div>
+              <label class="text-sm font-semibold text-bae-ink block mb-2">To</label>
+              <select id="rate-to-unit" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2.5 bg-white focus:outline-none focus:border-bae-primary"></select>
+            </div>
+
+            <!-- Quick Explanation -->
+            <div class="mt-4 pt-4 border-t border-bae-border">
+              <p class="text-xs text-bae-muted leading-relaxed" id="rate-tip">Internet speeds are in bits per second. File sizes are in bytes. Divide by 8 to convert. Real-world speeds are 10–30% slower due to overhead.</p>
+            </div>
+          </div>
+
+          <!-- Reset -->
+          <div class="flex justify-end">
+            <button type="button" id="clear-btn" class="text-sm font-semibold text-bae-muted hover:text-bae-primary hover:underline transition-colors bg-transparent border-0 cursor-pointer px-0 py-0">
+              Reset converter
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <!-- Main Result -->
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4" id="result-title">Conversion Result</h3>
+            <div id="result-main" class="text-3xl font-bold font-serif mb-1">—</div>
+            <div id="result-equation" class="text-sm text-white/70 mb-3">Select units and enter a value</div>
+            <div id="result-alt" class="text-sm text-bae-primary font-medium mb-4 hidden"></div>
+            <button type="button" id="copy-btn" class="w-full bg-bae-primary hover:bg-bae-accent text-white font-semibold text-sm py-2.5 rounded-bae-sm transition-colors">
+              Copy Result
+            </button>
+            <button type="button" id="pdf-btn" class="w-full mt-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm py-2.5 rounded-bae-sm transition-colors">
+              Download PDF Report
+            </button>
+          </div>
+
+          <!-- Show Your Work -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 shadow-bae-sm">
+            <h3 class="text-xs font-bold uppercase tracking-[0.08em] text-bae-muted mb-3">Show Your Work</h3>
+            <div class="space-y-2 text-sm" id="show-work-content">
+              <p class="text-bae-muted">Select units and enter a value to see the exact conversion formula and real-world context.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Pick a mode', text: 'Choose Data Storage for TB/GB conversions or Data Rate for internet speed math like Mbps to MB/s.' },
+    { name: 'Select your units', text: 'Pick from decimal (1000) or binary (1024) storage units, or bit/byte rate units. The dropdown groups make it clear which system you are using.' },
+    { name: 'See the exact math', text: 'Get your result with the full formula, real-world context like download times, and explanations for common confusion points.' },
+  ]} />
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Pick a mode</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Choose Data Storage for TB/GB conversions or Data Rate for internet speed math like Mbps to MB/s.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Select your units</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Pick from decimal (1000) or binary (1024) storage units, or bit/byte rate units. The dropdown groups make it clear which system you are using.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">See the exact math</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Get your result with the full formula, real-world context like download times, and explanations for common confusion points.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more free calculators</h3>
+          <p class="text-sm text-bae-muted">Also try our <a href="/calculators/unit-currency-converter/" class="text-bae-primary hover:underline">Unit Converter</a>, <a href="/calculators/cooking-converter/" class="text-bae-primary hover:underline">Cooking Converter</a>, and <a href="/calculators/" class="text-bae-primary hover:underline">Calculators Hub</a>.</p>
+        </div>
+        <a href="/calculators/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse all calculators →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Real-World Conversions -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Real-world conversions</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Storage</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">The 1 TB drive mystery</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">1 TB = 931 GiB</div>
+          <p class="text-sm text-bae-muted leading-relaxed">A 1 terabyte hard drive contains 1,000,000,000,000 bytes. Windows divides this by 1,073,741,824 to report capacity in gibibytes, giving 931 GiB. The drive is not defective. Windows is using binary math while the label uses decimal.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Internet</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">ISP speed reality</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">100 Mbps = 12.5 MB/s</div>
+          <p class="text-sm text-bae-muted leading-relaxed">An internet plan advertised as 100 megabits per second delivers a theoretical maximum of 12.5 megabytes per second. In practice, protocol overhead and network congestion reduce this to about 9 to 11 MB/s. This is why a 1 GB file takes roughly 90 seconds to download, not 80.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Cloud</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Cloud storage math</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">500 GB cloud = 465 GiB</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Google Drive, Dropbox, and iCloud measure storage in decimal gigabytes. If you upload files from a Windows PC, Windows reports those files in binary gibibytes. A 500 GB cloud plan holds approximately 465 GiB of Windows-reported files. The missing 35 GB is not a billing error.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Download</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">4K movie transfer</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">50 GB at 25 MB/s = ~33 min</div>
+          <p class="text-sm text-bae-muted leading-relaxed">A typical 4K movie download is about 50 GB, which equals 50,000 megabytes. At a sustained download speed of 25 MB/s, the transfer takes 2,000 seconds or about 33 minutes. At 100 Mbps, which is 12.5 MB/s, the same file takes about 67 minutes.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Conversion factors are based on international standards. Real-world transfer speeds depend on network conditions, protocol overhead, and hardware limitations.</p>
+    </div>
+  </section>
+
+  <!-- Report Summary (hidden on page; captured for PDF) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Data Conversion Report</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Data Storage & Rate Report</p>
+          </div>
+        </div>
+        <div class="border-t border-bae-border pt-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Mode</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-mode">—</p>
+            </div>
+            <div>
+              <p class="text-xs text-bae-muted uppercase tracking-wider mb-1">Date</p>
+              <p class="text-2xl font-bold text-bae-ink" id="report-date">—</p>
+            </div>
+          </div>
+          <div id="report-details"></div>
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>Conversion factors are based on international standards. Real-world transfer speeds depend on network conditions, protocol overhead, and hardware limitations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      const STORAGE_UNITS = {
+        B: { name: 'bytes', factor: 1 },
+        KB: { name: 'kilobytes', factor: 1000 },
+        MB: { name: 'megabytes', factor: 1000000 },
+        GB: { name: 'gigabytes', factor: 1000000000 },
+        TB: { name: 'terabytes', factor: 1000000000000 },
+        PB: { name: 'petabytes', factor: 1000000000000000 },
+        KiB: { name: 'kibibytes', factor: 1024 },
+        MiB: { name: 'mebibytes', factor: 1048576 },
+        GiB: { name: 'gibibytes', factor: 1073741824 },
+        TiB: { name: 'tebibytes', factor: 1099511627776 },
+        PiB: { name: 'pebibytes', factor: 1125899906842624 },
+      };
+
+      const RATE_UNITS = {
+        bps: { name: 'bits per second', factor: 1 },
+        Kbps: { name: 'kilobits per second', factor: 1000 },
+        Mbps: { name: 'megabits per second', factor: 1000000 },
+        Gbps: { name: 'gigabits per second', factor: 1000000000 },
+        Tbps: { name: 'terabits per second', factor: 1000000000000 },
+        'B/s': { name: 'bytes per second', factor: 8 },
+        'KB/s': { name: 'kilobytes per second', factor: 8000 },
+        'MB/s': { name: 'megabytes per second', factor: 8000000 },
+        'GB/s': { name: 'gigabytes per second', factor: 8000000000 },
+        'TB/s': { name: 'terabytes per second', factor: 8000000000000 },
+      };
+
+      let currentMode = 'storage';
+
+      function formatNumber(num) {
+        if (!isFinite(num)) return '—';
+        if (num === 0) return '0';
+        const abs = Math.abs(num);
+        if (abs >= 1e15) return num.toExponential(4);
+        if (abs < 1e-9) return num.toExponential(4);
+        if (abs >= 1000000) return num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+        if (abs >= 1) return num.toLocaleString(undefined, { maximumFractionDigits: 4 });
+        return num.toLocaleString(undefined, { maximumFractionDigits: 6 });
+      }
+
+      function populateStorageSelects() {
+        const fromSelect = $('store-from-unit');
+        const toSelect = $('store-to-unit');
+        const buildSelect = (select, selected) => {
+          select.innerHTML = '';
+          const bOpt = document.createElement('option');
+          bOpt.value = 'B';
+          bOpt.textContent = 'B: bytes';
+          if (selected === 'B') bOpt.selected = true;
+          select.appendChild(bOpt);
+          const decGroup = document.createElement('optgroup');
+          decGroup.label = 'Decimal (multiples of 1000)';
+          ['KB','MB','GB','TB','PB'].forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u;
+            opt.textContent = u + ': ' + STORAGE_UNITS[u].name;
+            if (u === selected) opt.selected = true;
+            decGroup.appendChild(opt);
+          });
+          select.appendChild(decGroup);
+          const binGroup = document.createElement('optgroup');
+          binGroup.label = 'Binary (multiples of 1024)';
+          ['KiB','MiB','GiB','TiB','PiB'].forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u;
+            opt.textContent = u + ': ' + STORAGE_UNITS[u].name;
+            if (u === selected) opt.selected = true;
+            binGroup.appendChild(opt);
+          });
+          select.appendChild(binGroup);
+        };
+        buildSelect(fromSelect, 'TB');
+        buildSelect(toSelect, 'GiB');
+      }
+
+      function populateRateSelects() {
+        const fromSelect = $('rate-from-unit');
+        const toSelect = $('rate-to-unit');
+        const buildSelect = (select, selected) => {
+          select.innerHTML = '';
+          const bitGroup = document.createElement('optgroup');
+          bitGroup.label = 'Bits per second';
+          ['bps','Kbps','Mbps','Gbps','Tbps'].forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u;
+            opt.textContent = u + ': ' + RATE_UNITS[u].name;
+            if (u === selected) opt.selected = true;
+            bitGroup.appendChild(opt);
+          });
+          select.appendChild(bitGroup);
+          const byteGroup = document.createElement('optgroup');
+          byteGroup.label = 'Bytes per second';
+          ['B/s','KB/s','MB/s','GB/s','TB/s'].forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u;
+            opt.textContent = u + ': ' + RATE_UNITS[u].name;
+            if (u === selected) opt.selected = true;
+            byteGroup.appendChild(opt);
+          });
+          select.appendChild(byteGroup);
+        };
+        buildSelect(fromSelect, 'Mbps');
+        buildSelect(toSelect, 'MB/s');
+      }
+
+      function setMode(mode, doCalc) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+          if (btn.dataset.mode === mode) {
+            btn.classList.add('bg-bae-primary', 'text-white');
+            btn.classList.remove('text-bae-muted');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('text-bae-muted');
+          }
+        });
+        if (mode === 'storage') {
+          $('storage-panel').classList.remove('hidden');
+          $('rate-panel').classList.add('hidden');
+        } else {
+          $('storage-panel').classList.add('hidden');
+          $('rate-panel').classList.remove('hidden');
+        }
+        if (doCalc !== false) calculate();
+      }
+
+      function calculate() {
+        if (currentMode === 'storage') calculateStorage();
+        else calculateRate();
+      }
+
+      function calculateStorage() {
+        const value = parseFloat($('store-from-value').value);
+        const fromUnit = $('store-from-unit').value;
+        const toUnit = $('store-to-unit').value;
+        if (isNaN(value)) {
+          $('result-main').textContent = '—';
+          $('result-equation').textContent = 'Enter a valid number';
+          $('result-alt').classList.add('hidden');
+          $('show-work-content').innerHTML = '<p class="text-bae-muted">Enter a valid number to see the conversion.</p>';
+          return;
+        }
+        const fromFactor = STORAGE_UNITS[fromUnit].factor;
+        const toFactor = STORAGE_UNITS[toUnit].factor;
+        const result = value * fromFactor / toFactor;
+        const bytes = value * fromFactor;
+
+        $('result-main').textContent = formatNumber(result) + ' ' + toUnit;
+        $('result-equation').textContent = value + ' ' + fromUnit + ' = ' + formatNumber(result) + ' ' + toUnit;
+
+        const altEl = $('result-alt');
+        if (fromUnit === 'TB' && toUnit === 'GiB') {
+          altEl.textContent = 'This is why a 1 TB drive shows as ~931 GB in Windows. Windows uses binary GiB but labels it as GB.';
+          altEl.classList.remove('hidden');
+        } else if (fromUnit === 'GB' && toUnit === 'GiB') {
+          altEl.textContent = 'A 500 GB drive has about 465 GiB of usable space in Windows.';
+          altEl.classList.remove('hidden');
+        } else if (fromUnit === 'PB' && toUnit === 'PiB') {
+          altEl.textContent = 'Binary petabytes are larger than decimal ones, so a 1 PB drive holds about 0.888 PiB (roughly 909 TiB).';
+          altEl.classList.remove('hidden');
+        } else {
+          altEl.textContent = formatNumber(bytes) + ' bytes';
+          altEl.classList.remove('hidden');
+        }
+
+        let work = '<p class="text-bae-muted">1 ' + fromUnit + ' = ' + fromFactor.toLocaleString() + ' bytes</p>';
+        work += '<p class="text-bae-muted">1 ' + toUnit + ' = ' + toFactor.toLocaleString() + ' bytes</p>';
+        work += '<p class="text-bae-ink font-medium">' + value + ' &times; ' + fromFactor.toLocaleString() + ' &divide; ' + toFactor.toLocaleString() + ' = ' + formatNumber(result) + ' ' + toUnit + '</p>';
+        if ((fromUnit === 'TB' || fromUnit === 'GB' || fromUnit === 'PB') && (toUnit === 'GiB' || toUnit === 'TiB' || toUnit === 'PiB')) {
+          work += '<p class="text-xs text-bae-primary mt-2">Manufacturers advertise in decimal ' + fromUnit + '. Windows reports in binary ' + toUnit + ' but labels it as ' + fromUnit.replace('i', '') + '.</p>';
+        }
+        $('show-work-content').innerHTML = work;
+        updateURL();
+      }
+
+      function calculateRate() {
+        const value = parseFloat($('rate-from-value').value);
+        const fromUnit = $('rate-from-unit').value;
+        const toUnit = $('rate-to-unit').value;
+        if (isNaN(value)) {
+          $('result-main').textContent = '—';
+          $('result-equation').textContent = 'Enter a valid number';
+          $('result-alt').classList.add('hidden');
+          $('show-work-content').innerHTML = '<p class="text-bae-muted">Enter a valid number to see the conversion.</p>';
+          return;
+        }
+        const fromFactor = RATE_UNITS[fromUnit].factor;
+        const toFactor = RATE_UNITS[toUnit].factor;
+        const result = value * fromFactor / toFactor;
+
+        $('result-main').textContent = formatNumber(result) + ' ' + toUnit;
+        $('result-equation').textContent = value + ' ' + fromUnit + ' = ' + formatNumber(result) + ' ' + toUnit;
+
+        const mbps = value * fromFactor / 1000000;
+        const seconds = 8000 / mbps;
+        let timeText;
+        if (seconds >= 60) {
+          timeText = formatNumber(seconds / 60) + ' minutes';
+        } else {
+          timeText = formatNumber(seconds) + ' seconds';
+        }
+        const altEl = $('result-alt');
+        altEl.textContent = 'Theoretical download time for 1 GB: ~' + timeText + '. Real-world speeds are typically 10–30% slower.';
+        altEl.classList.remove('hidden');
+
+        let work = '<p class="text-bae-muted">1 ' + fromUnit + ' = ' + fromFactor.toLocaleString() + ' bits per second</p>';
+        work += '<p class="text-bae-muted">1 ' + toUnit + ' = ' + toFactor.toLocaleString() + ' bits per second</p>';
+        work += '<p class="text-bae-ink font-medium">' + value + ' &times; ' + fromFactor.toLocaleString() + ' &divide; ' + toFactor.toLocaleString() + ' = ' + formatNumber(result) + ' ' + toUnit + '</p>';
+        if ((fromUnit === 'bps' || fromUnit === 'Kbps' || fromUnit === 'Mbps' || fromUnit === 'Gbps' || fromUnit === 'Tbps') && (toUnit === 'B/s' || toUnit === 'KB/s' || toUnit === 'MB/s' || toUnit === 'GB/s' || toUnit === 'TB/s')) {
+          work += '<p class="text-xs text-bae-primary mt-2">Internet speeds are in bits per second. There are 8 bits in 1 byte. Divide by 8 to get bytes per second.</p>';
+        } else if ((toUnit === 'bps' || toUnit === 'Kbps' || toUnit === 'Mbps' || toUnit === 'Gbps' || toUnit === 'Tbps') && (fromUnit === 'B/s' || fromUnit === 'KB/s' || fromUnit === 'MB/s' || fromUnit === 'GB/s' || fromUnit === 'TB/s')) {
+          work += '<p class="text-xs text-bae-primary mt-2">Multiply by 8 to convert bytes per second to bits per second.</p>';
+        }
+        $('show-work-content').innerHTML = work;
+        updateURL();
+      }
+
+      function updateURL() {
+        try {
+          const url = new URL(window.location.href);
+          const params = new URLSearchParams();
+          if (currentMode === 'rate') {
+            params.set('mode', 'rate');
+            const val = parseFloat($('rate-from-value').value);
+            if (val !== 100) params.set('val', val);
+            const from = $('rate-from-unit').value;
+            const to = $('rate-to-unit').value;
+            if (from !== 'Mbps') params.set('from', from);
+            if (to !== 'MB/s') params.set('to', to);
+          } else {
+            const val = parseFloat($('store-from-value').value);
+            if (val !== 1) params.set('val', val);
+            const from = $('store-from-unit').value;
+            const to = $('store-to-unit').value;
+            if (from !== 'TB') params.set('from', from);
+            if (to !== 'GiB') params.set('to', to);
+          }
+          url.search = params.toString();
+          window.history.replaceState({}, '', url);
+        } catch (e) {}
+      }
+
+      function readURL() {
+        try {
+          const url = new URL(window.location.href);
+          const mode = url.searchParams.get('mode');
+          if (mode === 'rate') {
+            currentMode = 'rate';
+            setMode('rate', false);
+            const val = url.searchParams.get('val');
+            if (val !== null) $('rate-from-value').value = val;
+            const from = url.searchParams.get('from');
+            const to = url.searchParams.get('to');
+            if (from) $('rate-from-unit').value = from;
+            if (to) $('rate-to-unit').value = to;
+          } else {
+            const val = url.searchParams.get('val');
+            if (val !== null) $('store-from-value').value = val;
+            const from = url.searchParams.get('from');
+            const to = url.searchParams.get('to');
+            if (from) $('store-from-unit').value = from;
+            if (to) $('store-to-unit').value = to;
+          }
+        } catch (e) {}
+      }
+
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => setMode(btn.dataset.mode));
+      });
+
+      $('store-from-value').addEventListener('input', calculateStorage);
+      $('store-from-unit').addEventListener('change', calculateStorage);
+      $('store-to-unit').addEventListener('change', calculateStorage);
+
+      $('rate-from-value').addEventListener('input', calculateRate);
+      $('rate-from-unit').addEventListener('change', calculateRate);
+      $('rate-to-unit').addEventListener('change', calculateRate);
+
+      $('rate-swap-btn').addEventListener('click', () => {
+        const from = $('rate-from-unit').value;
+        const to = $('rate-to-unit').value;
+        $('rate-from-unit').value = to;
+        $('rate-to-unit').value = from;
+        calculateRate();
+      });
+
+      $('copy-btn').addEventListener('click', () => {
+        const text = $('result-equation').textContent;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            const btn = $('copy-btn');
+            const orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = orig, 1500);
+          });
+        }
+      });
+
+      $('clear-btn').addEventListener('click', () => {
+        if (currentMode === 'storage') {
+          $('store-from-value').value = 1;
+          $('store-from-unit').value = 'TB';
+          $('store-to-unit').value = 'GiB';
+        } else {
+          $('rate-from-value').value = 100;
+          $('rate-from-unit').value = 'Mbps';
+          $('rate-to-unit').value = 'MB/s';
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+        calculate();
+      });
+
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const origText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        $('report-mode').textContent = currentMode === 'storage' ? 'Data Storage' : 'Data Rate';
+        $('report-date').textContent = new Date().toLocaleDateString();
+        const details = $('report-details');
+        details.innerHTML = '';
+        if (currentMode === 'storage') {
+          details.innerHTML = '<p class="text-sm text-bae-muted mb-2">' + $('result-equation').textContent + '</p><p class="text-sm text-bae-muted">' + $('show-work-content').textContent + '</p>';
+        } else {
+          details.innerHTML = '<p class="text-sm text-bae-muted mb-2">' + $('result-equation').textContent + '</p><p class="text-sm text-bae-muted">' + $('show-work-content').textContent + '</p>';
+        }
+
+        const element = $('print-report');
+        const clone = element.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('hidden');
+        clone.style.maxWidth = 'none';
+        clone.style.width = '210mm';
+        clone.style.margin = '0';
+        clone.style.boxSizing = 'border-box';
+        document.body.appendChild(clone);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'data-storage-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(clone).save();
+        } catch (err) {
+          console.error(err);
+        } finally {
+          if (clone.parentNode) document.body.removeChild(clone);
+          btn.textContent = origText;
+          btn.disabled = false;
+        }
+      });
+
+      populateStorageSelects();
+      populateRateSelects();
+      readURL();
+      calculate();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      #print-report .container { max-width: 100% !important; padding: 0 !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+  </style>
+</BaseLayout>

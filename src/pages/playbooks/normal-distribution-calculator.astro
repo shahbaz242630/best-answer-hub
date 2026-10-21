@@ -1,0 +1,361 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Normal Distribution Calculator?', a: 'The Best Answer Hub Normal Distribution Calculator is a free, browser-based statistics tool that computes probabilities for any normal distribution and shades them on a live bell curve. It handles left-tail, right-tail, between, outside, two-tailed, and reverse-solve questions, shows the z-score and steps, and runs with no signup and nothing uploaded.' },
+  { q: 'Why is a probability the same as an area under the curve?', a: 'For a continuous distribution, probability is defined as area under the density curve, and the total area equals 1. So the chance of a value in a range is the area over that range. The Best Answer Hub Normal Distribution Calculator computes that area and shades the matching region on the curve.' },
+  { q: 'How do you find the probability between two z-scores?', a: 'Subtract the smaller cumulative area from the larger one. For P(&minus;0.5 &lt; Z &lt; 1.2), that is 0.8849 minus 0.3085, which is 0.5764, about 57.6%. The Best Answer Hub Normal Distribution Calculator has a Between mode that shades the region and shows the subtraction explicitly.' },
+  { q: 'What is the difference between left-tail and right-tail probability?', a: 'Left-tail P(X &lt; x) is the area to the left of a value, and right-tail P(X &gt; x) is the area to the right, equal to 1 minus the left tail. If P(X &lt; 85) is 0.75, then P(X &gt; 85) is 0.25. The Best Answer Hub Normal Distribution Calculator displays both and shades the correct tail.' },
+  { q: 'What is the empirical rule?', a: 'The empirical rule states that about 68% of a normal distribution falls within one standard deviation of the mean, about 95% within two, and about 99.7% within three. The Best Answer Hub Normal Distribution Calculator can overlay these bands on the curve so you can estimate probabilities without a z-table.' },
+  { q: 'How do you convert a raw score to a z-score?', a: 'Use z = (x &minus; &mu;) / &sigma;. Scoring 78 on a test with a mean of 72 and a standard deviation of 6 gives z = 1.0, one standard deviation above the mean, about the 84th percentile. The Best Answer Hub Normal Distribution Calculator computes this and marks the score on the bell curve.' },
+  { q: 'What percentile is a z-score of 1.25?', a: 'A z-score of 1.25 sits at about the 89.4th percentile, since the cumulative area below it is 0.8944. The Best Answer Hub Normal Distribution Calculator returns the value to several decimals along with the shaded area and the complementary right-tail probability.' },
+  { q: 'How do you find a raw score from a percentile?', a: 'Use x = &mu; + z&sigma;, where z is the z-score for the percentile. For the 90th percentile with a mean of 100 and a standard deviation of 15, the raw score is 100 + 1.282 &times; 15, about 119.2. The Best Answer Hub Normal Distribution Calculator has a reverse-solve mode that does this directly.' },
+  { q: 'What z-score corresponds to a 95% confidence level?', a: 'For 95% confidence the critical z-scores are &minus;1.96 and +1.96 for a two-tailed interval, and 1.645 for one tail. For reference, 90% uses 1.645, 99% uses 2.576, and 99.9% uses 3.291. The Best Answer Hub Normal Distribution Calculator can return any of these critical values.' },
+  { q: 'Why does my TI-84 give a different answer?', a: 'Usually an input, not a bug. The common causes are swapping the mean and standard deviation in normalcdf, entering the variance instead of the standard deviation, or using the standard deviation where the standard error is needed. The Best Answer Hub Normal Distribution Calculator labels each field and prints the formula it used.' },
+  { q: 'Do I use standard deviation or variance?', a: 'Use the standard deviation, which is the square root of the variance. Entering the variance where the standard deviation belongs inflates the spread and distorts every probability. The Best Answer Hub Normal Distribution Calculator asks for the standard deviation and labels the field clearly to prevent the mix-up.' },
+  { q: 'When do I need the standard error instead of the standard deviation?', a: 'Use the standard error &sigma; divided by the square root of n when the question is about a sample mean rather than a single value, because averages vary less than individual readings. The Best Answer Hub Normal Distribution Calculator has a sample-size field that switches to the standard error automatically.' },
+  { q: 'Can I use the normal distribution if my data is skewed?', a: 'Only with caution. Normal-distribution probabilities are valid when the data is approximately normal, or when the sample is large enough for the Central Limit Theorem to apply to the mean. On clearly skewed data the areas mislead, so the Best Answer Hub Normal Distribution Calculator is best paired with a check that normality is reasonable.' },
+  { q: 'What algorithm does the calculator use?', a: 'The Best Answer Hub Normal Distribution Calculator computes the cumulative area with the Abramowitz and Stegun 26.2.17 analytic approximation, accurate to about eight decimal places, rather than numerical integration. That keeps results stable even with extreme bounds that can trip up some handheld calculators.' },
+  { q: 'Is the Best Answer Hub Normal Distribution Calculator free and private?', a: 'Yes. It is completely free with no usage limits and no signup. Every calculation runs in your browser, so nothing you enter is uploaded. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so it carries no ads.' },
+];
+
+const seo = {
+  title: 'How to Read Normal Distribution Probabilities',
+  description: 'Read normal distribution probabilities as areas under the bell curve: left, right, between, outside, the 68-95-99.7 rule, and reverse solving.',
+  url: '/playbooks/normal-distribution-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Normal Distribution Calculator', url: '/playbooks/normal-distribution-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+  <div class="hero">
+    <span class="glow"></span>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div class="masthead">
+          <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+          <span class="word">Best Answer Hub<i>.</i></span>
+        </div>
+        <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+      </div>
+      <span class="eyebrow">Best Answer Hub Playbooks &middot; Statistics</span>
+      <div class="cav">It is all about area</div>
+      <h1>How to Read <em>Normal Distribution</em> Probabilities</h1>
+      <p class="dek">In a normal distribution, a probability is an area under the bell curve. Once that clicks, every question, the chance of landing below a value, above it, between two, or outside them, becomes a matter of adding or subtracting areas. Here is how to read those areas, the 68-95-99.7 shortcut, and why two calculators can disagree on the same problem.</p>
+      <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Statistics</span><span>No signup</span></div>
+      <div class="bandstrip">
+        <div class="seg b1">Standardize<small>convert to a z-score</small></div>
+        <div class="seg b2">Find the area<small>left, right, between</small></div>
+        <div class="seg b3">Read it<small>probability, percentile</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n">= 1</div><div class="l">total area under any normal curve</div><div class="src">NIST</div></div>
+    <div class="stat"><div class="n">68-95-99.7</div><div class="l">the empirical rule, within 1, 2, 3 SD</div><div class="src">OpenStax</div></div>
+    <div class="stat"><div class="n">0.9750</div><div class="l">area below z = 1.96, the value behind a 95% interval</div><div class="src">NIST</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">computed in your browser, nothing uploaded</div><div class="src">no upload</div></div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="On this page">
+      <div class="t">On this page</div>
+      <a href="#what">What it is</a>
+      <a href="#area">Probability is area</a>
+      <a href="#tails">Left, right, between, outside</a>
+      <a href="#empirical">The 68-95-99.7 rule</a>
+      <a href="#reverse">Working backward</a>
+      <a href="#pitfalls">Why calculators disagree</a>
+      <a href="#different">Why this tool</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <article>
+      <p class="lead"><strong>In a normal distribution, the probability of a value falling in some range is the area under the bell curve over that range, and the total area is exactly 1.</strong> So the chance of scoring below a value is the area to its left, the chance of scoring above it is the area to its right, and the two always add to 1. The Best Answer Hub <a href="/calculators/stem-suite/normal-distribution-calculator/">Normal Distribution Calculator</a> computes those areas for left-tail, right-tail, between, and outside questions, shades the region on a live bell curve, and shows the z-score at each step, all in your browser.</p>
+
+      <p>This guide explains why a probability is an area, how the four kinds of tail question reduce to simple arithmetic on areas, how the 68-95-99.7 rule lets you check any answer by hand, how to work backward from a percentile to a raw score, and the three sourced reasons a TI-84 can hand back a different number. The tool sits in the Best Answer Hub <a href="/calculators/">Calculators hub</a> STEM suite, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+      <div class="cav">Start here</div>
+      <h2 id="what">What is the Best Answer Hub Normal Distribution Calculator?</h2>
+      <p>The Best Answer Hub Normal Distribution Calculator is a free, browser-based statistics tool that computes probabilities for any normal distribution and draws them. Enter a mean and standard deviation, pick a mode, and it returns the probability, the z-score, and the percentile, with the matching region shaded on a live bell curve. It covers left-tail, right-tail, between, outside, and two-tailed questions, reverse-solves from a percentile, overlays the empirical rule, and shows every step, with no signup and nothing uploaded.</p>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">1</span><div><b>Every kind of question.</b> Left tail, right tail, between two values, outside two values, and two-tailed, each shaded on the curve.</div></li>
+          <li><span class="dot">2</span><div><b>Works both ways.</b> Find a probability from a value, or reverse-solve to find the value at a given percentile.</div></li>
+          <li><span class="dot">3</span><div><b>Shows and checks the work.</b> The z-formula, the area lookup, and a 68-95-99.7 overlay you can use to sanity-check the answer.</div></li>
+        </ul>
+      </div>
+
+      <div class="cav">The core idea</div>
+      <h2 id="area">Why is a probability the same as an area?</h2>
+      <p>Because the normal distribution is continuous, probability is defined as area under its density curve, and the total area is 1 (<a href="https://stats.libretexts.org/Courses/Los_Angeles_City_College/Introductory_Statistics/05%3A_Continuous_Random_Variables/5.02%3A_Continuous_Probability_Functions" target="_blank" rel="noopener noreferrer">LibreTexts / OpenStax</a>). That single fact drives everything else: the chance of a value below x is the area to the left, and since the whole area is 1, the chance above x is just 1 minus that. The catch is that the cumulative area has no simple closed formula and has to be computed numerically (<a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm" target="_blank" rel="noopener noreferrer">NIST e-Handbook</a>), which is exactly why a calculator, a z-table, or a graphing utility exists in the first place.</p>
+      <p>To handle any normal distribution with one method, you standardize: convert a raw value to a z-score with z = (x &minus; &mu;) / &sigma;, which recenters the curve to a mean of 0 and a standard deviation of 1. One standard normal table or function then answers every problem. The Best Answer Hub Normal Distribution Calculator standardizes for you and shows the z-score it used, so the link between your raw value and the area is never hidden.</p>
+
+      <div class="cav">Four questions</div>
+      <h2 id="tails">Left tail, right tail, between, and outside</h2>
+      <p>Every normal-distribution question is one of four shapes, and each is simple arithmetic on areas. A left-tail probability P(X &lt; x) is the area to the left. A right-tail P(X &gt; x) is 1 minus the left tail. A between probability is the larger cumulative area minus the smaller one. An outside probability is 1 minus the between. For example, P(&minus;0.5 &lt; Z &lt; 1.2) is &Phi;(1.2) &minus; &Phi;(&minus;0.5) = 0.8849 &minus; 0.3085 = 0.5764, about 57.6% (<a href="https://en.wikipedia.org/wiki/Standard_normal_table" target="_blank" rel="noopener noreferrer">standard normal table</a>).</p>
+      <figure class="chart">
+        <figcaption class="chart-title">A "between" probability is the area over the range</figcaption>
+        <svg viewBox="0 0 600 224" role="img" aria-label="A bell curve with the area between z equals negative 0.5 and z equals 1.2 shaded, representing about 57.6 percent."><polygon points="267.0,59.0 268.3,57.9 269.6,56.9 271.0,55.8 272.3,54.8 273.6,53.8 274.9,52.9 276.2,52.0 277.6,51.2 278.9,50.4 280.2,49.6 281.5,48.9 282.8,48.3 284.2,47.6 285.5,47.1 286.8,46.5 288.1,46.1 289.4,45.6 290.8,45.2 292.1,44.9 293.4,44.6 294.7,44.4 296.0,44.2 297.4,44.1 298.7,44.0 300.0,44.0 301.3,44.0 302.6,44.1 304.0,44.2 305.3,44.4 306.6,44.6 307.9,44.9 309.2,45.2 310.6,45.6 311.9,46.1 313.2,46.5 314.5,47.1 315.8,47.6 317.2,48.3 318.5,48.9 319.8,49.6 321.1,50.4 322.4,51.2 323.8,52.0 325.1,52.9 326.4,53.8 327.7,54.8 329.0,55.8 330.4,56.9 331.7,57.9 333.0,59.0 334.3,60.2 335.6,61.4 337.0,62.6 338.3,63.8 339.6,65.1 340.9,66.4 342.2,67.7 343.6,69.1 344.9,70.4 346.2,71.8 347.5,73.2 348.8,74.7 350.2,76.1 351.5,77.6 352.8,79.1 354.1,80.5 355.4,82.1 356.8,83.6 358.1,85.1 359.4,86.6 360.7,88.2 362.0,89.7 363.4,91.3 364.7,92.8 366.0,94.4 367.3,95.9 368.6,97.5 370.0,99.0 371.3,100.6 372.6,102.1 373.9,103.6 375.2,105.2 376.6,106.7 377.9,108.2 379.2,109.7 379.2,172.0 267.0,172.0" fill="#C6603F" fill-opacity="0.26"/><polyline points="62.4,171.8 65.0,171.8 67.7,171.7 70.3,171.7 73.0,171.7 75.6,171.6 78.2,171.5 80.9,171.5 83.5,171.4 86.2,171.3 88.8,171.2 91.4,171.1 94.1,171.0 96.7,170.9 99.4,170.7 102.0,170.6 104.6,170.4 107.3,170.2 109.9,170.0 112.6,169.7 115.2,169.5 117.8,169.2 120.5,168.8 123.1,168.5 125.8,168.1 128.4,167.6 131.0,167.2 133.7,166.7 136.3,166.1 139.0,165.5 141.6,164.8 144.2,164.1 146.9,163.3 149.5,162.5 152.2,161.6 154.8,160.6 157.4,159.6 160.1,158.5 162.7,157.3 165.4,156.0 168.0,154.7 170.6,153.2 173.3,151.7 175.9,150.1 178.6,148.4 181.2,146.7 183.8,144.8 186.5,142.8 189.1,140.8 191.8,138.6 194.4,136.4 197.0,134.1 199.7,131.7 202.3,129.2 205.0,126.6 207.6,124.0 210.2,121.2 212.9,118.4 215.5,115.6 218.2,112.7 220.8,109.7 223.4,106.7 226.1,103.6 228.7,100.6 231.4,97.5 234.0,94.4 236.6,91.3 239.3,88.2 241.9,85.1 244.6,82.1 247.2,79.1 249.8,76.1 252.5,73.2 255.1,70.4 257.8,67.7 260.4,65.1 263.0,62.6 265.7,60.2 268.3,57.9 271.0,55.8 273.6,53.8 276.2,52.0 278.9,50.4 281.5,48.9 284.2,47.6 286.8,46.5 289.4,45.6 292.1,44.9 294.7,44.4 297.4,44.1 300.0,44.0 302.6,44.1 305.3,44.4 307.9,44.9 310.6,45.6 313.2,46.5 315.8,47.6 318.5,48.9 321.1,50.4 323.8,52.0 326.4,53.8 329.0,55.8 331.7,57.9 334.3,60.2 337.0,62.6 339.6,65.1 342.2,67.7 344.9,70.4 347.5,73.2 350.2,76.1 352.8,79.1 355.4,82.1 358.1,85.1 360.7,88.2 363.4,91.3 366.0,94.4 368.6,97.5 371.3,100.6 373.9,103.6 376.6,106.7 379.2,109.7 381.8,112.7 384.5,115.6 387.1,118.4 389.8,121.2 392.4,124.0 395.0,126.6 397.7,129.2 400.3,131.7 403.0,134.1 405.6,136.4 408.2,138.6 410.9,140.8 413.5,142.8 416.2,144.8 418.8,146.7 421.4,148.4 424.1,150.1 426.7,151.7 429.4,153.2 432.0,154.7 434.6,156.0 437.3,157.3 439.9,158.5 442.6,159.6 445.2,160.6 447.8,161.6 450.5,162.5 453.1,163.3 455.8,164.1 458.4,164.8 461.0,165.5 463.7,166.1 466.3,166.7 469.0,167.2 471.6,167.6 474.2,168.1 476.9,168.5 479.5,168.8 482.2,169.2 484.8,169.5 487.4,169.7 490.1,170.0 492.7,170.2 495.4,170.4 498.0,170.6 500.6,170.7 503.3,170.9 505.9,171.0 508.6,171.1 511.2,171.2 513.8,171.3 516.5,171.4 519.1,171.5 521.8,171.5 524.4,171.6 527.0,171.7 529.7,171.7 532.3,171.7 535.0,171.8 537.6,171.8" fill="none" stroke="#C6603F" stroke-width="2.5"/><line x1="60" y1="172.0" x2="540" y2="172.0" stroke="#E1D4be" stroke-width="2"/><line x1="267.0" y1="59.0" x2="267.0" y2="172.0" stroke="#8a4429" stroke-width="1.5" stroke-dasharray="3 3"/><text x="267.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#33302A">z = -0.5</text><line x1="379.2" y1="109.7" x2="379.2" y2="172.0" stroke="#8a4429" stroke-width="1.5" stroke-dasharray="3 3"/><text x="379.2" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#33302A">z = 1.2</text><text x="323.1" y="120" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="22" font-weight="800" fill="#8a4429">57.6%</text><text x="323.1" y="138" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#847B6B">area between</text></svg>
+        <p class="chart-src">The shaded area between z = &minus;0.5 and z = 1.2 is 0.5764, or about 57.6%, found by subtracting the two cumulative areas. Values from the standard normal table.</p>
+      </figure>
+      <table>
+        <thead><tr><th>Question</th><th>Notation</th><th>How the area works</th></tr></thead>
+        <tbody>
+          <tr><td class="band">Below a value</td><td>P(X &lt; x)</td><td>Area to the left</td></tr>
+          <tr><td class="band">Above a value</td><td>P(X &gt; x)</td><td>1 &minus; area to the left</td></tr>
+          <tr><td class="band">Between two values</td><td>P(a &lt; X &lt; b)</td><td>Larger area &minus; smaller area</td></tr>
+          <tr><td class="band">Outside two values</td><td>P(X &lt; a or X &gt; b)</td><td>1 &minus; the between area</td></tr>
+        </tbody>
+      </table>
+      <p>The Best Answer Hub Normal Distribution Calculator has a dedicated mode for each, shades the matching region, and shows the subtraction so the answer is not a black box.</p>
+
+      <div class="cav">The shortcut</div>
+      <h2 id="empirical">What is the 68-95-99.7 rule?</h2>
+      <p>The empirical rule says about 68% of a normal distribution falls within one standard deviation of the mean, about 95% within two, and about 99.7% within three (<a href="https://openstax.org/books/statistics/pages/6-1-the-standard-normal-distribution" target="_blank" rel="noopener noreferrer">OpenStax, Statistics</a>). It is the fastest sanity check there is. IQ scores are scaled to a mean of 100 and a standard deviation of 15, so about 68% of people score between 85 and 115, and about 95% between 70 and 130. If a calculator tells you something wildly different, one of your inputs is wrong.</p>
+      <figure class="chart">
+        <figcaption class="chart-title">The empirical rule: 68, 95, and 99.7 percent</figcaption>
+        <svg viewBox="0 0 600 224" role="img" aria-label="A normal bell curve showing 68 percent of data within one standard deviation, 95 percent within two, and 99.7 percent within three."><polygon points="102.0,170.6 103.3,170.5 104.6,170.4 106.0,170.3 107.3,170.2 108.6,170.1 109.9,170.0 111.2,169.9 112.6,169.7 113.9,169.6 115.2,169.5 116.5,169.3 117.8,169.2 119.2,169.0 120.5,168.8 121.8,168.7 123.1,168.5 124.4,168.3 125.8,168.1 127.1,167.9 128.4,167.6 129.7,167.4 131.0,167.2 132.4,166.9 133.7,166.7 135.0,166.4 136.3,166.1 137.6,165.8 139.0,165.5 140.3,165.2 141.6,164.8 142.9,164.5 144.2,164.1 145.6,163.7 146.9,163.3 148.2,162.9 149.5,162.5 150.8,162.0 152.2,161.6 153.5,161.1 154.8,160.6 156.1,160.1 157.4,159.6 158.8,159.0 160.1,158.5 161.4,157.9 162.7,157.3 164.0,156.7 165.4,156.0 166.7,155.4 168.0,154.7 169.3,154.0 170.6,153.2 172.0,152.5 173.3,151.7 174.6,150.9 175.9,150.1 177.2,149.3 178.6,148.4 179.9,147.6 181.2,146.7 182.5,145.7 183.8,144.8 185.2,143.8 186.5,142.8 187.8,141.8 189.1,140.8 190.4,139.7 191.8,138.6 193.1,137.5 194.4,136.4 195.7,135.3 197.0,134.1 198.4,132.9 199.7,131.7 201.0,130.4 202.3,129.2 203.6,127.9 205.0,126.6 206.3,125.3 207.6,124.0 208.9,122.6 210.2,121.2 211.6,119.8 212.9,118.4 214.2,117.0 215.5,115.6 216.8,114.1 218.2,112.7 219.5,111.2 220.8,109.7 222.1,108.2 223.4,106.7 224.8,105.2 226.1,103.6 227.4,102.1 228.7,100.6 230.0,99.0 231.4,97.5 232.7,95.9 234.0,94.4 235.3,92.8 236.6,91.3 238.0,89.7 239.3,88.2 240.6,86.6 241.9,85.1 243.2,83.6 244.6,82.1 245.9,80.5 247.2,79.1 248.5,77.6 249.8,76.1 251.2,74.7 252.5,73.2 253.8,71.8 255.1,70.4 256.4,69.1 257.8,67.7 259.1,66.4 260.4,65.1 261.7,63.8 263.0,62.6 264.4,61.4 265.7,60.2 267.0,59.0 268.3,57.9 269.6,56.9 271.0,55.8 272.3,54.8 273.6,53.8 274.9,52.9 276.2,52.0 277.6,51.2 278.9,50.4 280.2,49.6 281.5,48.9 282.8,48.3 284.2,47.6 285.5,47.1 286.8,46.5 288.1,46.1 289.4,45.6 290.8,45.2 292.1,44.9 293.4,44.6 294.7,44.4 296.0,44.2 297.4,44.1 298.7,44.0 300.0,44.0 301.3,44.0 302.6,44.1 304.0,44.2 305.3,44.4 306.6,44.6 307.9,44.9 309.2,45.2 310.6,45.6 311.9,46.1 313.2,46.5 314.5,47.1 315.8,47.6 317.2,48.3 318.5,48.9 319.8,49.6 321.1,50.4 322.4,51.2 323.8,52.0 325.1,52.9 326.4,53.8 327.7,54.8 329.0,55.8 330.4,56.9 331.7,57.9 333.0,59.0 334.3,60.2 335.6,61.4 337.0,62.6 338.3,63.8 339.6,65.1 340.9,66.4 342.2,67.7 343.6,69.1 344.9,70.4 346.2,71.8 347.5,73.2 348.8,74.7 350.2,76.1 351.5,77.6 352.8,79.1 354.1,80.5 355.4,82.1 356.8,83.6 358.1,85.1 359.4,86.6 360.7,88.2 362.0,89.7 363.4,91.3 364.7,92.8 366.0,94.4 367.3,95.9 368.6,97.5 370.0,99.0 371.3,100.6 372.6,102.1 373.9,103.6 375.2,105.2 376.6,106.7 377.9,108.2 379.2,109.7 380.5,111.2 381.8,112.7 383.2,114.1 384.5,115.6 385.8,117.0 387.1,118.4 388.4,119.8 389.8,121.2 391.1,122.6 392.4,124.0 393.7,125.3 395.0,126.6 396.4,127.9 397.7,129.2 399.0,130.4 400.3,131.7 401.6,132.9 403.0,134.1 404.3,135.3 405.6,136.4 406.9,137.5 408.2,138.6 409.6,139.7 410.9,140.8 412.2,141.8 413.5,142.8 414.8,143.8 416.2,144.8 417.5,145.7 418.8,146.7 420.1,147.6 421.4,148.4 422.8,149.3 424.1,150.1 425.4,150.9 426.7,151.7 428.0,152.5 429.4,153.2 430.7,154.0 432.0,154.7 433.3,155.4 434.6,156.0 436.0,156.7 437.3,157.3 438.6,157.9 439.9,158.5 441.2,159.0 442.6,159.6 443.9,160.1 445.2,160.6 446.5,161.1 447.8,161.6 449.2,162.0 450.5,162.5 451.8,162.9 453.1,163.3 454.4,163.7 455.8,164.1 457.1,164.5 458.4,164.8 459.7,165.2 461.0,165.5 462.4,165.8 463.7,166.1 465.0,166.4 466.3,166.7 467.6,166.9 469.0,167.2 470.3,167.4 471.6,167.6 472.9,167.9 474.2,168.1 475.6,168.3 476.9,168.5 478.2,168.7 479.5,168.8 480.8,169.0 482.2,169.2 483.5,169.3 484.8,169.5 486.1,169.6 487.4,169.7 488.8,169.9 490.1,170.0 491.4,170.1 492.7,170.2 494.0,170.3 495.4,170.4 496.7,170.5 498.0,170.6 498.0,172.0 102.0,172.0" fill="#E4EADD"/><polygon points="168.0,154.7 169.3,154.0 170.6,153.2 172.0,152.5 173.3,151.7 174.6,150.9 175.9,150.1 177.2,149.3 178.6,148.4 179.9,147.6 181.2,146.7 182.5,145.7 183.8,144.8 185.2,143.8 186.5,142.8 187.8,141.8 189.1,140.8 190.4,139.7 191.8,138.6 193.1,137.5 194.4,136.4 195.7,135.3 197.0,134.1 198.4,132.9 199.7,131.7 201.0,130.4 202.3,129.2 203.6,127.9 205.0,126.6 206.3,125.3 207.6,124.0 208.9,122.6 210.2,121.2 211.6,119.8 212.9,118.4 214.2,117.0 215.5,115.6 216.8,114.1 218.2,112.7 219.5,111.2 220.8,109.7 222.1,108.2 223.4,106.7 224.8,105.2 226.1,103.6 227.4,102.1 228.7,100.6 230.0,99.0 231.4,97.5 232.7,95.9 234.0,94.4 235.3,92.8 236.6,91.3 238.0,89.7 239.3,88.2 240.6,86.6 241.9,85.1 243.2,83.6 244.6,82.1 245.9,80.5 247.2,79.1 248.5,77.6 249.8,76.1 251.2,74.7 252.5,73.2 253.8,71.8 255.1,70.4 256.4,69.1 257.8,67.7 259.1,66.4 260.4,65.1 261.7,63.8 263.0,62.6 264.4,61.4 265.7,60.2 267.0,59.0 268.3,57.9 269.6,56.9 271.0,55.8 272.3,54.8 273.6,53.8 274.9,52.9 276.2,52.0 277.6,51.2 278.9,50.4 280.2,49.6 281.5,48.9 282.8,48.3 284.2,47.6 285.5,47.1 286.8,46.5 288.1,46.1 289.4,45.6 290.8,45.2 292.1,44.9 293.4,44.6 294.7,44.4 296.0,44.2 297.4,44.1 298.7,44.0 300.0,44.0 301.3,44.0 302.6,44.1 304.0,44.2 305.3,44.4 306.6,44.6 307.9,44.9 309.2,45.2 310.6,45.6 311.9,46.1 313.2,46.5 314.5,47.1 315.8,47.6 317.2,48.3 318.5,48.9 319.8,49.6 321.1,50.4 322.4,51.2 323.8,52.0 325.1,52.9 326.4,53.8 327.7,54.8 329.0,55.8 330.4,56.9 331.7,57.9 333.0,59.0 334.3,60.2 335.6,61.4 337.0,62.6 338.3,63.8 339.6,65.1 340.9,66.4 342.2,67.7 343.6,69.1 344.9,70.4 346.2,71.8 347.5,73.2 348.8,74.7 350.2,76.1 351.5,77.6 352.8,79.1 354.1,80.5 355.4,82.1 356.8,83.6 358.1,85.1 359.4,86.6 360.7,88.2 362.0,89.7 363.4,91.3 364.7,92.8 366.0,94.4 367.3,95.9 368.6,97.5 370.0,99.0 371.3,100.6 372.6,102.1 373.9,103.6 375.2,105.2 376.6,106.7 377.9,108.2 379.2,109.7 380.5,111.2 381.8,112.7 383.2,114.1 384.5,115.6 385.8,117.0 387.1,118.4 388.4,119.8 389.8,121.2 391.1,122.6 392.4,124.0 393.7,125.3 395.0,126.6 396.4,127.9 397.7,129.2 399.0,130.4 400.3,131.7 401.6,132.9 403.0,134.1 404.3,135.3 405.6,136.4 406.9,137.5 408.2,138.6 409.6,139.7 410.9,140.8 412.2,141.8 413.5,142.8 414.8,143.8 416.2,144.8 417.5,145.7 418.8,146.7 420.1,147.6 421.4,148.4 422.8,149.3 424.1,150.1 425.4,150.9 426.7,151.7 428.0,152.5 429.4,153.2 430.7,154.0 432.0,154.7 432.0,172.0 168.0,172.0" fill="#F3E2D6"/><polygon points="234.0,94.4 235.3,92.8 236.6,91.3 238.0,89.7 239.3,88.2 240.6,86.6 241.9,85.1 243.2,83.6 244.6,82.1 245.9,80.5 247.2,79.1 248.5,77.6 249.8,76.1 251.2,74.7 252.5,73.2 253.8,71.8 255.1,70.4 256.4,69.1 257.8,67.7 259.1,66.4 260.4,65.1 261.7,63.8 263.0,62.6 264.4,61.4 265.7,60.2 267.0,59.0 268.3,57.9 269.6,56.9 271.0,55.8 272.3,54.8 273.6,53.8 274.9,52.9 276.2,52.0 277.6,51.2 278.9,50.4 280.2,49.6 281.5,48.9 282.8,48.3 284.2,47.6 285.5,47.1 286.8,46.5 288.1,46.1 289.4,45.6 290.8,45.2 292.1,44.9 293.4,44.6 294.7,44.4 296.0,44.2 297.4,44.1 298.7,44.0 300.0,44.0 301.3,44.0 302.6,44.1 304.0,44.2 305.3,44.4 306.6,44.6 307.9,44.9 309.2,45.2 310.6,45.6 311.9,46.1 313.2,46.5 314.5,47.1 315.8,47.6 317.2,48.3 318.5,48.9 319.8,49.6 321.1,50.4 322.4,51.2 323.8,52.0 325.1,52.9 326.4,53.8 327.7,54.8 329.0,55.8 330.4,56.9 331.7,57.9 333.0,59.0 334.3,60.2 335.6,61.4 337.0,62.6 338.3,63.8 339.6,65.1 340.9,66.4 342.2,67.7 343.6,69.1 344.9,70.4 346.2,71.8 347.5,73.2 348.8,74.7 350.2,76.1 351.5,77.6 352.8,79.1 354.1,80.5 355.4,82.1 356.8,83.6 358.1,85.1 359.4,86.6 360.7,88.2 362.0,89.7 363.4,91.3 364.7,92.8 366.0,94.4 366.0,172.0 234.0,172.0" fill="#C6603F" fill-opacity="0.34"/><polyline points="62.4,171.8 65.0,171.8 67.7,171.7 70.3,171.7 73.0,171.7 75.6,171.6 78.2,171.5 80.9,171.5 83.5,171.4 86.2,171.3 88.8,171.2 91.4,171.1 94.1,171.0 96.7,170.9 99.4,170.7 102.0,170.6 104.6,170.4 107.3,170.2 109.9,170.0 112.6,169.7 115.2,169.5 117.8,169.2 120.5,168.8 123.1,168.5 125.8,168.1 128.4,167.6 131.0,167.2 133.7,166.7 136.3,166.1 139.0,165.5 141.6,164.8 144.2,164.1 146.9,163.3 149.5,162.5 152.2,161.6 154.8,160.6 157.4,159.6 160.1,158.5 162.7,157.3 165.4,156.0 168.0,154.7 170.6,153.2 173.3,151.7 175.9,150.1 178.6,148.4 181.2,146.7 183.8,144.8 186.5,142.8 189.1,140.8 191.8,138.6 194.4,136.4 197.0,134.1 199.7,131.7 202.3,129.2 205.0,126.6 207.6,124.0 210.2,121.2 212.9,118.4 215.5,115.6 218.2,112.7 220.8,109.7 223.4,106.7 226.1,103.6 228.7,100.6 231.4,97.5 234.0,94.4 236.6,91.3 239.3,88.2 241.9,85.1 244.6,82.1 247.2,79.1 249.8,76.1 252.5,73.2 255.1,70.4 257.8,67.7 260.4,65.1 263.0,62.6 265.7,60.2 268.3,57.9 271.0,55.8 273.6,53.8 276.2,52.0 278.9,50.4 281.5,48.9 284.2,47.6 286.8,46.5 289.4,45.6 292.1,44.9 294.7,44.4 297.4,44.1 300.0,44.0 302.6,44.1 305.3,44.4 307.9,44.9 310.6,45.6 313.2,46.5 315.8,47.6 318.5,48.9 321.1,50.4 323.8,52.0 326.4,53.8 329.0,55.8 331.7,57.9 334.3,60.2 337.0,62.6 339.6,65.1 342.2,67.7 344.9,70.4 347.5,73.2 350.2,76.1 352.8,79.1 355.4,82.1 358.1,85.1 360.7,88.2 363.4,91.3 366.0,94.4 368.6,97.5 371.3,100.6 373.9,103.6 376.6,106.7 379.2,109.7 381.8,112.7 384.5,115.6 387.1,118.4 389.8,121.2 392.4,124.0 395.0,126.6 397.7,129.2 400.3,131.7 403.0,134.1 405.6,136.4 408.2,138.6 410.9,140.8 413.5,142.8 416.2,144.8 418.8,146.7 421.4,148.4 424.1,150.1 426.7,151.7 429.4,153.2 432.0,154.7 434.6,156.0 437.3,157.3 439.9,158.5 442.6,159.6 445.2,160.6 447.8,161.6 450.5,162.5 453.1,163.3 455.8,164.1 458.4,164.8 461.0,165.5 463.7,166.1 466.3,166.7 469.0,167.2 471.6,167.6 474.2,168.1 476.9,168.5 479.5,168.8 482.2,169.2 484.8,169.5 487.4,169.7 490.1,170.0 492.7,170.2 495.4,170.4 498.0,170.6 500.6,170.7 503.3,170.9 505.9,171.0 508.6,171.1 511.2,171.2 513.8,171.3 516.5,171.4 519.1,171.5 521.8,171.5 524.4,171.6 527.0,171.7 529.7,171.7 532.3,171.7 535.0,171.8 537.6,171.8" fill="none" stroke="#C6603F" stroke-width="2.5"/><line x1="60" y1="172.0" x2="540" y2="172.0" stroke="#E1D4be" stroke-width="2"/><line x1="102.0" y1="170.6" x2="102.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="168.0" y1="154.7" x2="168.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="234.0" y1="94.4" x2="234.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="366.0" y1="94.4" x2="366.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="432.0" y1="154.7" x2="432.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><line x1="498.0" y1="170.6" x2="498.0" y2="172.0" stroke="#cdbfa8" stroke-width="1" stroke-dasharray="2 3"/><text x="300" y="150" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="17" font-weight="800" fill="#8a4429">68%</text><text x="102.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-3σ</text><text x="168.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-2σ</text><text x="234.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">-1σ</text><text x="300.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">0</text><text x="366.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">+1σ</text><text x="432.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">+2σ</text><text x="498.0" y="188" text-anchor="middle" font-family="Karla, sans-serif" font-size="10" fill="#847B6B">+3σ</text><rect x="92" y="195" width="13" height="13" rx="3" fill="#C6603F"/><text x="111" y="205" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#4f4940">68% (±1 SD)</text><rect x="212" y="195" width="13" height="13" rx="3" fill="#F3E2D6"/><text x="231" y="205" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#4f4940">95% (±2 SD)</text><rect x="332" y="195" width="13" height="13" rx="3" fill="#E4EADD"/><text x="351" y="205" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#4f4940">99.7% (±3 SD)</text></svg>
+        <p class="chart-src">Percentages of a normal distribution within 1, 2, and 3 standard deviations of the mean. Exact figures 68.26 / 95.44 / 99.73 percent. Source: NIST e-Handbook and OpenStax.</p>
+      </figure>
+      <p>The Best Answer Hub Normal Distribution Calculator can overlay these three bands on the curve with their percentages, so you always have a hand-check sitting next to the exact answer.</p>
+
+      <div class="cav">In reverse</div>
+      <h2 id="reverse">How do you work backward, from a percentile to a value?</h2>
+      <p>Use the inverse of standardizing: x = &mu; + z&sigma;, where z is the z-score for your target percentile. The z-score for the 90th percentile is about 1.282, so for IQ scores with a mean of 100 and a standard deviation of 15, the 90th-percentile score is 100 + 1.282 &times; 15 = 119.2 (<a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda3671.htm" target="_blank" rel="noopener noreferrer">NIST critical values</a>). This is the operation a graphing calculator calls invNorm, and it answers questions like "what score puts me in the top 10%."</p>
+      <table>
+        <thead><tr><th>Confidence level</th><th>Critical z (two-tailed)</th></tr></thead>
+        <tbody>
+          <tr><td class="band">90%</td><td>1.645</td></tr>
+          <tr><td class="band">95%</td><td>1.96</td></tr>
+          <tr><td class="band">99%</td><td>2.576</td></tr>
+          <tr><td class="band">99.9%</td><td>3.291</td></tr>
+        </tbody>
+      </table>
+      <p>The Best Answer Hub Normal Distribution Calculator has a reverse-solve mode: enter the percentile, mean, and standard deviation, and it returns the exact raw score and z-score and marks the spot on the curve, without hunting through an invNorm table.</p>
+
+      <div class="cav">The gotchas</div>
+      <h2 id="pitfalls">Why does my TI-84 give a different answer?</h2>
+      <p>Almost always because of an input, not a bug, and there are three usual suspects. First, argument order: on a TI-84, normalcdf takes (lower bound, upper bound, mean, standard deviation) and invNorm takes (area to the left, mean, standard deviation), so swapping the mean and standard deviation quietly changes the answer (<a href="https://webcontent.indianhills.edu/_myhills/courses/MAT156/documents/calc_examples_lu6.pdf" target="_blank" rel="noopener noreferrer">Indian Hills Community College</a>). Second, entering the variance where the standard deviation belongs, since the standard deviation is the square root of the variance (<a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm" target="_blank" rel="noopener noreferrer">NIST</a>). Third, using &sigma; for a sample-mean problem that needs the standard error &sigma;/&radic;n.</p>
+      <div class="callout"><div class="h">The three usual culprits</div><p>1. Mean and standard deviation entered in the wrong order. 2. Variance typed in where the standard deviation was expected (SD is the square root of variance). 3. Using the standard deviation instead of the standard error &sigma;/&radic;n for a question about a sample mean. The Best Answer Hub Normal Distribution Calculator labels every field and prints the formula it used, so you can see which parameter went where.</p></div>
+      <p>A sample-mean question needs the standard error because averages vary less than individual values, a consequence of the Central Limit Theorem, and a sample is often treated as large enough for the normal approximation past roughly n = 30 (a rule of thumb, not a hard line) (<a href="https://openstax.org/books/introductory-statistics-2e/pages/7-1-the-central-limit-theorem-for-sample-means-averages" target="_blank" rel="noopener noreferrer">OpenStax</a>). One more caution: normal-distribution probabilities only hold when the data is approximately normal. On clearly skewed data the areas are misleading, because standardizing a value never changes the shape of its distribution (<a href="https://influentialpoints.com/Training/z_scores_use_and_misuse.htm" target="_blank" rel="noopener noreferrer">InfluentialPoints</a>).</p>
+      <div class="callout sage"><div class="h">Why the answers stay stable here</div><p>The Best Answer Hub Normal Distribution Calculator computes the area with the Abramowitz and Stegun 26.2.17 analytic approximation, accurate to about eight decimal places, rather than the numerical integration some handhelds use. That keeps extreme bounds from silently failing. Reference: Abramowitz and Stegun, Handbook of Mathematical Functions, 1964.</p></div>
+
+      <div class="cav">Why this one</div>
+      <h2 id="different">How is Best Answer Hub different from other calculators?</h2>
+      <p>The difference is that it bundles what other tools split up. Some calculators return only a number, some show a static curve, some cover only left and right tails. The Best Answer Hub Normal Distribution Calculator shades your own region on a live bell curve, handles between and outside and reverse questions, overlays the empirical rule, and prints the steps, in one place and in your browser with no signup.</p>
+      <table>
+        <thead><tr><th>Feature</th><th>Best Answer Hub</th><th>Typical calculator</th></tr></thead>
+        <tbody>
+          <tr><td>Shaded bell curve on your input</td><td class="band">Yes</td><td>Static image or none</td></tr>
+          <tr><td>Between, outside, and reverse modes</td><td class="band">All included</td><td>Often partial</td></tr>
+          <tr><td>Empirical-rule overlay</td><td class="band">Yes</td><td>Rare</td></tr>
+          <tr><td>Step-by-step working</td><td class="band">Yes</td><td>Usually not</td></tr>
+          <tr><td>Signup or upload</td><td class="band">Neither</td><td>Some gate features</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cta">
+        <span class="kicker">See the probability, not just a number</span>
+        <h3>Try the free Normal Distribution Calculator</h3>
+        <p>Enter a mean and standard deviation, pick left, right, between, outside, or reverse, and get the probability, z-score, and a shaded bell curve with the steps. No signup, in your browser.</p>
+        <a class="btn" href="/calculators/stem-suite/normal-distribution-calculator/">Open the Normal Distribution Calculator</a>
+      </div>
+
+      <div class="cav">Good questions</div>
+      <h2 id="faq">Frequently asked questions about the normal distribution</h2>
+      <div class="faq">
+        {faqs.map((f) => (
+          <div class="qa">
+            <div class="q" set:html={f.q}></div>
+            <div class="a" set:html={f.a}></div>
+          </div>
+        ))}
+      </div>
+
+      <div class="cav">People also read</div>
+      <h2>Keep going</h2>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/z-score-calculator/">How to Calculate and Read a Z-Score</a></b> The companion piece: standardizing a single value and reading its percentile.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/p-value-and-confidence-interval/">P-Values and Confidence Intervals, Read Correctly</a></b> Where tail areas and critical z-values do their real work.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-calculators/">Free Online Calculators, Nothing Uploaded</a></b> The Calculators hub guide, every tool client-side.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/ai-knowledge-test/">The Free AI Knowledge Test</a></b> A no-signup check of how well you really understand AI.</div></li>
+        </ul>
+      </div>
+
+      <h2>Sources</h2>
+      <ul class="sources">
+        <li>NIST/SEMATECH, <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda3661.htm" target="_blank" rel="noopener noreferrer">The Normal Distribution</a> (PDF vs CDF; the CDF is computed numerically).</li>
+        <li>LibreTexts / OpenStax, <a href="https://stats.libretexts.org/Courses/Los_Angeles_City_College/Introductory_Statistics/05%3A_Continuous_Random_Variables/5.02%3A_Continuous_Probability_Functions" target="_blank" rel="noopener noreferrer">Continuous Probability Functions</a> (probability equals area, total area 1).</li>
+        <li>OpenStax, <a href="https://openstax.org/books/statistics/pages/6-1-the-standard-normal-distribution" target="_blank" rel="noopener noreferrer">Statistics, section 6.1</a>, 2023 (the empirical rule, 68-95-99.7).</li>
+        <li>NIST/SEMATECH, <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda3671.htm" target="_blank" rel="noopener noreferrer">Standard normal cumulative and critical values</a> (Φ values; z for the 90th percentile and confidence levels).</li>
+        <li>Indian Hills Community College, <a href="https://webcontent.indianhills.edu/_myhills/courses/MAT156/documents/calc_examples_lu6.pdf" target="_blank" rel="noopener noreferrer">TI-84 normalcdf and invNorm guide</a> (argument order).</li>
+        <li>NIST/SEMATECH, <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm" target="_blank" rel="noopener noreferrer">Measures of Scale</a> (standard deviation is the square root of the variance).</li>
+        <li>Abramowitz and Stegun, <em>Handbook of Mathematical Functions</em>, 1964, formula 26.2.17 (the CDF approximation the tool uses).</li>
+      </ul>
+      <p class="foot">More free calculators: <a href="/calculators/">Calculators hub</a>, <a href="/calculators/statistics-suite/z-score-calculator/">Z-Score Calculator</a>, <a href="/calculators/statistics-suite/p-value-calculator/">P-Value Calculator</a>, and <a href="/tools/">all free tools</a>.</p>
+    </article>
+  </div>
+</div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.7rem;color:var(--clay);line-height:1}
+  .pb .stat .n sup{font-size:.6em}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  .pb .foot{max-width:1080px;margin:0 auto;padding:0 24px 50px;font-size:.85rem;color:var(--muted)}
+  .pb .foot a{color:var(--clay-deep)}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

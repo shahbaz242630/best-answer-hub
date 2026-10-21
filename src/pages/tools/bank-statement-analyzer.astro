@@ -1,0 +1,1471 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Bank Statement Analyzer?',
+    a: 'The Best Answer Hub Bank Statement Analyzer is a free browser-based tool that turns bank and credit card statements (PDF or CSV) into a categorized spending breakdown plus a list of recurring charges and subscriptions — including ones long forgotten. Everything runs on your device: no upload, no signup, and no bank login. Updated July 2026.',
+  },
+  {
+    q: 'Does this tool upload my bank statement or see my spending?',
+    a: 'No. The analysis runs entirely in your browser, so the statement never leaves your device, is never stored anywhere, and is never seen by anyone. You can verify it: open your browser\'s Network tab while analyzing and no file data is sent — the tool even keeps working with the internet disconnected. Bank statements are among the most sensitive documents there are, and this design removes the trust question entirely.',
+  },
+  {
+    q: 'How do I find subscriptions I forgot I\'m paying for?',
+    a: 'Drop one or more statements into the Best Answer Hub Bank Statement Analyzer and open the recurring charges panel. It groups repeated payments to the same merchant, flags known subscription services, and shows what each one costs per month and per year — the annual number is usually the wake-up call. Analyzing two or three consecutive months catches the most, including charges that only appear quarterly.',
+  },
+  {
+    q: 'Can I find my subscriptions without linking my bank account?',
+    a: 'Yes — that is exactly what this tool is for. Apps like Rocket Money require connecting your bank through Plaid, which many people refuse on principle and which does not work outside the US at all. The Best Answer Hub Bank Statement Analyzer reads the statement PDF you already download from your bank, so no credentials, no third-party access, and no country restrictions are involved.',
+  },
+  {
+    q: 'Is it really free? I don\'t want a subscription just to find my subscriptions.',
+    a: 'It is completely free — no signup, no trial, no page caps, and no premium tier. Paid subscription-finders charge for the result: some take a cut of "savings", others charge per scan or lock PDF import behind a paid plan. The Best Answer Hub Bank Statement Analyzer has no server costs to recover because everything runs on your device, so nothing needs to be charged.',
+  },
+  {
+    q: 'How does it detect recurring charges and subscriptions?',
+    a: 'Two ways. Across multiple statements, the Best Answer Hub Bank Statement Analyzer groups payments to the same merchant and checks the spacing — weekly, monthly, quarterly, or yearly intervals with three or more occurrences count as confirmed. Within a single statement, it flags known subscription services and descriptor wording like "RECURRING" or "MEMBERSHIP" as possible subscriptions. Every result carries an honest confidence label.',
+  },
+  {
+    q: 'What if a transaction lands in the wrong category?',
+    a: 'Change it on the spot. Every row in the results table has a category dropdown, and all totals, percentages, and charts recompute instantly when you change one. Miscategorization is the single most common complaint about budgeting apps, so the Best Answer Hub Bank Statement Analyzer treats your correction as the final word instead of hiding mistakes inside an algorithm.',
+  },
+  {
+    q: 'Which spending categories does it use?',
+    a: 'Twelve practical categories: Groceries, Dining and Delivery, Transport and Fuel, Subscriptions and Software, Telecom and Utilities, Shopping, Health and Pharmacy, Travel, Entertainment, Fees and Interest, Cash and Transfers, and Income and Refunds — anything unrecognized goes to Other rather than being guessed. Transfers and credit card payments are kept out of the spending total, which fixes the classic "my spending looks doubled" problem.',
+  },
+  {
+    q: 'Can I analyze credit card statements and several months together?',
+    a: 'Yes. The Best Answer Hub Bank Statement Analyzer reads both bank statements and credit card statements — where most subscriptions actually live — and accepts several files at once, merging them into one view with each transaction tagged by file. More months of history also makes recurring-charge detection stronger, since real intervals become visible across statements.',
+  },
+  {
+    q: 'Does it work with banks outside the US, like UAE or UK banks?',
+    a: 'Yes. Because it reads statements rather than connecting to banks, it is country-agnostic — statements in dirhams, pounds, or euros analyze exactly the same way, and bilingual Middle East statements such as HSBC UAE are supported. Bank-link subscription apps are typically US-only, which leaves most of the world without an automatic option; a statement-based analyzer has no such restriction.',
+  },
+  {
+    q: 'Can it catch duplicate subscriptions or a price increase?',
+    a: 'Yes on both. Duplicate services show up as separate recurring entries for the same merchant — a common surprise when an old autopay was never switched off. For price creep, the Best Answer Hub Bank Statement Analyzer follows a subscription through a price change and always shows the latest amount charged, so a quiet increase becomes visible instead of hiding inside an average.',
+  },
+  {
+    q: 'How accurate is the categorization?',
+    a: 'Recognition is rule-based against hundreds of known merchants across US, UK, and Middle East spending — Walmart to Tesco to Carrefour, DoorDash to Deliveroo to Talabat. Anything unrecognized is honestly labeled Other instead of being guessed into the wrong bucket, and every row can be corrected with the dropdown. Review the table before exporting, exactly as you would with any automatic tool.',
+  },
+  {
+    q: 'Can I export the results?',
+    a: 'Yes, two ways. Download the categorized transactions as a CSV that opens in Excel, Google Sheets, or accounting software. And download a renewal calendar (.ics) of detected recurring charges — import it into Google, Apple, or Outlook Calendar and each expected renewal appears as an event, so the next charge never surprises you again. Both files are generated locally in your browser.',
+  },
+  {
+    q: 'Is it safe to upload my bank statement to ChatGPT to analyze my spending?',
+    a: 'Uploading statements to AI chatbots sends your account numbers, balances, and complete merchant history to a third-party server with varying retention policies — security experts consistently advise against it. The safer route is analysis that never transmits the file: the Best Answer Hub Bank Statement Analyzer produces the same categorized breakdown while the statement stays on your device.',
+  },
+  {
+    q: 'Does it work on scanned paper statements?',
+    a: 'The analyzer reads text-based PDF statements (the kind your bank generates digitally) and CSV exports. For a scanned paper statement, run it through the Best Answer Hub <a href="/tools/bank-statement-to-excel/">Bank Statement to Excel converter</a> first — its built-in OCR extracts the transactions — then download the CSV and drop that into the analyzer. Digital PDFs from your bank give the most accurate results.',
+  },
+];
+
+const steps = [
+  { title: 'Drop your statements', description: 'Drag in bank or credit card statements — PDF or CSV, one month or several at once. Files stay on your device and are never uploaded anywhere.' },
+  { title: 'Review spending & subscriptions', description: 'See spending categorized with charts, top merchants, and every recurring charge with its monthly and annual cost. Fix any category with a dropdown — totals recompute instantly.' },
+  { title: 'Export or set reminders', description: 'Download the categorized transactions as CSV, or export a renewal calendar (.ics) so upcoming subscription charges appear in Google, Apple, or Outlook Calendar.' },
+];
+
+const seo = {
+  title: 'Bank Statement Analyzer: Free Subscription Finder (2026)',
+  description: 'Free bank statement analyzer. Drop PDF or CSV statements to see categorized spending and every recurring subscription. 100% in your browser, no upload.',
+  url: '/tools/bank-statement-analyzer/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Finance Toolkit', url: '/finance-toolkit/' },
+    { name: 'Bank Statement Analyzer', url: '/tools/bank-statement-analyzer/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · Nothing Uploaded"
+    title="Bank Statement Analyzer:"
+    accentText="Find forgotten subscriptions and see where money goes"
+    description="Drop bank or credit card statements (PDF or CSV) and get categorized spending, top merchants, and every recurring charge with its true annual cost — all in your browser. No upload, no signup, no bank login."
+    href={seo.url}
+  />
+
+  <!-- Analyzer Interface -->
+  <section class="py-6 md:py-8" aria-label="Bank statement analyzer">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="max-w-3xl mx-auto">
+        <!-- Drop Zone -->
+        <div id="drop-zone" class="border-2 border-dashed border-bae-border rounded-bae p-8 md:p-12 text-center bg-bae-card hover:border-bae-primary hover:bg-bae-primary-soft/30 transition-colors cursor-pointer mb-4">
+          <div class="w-12 h-12 rounded-full bg-bae-primary-soft flex items-center justify-center text-bae-primary mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-bae-ink mb-1" id="drop-title">Drop bank or card statements here</p>
+          <p class="text-xs text-bae-muted" id="drop-subtitle">PDF or CSV — several months at once works best (.pdf, .csv)</p>
+          <input type="file" id="file-input" class="hidden" accept=".pdf,.csv,application/pdf,text/csv" multiple />
+        </div>
+
+        <!-- File Info -->
+        <div id="file-info" class="hidden mb-4 text-center">
+          <p class="text-sm text-bae-ink font-medium" id="info-name"></p>
+          <p class="text-xs text-bae-muted" id="info-size"></p>
+          <button type="button" id="reset-top" class="mt-2 text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors">↺ Reset — choose different files</button>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-area" class="hidden mb-4 bg-bae-card border border-bae-border rounded-bae p-5">
+          <button type="button" id="analyze-btn" class="w-full bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">
+            Analyze Statements
+          </button>
+          <p class="text-[11px] text-bae-muted mt-2 text-center">Everything runs locally — you can even go offline first.</p>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress-area" class="hidden mb-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 text-center">
+            <div class="w-8 h-8 border-2 border-bae-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+            <p class="text-sm font-medium text-bae-ink" id="progress-text">Reading statements...</p>
+            <p class="text-xs text-bae-muted mt-2">Processing locally in your browser</p>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div id="error-area" class="hidden mb-4 bg-amber-50 border border-amber-200 rounded-bae p-4">
+          <p class="text-sm font-semibold text-amber-800 mb-1">Could not analyze</p>
+          <p class="text-xs text-amber-700" id="error-text"></p>
+        </div>
+
+        <!-- Results -->
+        <div id="result-area" class="hidden">
+          <!-- Summary strip -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4" id="summary-strip"></div>
+
+          <!-- Subscriptions panel -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 mb-4">
+            <div class="flex items-center justify-between mb-1 flex-wrap gap-2">
+              <h3 class="text-sm font-bold text-bae-ink">Recurring Charges &amp; Subscriptions</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-bae-primary-soft text-bae-primary" id="sub-count"></span>
+            </div>
+            <p class="text-xs text-bae-muted mb-4" id="sub-burn"></p>
+            <div id="sub-list" class="space-y-2"></div>
+            <p id="sub-empty" class="hidden text-xs text-bae-muted">No recurring charges detected. Analyzing 2–3 consecutive months catches more — intervals become visible across statements.</p>
+            <div class="mt-4">
+              <button type="button" id="ics-btn" class="hidden text-xs font-semibold text-bae-primary hover:text-bae-accent transition-colors">📅 Download renewal calendar (.ics)</button>
+            </div>
+          </div>
+
+          <!-- Categories -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 mb-4">
+            <h3 class="text-sm font-bold text-bae-ink mb-4">Spending by Category</h3>
+            <div class="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+              <div id="donut" class="w-36 h-36 rounded-full shrink-0 relative">
+                <div class="absolute inset-4 rounded-full bg-bae-card flex items-center justify-center">
+                  <span class="text-[10px] text-bae-muted text-center leading-tight" id="donut-label"></span>
+                </div>
+              </div>
+              <div class="flex-1 w-full space-y-2" id="cat-bars"></div>
+            </div>
+            <p class="text-[11px] text-bae-muted mt-3">Transfers, card payments, and income are excluded from the spending total and shown in the summary instead. Amounts are in your statement's currency.</p>
+          </div>
+
+          <!-- Top merchants -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 mb-4">
+            <h3 class="text-sm font-bold text-bae-ink mb-3">Top Merchants</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs">
+                <thead><tr class="text-left text-bae-muted border-b border-bae-border-light"><th class="py-2 pr-2 font-medium">Merchant</th><th class="py-2 pr-2 font-medium text-right">Visits</th><th class="py-2 font-medium text-right">Total</th></tr></thead>
+                <tbody id="merchant-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Transactions -->
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 mb-4">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <h3 class="text-sm font-bold text-bae-ink">All Transactions</h3>
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100" id="txn-count"></span>
+            </div>
+            <p class="text-[11px] text-bae-muted mb-3">Wrong category? Change it with the dropdown — every total and chart recomputes instantly.</p>
+            <div class="overflow-x-auto border border-bae-border rounded-bae-sm max-h-96 overflow-y-auto">
+              <table class="w-full text-xs" id="txn-table">
+                <thead class="bg-bae-bg sticky top-0"><tr class="text-left text-bae-muted"><th class="px-2 py-2 font-medium">Date</th><th class="px-2 py-2 font-medium">Description</th><th class="px-2 py-2 font-medium">Category</th><th class="px-2 py-2 font-medium text-right">Amount</th></tr></thead>
+                <tbody id="txn-body"></tbody>
+              </table>
+            </div>
+            <div class="flex gap-3 mt-4">
+              <button type="button" id="csv-btn" class="flex-1 bg-bae-primary text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-accent transition-colors">Download categorized CSV</button>
+              <button type="button" id="reset-btn" class="px-4 bg-bae-ink text-white text-sm font-semibold py-3 rounded-bae-sm hover:bg-bae-primary transition-colors">New files</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limitations -->
+  <section class="py-6 md:py-8 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl mx-auto bg-amber-50 border border-amber-200 rounded-bae p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <h3 class="text-sm font-semibold text-amber-800 mb-2">What to keep in mind</h3>
+            <ul class="text-sm text-amber-700 space-y-1.5 list-disc list-inside">
+              <li><strong>Review before acting:</strong> categorization is rule-based and honest about uncertainty — unknown merchants go to "Other" and single-statement subscription detection is marked "possible", not certain.</li>
+              <li><strong>More months = better detection:</strong> recurring intervals only become provable across 2–3 statements; quarterly and annual charges need even longer windows.</li>
+              <li><strong>Text PDFs or CSVs:</strong> scanned paper statements should go through the <a href="/tools/bank-statement-to-excel/" class="underline">Bank Statement to Excel converter</a> (OCR) first, then drop its CSV here.</li>
+              <li><strong>Cancelling is on you:</strong> the analyzer finds and prices recurring charges; cancelling them happens with the merchant or your bank.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+</BaseLayout>
+
+<script>
+  // ─────────────────────────────────────────────────────────────────────────
+  // Bank Statement Analyzer, 100% client-side. PDF path: pdf.js text extraction
+  // → line grouping → statement parser (the credit-card banded/section parser
+  // shared with the CC converter, or the bank-layout column parser — whichever
+  // reads more rows). CSV path: anParseCsv. Then the ANALYZER CORE categorizes,
+  // detects recurring charges (Plaid-style: >=3 occurrences at a regular
+  // interval = confirmed; known-merchant/hint scoring for single statements),
+  // and the UI renders with zero chart libraries (conic-gradient + CSS bars).
+  // Core blocks are plain JS and node-tested against this real file.
+  // ─────────────────────────────────────────────────────────────────────────
+  (function () {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input') as HTMLInputElement;
+    const fileInfo = document.getElementById('file-info');
+    const infoName = document.getElementById('info-name');
+    const infoSize = document.getElementById('info-size');
+    const settingsArea = document.getElementById('settings-area');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const progressArea = document.getElementById('progress-area');
+    const progressText = document.getElementById('progress-text');
+    const errorArea = document.getElementById('error-area');
+    const errorText = document.getElementById('error-text');
+    const resultArea = document.getElementById('result-area');
+    const summaryStrip = document.getElementById('summary-strip');
+    const subCount = document.getElementById('sub-count');
+    const subBurn = document.getElementById('sub-burn');
+    const subList = document.getElementById('sub-list');
+    const subEmpty = document.getElementById('sub-empty');
+    const icsBtn = document.getElementById('ics-btn');
+    const donut = document.getElementById('donut');
+    const donutLabel = document.getElementById('donut-label');
+    const catBars = document.getElementById('cat-bars');
+    const merchantBody = document.getElementById('merchant-body');
+    const txnBody = document.getElementById('txn-body');
+    const txnCount = document.getElementById('txn-count');
+    const csvBtn = document.getElementById('csv-btn');
+    const resetBtn = document.getElementById('reset-btn');
+
+    let pdfjsLib: any = null;
+    let files: File[] = [];
+    let txns: any[] = [];
+    let overrides: any = {};
+    let analysis: any = null;
+
+    const PALETTE = ['#2563eb', '#16a34a', '#f59e0b', '#dc2626', '#7c3aed', '#0891b2', '#db2777', '#65a30d', '#ea580c', '#0d9488', '#a21caf', '#475569', '#94a3b8'];
+    const ALL_CATS = ['Groceries', 'Dining & Delivery', 'Transport & Fuel', 'Subscriptions & Software', 'Telecom & Utilities', 'Shopping', 'Health & Pharmacy', 'Travel', 'Entertainment', 'Fees & Interest', 'Cash & Transfers', 'Income & Refunds', 'Other'];
+
+    function escapeHtml(s: string): string {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function fmt(n: number): string {
+      return (n < 0 ? '-' : '') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function formatBytes(b: number): string {
+      if (!b) return '0 B';
+      const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(b) / Math.log(k));
+      return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    function showError(msg: string) {
+      progressArea?.classList.add('hidden');
+      if (errorText) errorText.textContent = msg;
+      errorArea?.classList.remove('hidden');
+    }
+    function loadScript(src: string): Promise<void> {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Failed to load ' + src));
+        document.head.appendChild(s);
+      });
+    }
+    async function loadPdf() {
+      if (pdfjsLib) return;
+      await loadScript('/pdf.min.js');
+      pdfjsLib = (window as any).pdfjsLib;
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+    }
+    function groupLines(items: any[]): any[] {
+      const toks = items
+        .filter((it) => it && typeof it.str === 'string' && it.str.trim() !== '')
+        .map((it) => ({ s: it.str.trim(), x: it.transform[4], y: it.transform[5] }));
+      toks.sort((a, b) => b.y - a.y || a.x - b.x);
+      const lines: any[] = [];
+      let cur: any[] = [];
+      let lastY: number | null = null;
+      for (const t of toks) {
+        if (lastY === null || Math.abs(t.y - lastY) <= 3) cur.push(t);
+        else { if (cur.length) lines.push(cur); cur = [t]; }
+        lastY = t.y;
+      }
+      if (cur.length) lines.push(cur);
+      lines.forEach((l) => l.sort((a: any, b: any) => a.x - b.x));
+      return lines;
+    }
+
+// ── CC PARSE CORE (shared with the Credit Card converter — node-tested there) ──
+const CC_ARABIC_RE = /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/;
+const CC_MONEY_RE = /^[\(\-\+]?\s*(?:[A-Z]{3}\s+)?(?:[$£€]\s*\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?|\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+\.\d{1,2})\s*\)?(?:\s*(?:CR|DR))?$/i;
+const CC_FOOTER_RE = /please review this account statement|report any discrepancies|regulated by|customer service|page \d+ of \d+|important information about/i;
+const CC_MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+const CC_SEC_RULES = [
+  { re: /^(payments and other credits|payments,? credits( and adjustments)?|payments and credits|payments\/credits|payments? received|other credits)$/i, sec: 'payments' },
+  { re: /^(purchases?( and adjustments)?|standard purchases|new charges|new transactions|transactions)$/i, sec: 'charges' },
+  { re: /^(fees|fees charged)$/i, sec: 'fees' },
+  { re: /^(interest charged)$/i, sec: 'interest' },
+];
+const CC_SEC_EXCLUDE_RE = /^(totals? year-to-date|interest charge calculation|rewards summary|membership rewards|cashback bonus|plan balance details|pay over time|qualifying promotional|special terms|deferred interest|account summary|payment information)/i;
+const CC_SUMMARY_LABELS = [
+  ['previousBalance', /^(previous balance|total outstanding \(previous statement\)|opening balance)\b/i],
+  ['payments', /^(payments?,? (and other )?credits( and adjustments)?|payments?\/credits|payment, credits|payments and credits|\(-\) payment)\b/i],
+  ['purchases', /^(purchases|new charges|\(\+\) new purchases)\b/i],
+  ['cashAdvances', /^cash advances\b/i],
+  ['balanceTransfers', /^balance transfers\b/i],
+  ['fees', /^(fees( charged)?|\(\+\) fees)\b/i],
+  ['interest', /^(interest charged|\(\+\) finance charges)\b/i],
+  ['vat', /^\(\+\) vat\b/i],
+  ['newBalance', /^(new balance|total outstanding \(current statement\)|total outstanding on statement date)\b/i],
+];
+const CC_CLOSING_RES = [
+  { re: /opening\/closing date\s+\d{1,2}\/\d{1,2}\/\d{2,4}\s*[-–]\s*(\d{1,2})\/\d{1,2}\/(\d{2,4})/i, kind: 'mdy' },
+  { re: /billing period:?\s*\d{1,2}\/\d{1,2}\/\d{2,4}\s*[-–]\s*(\d{1,2})\/\d{1,2}\/(\d{2,4})/i, kind: 'mdy' },
+  { re: /(?<!\/)(?:statement )?closing date:?\s+(\d{1,2})\/\d{1,2}\/(\d{2,4})/i, kind: 'mdy' },
+  { re: /statement date:?\s+\d{1,2}\s+([A-Za-z]{3,9})\.?\s+(\d{4})/i, kind: 'dmy-name' },
+  { re: /\bfrom\s+\d{1,2}\s+[A-Za-z]{3,9}\.?\s*\d{2,4}\s+to\s+\d{1,2}\s+([A-Za-z]{3,9})\.?\s*(\d{2,4})/i, kind: 'dmy-name' },
+];
+const CC_NOISE_RE = /^(credit card statement|together we thrive|details of your transactions|transaction date\b|page \d+|to view your|opening balance|closing balance)/i;
+function ccIsDate(s) {
+  const t = String(s || '').trim();
+  const m = t.match(/^(\d{1,2})[\/.\-](\d{1,2})([\/.\-]\d{2,4})?$/);
+  if (m) {
+    const a = parseInt(m[1], 10), b = parseInt(m[2], 10);
+    return a >= 1 && a <= 31 && b >= 1 && b <= 31 && (a <= 12 || b <= 12);
+  }
+  const MON = /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
+  let w = t.match(/^(\d{1,2})[-\s]([A-Za-z]{3,9})\.?([-\s]\d{2,4})?$/);
+  if (w) { const d = parseInt(w[1], 10); return d >= 1 && d <= 31 && MON.test(w[2]); }
+  w = t.match(/^([A-Za-z]{3,9})\.?\s+(\d{1,2}),?(\s+\d{2,4})?$/);
+  if (w) { const d = parseInt(w[2], 10); return d >= 1 && d <= 31 && MON.test(w[1]); }
+  return false;
+}
+function ccIsMoney(s) {
+  const t = String(s || '').trim();
+  return /\d/.test(t) && CC_MONEY_RE.test(t);
+}
+function ccParseMoneyParts(s) {
+  let t = String(s || '').trim().replace(/^([\(\-\+]?)\s*[A-Za-z]{3}\s+/, '$1');
+  const cr = /(^|\s)CR$/i.test(t);
+  const neg = /^\(.*\)$/.test(t) || /^-/.test(t);
+  t = t.replace(/[()$£€,\s]/g, '').replace(/CR$|DR$/i, '').replace(/^[+-]/, '');
+  const n = parseFloat(t);
+  if (isNaN(n)) return null;
+  return { val: neg ? -n : n, cr: cr };
+}
+function ccMatchClosing(text) {
+  for (const c of CC_CLOSING_RES) {
+    const m = text.match(c.re);
+    if (!m) continue;
+    if (c.kind === 'mdy') {
+      let y = parseInt(m[2], 10); if (y < 100) y += 2000;
+      return { month: parseInt(m[1], 10), year: y };
+    }
+    const mo = CC_MONTHS[m[1].slice(0, 3).toLowerCase()];
+    let y = parseInt(m[2], 10); if (y < 100) y += 2000;
+    if (mo) return { month: mo, year: y };
+  }
+  return null;
+}
+function ccApplyYear(dateStr, closing) {
+  if (!closing || !dateStr) return dateStr;
+  let m = dateStr.match(/^(\d{1,2})\/(\d{1,2})$/);
+  if (m) {
+    const mo = parseInt(m[1], 10);
+    const yr = mo > closing.month ? closing.year - 1 : closing.year;
+    return dateStr + '/' + yr;
+  }
+  m = dateStr.match(/^(\d{1,2})\s+([A-Za-z]{3,9})\.?$/);
+  if (m) {
+    const mo = CC_MONTHS[m[2].slice(0, 3).toLowerCase()];
+    if (!mo) return dateStr;
+    const yr = mo > closing.month ? closing.year - 1 : closing.year;
+    return dateStr + ' ' + yr;
+  }
+  return dateStr;
+}
+function ccNormalizeSigns(line) {
+  const out = [];
+  for (let i = 0; i < line.length; i++) {
+    const t = line[i];
+    if ((t.s === '-' || t.s === '+') && line[i + 1] && ccIsMoney(line[i + 1].s)) {
+      out.push({ s: t.s + line[i + 1].s, x: line[i + 1].x });
+      i++;
+      continue;
+    }
+    if (ccIsMoney(t.s) && line[i + 1] && /^(CR|DR)$/i.test(line[i + 1].s)) {
+      out.push({ s: t.s + ' ' + line[i + 1].s.toUpperCase(), x: t.x });
+      i++;
+      continue;
+    }
+    out.push(t);
+  }
+  return out;
+}
+function ccAssignAmount(row, parts, section) {
+  const isCredit = section === 'payments' || parts.cr || parts.val < 0;
+  if (isCredit) {
+    row.credit = Math.abs(parts.val).toFixed(2);
+    row.type = 'Payment / Credit';
+  } else {
+    row.charge = Math.abs(parts.val).toFixed(2);
+    row.type = section === 'fees' ? 'Fee' : section === 'interest' ? 'Interest' : 'Purchase';
+  }
+}
+function parseCardStatement(lines) {
+  const summary = {};
+  let closing = null;
+  const rows = [];
+  let section = 'none';
+  let foldTarget = null;
+  let bands = null;
+  let block = null;
+  let lastLone = null;
+  let pendingSum = null;
+  let idx = -1;
+  function finalizeBlock() {
+    if (block && block.date && (block.total || block.orig)) {
+      const parts = block.total || block.orig;
+      const row = {
+        date: block.date, postDate: block.postDate,
+        description: block.desc.replace(/\s{2,}/g, ' ').trim(),
+        charge: '', credit: '', type: '', section: 'banded', flagged: false,
+      };
+      const isCredit = parts.cr || parts.val < 0;
+      if (isCredit) { row.credit = Math.abs(parts.val).toFixed(2); row.type = 'Payment / Credit'; }
+      else { row.charge = Math.abs(parts.val).toFixed(2); row.type = 'Purchase'; }
+      rows.push(row);
+    }
+    block = null;
+  }
+  for (const raw of lines) {
+    idx++;
+    let line = raw.filter(function (t) { return !CC_ARABIC_RE.test(t.s); });
+    if (!line.length) continue;
+    line = ccNormalizeSigns(line);
+    const text = line.map(function (t) { return t.s; }).join(' ').trim();
+    if (!text) continue;
+    if (!closing) { const c = ccMatchClosing(text); if (c) closing = c; }
+    if (/original amount/i.test(text) && /total amount/i.test(text)) {
+      const orig = line.find(function (t) { return /^original amount/i.test(t.s); });
+      const vat = line.find(function (t) { return /^vat$/i.test(t.s); });
+      const total = line.find(function (t) { return /^total amount/i.test(t.s); });
+      if (orig && total) bands = { vatX: vat ? vat.x : total.x, totalX: total.x };
+      continue;
+    }
+    const moneyToks = line.filter(function (t) { return ccIsMoney(t.s); });
+    if (moneyToks.length) {
+      let labeled = false;
+      for (const pair of CC_SUMMARY_LABELS) {
+        if (pair[1].test(text)) {
+          if (summary[pair[0]] === undefined) {
+            const parts = ccParseMoneyParts(moneyToks[moneyToks.length - 1].s);
+            if (parts) summary[pair[0]] = parts.cr ? -Math.abs(parts.val) : parts.val;
+          }
+          labeled = true;
+          break;
+        }
+      }
+      if (labeled) continue;
+    } else {
+      if (CC_SEC_EXCLUDE_RE.test(text)) { section = 'skip'; foldTarget = null; continue; }
+      let matched = null;
+      for (const r of CC_SEC_RULES) { if (r.re.test(text)) { matched = r; break; } }
+      if (matched) { section = matched.sec; foldTarget = null; continue; }
+      if (/^account activity/i.test(text)) { section = 'none'; foldTarget = null; continue; }
+      if (/card ending|account ending/i.test(text)) { foldTarget = null; continue; }
+      for (const pair of CC_SUMMARY_LABELS) {
+        if (summary[pair[0]] === undefined && pair[1].test(text)) {
+          if (lastLone && lastLone.idx === idx - 1) summary[pair[0]] = lastLone.val;
+          else pendingSum = { key: pair[0], idx: idx };
+          break;
+        }
+      }
+    }
+    const moneyOnly = moneyToks.length > 0 && moneyToks.length === line.length;
+    if (moneyOnly && pendingSum && pendingSum.idx === idx - 1 && summary[pendingSum.key] === undefined) {
+      const parts = ccParseMoneyParts(moneyToks[0].s);
+      if (parts) summary[pendingSum.key] = parts.cr ? -Math.abs(parts.val) : parts.val;
+      pendingSum = null;
+      continue;
+    }
+    if (moneyOnly && !bands) {
+      const parts = ccParseMoneyParts(moneyToks[0].s);
+      if (parts) lastLone = { val: parts.cr ? -Math.abs(parts.val) : parts.val, idx: idx };
+      if (rows.length && rows[rows.length - 1].pendingAmt && section !== 'skip') {
+        const r = rows[rows.length - 1];
+        const p2 = ccParseMoneyParts(moneyToks[moneyToks.length - 1].s);
+        if (p2) { ccAssignAmount(r, p2, r.section); r.pendingAmt = false; }
+      }
+      continue;
+    }
+    if (bands) {
+      if (/^[-–]+$/.test(text)) { finalizeBlock(); continue; }
+      if (/^\d[\d\s-]{9,}$/.test(text)) { block = null; continue; }
+      if (CC_NOISE_RE.test(text) || CC_FOOTER_RE.test(text)) continue;
+      if (/^[A-Z]{3}\/[A-Z]{3}\b/.test(text)) continue;
+      if (!block) block = { date: '', postDate: '', desc: '', total: null, orig: null, origLocked: false, armed: false };
+      let start = 0;
+      const dated = line[0] && ccIsDate(line[0].s);
+      if (dated) {
+        if (block.date && (block.total || block.orig)) { finalizeBlock(); block = { date: '', postDate: '', desc: '', total: null, orig: null, origLocked: false, armed: false }; }
+        block.date = line[0].s;
+        start = 1;
+        if (line[1] && ccIsDate(line[1].s)) { block.postDate = line[1].s; start = 2; }
+        block.armed = true;
+      }
+      const rest = line.slice(start);
+      const money = rest.filter(function (t) { return ccIsMoney(t.s); });
+      if (money.length) block.armed = true;
+      let lineOrig = null;
+      for (const t of money) {
+        const parts = ccParseMoneyParts(t.s);
+        if (!parts) continue;
+        if (t.x >= bands.totalX - 12) block.total = parts;
+        else if (t.x >= bands.vatX - 12) { /* VAT column */ }
+        else if (!block.origLocked) { if (!lineOrig || t.x > lineOrig.x) lineOrig = { parts: parts, x: t.x }; }
+      }
+      if (lineOrig) { block.orig = lineOrig.parts; block.origLocked = true; }
+      if (block.armed && (dated || money.length === 0 || !block.desc)) {
+        const textPart = rest.filter(function (t) { return !ccIsMoney(t.s); }).map(function (t) { return t.s; }).join(' ').trim();
+        if (textPart) block.desc = (block.desc + ' ' + textPart).trim();
+      }
+      continue;
+    }
+    const first = line[0];
+    if (first && ccIsDate(first.s) && section !== 'skip') {
+      const second = line[1] && ccIsDate(line[1].s) ? line[1] : null;
+      const startIdx = second ? 2 : 1;
+      let amtTok = null;
+      for (const t of moneyToks) { if (!amtTok || t.x > amtTok.x) amtTok = t; }
+      const descToks = line.slice(startIdx).filter(function (t) { return !ccIsMoney(t.s); });
+      const row = {
+        date: first.s, postDate: second ? second.s : '',
+        description: descToks.map(function (t) { return t.s; }).join(' ').trim(),
+        charge: '', credit: '', type: '', section: section, flagged: false, pendingAmt: !amtTok,
+      };
+      if (amtTok) {
+        const parts = ccParseMoneyParts(amtTok.s);
+        if (parts) ccAssignAmount(row, parts, section); else row.pendingAmt = true;
+      }
+      rows.push(row);
+      foldTarget = rows.length - 1;
+      continue;
+    }
+    if (moneyToks.length === 0 && foldTarget != null && section !== 'skip') {
+      if (CC_FOOTER_RE.test(text)) { foldTarget = null; continue; }
+      rows[foldTarget].description = (rows[foldTarget].description + ' ' + text).trim();
+    }
+  }
+  if (bands) finalizeBlock();
+  for (const r of rows) {
+    if (r.pendingAmt) r.flagged = true;
+    r.date = ccApplyYear(r.date, closing);
+    r.postDate = ccApplyYear(r.postDate, closing);
+    delete r.pendingAmt;
+  }
+  return { rows: rows, summary: summary, banded: bands != null };
+}
+// ── END CC PARSE CORE ──
+
+// ── ANALYZER CORE (plain JS — node-tested, see Claude Test.md hard rule) ──
+// Categorization + recurring-charge detection over transactions parsed from
+// bank/credit-card statements. Approach follows the published Plaid model
+// (grouping by description+amount+cadence; >=3 occurrences = mature stream;
+// habitual spending excluded from recurrence) and the Firefly/Actual rule
+// pattern (ordered keyword rules, most specific first, first hit wins).
+const AN_MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+
+// Hints are captured from the RAW descriptor before any stripping.
+const AN_HINT_RE = /(RECURRING|SUBSCRIPTION|SUBSCR|MEMBERSHIP|MBRSHIP|RENEWAL|AUTO-?PAY|AUTO PAY|APPLE\.COM\/BILL|DIRECT DEBIT|STANDING ORDER|\bSTO\b|\bEMI\b|INSTALLMENT|E?BILL\b|MONTHLY PLAN|ANNUAL PLAN)/i;
+
+// Ordered keyword -> category rules. Most specific first (NOON FOOD before
+// NOON, UBER EATS before UBER, CAREEM FOOD before CAREEM). Substring match on
+// the raw uppercased descriptor; first hit wins; unmatched falls to "Other".
+const AN_KW = [
+  // — specific multi-word overrides —
+  ['UBER EATS', 'Dining & Delivery'], ['UBEREATS', 'Dining & Delivery'],
+  ['CAREEM FOOD', 'Dining & Delivery'], ['CAREEM NOW', 'Dining & Delivery'],
+  ['NOON FOOD', 'Dining & Delivery'], ['NOON MINUTES', 'Groceries'], ['NOW NOW', 'Groceries'],
+  ['AMAZON PRIME', 'Subscriptions & Software'], ['PRIME VIDEO', 'Subscriptions & Software'],
+  ['AMAZON GROCERY', 'Groceries'], ['AMAZON FRESH', 'Groceries'],
+  ['YOUTUBE', 'Subscriptions & Software'], ['GOOGLE ONE', 'Subscriptions & Software'], ['GOOGLE STORAGE', 'Subscriptions & Software'],
+  ['APPLE.COM/BILL', 'Subscriptions & Software'], ['ICLOUD', 'Subscriptions & Software'], ['APPLE ONE', 'Subscriptions & Software'],
+  ['WHOLE FOODS', 'Groceries'], ['WHOLEFDS', 'Groceries'], ['TRADER JOE', 'Groceries'],
+  ['MARKS & SPENCER', 'Shopping'], ['M&S SIMPLY FOOD', 'Groceries'],
+  ['CREDIT CARD PAYMENT', 'Cash & Transfers'], ['CC PAYMENT', 'Cash & Transfers'], ['AUTOPAY PAYMENT', 'Cash & Transfers'],
+  ['PAYMENT RECEIVED', 'Cash & Transfers'], ['ONLINE PAYMENT', 'Cash & Transfers'], ['PAYMENT THANK YOU', 'Cash & Transfers'],
+  ['LOAN PAYMENT', 'Cash & Transfers'], ['MORTGAGE', 'Cash & Transfers'],
+  // — groceries —
+  ['WALMART', 'Groceries'], ['WAL-MART', 'Groceries'], ['KROGER', 'Groceries'], ['ALDI', 'Groceries'],
+  ['COSTCO', 'Groceries'], ['SAFEWAY', 'Groceries'], ['PUBLIX', 'Groceries'], ['WEGMANS', 'Groceries'],
+  ['TESCO', 'Groceries'], ['SAINSBURY', 'Groceries'], ['ASDA', 'Groceries'], ['MORRISONS', 'Groceries'],
+  ['WAITROSE', 'Groceries'], ['LIDL', 'Groceries'], ['ICELAND FOODS', 'Groceries'], ['CO-OP', 'Groceries'],
+  ['CARREFOUR', 'Groceries'], ['LULU', 'Groceries'], ['SPINNEYS', 'Groceries'], ['UNION COOP', 'Groceries'],
+  ['CHOITHRAM', 'Groceries'], ['WEST ZONE', 'Groceries'], ['NESTO', 'Groceries'], ['AL MAYA', 'Groceries'],
+  ['ALMAYA', 'Groceries'], ['GRANDIOSE', 'Groceries'], ['KIBSONS', 'Groceries'], ['INSTASHOP', 'Groceries'],
+  ['GROCERY', 'Groceries'], ['SUPERMARKET', 'Groceries'], ['HYPERMARKET', 'Groceries'],
+  // — dining & delivery —
+  ['MCDONALD', 'Dining & Delivery'], ['STARBUCKS', 'Dining & Delivery'], ['KFC', 'Dining & Delivery'],
+  ['BURGER KING', 'Dining & Delivery'], ['SUBWAY', 'Dining & Delivery'], ['DOMINO', 'Dining & Delivery'],
+  ['PIZZA HUT', 'Dining & Delivery'], ['CHIPOTLE', 'Dining & Delivery'], ['DUNKIN', 'Dining & Delivery'],
+  ['NANDO', 'Dining & Delivery'], ['PRET A MANGER', 'Dining & Delivery'], ['GREGGS', 'Dining & Delivery'],
+  ['COSTA COFFEE', 'Dining & Delivery'], ['FIVE GUYS', 'Dining & Delivery'], ['SHAKE SHACK', 'Dining & Delivery'],
+  ['TACO BELL', 'Dining & Delivery'], ['CHICK-FIL-A', 'Dining & Delivery'], ['CHKFILA', 'Dining & Delivery'],
+  ['WENDY', 'Dining & Delivery'], ['PANERA', 'Dining & Delivery'], ['TIM HORTONS', 'Dining & Delivery'],
+  ['DOORDASH', 'Dining & Delivery'], ['GRUBHUB', 'Dining & Delivery'], ['POSTMATES', 'Dining & Delivery'],
+  ['DELIVEROO', 'Dining & Delivery'], ['JUST EAT', 'Dining & Delivery'], ['JUSTEAT', 'Dining & Delivery'],
+  ['TALABAT', 'Dining & Delivery'], ['ZOMATO', 'Dining & Delivery'], ['EATEASY', 'Dining & Delivery'],
+  ['RESTAURANT', 'Dining & Delivery'], ['CAFE', 'Dining & Delivery'], ['CAFÉ', 'Dining & Delivery'],
+  ['COFFEE', 'Dining & Delivery'], ['BAKERY', 'Dining & Delivery'], ['GRILL', 'Dining & Delivery'],
+  ['SHAWARMA', 'Dining & Delivery'], ['DINER', 'Dining & Delivery'], ['PIZZERIA', 'Dining & Delivery'],
+  // — transport & fuel —
+  ['UBER', 'Transport & Fuel'], ['LYFT', 'Transport & Fuel'], ['CAREEM', 'Transport & Fuel'],
+  ['BOLT.EU', 'Transport & Fuel'], ['TAXI', 'Transport & Fuel'], ['SHELL', 'Transport & Fuel'],
+  ['EXXON', 'Transport & Fuel'], ['MOBIL', 'Transport & Fuel'], ['CHEVRON', 'Transport & Fuel'],
+  ['TEXACO', 'Transport & Fuel'], ['ESSO', 'Transport & Fuel'], ['ADNOC', 'Transport & Fuel'],
+  ['ENOC', 'Transport & Fuel'], ['EPPCO', 'Transport & Fuel'], ['EMARAT', 'Transport & Fuel'],
+  ['SALIK', 'Transport & Fuel'], ['RTA ', 'Transport & Fuel'], ['NOL ', 'Transport & Fuel'],
+  ['DUBAI TAXI', 'Transport & Fuel'], ['DARB', 'Transport & Fuel'], ['MAWAQIF', 'Transport & Fuel'],
+  ['TFL TRAVEL', 'Transport & Fuel'], ['TFL.GOV', 'Transport & Fuel'], ['TRANSPORT FOR LONDON', 'Transport & Fuel'], ['TRAINLINE', 'Transport & Fuel'],
+  ['NATIONAL RAIL', 'Transport & Fuel'], ['AMTRAK', 'Transport & Fuel'], ['PARKING', 'Transport & Fuel'],
+  ['PARKMOBILE', 'Transport & Fuel'], ['PETROL', 'Transport & Fuel'], ['FUEL', 'Transport & Fuel'],
+  // — subscriptions & software —
+  ['NETFLIX', 'Subscriptions & Software'], ['SPOTIFY', 'Subscriptions & Software'], ['HULU', 'Subscriptions & Software'],
+  ['DISNEY', 'Subscriptions & Software'], ['HBO', 'Subscriptions & Software'], ['PARAMOUNT+', 'Subscriptions & Software'],
+  ['AUDIBLE', 'Subscriptions & Software'], ['KINDLE', 'Subscriptions & Software'], ['ITUNES', 'Subscriptions & Software'],
+  ['ADOBE', 'Subscriptions & Software'], ['MICROSOFT 365', 'Subscriptions & Software'], ['MSFT', 'Subscriptions & Software'],
+  ['OFFICE 365', 'Subscriptions & Software'], ['DROPBOX', 'Subscriptions & Software'], ['CANVA', 'Subscriptions & Software'],
+  ['NOTION', 'Subscriptions & Software'], ['FIGMA', 'Subscriptions & Software'], ['GITHUB', 'Subscriptions & Software'],
+  ['OPENAI', 'Subscriptions & Software'], ['CHATGPT', 'Subscriptions & Software'], ['ANTHROPIC', 'Subscriptions & Software'],
+  ['CLAUDE.AI', 'Subscriptions & Software'], ['MIDJOURNEY', 'Subscriptions & Software'], ['PATREON', 'Subscriptions & Software'],
+  ['SUBSTACK', 'Subscriptions & Software'], ['NYTIMES', 'Subscriptions & Software'], ['DUOLINGO', 'Subscriptions & Software'],
+  ['HEADSPACE', 'Subscriptions & Software'], ['CALM.COM', 'Subscriptions & Software'], ['STRAVA', 'Subscriptions & Software'],
+  ['SHAHID', 'Subscriptions & Software'], ['OSN', 'Subscriptions & Software'], ['STARZPLAY', 'Subscriptions & Software'],
+  ['ANGHAMI', 'Subscriptions & Software'], ['BEIN', 'Subscriptions & Software'], ['CRUNCHYROLL', 'Subscriptions & Software'],
+  ['APPLEBEE', 'Dining & Delivery'], ['APPLE', 'Subscriptions & Software'],
+  ['CATERING', 'Dining & Delivery'],
+  // — telecom & utilities —
+  ['VERIZON', 'Telecom & Utilities'], ['VZWRLSS', 'Telecom & Utilities'], ['AT&T', 'Telecom & Utilities'],
+  ['T-MOBILE', 'Telecom & Utilities'], ['TMOBILE', 'Telecom & Utilities'], ['COMCAST', 'Telecom & Utilities'],
+  ['XFINITY', 'Telecom & Utilities'], ['SPECTRUM', 'Telecom & Utilities'], ['VODAFONE', 'Telecom & Utilities'],
+  ['GIFFGAFF', 'Telecom & Utilities'], ['VIRGIN MEDIA', 'Telecom & Utilities'], ['VIRGIN MOBILE', 'Telecom & Utilities'],
+  ['BT GROUP', 'Telecom & Utilities'], ['SKY DIGITAL', 'Telecom & Utilities'], ['ETISALAT', 'Telecom & Utilities'],
+  ['E& ', 'Telecom & Utilities'], ['EAND', 'Telecom & Utilities'], ['TELECOM', 'Telecom & Utilities'],
+  ['DU BILL', 'Telecom & Utilities'], ['DU PAYMENT', 'Telecom & Utilities'], ['DU RECHARGE', 'Telecom & Utilities'],
+  ['DEWA', 'Telecom & Utilities'], ['SEWA', 'Telecom & Utilities'], ['ADDC', 'Telecom & Utilities'],
+  ['FEWA', 'Telecom & Utilities'], ['EMPOWER', 'Telecom & Utilities'], ['BRITISH GAS', 'Telecom & Utilities'],
+  ['OCTOPUS ENERGY', 'Telecom & Utilities'], ['EDF ENERGY', 'Telecom & Utilities'], ['THAMES WATER', 'Telecom & Utilities'],
+  ['PG&E', 'Telecom & Utilities'], ['CON ED', 'Telecom & Utilities'], ['DUKE ENERGY', 'Telecom & Utilities'],
+  ['ELECTRICITY', 'Telecom & Utilities'], ['WATER AUTHORITY', 'Telecom & Utilities'],
+  // — health & pharmacy —
+  ['CVS', 'Health & Pharmacy'], ['WALGREENS', 'Health & Pharmacy'], ['RITE AID', 'Health & Pharmacy'],
+  ['BOOTS', 'Health & Pharmacy'], ['SUPERDRUG', 'Health & Pharmacy'], ['MYASTER', 'Health & Pharmacy'], [' ASTER', 'Health & Pharmacy'],
+  ['LIFE PHARMACY', 'Health & Pharmacy'], ['LIFE PHAR', 'Health & Pharmacy'], ['BIN SINA', 'Health & Pharmacy'],
+  ['BINSINA', 'Health & Pharmacy'], ['MEDICINA', 'Health & Pharmacy'], ['MEDICLINIC', 'Health & Pharmacy'],
+  ['PHARMACY', 'Health & Pharmacy'], ['CLINIC', 'Health & Pharmacy'], ['HOSPITAL', 'Health & Pharmacy'],
+  ['DENTAL', 'Health & Pharmacy'], ['FITNESS FIRST', 'Health & Pharmacy'], ['GOLD\'S GYM', 'Health & Pharmacy'],
+  ['ANYTIME FITNESS', 'Health & Pharmacy'], ['PURE GYM', 'Health & Pharmacy'], ['PUREGYM', 'Health & Pharmacy'],
+  ['PLANET FITNESS', 'Health & Pharmacy'], ['GYM', 'Health & Pharmacy'],
+  // — travel —
+  ['EMIRATES AIR', 'Travel'], ['FLY EMIRATES', 'Travel'], ['ETIHAD', 'Travel'], ['FLYDUBAI', 'Travel'],
+  ['AIR ARABIA', 'Travel'], ['BRITISH AIRWAYS', 'Travel'], ['EASYJET', 'Travel'], ['RYANAIR', 'Travel'],
+  ['QATAR AIRWAYS', 'Travel'], ['TURKISH AIR', 'Travel'], ['DELTA AIR', 'Travel'], ['UNITED AIR', 'Travel'],
+  ['AMERICAN AIR', 'Travel'], ['WIZZ', 'Travel'], ['BOOKING.COM', 'Travel'], ['EXPEDIA', 'Travel'],
+  ['AGODA', 'Travel'], ['AIRBNB', 'Travel'], ['HOTELS.COM', 'Travel'], ['MARRIOTT', 'Travel'],
+  ['HILTON', 'Travel'], ['HYATT', 'Travel'], ['ROTANA', 'Travel'], ['TRIP.COM', 'Travel'],
+  ['CLEARTRIP', 'Travel'], ['MUSAFIR', 'Travel'], ['DNATA', 'Travel'], ['HOTEL', 'Travel'], ['AIRLINE', 'Travel'],
+  // — entertainment —
+  ['VOX CINEMA', 'Entertainment'], ['REEL CINEMA', 'Entertainment'], ['NOVO CINEMA', 'Entertainment'],
+  ['CINEMA', 'Entertainment'], ['AMC ', 'Entertainment'], ['ODEON', 'Entertainment'], ['VUE ', 'Entertainment'],
+  ['STEAM', 'Entertainment'], ['PLAYSTATION', 'Entertainment'], ['XBOX', 'Entertainment'],
+  ['NINTENDO', 'Entertainment'], ['EPIC GAMES', 'Entertainment'], ['RIOT GAMES', 'Entertainment'],
+  ['TICKETMASTER', 'Entertainment'], ['PLATINUMLIST', 'Entertainment'], ['EVENTBRITE', 'Entertainment'],
+  ['DUBAI PARKS', 'Entertainment'], ['FERRARI WORLD', 'Entertainment'], ['THEME PARK', 'Entertainment'],
+  // — fees & interest —
+  ['ANNUAL FEE', 'Fees & Interest'], ['LATE FEE', 'Fees & Interest'], ['OVERLIMIT', 'Fees & Interest'],
+  ['OVERDRAFT', 'Fees & Interest'], ['NSF FEE', 'Fees & Interest'], ['SERVICE CHARGE', 'Fees & Interest'],
+  ['MAINTENANCE FEE', 'Fees & Interest'], ['ATM FEE', 'Fees & Interest'], ['PROCESSING FEE', 'Fees & Interest'],
+  ['FOREIGN TRANSACTION', 'Fees & Interest'], ['FINANCE CHARGE', 'Fees & Interest'], ['INTEREST CHARGE', 'Fees & Interest'],
+  ['VAT ON FEE', 'Fees & Interest'], ['CARD FEE', 'Fees & Interest'], [' FEE', 'Fees & Interest'],
+  // — cash & transfers —
+  ['ATM', 'Cash & Transfers'], ['CASH WITHDRAWAL', 'Cash & Transfers'], ['CASH WD', 'Cash & Transfers'],
+  ['TRANSFER', 'Cash & Transfers'], ['WESTERN UNION', 'Cash & Transfers'], ['MONEYGRAM', 'Cash & Transfers'],
+  ['AL ANSARI', 'Cash & Transfers'], ['LULU EXCHANGE', 'Cash & Transfers'], ['AL FARDAN', 'Cash & Transfers'],
+  ['TRANSFERWISE', 'Cash & Transfers'], ['WISE.COM', 'Cash & Transfers'], ['ZELLE', 'Cash & Transfers'],
+  ['VENMO', 'Cash & Transfers'], ['CASH APP', 'Cash & Transfers'], ['REVOLUT', 'Cash & Transfers'],
+  ['STANDING ORDER', 'Cash & Transfers'], ['DIRECT DEBIT', 'Cash & Transfers'], ['CHEQUE', 'Cash & Transfers'],
+  // — shopping (broad — late so specifics win first) —
+  ['AMAZON', 'Shopping'], ['AMZN', 'Shopping'], ['EBAY', 'Shopping'], ['ETSY', 'Shopping'],
+  ['NOON', 'Shopping'], ['NAMSHI', 'Shopping'], ['SHEIN', 'Shopping'], ['TEMU', 'Shopping'],
+  ['ALIEXPRESS', 'Shopping'], ['ZARA', 'Shopping'], ['H&M', 'Shopping'], ['UNIQLO', 'Shopping'],
+  ['NIKE', 'Shopping'], ['ADIDAS', 'Shopping'], ['IKEA', 'Shopping'], ['HOME DEPOT', 'Shopping'],
+  ['LOWES', 'Shopping'], ['BEST BUY', 'Shopping'], ['SHARAF DG', 'Shopping'], ['JUMBO ELECTRONICS', 'Shopping'],
+  ['EMAX', 'Shopping'], ['ACE HARDWARE', 'Shopping'], ['ARGOS', 'Shopping'], ['JOHN LEWIS', 'Shopping'],
+  ['PRIMARK', 'Shopping'], ['CENTREPOINT', 'Shopping'], ['MAX FASHION', 'Shopping'], ['MAX ', 'Shopping'],
+  ['BRANDS FOR LESS', 'Shopping'], ['APPLE STORE', 'Shopping'], ['TARGET', 'Shopping'], ['DAY TO DAY', 'Shopping'],
+  ['AL KABAYEL', 'Shopping'],
+  // — income & refunds —
+  ['SALARY', 'Income & Refunds'], ['PAYROLL', 'Income & Refunds'], ['WAGES', 'Income & Refunds'],
+  ['WPS', 'Income & Refunds'], ['DIRECT DEPOSIT', 'Income & Refunds'], ['REFUND', 'Income & Refunds'],
+  ['REVERSAL', 'Income & Refunds'], ['CASHBACK', 'Income & Refunds'], ['DIVIDEND', 'Income & Refunds'],
+  ['PENSION', 'Income & Refunds'], ['HMRC', 'Income & Refunds'], ['IRS TREAS', 'Income & Refunds'],
+];
+
+// Known-subscription merchants for single-statement ("Mode B") detection —
+// Subscriptions & Software keywords plus gyms, insurance, and telecom plans.
+const AN_KNOWN_SUB_RE = /(\bAPPLE\b(?!BEE)|NETFLIX|SPOTIFY|HULU|DISNEY|HBO|PARAMOUNT|AUDIBLE|KINDLE|ADOBE|MICROSOFT 365|OFFICE 365|DROPBOX|CANVA|NOTION|FIGMA|GITHUB|OPENAI|CHATGPT|ANTHROPIC|CLAUDE\.AI|MIDJOURNEY|PATREON|SUBSTACK|NYTIMES|DUOLINGO|HEADSPACE|CALM\.COM|STRAVA|SHAHID|OSN|STARZPLAY|ANGHAMI|BEIN|CRUNCHYROLL|YOUTUBE|GOOGLE ONE|GOOGLE STORAGE|APPLE\.COM\/BILL|ICLOUD|APPLE ONE|AMAZON PRIME|PRIME VIDEO|ITUNES|FITNESS FIRST|GOLD'S GYM|ANYTIME FITNESS|PURE ?GYM|PLANET FITNESS|INSURANC|TAKAFUL|AXA |ALLIANZ|GEICO|ADMIRAL|LINKEDIN|ZOOM\.US|SLACK|1PASSWORD|LASTPASS|NORDVPN|EXPRESSVPN|SURFSHARK|PLAYSTATION PLUS|XBOX GAME PASS|NINTENDO ONLINE)/i;
+
+const AN_PROC_PREFIX_RE = /^(SQ|TST|PAYPAL|PP|SP|WPY|IDP|GOOGLE|APL|CKO|PAYTABS|TELR)\s*\*\s*/i;
+const AN_CHANNEL_RE = /^(IAP|NFC|ECOM|ATM|POS)\s*[-–]\s*(\((AP-PAY|G-PAY|S-PAY|[A-Z-]+)\)\s*[-–]?\s*)?/i;
+const AN_NOISE_RE = /\b(POS( PURCHASE| DEBIT| WD)?|ACH (DEBIT|CREDIT)|CHECKCARD|CHKCARD|DEBIT (CARD )?PURCHASE|VISA (DDA )?PUR(CHASE)?|RECURRING (PAYMENT|PMT)|AUTHORIZED ON \d{1,2}\/\d{1,2}|CARD \d{4}|PURCHASE AUTHORIZED|PENDING|PREAUTH)\b/gi;
+const AN_PHONE_RE = /\+?\d{3}[-. ]\d{3}[-. ]\d{4}\b/g;
+const AN_DATE_IN_DESC_RE = /\b\d{1,2}\/\d{1,2}(\/\d{2,4})?\b/g;
+const AN_COUNTRY_TAIL_RE = /\s+(ARE|UAE|AE|USA|US|GBR|GB|UK|FRA|FR|DEU|DE|NLD|NL|ESP|IT|ITA|IND|IN|PAK|CAN|AUS|NH|IDF|DXB|DUB)\s*$/;
+
+function anParseDate(s, dayFirst) {
+  const t = String(s || '').trim();
+  let m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (m) return Date.UTC(+m[1], +m[2] - 1, +m[3]);
+  m = t.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/);
+  if (m) {
+    let a = +m[1], b = +m[2], y = +m[3];
+    if (y < 100) y += 2000;
+    if (a > 12 && b <= 12) { const d = a; a = b; b = d; }        // unambiguous day-first
+    else if (dayFirst && a <= 12 && b <= 12) { const d = a; a = b; b = d; } // file-level day-first (UK/EU/UAE)
+    if (a >= 1 && a <= 12 && b >= 1 && b <= 31) return Date.UTC(y, a - 1, b);
+    return null;
+  }
+  m = t.match(/^(\d{1,2})[-\s]([A-Za-z]{3,9})\.?[-\s](\d{2,4})$/);
+  if (m) {
+    const mo = AN_MONTHS[m[2].slice(0, 3).toLowerCase()];
+    let y = +m[3]; if (y < 100) y += 2000;
+    if (mo !== undefined) return Date.UTC(y, mo, +m[1]);
+  }
+  m = t.match(/^(\d{1,2})\s+([A-Za-z]{3,9})\.?\s+(\d{4})$/);
+  if (m) {
+    const mo = AN_MONTHS[m[2].slice(0, 3).toLowerCase()];
+    if (mo !== undefined) return Date.UTC(+m[3], mo, +m[1]);
+  }
+  m = t.match(/^([A-Za-z]{3,9})\.?\s+(\d{1,2}),?\s+(\d{4})$/);
+  if (m) {
+    const mo = AN_MONTHS[m[1].slice(0, 3).toLowerCase()];
+    if (mo !== undefined) return Date.UTC(+m[3], mo, +m[2]);
+  }
+  return null;
+}
+
+// Money/date token helpers for the bank-layout parser. Signed plain integers
+// ("-551", "-21,000") count as money — neo-bank statements print whole-number
+// amounts; UNSIGNED integers stay excluded (store numbers, refs).
+const AN_ARABIC_RE = /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/;
+const AN_MONEY_TOK_RE = /^[\(\-\+]?\s*(?:[A-Z]{3}\s+)?(?:[$£€]\s*\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?|\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+\.\d{1,2})\s*\)?(?:\s*(?:CR|DR))?$/i;
+const AN_SIGNED_INT_RE = /^[\-+]\s*[$£€]?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?$/;
+function anIsMoneyTok(s) {
+  const t = String(s || '').trim();
+  if (!/\d/.test(t)) return false;
+  return AN_MONEY_TOK_RE.test(t) || AN_SIGNED_INT_RE.test(t);
+}
+function anMoneyVal(s) {
+  let t = String(s || '').trim().replace(/^([\(\-\+]?)\s*[A-Za-z]{3}\s+/, '$1');
+  const cr = /(^|\s)CR$/i.test(t);
+  const neg = /^\(.*\)$/.test(t) || /^-/.test(t);
+  t = t.replace(/[()$£€,\s]/g, '').replace(/CR$|DR$/i, '').replace(/^[+-]/, '');
+  const n = parseFloat(t);
+  if (isNaN(n)) return null;
+  return { val: neg ? -n : n, cr: cr };
+}
+function anIsDateTok(s) {
+  return anParseDate(s) != null || /^(\d{1,2})[\/.\-](\d{1,2})$/.test(String(s || '').trim());
+}
+
+// Bank-layout parser. Two modes: (a) header-banded — a "Amount ... Balance"
+// column header defines x positions (neo-bank style: Date | Ref | Description |
+// signed Amount | Balance); (b) classic column-band clustering (money out /
+// money in / balance) as proven in the Bank Statement to Excel tool.
+// Returns { rows, banded } in the common transaction model.
+function bankLinesToRows(lines) {
+  const cleaned = [];
+  for (const raw of lines) {
+    const line = raw.filter(function (t) { return !AN_ARABIC_RE.test(t.s); });
+    if (line.length) cleaned.push(line);
+  }
+  let amountX = null, balanceX = null;
+  for (const line of cleaned) {
+    let a = null, b = null;
+    for (const t of line) {
+      if (/^amount( \(|$)/i.test(t.s)) a = t;
+      if (/^balance( \(|$)/i.test(t.s)) b = t;
+    }
+    if (a && b && b.x > a.x) { amountX = a.x; balanceX = b.x; break; }
+  }
+  const out = [];
+  if (amountX != null) {
+    for (const line of cleaned) {
+      const first = line[0];
+      if (!first || !anIsDateTok(first.s)) continue;
+      const descToks = [];
+      let amtTok = null;
+      for (let i = 1; i < line.length; i++) {
+        const t = line[i];
+        if (anIsMoneyTok(t.s) && t.x >= balanceX - 15) continue;              // balance column
+        if (anIsMoneyTok(t.s) && t.x >= amountX - 60) { amtTok = t; continue; } // amount column
+        descToks.push(t);
+      }
+      if (!amtTok) continue;
+      const v = anMoneyVal(amtTok.s);
+      if (!v || v.val === 0) continue;
+      const desc = descToks.map(function (t) { return t.s; }).join(' ').trim();
+      if (/OPENING BALANCE|CLOSING BALANCE/i.test(desc)) continue;
+      const isOut = v.val < 0 && !v.cr;
+      out.push({
+        date: first.s, description: desc,
+        charge: isOut ? Math.abs(v.val).toFixed(2) : '',
+        credit: isOut ? '' : Math.abs(v.val).toFixed(2),
+      });
+    }
+    return { rows: out, banded: true };
+  }
+  // classic clustering
+  const xs = [];
+  for (const line of cleaned) {
+    if (line[0] && anIsDateTok(line[0].s)) for (const t of line) if (anIsMoneyTok(t.s)) xs.push(t.x);
+  }
+  if (!xs.length) return { rows: [], banded: false };
+  xs.sort(function (a, b) { return a - b; });
+  const bandsArr = [];
+  let cur = [xs[0]];
+  for (let i = 1; i < xs.length; i++) {
+    if (xs[i] - xs[i - 1] > 40) { bandsArr.push(cur); cur = [xs[i]]; }
+    else cur.push(xs[i]);
+  }
+  bandsArr.push(cur);
+  const centers = bandsArr.map(function (b) { return b.reduce(function (s, v) { return s + v; }, 0) / b.length; });
+  const balIdx = centers.length - 1;
+  const amountColCount = Math.max(0, centers.length - 1);
+  for (const line of cleaned) {
+    const first = line[0];
+    if (!first || !anIsDateTok(first.s)) continue;
+    const descToks = line.slice(1).filter(function (t) { return !anIsMoneyTok(t.s); });
+    let moneyOut = '', moneyIn = '';
+    for (const t of line) {
+      if (!anIsMoneyTok(t.s)) continue;
+      const v = anMoneyVal(t.s);
+      if (!v) continue;
+      let bi = 0, best = Infinity;
+      for (let i = 0; i < centers.length; i++) { const d = Math.abs(t.x - centers[i]); if (d < best) { best = d; bi = i; } }
+      if (centers.length >= 2 && bi === balIdx) continue;
+      if (amountColCount >= 2) {
+        if (bi === 0) moneyOut = Math.abs(v.val).toFixed(2); else moneyIn = Math.abs(v.val).toFixed(2);
+      } else {
+        if (v.val < 0 && !v.cr) moneyOut = Math.abs(v.val).toFixed(2);
+        else if (v.cr) moneyIn = Math.abs(v.val).toFixed(2);
+        else moneyOut = Math.abs(v.val).toFixed(2);
+      }
+    }
+    const desc = descToks.map(function (t) { return t.s; }).join(' ').trim();
+    if (/OPENING BALANCE|CLOSING BALANCE/i.test(desc)) continue;
+    if (moneyOut === '' && moneyIn === '') continue;
+    out.push({ date: first.s, description: desc, charge: moneyOut, credit: moneyIn });
+  }
+  return { rows: out, banded: false };
+}
+
+// Clean a raw descriptor into { display, key, hints }. Known-merchant category
+// matching runs against the RAW uppercase string (Plaid/Actual pattern), so
+// aggressive display cleanup here is harmless to categorization.
+function anNormalize(desc) {
+  const raw = String(desc || '').toUpperCase().replace(/\s{2,}/g, ' ').trim();
+  const hints = AN_HINT_RE.test(raw);
+  let t = raw;
+  t = t.replace(/^[A-Z]{0,2}\d{7,}\s+/, ''); // leading transfer/ref number (P570295703 …)
+  t = t.replace(AN_CHANNEL_RE, '');
+  t = t.replace(AN_PROC_PREFIX_RE, '');
+  t = t.replace(AN_NOISE_RE, ' ');
+  t = t.replace(AN_PHONE_RE, ' ');
+  t = t.replace(AN_DATE_IN_DESC_RE, ' ');
+  t = t.replace(/[#*]\s?[A-Z0-9]{2,14}$/, ' ');       // trailing ref after # or *
+  t = t.replace(/\s\d{4,}$/, ' ');                     // trailing store number
+  t = t.replace(/\s{2,}/g, ' ').trim();
+  let prev = '';
+  while (prev !== t) { prev = t; t = t.replace(AN_COUNTRY_TAIL_RE, ''); } // repeated country/city-code tails
+  t = t.replace(/\b(LLC|INC|LTD|CORP|PLC|FZE|FZ-?LLC)\b/g, ' ');
+  t = t.replace(/^[\s*\-–_.]+|[\s*\-–_.]+$/g, '').replace(/\s{2,}/g, ' ').trim();
+  if (!t) t = raw;
+  // grouping key: letters/digits only, first 18 chars — stable across store
+  // numbers, cities, and refs so streams group correctly
+  const key = t.replace(/[^A-Z0-9]/g, '').slice(0, 18) || raw.replace(/[^A-Z0-9]/g, '').slice(0, 18);
+  return { display: t, key: key, hints: hints };
+}
+
+// category from RAW uppercase descriptor; sign- and parser-type-aware.
+function anCategorize(rawUpper, isCredit, parserType) {
+  if (parserType === 'Fee' || parserType === 'Interest') return 'Fees & Interest';
+  if (isCredit) {
+    if (/(REFUND|REVERSAL|CASHBACK|RETURN|CREDIT ADJUSTMENT)/.test(rawUpper)) return 'Income & Refunds';
+    if (/(SALARY|PAYROLL|WAGES|WPS|DIRECT DEPOSIT|PENSION|DIVIDEND|HMRC|IRS TREAS)/.test(rawUpper)) return 'Income & Refunds';
+    if (/(PAYMENT|TRANSFER|TRF|AUTOPAY)/.test(rawUpper)) return 'Cash & Transfers';
+    return 'Income & Refunds';
+  }
+  // bank-transfer patterns: "P570295703 To Golden Nest (rate: 1.0000)" style
+  if (/^([A-Z]{0,2}\d{7,}\s+)?TO\s+[A-Z0-9]/.test(rawUpper) || /\(RATE:/.test(rawUpper) || /FOREIGN EXCHANGE/.test(rawUpper)) return 'Cash & Transfers';
+  if (/^TST\s*\*/i.test(rawUpper)) return 'Dining & Delivery';
+  for (const pair of AN_KW) {
+    if (rawUpper.indexOf(pair[0]) !== -1) return pair[1];
+  }
+  if (/^SQ\s*\*/i.test(rawUpper)) return 'Shopping';
+  return 'Other';
+}
+
+// Frequency windows (Plaid frequencies; day windows are our tolerance synthesis)
+const AN_FREQ = [
+  { name: 'Weekly', min: 5, max: 9, perMonth: 52 / 12 },
+  { name: 'Every 2 weeks', min: 12, max: 17, perMonth: 26 / 12 },
+  { name: 'Monthly', min: 26, max: 35, perMonth: 1 },
+  { name: 'Quarterly', min: 80, max: 100, perMonth: 1 / 3 },
+  { name: 'Yearly', min: 340, max: 395, perMonth: 1 / 12 },
+];
+const AN_SPEND_EXCLUDE = { 'Cash & Transfers': 1, 'Income & Refunds': 1 };
+const AN_HABITUAL = { 'Groceries': 1, 'Dining & Delivery': 1, 'Transport & Fuel': 1, 'Shopping': 1, 'Entertainment': 1, 'Travel': 1, 'Health & Pharmacy': 1 };
+
+// Parse a bank/card CSV export into the common transaction model. Handles
+// quoted fields, Date/Description/Amount or Debit+Credit column layouts, and
+// either sign convention (majority sign = the spending side).
+function anCsvSplitLine(line) {
+  const out = []; let cur = ''; let q = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (q) {
+      if (ch === '"') { if (line[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+      else cur += ch;
+    } else if (ch === '"') q = true;
+    else if (ch === ',') { out.push(cur); cur = ''; }
+    else cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
+function anCsvNum(s) {
+  const t = String(s || '').replace(/[$£€,\s]|AED|USD|GBP|EUR/gi, '').replace(/^\((.*)\)$/, '-$1');
+  if (t === '' || !/\d/.test(t)) return null;
+  const n = parseFloat(t);
+  return isNaN(n) ? null : n;
+}
+function anParseCsv(text, fileName) {
+  const lines = String(text || '').split(/\r?\n/).filter(function (l) { return l.trim() !== ''; });
+  if (!lines.length) return [];
+  const rows = lines.map(anCsvSplitLine);
+  const h = rows[0].map(function (c) { return c.trim().toLowerCase(); });
+  const findH = function (re) { for (let i = 0; i < h.length; i++) { if (re.test(h[i])) return i; } return -1; };
+  let dateI = findH(/^(trans(action)? )?date$|posting date|^posted/);
+  let descI = findH(/desc|narrat|details|payee|merchant|memo|reference$/);
+  const debitI = findH(/debit|money out|withdraw|paid out|^out$/);
+  const creditI = findH(/^credit$|money in|deposit|paid in|^in$/);
+  let amtI = findH(/^amount|^value$|^amt/);
+  const hasHeader = dateI !== -1 || (descI !== -1 && (amtI !== -1 || debitI !== -1));
+  const body = hasHeader ? rows.slice(1) : rows;
+  if (!body.length) return [];
+  if (!hasHeader) {
+    // infer: first column where most values parse as dates; amount = last
+    // numeric column; description = widest text column between them
+    const cols = body[0].length;
+    dateI = -1; amtI = -1; descI = -1;
+    for (let c = 0; c < cols; c++) {
+      const hits = body.filter(function (r) { return anParseDate((r[c] || '').trim()) != null; }).length;
+      if (hits >= body.length * 0.6) { dateI = c; break; }
+    }
+    for (let c = cols - 1; c >= 0; c--) {
+      const hits = body.filter(function (r) { return anCsvNum(r[c]) != null; }).length;
+      if (hits >= body.length * 0.6 && c !== dateI) { amtI = c; break; }
+    }
+    let best = -1;
+    for (let c = 0; c < cols; c++) {
+      if (c === dateI || c === amtI) continue;
+      const len = body.reduce(function (s, r) { return s + String(r[c] || '').replace(/[\d.,\s-]/g, '').length; }, 0);
+      if (len > best) { best = len; descI = c; }
+    }
+    if (dateI === -1 || amtI === -1 || descI === -1) return [];
+  }
+  const txns = [];
+  const signed = [];
+  for (const r of body) {
+    const date = (r[dateI] || '').trim();
+    if (anParseDate(date) == null) continue;
+    const description = descI !== -1 ? String(r[descI] || '').trim() : '';
+    let charge = '', credit = '';
+    if (debitI !== -1 || creditI !== -1) {
+      const d = debitI !== -1 ? anCsvNum(r[debitI]) : null;
+      const c = creditI !== -1 ? anCsvNum(r[creditI]) : null;
+      if (d != null && d !== 0) charge = Math.abs(d).toFixed(2);
+      else if (c != null && c !== 0) credit = Math.abs(c).toFixed(2);
+      else continue;
+      txns.push({ date: date, description: description, charge: charge, credit: credit, fileName: fileName || '' });
+    } else if (amtI !== -1) {
+      const n = anCsvNum(r[amtI]);
+      if (n == null || n === 0) continue;
+      signed.push({ date: date, description: description, n: n });
+    }
+  }
+  if (signed.length) {
+    // majority sign = the spending side (card CSVs differ from bank CSVs)
+    const negs = signed.filter(function (s) { return s.n < 0; }).length;
+    const negIsSpend = negs >= signed.length / 2;
+    for (const s of signed) {
+      const isSpend = negIsSpend ? s.n < 0 : s.n > 0;
+      txns.push({
+        date: s.date, description: s.description,
+        charge: isSpend ? Math.abs(s.n).toFixed(2) : '',
+        credit: isSpend ? '' : Math.abs(s.n).toFixed(2),
+        fileName: fileName || '',
+      });
+    }
+  }
+  return txns;
+}
+
+// txns: [{ date, description, charge:'12.34'|'', credit:''|'5.00', type?, fileName? }]
+// overrides: optional { itemIndex: 'Category Name' } from the user's manual edits.
+function anAnalyze(txns, overrides) {
+  // per-file day-first detection: any DD/MM date with day > 12 marks the file
+  const dayFirstByFile = {};
+  for (const t of txns) {
+    const m = String(t.date || '').match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-]\d{2,4}$/);
+    if (m && +m[1] > 12 && +m[2] <= 12) dayFirstByFile[t.fileName || ''] = true;
+  }
+  const items = [];
+  for (const t of txns) {
+    const amt = t.charge ? parseFloat(t.charge) : (t.credit ? -parseFloat(t.credit) : 0);
+    if (!amt) continue;
+    const rawUpper = String(t.description || '').toUpperCase();
+    if (/OPENING BALANCE|CLOSING BALANCE/.test(rawUpper)) continue;
+    const norm = anNormalize(t.description);
+    const cat = anCategorize(rawUpper, amt < 0, t.type === 'Fee' ? 'Fee' : t.type === 'Interest' ? 'Interest' : '');
+    items.push({
+      date: t.date, ts: anParseDate(t.date, dayFirstByFile[t.fileName || '']), description: t.description,
+      merchant: norm.display, key: norm.key, hints: norm.hints,
+      amount: amt, category: cat, fileName: t.fileName || '',
+    });
+  }
+  if (overrides) {
+    for (const k in overrides) {
+      const i = parseInt(k, 10);
+      if (items[i] && overrides[k]) items[i].category = overrides[k];
+    }
+  }
+
+  // summary + categories
+  let debits = 0, credits = 0, spend = 0, transfersOut = 0;
+  const catTotals = {};
+  let minTs = null, maxTs = null;
+  for (const it of items) {
+    if (it.ts != null) { if (minTs == null || it.ts < minTs) minTs = it.ts; if (maxTs == null || it.ts > maxTs) maxTs = it.ts; }
+    if (it.amount > 0) {
+      debits += it.amount;
+      if (AN_SPEND_EXCLUDE[it.category]) transfersOut += it.amount;
+      else { spend += it.amount; catTotals[it.category] = (catTotals[it.category] || 0) + it.amount; }
+    } else {
+      credits += -it.amount;
+    }
+  }
+  const categories = Object.keys(catTotals)
+    .map(function (c) { return { name: c, total: catTotals[c], pct: spend > 0 ? (catTotals[c] / spend) * 100 : 0 }; })
+    .sort(function (a, b) { return b.total - a.total; });
+
+  // top merchants (spend only)
+  const merchTotals = {};
+  for (const it of items) {
+    if (it.amount <= 0 || AN_SPEND_EXCLUDE[it.category]) continue;
+    if (!merchTotals[it.key]) merchTotals[it.key] = { name: it.merchant, total: 0, count: 0 };
+    merchTotals[it.key].total += it.amount;
+    merchTotals[it.key].count++;
+  }
+  const topMerchants = Object.keys(merchTotals).map(function (k) { return merchTotals[k]; })
+    .sort(function (a, b) { return b.total - a.total; }).slice(0, 10);
+
+  // recurring detection
+  const groups = {};
+  for (const it of items) {
+    if (it.amount <= 0) continue;
+    if (!groups[it.key]) groups[it.key] = [];
+    groups[it.key].push(it);
+  }
+  const recurring = [];
+  for (const k in groups) {
+    const g = groups[k].filter(function (x) { return x.ts != null; }).sort(function (a, b) { return a.ts - b.ts; });
+    if (!g.length) continue;
+    const sample = g[g.length - 1];
+    const knownSub = AN_KNOWN_SUB_RE.test(sample.description.toUpperCase());
+    const hinted = g.some(function (x) { return x.hints; });
+    const amounts = g.map(function (x) { return x.amount; }).sort(function (a, b) { return a - b; });
+    const median = amounts[Math.floor(amounts.length / 2)];
+    const tol = Math.max(median * 0.15, 3);
+    const isFixed = amounts.every(function (a) { return Math.abs(a - median) <= tol; });
+
+    if (g.length >= 2) {
+      // Mode A: interval-based
+      const gaps = [];
+      for (let i = 1; i < g.length; i++) gaps.push((g[i].ts - g[i - 1].ts) / 86400000);
+      const sg = gaps.slice().sort(function (a, b) { return a - b; });
+      const medGap = sg[Math.floor(sg.length / 2)];
+      const win = AN_FREQ.find(function (w) { return medGap >= w.min && medGap <= w.max; });
+      if (win) {
+        const inWin = gaps.filter(function (d) { return d >= win.min && d <= win.max; }).length;
+        if (inWin / gaps.length >= 0.6) {
+          const allowed = knownSub || hinted || sample.category === 'Subscriptions & Software' || sample.category === 'Telecom & Utilities' ||
+            (isFixed && !AN_HABITUAL[sample.category]);
+          if (allowed) {
+            const lastAmount = g[g.length - 1].amount;
+            recurring.push({
+              merchant: sample.merchant, category: sample.category,
+              frequency: win.name, occurrences: g.length,
+              lastAmount: lastAmount, isFixed: isFixed,
+              monthly: lastAmount * win.perMonth, annual: lastAmount * win.perMonth * 12,
+              confidence: g.length >= 3 ? 'confirmed' : 'likely',
+              nextTs: g[g.length - 1].ts + Math.round(medGap) * 86400000,
+            });
+            continue;
+          }
+        }
+      }
+    }
+    // Mode B: single occurrence (or irregular) — known-merchant / hint scoring
+    if (g.length === 1) {
+      let score = 0;
+      if (knownSub) score += 2;
+      if (hinted) score += 2;
+      const cents = Math.round((sample.amount % 1) * 100);
+      if ((cents === 99 || cents === 95) && sample.amount >= 2 && sample.amount <= 150) score += 1;
+      if (score >= 2 && !AN_SPEND_EXCLUDE[sample.category]) {
+        recurring.push({
+          merchant: sample.merchant, category: sample.category,
+          frequency: 'Monthly (assumed)', occurrences: 1,
+          lastAmount: sample.amount, isFixed: true,
+          monthly: sample.amount, annual: sample.amount * 12,
+          confidence: 'possible', nextTs: null,
+        });
+      }
+    }
+  }
+  recurring.sort(function (a, b) { return b.monthly - a.monthly; });
+  let subMonthly = 0;
+  for (const r of recurring) subMonthly += r.monthly;
+
+  return {
+    items: items,
+    summary: { debits: debits, credits: credits, spend: spend, transfersOut: transfersOut, net: credits - debits, count: items.length, minTs: minTs, maxTs: maxTs },
+    categories: categories,
+    topMerchants: topMerchants,
+    recurring: recurring,
+    subscriptionMonthly: subMonthly,
+    subscriptionAnnual: subMonthly * 12,
+  };
+}
+
+function anIcsDate(ts) {
+  const d = new Date(ts);
+  const p = function (n) { return (n < 10 ? '0' : '') + n; };
+  return '' + d.getUTCFullYear() + p(d.getUTCMonth() + 1) + p(d.getUTCDate());
+}
+const AN_ICS_FREQ = { 'Weekly': 'FREQ=WEEKLY', 'Every 2 weeks': 'FREQ=WEEKLY;INTERVAL=2', 'Monthly': 'FREQ=MONTHLY', 'Quarterly': 'FREQ=MONTHLY;INTERVAL=3', 'Yearly': 'FREQ=YEARLY' };
+function anBuildIcs(recurring, currency) {
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Best Answer Hub//Bank Statement Analyzer//EN'];
+  let n = 0;
+  for (const r of recurring) {
+    if (r.nextTs == null) continue;
+    n++;
+    lines.push('BEGIN:VEVENT');
+    lines.push('UID:bah-analyzer-' + n + '-' + anIcsDate(r.nextTs) + '@bestanswerhub.com');
+    lines.push('DTSTART;VALUE=DATE:' + anIcsDate(r.nextTs));
+    const rr = AN_ICS_FREQ[r.frequency];
+    if (rr) lines.push('RRULE:' + rr);
+    lines.push('SUMMARY:' + (r.merchant + ' ' + (currency || '') + ' ' + r.lastAmount.toFixed(2) + ' expected (' + r.frequency + ')').replace(/[,;]/g, ' '));
+    lines.push('END:VEVENT');
+  }
+  lines.push('END:VCALENDAR');
+  return n ? lines.join('\r\n') : '';
+}
+// ── END ANALYZER CORE ──
+
+    // ── Orchestration ────────────────────────────────────────────────────────
+    function handleFiles(fs: File[]) {
+      errorArea?.classList.add('hidden');
+      resultArea?.classList.add('hidden');
+      const okFiles = fs.filter((f) => /\.(pdf|csv)$/i.test(f.name));
+      if (!okFiles.length) { showError('Please choose .pdf or .csv statement files.'); return; }
+      files = okFiles;
+      if (infoName) infoName.textContent = files.length === 1 ? files[0].name : files.length + ' files selected';
+      if (infoSize) infoSize.textContent = formatBytes(files.reduce((s, f) => s + f.size, 0));
+      fileInfo?.classList.remove('hidden');
+      settingsArea?.classList.remove('hidden');
+    }
+
+    async function analyze() {
+      if (!files.length) return;
+      settingsArea?.classList.add('hidden');
+      errorArea?.classList.add('hidden');
+      progressArea?.classList.remove('hidden');
+      txns = []; overrides = {};
+      try {
+        for (const file of files) {
+          if (progressText) progressText.textContent = 'Reading ' + file.name + '...';
+          if (/\.csv$/i.test(file.name)) {
+            const text = await file.text();
+            txns.push(...anParseCsv(text, file.name));
+          } else {
+            await loadPdf();
+            const buf = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+            const allLines: any[] = [];
+            let totalItems = 0;
+            for (let i = 1; i <= pdf.numPages; i++) {
+              if (progressText) progressText.textContent = 'Reading ' + file.name + ' — page ' + i + ' of ' + pdf.numPages + '...';
+              const page = await pdf.getPage(i);
+              const tc = await page.getTextContent();
+              totalItems += tc.items.length;
+              allLines.push(...groupLines(tc.items));
+            }
+            if (totalItems === 0) {
+              showError(file.name + ' looks like a scanned statement (no text layer). Run it through the Bank Statement to Excel converter\'s OCR first, then drop the CSV here.');
+              return;
+            }
+            const card = parseCardStatement(allLines);
+            const bank = bankLinesToRows(allLines);
+            // banded layouts are decisive: an Amount/Balance header means a bank
+            // statement (rightmost money = running balance, never the amount)
+            let rows: any[];
+            if (bank.banded && bank.rows.length >= 3 && !card.banded) rows = bank.rows;
+            else if (card.banded || card.rows.length >= bank.rows.length) rows = card.rows;
+            else rows = bank.rows;
+            for (const r of rows) (r as any).fileName = file.name;
+            txns.push(...rows);
+          }
+        }
+        if (!txns.length) {
+          showError('No transactions could be read from these files. The layout may be unusual — try the Bank Statement to Excel converter first and drop its CSV here.');
+          return;
+        }
+        recompute();
+        progressArea?.classList.add('hidden');
+        resultArea?.classList.remove('hidden');
+        resultArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (e: any) {
+        showError(e?.message || 'Something went wrong while analyzing.');
+      }
+    }
+
+    function recompute() {
+      analysis = anAnalyze(txns, overrides);
+      renderSummary();
+      renderSubs();
+      renderCategories();
+      renderMerchants();
+      renderTxns();
+    }
+
+    function tsLabel(ts: number | null): string {
+      if (ts == null) return '';
+      const d = new Date(ts);
+      const M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return d.getUTCDate() + ' ' + M[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+    }
+
+    function renderSummary() {
+      if (!summaryStrip) return;
+      const s = analysis.summary;
+      const range = s.minTs != null ? tsLabel(s.minTs) + ' – ' + tsLabel(s.maxTs) : '';
+      const tiles = [
+        ['Total spending', fmt(s.spend), 'text-bae-ink'],
+        ['Money in', fmt(s.credits), 'text-emerald-600'],
+        ['Transfers & card payments', fmt(s.transfersOut), 'text-bae-muted'],
+        ['Transactions', String(s.count) + (range ? '<span class="block text-[10px] font-normal text-bae-muted mt-0.5">' + escapeHtml(range) + '</span>' : ''), 'text-bae-ink'],
+      ];
+      summaryStrip.innerHTML = tiles.map((t) => `
+        <div class="bg-bae-card border border-bae-border rounded-bae p-4 text-center">
+          <p class="text-[10px] uppercase tracking-wide text-bae-muted mb-1">${t[0]}</p>
+          <p class="text-base font-bold ${t[2]}">${t[1]}</p>
+        </div>`).join('');
+    }
+
+    function renderSubs() {
+      if (!subList || !subCount || !subBurn) return;
+      const rec = analysis.recurring;
+      subCount.textContent = rec.length + ' found';
+      if (!rec.length) {
+        subBurn.textContent = '';
+        subList.innerHTML = '';
+        subEmpty?.classList.remove('hidden');
+        icsBtn?.classList.add('hidden');
+        return;
+      }
+      subEmpty?.classList.add('hidden');
+      subBurn.textContent = 'Estimated recurring spend: ' + fmt(analysis.subscriptionMonthly) + ' / month ≈ ' + fmt(analysis.subscriptionAnnual) + ' / year.';
+      const badge = (c: string) =>
+        c === 'confirmed' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">confirmed</span>'
+        : c === 'likely' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-bae-primary-soft text-bae-primary">likely</span>'
+        : '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-100">possible</span>';
+      subList.innerHTML = rec.map((r: any) => `
+        <div class="flex items-center justify-between gap-3 border border-bae-border-light rounded-bae-sm p-3 flex-wrap">
+          <div class="min-w-0">
+            <p class="text-xs font-semibold text-bae-ink truncate">${escapeHtml(r.merchant)} ${badge(r.confidence)}</p>
+            <p class="text-[11px] text-bae-muted">${escapeHtml(r.frequency)}${r.isFixed ? '' : ' · variable amount'}${r.nextTs != null ? ' · next ≈ ' + escapeHtml(tsLabel(r.nextTs)) : ''}</p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-xs font-bold text-bae-ink">${fmt(r.monthly)} / mo</p>
+            <p class="text-[11px] text-bae-muted">≈ ${fmt(r.annual)} / yr</p>
+          </div>
+        </div>`).join('');
+      if (icsBtn) icsBtn.classList.toggle('hidden', !rec.some((r: any) => r.nextTs != null));
+    }
+
+    function renderCategories() {
+      if (!donut || !catBars) return;
+      const cats = analysis.categories;
+      if (!cats.length) {
+        donut.style.background = '#e5e7eb';
+        catBars.innerHTML = '<p class="text-xs text-bae-muted">No spending detected.</p>';
+        if (donutLabel) donutLabel.textContent = '';
+        return;
+      }
+      let acc = 0;
+      const segs: string[] = [];
+      cats.forEach((c: any, i: number) => {
+        const col = PALETTE[i % PALETTE.length];
+        segs.push(col + ' ' + acc.toFixed(2) + '% ' + (acc + c.pct).toFixed(2) + '%');
+        acc += c.pct;
+      });
+      donut.style.background = 'conic-gradient(' + segs.join(', ') + ')';
+      if (donutLabel) donutLabel.textContent = 'Spending ' + fmt(analysis.summary.spend);
+      const max = cats[0].total || 1;
+      catBars.innerHTML = cats.map((c: any, i: number) => `
+        <div>
+          <div class="flex items-center justify-between text-xs mb-0.5">
+            <span class="font-medium text-bae-ink flex items-center gap-1.5"><span class="inline-block w-2.5 h-2.5 rounded-sm" style="background:${PALETTE[i % PALETTE.length]}"></span>${escapeHtml(c.name)}</span>
+            <span class="text-bae-muted">${fmt(c.total)} · ${c.pct.toFixed(1)}%</span>
+          </div>
+          <div class="h-1.5 bg-bae-bg rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:${((c.total / max) * 100).toFixed(1)}%;background:${PALETTE[i % PALETTE.length]}"></div></div>
+        </div>`).join('');
+    }
+
+    function renderMerchants() {
+      if (!merchantBody) return;
+      merchantBody.innerHTML = analysis.topMerchants.map((m: any) => `
+        <tr class="border-b border-bae-border-light">
+          <td class="py-2 pr-2 font-medium text-bae-ink">${escapeHtml(m.name)}</td>
+          <td class="py-2 pr-2 text-right text-bae-muted">${m.count}</td>
+          <td class="py-2 text-right font-semibold text-bae-ink">${fmt(m.total)}</td>
+        </tr>`).join('');
+    }
+
+    function renderTxns() {
+      if (!txnBody || !txnCount) return;
+      const items = analysis.items;
+      txnCount.textContent = items.length + (items.length === 1 ? ' row' : ' rows');
+      const opts = (sel: string) => ALL_CATS.map((c) => `<option value="${escapeHtml(c)}"${c === sel ? ' selected' : ''}>${escapeHtml(c)}</option>`).join('');
+      txnBody.innerHTML = items.map((it: any, i: number) => `
+        <tr class="border-t border-bae-border-light">
+          <td class="px-2 py-1.5 whitespace-nowrap">${escapeHtml(it.date)}</td>
+          <td class="px-2 py-1.5">${escapeHtml(it.merchant)}</td>
+          <td class="px-2 py-1.5"><select data-i="${i}" class="cat-sel text-xs bg-bae-bg border border-bae-border rounded-bae-sm px-1 py-0.5">${opts(it.category)}</select></td>
+          <td class="px-2 py-1.5 text-right font-medium ${it.amount < 0 ? 'text-emerald-600' : 'text-bae-ink'}">${it.amount < 0 ? '+' + fmt(-it.amount) : fmt(it.amount)}</td>
+        </tr>`).join('');
+      txnBody.querySelectorAll('.cat-sel').forEach((sel) => {
+        sel.addEventListener('change', () => {
+          const i = parseInt((sel as HTMLElement).dataset.i || '-1', 10);
+          if (i >= 0) { overrides[i] = (sel as HTMLSelectElement).value; recompute(); }
+        });
+      });
+    }
+
+    function triggerDownload(blob: Blob, name: string) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name; document.body.appendChild(a); a.click();
+      document.body.removeChild(a); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+    function downloadCsv() {
+      if (!analysis) return;
+      const header = ['Date', 'Description', 'Merchant', 'Category', 'Charge', 'Credit', 'Statement'];
+      const rows = analysis.items.map((it: any) => [
+        it.date, it.description, it.merchant, it.category,
+        it.amount > 0 ? it.amount.toFixed(2) : '', it.amount < 0 ? (-it.amount).toFixed(2) : '', it.fileName,
+      ]);
+      const csv = [header, ...rows].map((row: any[]) => row.map((c) => {
+        const v = String(c == null ? '' : c);
+        return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+      }).join(',')).join('\r\n');
+      triggerDownload(new Blob([csv], { type: 'text/csv;charset=utf-8' }), 'statement-analysis.csv');
+    }
+    function downloadIcs() {
+      if (!analysis) return;
+      const ics = anBuildIcs(analysis.recurring, '');
+      if (!ics) return;
+      triggerDownload(new Blob([ics], { type: 'text/calendar;charset=utf-8' }), 'subscription-renewals.ics');
+    }
+    function reset() {
+      files = []; txns = []; overrides = {}; analysis = null;
+      fileInput.value = '';
+      [fileInfo, settingsArea, progressArea, resultArea, errorArea].forEach((el) => el?.classList.add('hidden'));
+    }
+
+    // ── Wiring ───────────────────────────────────────────────────────────────
+    dropZone?.addEventListener('click', () => fileInput.click());
+    dropZone?.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-bae-primary'); });
+    dropZone?.addEventListener('dragleave', () => dropZone.classList.remove('border-bae-primary'));
+    dropZone?.addEventListener('drop', (e) => {
+      e.preventDefault(); dropZone.classList.remove('border-bae-primary');
+      const fs = e.dataTransfer?.files; if (fs && fs.length) handleFiles(Array.from(fs));
+    });
+    fileInput?.addEventListener('change', () => {
+      const fs = fileInput.files ? Array.from(fileInput.files) : [];
+      fileInput.value = ''; // allow re-selecting the same files without a page refresh
+      if (fs.length) handleFiles(fs);
+    });
+    analyzeBtn?.addEventListener('click', analyze);
+    csvBtn?.addEventListener('click', downloadCsv);
+    icsBtn?.addEventListener('click', downloadIcs);
+    resetBtn?.addEventListener('click', reset);
+    document.getElementById('reset-top')?.addEventListener('click', reset);
+  })();
+</script>

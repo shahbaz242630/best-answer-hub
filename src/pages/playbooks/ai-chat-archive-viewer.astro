@@ -1,0 +1,361 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub AI Chat Archive Viewer?', a: 'The Best Answer Hub AI Chat Archive Viewer is a free browser tool that opens the data-export ZIP from ChatGPT or Claude and makes every conversation readable again. You can browse your chats, search all of them at once, and save any chat as PDF, Word, or Markdown. Everything runs on your device, with nothing uploaded.' },
+  { q: 'How do I export my ChatGPT data?', a: 'In ChatGPT, open Settings, then Data Controls, then Export data, and confirm. OpenAI emails a download link that expires after 24 hours, so download the ZIP promptly. Then drop that ZIP into the Best Answer Hub AI Chat Archive Viewer, with no unzipping needed, to read it.' },
+  { q: 'How do I export my Claude data?', a: 'In Claude, open Settings, then the Privacy section, then Export data, on the web or desktop app. Anthropic emails a download link that expires 24 hours after delivery. Drop the export into the Best Answer Hub AI Chat Archive Viewer to browse and search your Claude conversations on your own device.' },
+  { q: 'Why is my ChatGPT export unreadable?', a: 'Because the export is a conversations.json file built for software, not people. Each chat is stored as a branching tree of message nodes, with parents and children, to handle edits and regenerations. The Best Answer Hub AI Chat Archive Viewer walks that tree and rebuilds each conversation as a normal, readable thread.' },
+  { q: 'What is conversations.json?', a: 'It is the core file in a ChatGPT export, holding your entire history as raw JSON. OpenAI names it directly and notes larger exports may split it into numbered files. It is not meant to be read by hand. The Best Answer Hub AI Chat Archive Viewer decodes it so every chat appears as a readable conversation.' },
+  { q: 'Is my export uploaded to a server?', a: 'No. The Best Answer Hub AI Chat Archive Viewer reads your export in the browser using the File API, so the file never leaves your device. There is no upload and no signup. You can confirm it in the browser Network tab, which shows no request carrying your archive after the page loads.' },
+  { q: 'Why does it matter where I open my AI history?', a: 'Because your history holds personal, work, and sometimes health or financial details you typed into a chatbot. Uploading it to a third-party website to read it would expose all of that. The Best Answer Hub AI Chat Archive Viewer keeps the file on your device, which is the safest way to open something so personal.' },
+  { q: 'Can it read both ChatGPT and Claude exports?', a: 'Yes. The Best Answer Hub AI Chat Archive Viewer opens the data export from ChatGPT or Claude, and you can even load both at once. Many other viewers handle only one service, so keeping your archives from different assistants in one readable place is part of what this tool is for.' },
+  { q: 'Can I save a conversation as a PDF?', a: 'Yes. Once your history is open, the Best Answer Hub AI Chat Archive Viewer lets you export any single chat as a PDF, a Word document, or a Markdown file. That is useful for keeping a record, sharing an answer, or filing an important exchange before you delete your account.' },
+  { q: 'How long does the download link last?', a: 'Both ChatGPT and Claude email a link that expires 24 hours after it is sent, so download the ZIP soon after it arrives. ChatGPT can take up to a few days to prepare a large export. Once you have the ZIP, the Best Answer Hub AI Chat Archive Viewer opens it instantly on your device.' },
+  { q: 'Can I search across all my conversations?', a: 'Yes. The Best Answer Hub AI Chat Archive Viewer searches every conversation in your export at once, so you can find an answer you remember getting without scrolling through hundreds of chats. This is one of the main reasons to open an export rather than leave it as an unreadable file.' },
+  { q: 'Is it safe to open my history before deleting my account?', a: 'Yes, and it is a good idea. Export your data first, open it in the Best Answer Hub AI Chat Archive Viewer, and save the chats worth keeping as PDFs. Because nothing is uploaded, you keep what matters without exposing your history, then you can delete the account with a clear record in hand.' },
+  { q: 'Do AI companies use my conversations?', a: 'Both OpenAI and Anthropic say chats may be used to improve their models unless you opt out in your settings. That is a reason many people care about their own copy of their history. The Best Answer Hub AI Chat Archive Viewer helps you read and keep that copy, entirely on your own device.' },
+  { q: 'Does it work offline?', a: 'Yes. Once the Best Answer Hub AI Chat Archive Viewer page has loaded, it works with no internet connection, because it reads and rebuilds your export locally. That suits a sensitive file: you can disconnect entirely and still browse, search, and export your history.' },
+  { q: 'Is the AI Chat Archive Viewer free?', a: 'Yes. The Best Answer Hub AI Chat Archive Viewer is completely free with no usage limits and no signup. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising, so it carries no ads and never gates your own history behind an upgrade.' },
+];
+
+const seo = {
+  title: 'How to Read Your ChatGPT Export Without Uploading It',
+  description: 'Your ChatGPT export is an unreadable conversations.json full of private chats. Here is how to browse, search, and save it in your browser, nothing uploaded.',
+  url: '/playbooks/ai-chat-archive-viewer/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'AI Chat Archive Viewer', url: '/playbooks/ai-chat-archive-viewer/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; AI Tools</span>
+        <div class="cav">Your history, readable again</div>
+        <h1>How to Read Your ChatGPT Export <em>Without Uploading It</em></h1>
+        <p class="dek">You can download everything you have ever said to ChatGPT or Claude, but what arrives is a single unreadable JSON file, and it holds some of the most personal things you have typed anywhere. Here is how the export works, why it is so hard to read, and how to browse and search it on your own device without sending it to a stranger's server.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~8 min read</span><span>AI tools</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Drop in<small>the export ZIP</small></div>
+          <div class="seg b2">Read<small>browse and search</small></div>
+          <div class="seg b3">Private<small>nothing uploaded</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">24 hours</div><div class="l">how long your export download link lasts</div><div class="src">OpenAI, Anthropic</div></div>
+      <div class="stat"><div class="n">conversations<wbr>.json</div><div class="l">the one unreadable file at the core</div><div class="src">OpenAI</div></div>
+      <div class="stat"><div class="n">Article 20</div><div class="l">the GDPR right to export your data</div><div class="src">GDPR</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">files uploaded, it opens in your browser</div><div class="src">no upload</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#export">How to export</a>
+        <a href="#json">Why it is unreadable</a>
+        <a href="#privacy">The upload risk</a>
+        <a href="#use">What you can do</a>
+        <a href="#different">Why this tool</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>Your ChatGPT or Claude data export is a machine-readable archive, not a readable one: it arrives as a ZIP whose core is a conversations.json file that stores each chat as a branching tree of nodes rather than a normal thread.</strong> It is also deeply personal, which is why the safest way to open it is one that never sends it anywhere. The Best Answer Hub <a href="/tools/ai-chat-archive-viewer/">AI Chat Archive Viewer</a> reads that export in your browser, turning it back into conversations you can browse, search, and save.</p>
+
+        <p>This guide covers how to export your data from ChatGPT and Claude, why the file is so hard to read, why uploading it to a random web viewer is a bad idea, and what you can actually do with your history once it is readable again. The tool sits in the Best Answer Hub <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub AI Chat Archive Viewer?</h2>
+        <p>The Best Answer Hub AI Chat Archive Viewer is a free tool that opens the data-export ZIP from ChatGPT or Claude and makes every conversation readable again. Drop the file in and you can browse your chats like the originals, search across all of them at once, and save any single chat as PDF, Word, or Markdown. Everything runs on your device using the browser File API, so nothing is uploaded and there is no signup.</p>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">1</span><div><b>Drop in the ZIP.</b> Point it at the export from ChatGPT or Claude, or at conversations.json by itself, no unzipping needed.</div></li>
+            <li><span class="dot">2</span><div><b>Browse and search.</b> Read each chat as a normal thread, and search every conversation at once to find an old answer.</div></li>
+            <li><span class="dot">3</span><div><b>Save what matters.</b> Export any chat to PDF, Word, or Markdown to keep, share, or file it.</div></li>
+          </ul>
+        </div>
+
+        <div class="cav">Getting the file</div>
+        <h2 id="export">How do you export your ChatGPT and Claude data?</h2>
+        <p>Both services let you download your history from their settings, then email you a link that expires quickly. In ChatGPT, go to Settings, then Data Controls, then Export data; OpenAI emails a download link, and its help page states that "the link in the email expires after 24 hours," so grab the ZIP promptly (<a href="https://help.openai.com/en/articles/7260999-how-do-i-export-my-chatgpt-history-and-data" target="_blank" rel="noopener noreferrer">OpenAI</a>). In Claude, go to Settings, then Privacy, then Export data; Anthropic also emails a link, and states that "the download link will expire 24 hours after delivery" (<a href="https://privacy.claude.com/en/articles/9450526-how-can-i-export-my-claude-data" target="_blank" rel="noopener noreferrer">Anthropic</a>).</p>
+        <table>
+          <thead><tr><th>Service</th><th>Where to click</th><th>Link expires</th></tr></thead>
+          <tbody>
+            <tr><td class="band">ChatGPT</td><td>Settings &rarr; Data Controls &rarr; Export data</td><td>24 hours</td></tr>
+            <tr><td class="band">Claude</td><td>Settings &rarr; Privacy &rarr; Export data</td><td>24 hours</td></tr>
+          </tbody>
+        </table>
+        <p>This whole export mechanism exists because of data-portability rights. GDPR Article 20 gives people the right to receive their personal data "in a structured, commonly used and machine-readable format" (<a href="https://gdpr-info.eu/art-20-gdpr/" target="_blank" rel="noopener noreferrer">GDPR</a>). The catch is that "machine-readable" is doing a lot of work: the file is built for a computer, not for you.</p>
+
+        <div class="cav">The unreadable part</div>
+        <h2 id="json">Why is the export so hard to read?</h2>
+        <p>Because your history is not stored as a tidy transcript. OpenAI confirms the export centers on a file called conversations.json, noting that "larger exports may contain numbered conversation JSON files instead" (<a href="https://help.openai.com/en/articles/9106926-transfer-exported-conversations-between-chatgpt-accounts" target="_blank" rel="noopener noreferrer">OpenAI</a>). Inside, each conversation is a branching tree of nodes, where every message points to a parent and a list of children, which is how the format handles your edits and regenerations. To rebuild one readable thread, a program has to walk that tree, which is why opening the raw file yourself is close to useless.</p>
+        <div class="codebox">
+          <div class="dt">What conversations.json really looks like</div>
+          <div class="codelines">conversations.json   (your entire history, one machine file)
+  a conversation
+    node  ->  a message, plus its parent and its children
+    node  ->  a message, plus its parent and its children
+    node  ->  an edited version, branching off the same parent
+  ...repeated for every chat, as a tree, not a thread</div>
+          <p class="codenote">The node, parent, and children structure is described by users in the OpenAI developer forum; OpenAI does not publish an official schema. A viewer reconstructs the readable thread from this tree.</p>
+        </div>
+        <p>This is not a knock on OpenAI or Anthropic; a tree is a reasonable way to store branching edits. It just means the export is written for software, and you need something to turn it back into conversations. That is the whole job of the Best Answer Hub AI Chat Archive Viewer.</p>
+
+        <div class="cav">The part that matters most</div>
+        <h2 id="privacy">Why not just upload it to a web viewer?</h2>
+        <p>Because your AI history is one of the most sensitive files you own, and uploading it hands all of it to a server you do not control. People type personal, work, health, financial, and legal questions into these tools. Stanford researchers put it bluntly: "if you share sensitive information in a dialogue with ChatGPT, Gemini, or other frontier models, it may be collected and used for training," and found that leading assistants use chat data to train by default unless you opt out (<a href="https://hai.stanford.edu/news/be-careful-what-you-tell-your-ai-chatbot" target="_blank" rel="noopener noreferrer">Stanford HAI, 2025</a>). Your export is a concentrated copy of exactly that.</p>
+        <p>So sending the whole archive to a third-party website just to make it readable is the opposite of careful. The FTC's guidance to businesses is the right instinct for a personal file too: if you do not need to hand over sensitive information, "do not even collect it" (<a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">FTC</a>). A browser-only viewer follows that logic by never transmitting the file. It reads the ZIP locally through the browser File API, which lets a page "select local files and then read the contents of those files" on your device (<a href="https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications" target="_blank" rel="noopener noreferrer">MDN</a>), so the archive never leaves your machine.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">The export never leaves your device</figcaption>
+          <svg viewBox="0 0 600 210" role="img" aria-label="Flow: your export ZIP goes into your browser, which reads it with the File API and shows readable, searchable chats, with nothing uploaded.">
+            <rect x="18" y="52" width="160" height="66" rx="12" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="98" y="80" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">Export ZIP</text>
+            <text x="98" y="100" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#847B6B">from ChatGPT / Claude</text>
+            <rect x="220" y="52" width="160" height="66" rx="12" fill="#C6603F"/>
+            <text x="300" y="80" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#fff">Your browser</text>
+            <text x="300" y="100" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#f3ddd2">File API, on device</text>
+            <rect x="422" y="52" width="160" height="66" rx="12" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+            <text x="502" y="80" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">Readable chats</text>
+            <text x="502" y="100" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" fill="#847B6B">browse and search</text>
+            <path d="M178 85 L220 85" stroke="#C6603F" stroke-width="2.5"/><path d="M214 79 l8 6 -8 6" fill="none" stroke="#C6603F" stroke-width="2.5"/>
+            <path d="M380 85 L422 85" stroke="#C6603F" stroke-width="2.5"/><path d="M416 79 l8 6 -8 6" fill="none" stroke="#C6603F" stroke-width="2.5"/>
+            <rect x="18" y="150" width="564" height="40" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+            <text x="300" y="175" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#5a7355">Nothing is uploaded to a server</text>
+          </svg>
+          <p class="chart-src">The viewer reads the export with the browser File API (MDN) and reconstructs the chats locally. No network request carries your archive.</p>
+        </figure>
+
+        <div class="cav">Once it opens</div>
+        <h2 id="use">What can you do once your history is readable?</h2>
+        <p>Quite a lot, once it stops being a wall of JSON. You can browse every conversation as a normal thread, search across all of them at once to find that answer you know you got months ago, and save any single chat as a PDF, Word document, or Markdown file for your records. It is especially useful before you delete an account or clear your history, so you keep the parts worth keeping.</p>
+        <div class="callout sage"><div class="h">A good habit before you delete</div><p>If you are about to wipe your ChatGPT or Claude history, export it first and open it in the Best Answer Hub AI Chat Archive Viewer. You can pull out the handful of chats worth keeping as PDFs, then delete the account knowing nothing useful was lost, and without having uploaded your history anywhere.</p></div>
+
+        <div class="cav">Why this one</div>
+        <h2 id="different">How is Best Answer Hub different from other viewers?</h2>
+        <p>A few developer projects can open a ChatGPT export, but most are GitHub scripts, single-platform, or need you to run code or open a raw HTML file. The Best Answer Hub AI Chat Archive Viewer is a plain consumer tool: drop in the ZIP from ChatGPT or Claude, no install and no technical steps, browse and search, and export to PDF, Word, or Markdown. It reads everything in the browser, so the file is never uploaded.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical option</th></tr></thead>
+          <tbody>
+            <tr><td>ChatGPT and Claude exports</td><td class="band">Both</td><td>Often one only</td></tr>
+            <tr><td>Setup</td><td class="band">Drop in the ZIP</td><td>Run a script or open raw HTML</td></tr>
+            <tr><td>Export a chat to PDF / Word / Markdown</td><td class="band">Yes</td><td>Varies</td></tr>
+            <tr><td>Where the file is read</td><td class="band">In your browser</td><td>Client-side or upload, varies</td></tr>
+          </tbody>
+        </table>
+        <p>To be fair, at least one open-source viewer also runs fully in the browser, so this is not the only private option. What the Best Answer Hub AI Chat Archive Viewer adds is a no-install consumer experience across both platforms, with export built in, and nothing to configure.</p>
+
+        <div class="cta">
+          <span class="kicker">Open your history safely</span>
+          <h3>Try the free AI Chat Archive Viewer</h3>
+          <p>Drop in your ChatGPT or Claude export ZIP and browse, search, and save your chats as PDF, Word, or Markdown. In your browser, nothing uploaded, no signup.</p>
+          <a class="btn" href="/tools/ai-chat-archive-viewer/">Open the AI Chat Archive Viewer</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Frequently asked questions about AI chat exports</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/pdf-to-word-converter/">Convert a PDF to Word, Nothing Uploaded</a></b> Another file tool that keeps your document on your device.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/markdown-editor/">Where Does Your Text Go in a Markdown Editor?</a></b> The same local-first principle, for writing.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/ai-knowledge-test/">The Free AI Knowledge Test</a></b> A no-signup check of how well you really understand AI.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>OpenAI Help Center, <a href="https://help.openai.com/en/articles/7260999-how-do-i-export-my-chatgpt-history-and-data" target="_blank" rel="noopener noreferrer">Export your ChatGPT history</a>, 2026 (Settings path; link expires after 24 hours; ZIP).</li>
+          <li>OpenAI Help Center, <a href="https://help.openai.com/en/articles/9106926-transfer-exported-conversations-between-chatgpt-accounts" target="_blank" rel="noopener noreferrer">Transfer exported conversations</a>, 2026 (conversations.json is the core file).</li>
+          <li>Anthropic Privacy Center, <a href="https://privacy.claude.com/en/articles/9450526-how-can-i-export-my-claude-data" target="_blank" rel="noopener noreferrer">Export your Claude data</a>, 2026 (Settings, Privacy; link expires 24 hours after delivery).</li>
+          <li>OpenAI Developer Community, <a href="https://community.openai.com/t/questions-about-the-json-structures-in-the-exported-conversations-json/954762" target="_blank" rel="noopener noreferrer">JSON structure of conversations.json</a>, 2026 (community-described node/parent/children tree; no official schema).</li>
+          <li>Stanford HAI, <a href="https://hai.stanford.edu/news/be-careful-what-you-tell-your-ai-chatbot" target="_blank" rel="noopener noreferrer">Be careful what you tell your AI chatbot</a>, 2025 (chat data is sensitive and trained on by default absent an opt-out).</li>
+          <li>FTC, <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">Protecting Personal Information</a> (do not collect sensitive data you do not need).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications" target="_blank" rel="noopener noreferrer">Using files from web applications</a>, 2026 (the browser reads local files on the client).</li>
+          <li>GDPR, <a href="https://gdpr-info.eu/art-20-gdpr/" target="_blank" rel="noopener noreferrer">Article 20, Right to data portability</a>, 2018 (machine-readable export).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">More free tools: <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">All Tools</a>, <a href="/tools/pdf-to-word-converter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF to Word</a>, <a href="/developer-toolbox/markdown-editor/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Markdown Editor</a>, and the <a href="/knowledge-center/ai-knowledge-test/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">free AI Knowledge Test</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.55rem;color:var(--clay);line-height:1.05}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-style:normal;font-size:.82rem;color:var(--label);margin-top:10px}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

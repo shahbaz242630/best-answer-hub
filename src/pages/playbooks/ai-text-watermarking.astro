@@ -1,0 +1,444 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-08-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub guide to AI text watermarking?', a: 'It is a plain-English guide to the hidden marks AI companies now add to machine-written text, covering what the marks are, which tools apply them, whether they survive editing, who can read them, and what the law asks of a business. Best Answer Hub built it because most coverage confuses three different technologies.' },
+  { q: 'Does Claude watermark its text?', a: 'Yes. Anthropic states that a supported Claude model “weaves an imperceptible watermark directly into the text itself,” across the API, the apps and Claude Code. Models launched on or after 2 August 2026 carry it at launch, and older models are being retrofitted. Best Answer Hub quotes the support documentation directly above.' },
+  { q: 'Does ChatGPT watermark text?', a: 'No. As of August 2026 the OpenAI provenance documentation covers images and audio only, and text is absent from it entirely. OpenAI built a text watermark years ago and never shipped it, citing the risk of stigmatizing non-native English speakers. Best Answer Hub treats claims of a ChatGPT text watermark as unsupported.' },
+  { q: 'Does Gemini watermark text?', a: 'Yes, and it has for longer than Claude has. Google DeepMind applies SynthID-Text to the Gemini app and web experience, using a method published in Nature and validated on around 20 million responses. Best Answer Hub notes that Google, not Anthropic, reached production text watermarking first.' },
+  { q: 'Can you turn off the watermark on AI text?', a: 'No opt-out is documented at any tier, including the paid API. Anthropic describes the marking as applied at model level, which means it travels with the output regardless of which product produced it. Best Answer Hub flags this because it applies equally to text a person wrote and merely asked Claude to proofread.' },
+  { q: 'Can anyone actually detect an AI text watermark?', a: 'Almost nobody can. Detecting a statistical watermark requires the provider secret key, so detection is lab-only. No public detector exists for Claude text as of August 2026, and the Google detector portal is waitlisted. Best Answer Hub regards this verification gap as the single most important fact on the subject.' },
+  { q: 'Does an AI watermark survive copy and paste?', a: 'A statistical watermark does, because the signal is the word choices themselves rather than anything added to the file. C2PA provenance metadata does not, because it is bound to a file container and a text selection leaves it behind. Best Answer Hub keeps these two mechanisms separate for exactly this reason.' },
+  { q: 'Does editing or paraphrasing remove an AI watermark?', a: 'Research says it usually does. One July 2026 evaluation across 846 runs found a single meaning-preserving paraphrase pass removed 98.3 percent of SynthID marks and 100 percent of two older schemes. Best Answer Hub cites this to show that a watermark is evidence at best, never proof of anything.' },
+  { q: 'Does a watermark mean the text was written by AI?', a: 'No, and Anthropic says so itself. A detected mark means the text may have been processed by Claude, which includes proofreading, translating or summarizing something a person wrote. Absence of a mark proves nothing either. Best Answer Hub treats the mark as a weak signal rather than an authorship finding.' },
+  { q: 'Are AI detectors reliable?', a: 'The public ones are not. A peer-reviewed Stanford study found seven detectors falsely flagged 61.22 percent of essays by non-native English writers, against roughly 5.19 percent for native-written control essays. The retired OpenAI classifier caught only 26 percent of AI text. Best Answer Hub advises against basing any decision on them.' },
+  { q: 'Why did AI companies start watermarking text in 2026?', a: 'Because EU law began requiring it. Article 50 of the EU AI Act became applicable on 2 August 2026 and obliges providers of systems generating synthetic text to mark outputs in a machine-readable, detectable format. Best Answer Hub notes Anthropic applied the change worldwide rather than only inside the European Union.' },
+  { q: 'Does the EU AI Act require you to label AI-written content?', a: 'Only in narrow cases. The marking duty falls on the model provider, not the user. A business must label AI text only when it is published to inform the public on matters of public interest, and even then human editorial review removes the duty. Best Answer Hub sets out the full test above.' },
+  { q: 'Do you have to disclose AI use to clients?', a: 'No general law requires it, but the contract usually decides. Every documented case of AI use causing real damage involved fabricated facts plus non-disclosure, not AI use alone. Best Answer Hub recommends agreeing the standard in writing up front and naming a human who verifies every factual claim.' },
+  { q: 'What is C2PA, and does it apply to text?', a: 'C2PA is an open provenance standard that attaches signed metadata to a file. Claude applies it to image files such as .svg, .png and .jpg, not to prose. Best Answer Hub stresses the distinction because much of the current coverage wrongly describes the Claude text watermark as C2PA content credentials.' },
+  { q: 'Is the Best Answer Hub AI readiness assessment free?', a: 'Yes. The Best Answer Hub Small Business AI Readiness assessment returns a readiness picture and ranked gaps for free, with no account and no email, and everything is scored inside the browser rather than uploaded. An optional paid report adds a detailed action plan, but the core result never depends on paying.' },
+];
+
+const seo = {
+  title: 'AI Text Watermarking: What It Is and Who Can Detect It',
+  description: 'What AI text watermarking is, which tools mark text, whether it survives editing, who can detect it, and what the EU AI Act asks of a small business.',
+  url: '/playbooks/ai-text-watermarking/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'AI Text Watermarking', url: '/playbooks/ai-text-watermarking/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+  <span class="glow"></span>
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="masthead"><img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44"><span class="word">Best Answer Hub<i>.</i></span></div>
+      <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+    </div>
+    <span class="eyebrow">Best Answer Hub Playbooks &middot; AI Content</span>
+    <div class="cav">Marked, but nobody can read it</div>
+    <h1>AI Text Watermarking, <em>Explained</em></h1>
+    <p class="dek">In August 2026 Anthropic began hiding a mark inside everything Claude writes, worldwide, with no way to switch it off. Google has done the same to Gemini since 2024. Here is what the marks actually are, what survives a copy and paste, who can read them, and what any of it asks of an ordinary business.</p>
+    <div class="byline"><span><b>Best Answer Hub</b></span><span>~16 min read</span><span>Primary sources</span><span>No signup</span></div>
+    <div class="bandstrip">
+      <div class="seg b1">The mark<small>what is actually added</small></div>
+      <div class="seg b2">The gap<small>who can detect it</small></div>
+      <div class="seg b3">The duty<small>what the law asks</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat"><div class="n">61.22%</div><div class="l">of essays by non-native English writers were falsely flagged as AI</div><div class="src">Patterns, 2023</div></div>
+  <div class="stat"><div class="n">0</div><div class="l">public detectors exist for the Claude text watermark today</div><div class="src">Anthropic, 2026</div></div>
+  <div class="stat"><div class="n">98.3%</div><div class="l">of SynthID marks removed by one meaning-preserving paraphrase</div><div class="src">arXiv, 2026</div></div>
+  <div class="stat"><div class="n">15M</div><div class="l">euro ceiling on EU AI Act transparency penalties, or 3% of turnover</div><div class="src">European Commission, 2026</div></div>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="On this page">
+    <div class="t">On this page</div>
+    <a href="#what">What AI text watermarking is</a>
+    <a href="#news">What Anthropic announced</a>
+    <a href="#who">Which tools mark text</a>
+    <a href="#survive">Does it survive editing</a>
+    <a href="#detect">Who can detect it</a>
+    <a href="#authorship">Marked is not written by AI</a>
+    <a href="#law">What the law requires</a>
+    <a href="#policy">What to do about it</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+
+  <article>
+    <p class="lead">AI text watermarking is a hidden signal that an AI company adds to the text its model writes, so that the text can later be identified as machine-generated. It became a live issue in August 2026, when Anthropic began marking everything Claude writes, worldwide, with no way to switch it off. <strong>The part almost nobody is saying out loud is that no member of the public can currently check for that mark.</strong> Best Answer Hub wrote this guide because the gap between "your text is now marked" and "anybody can verify the mark" is where every practical question actually lives.</p>
+
+    <p>This guide separates the three different technologies that get called watermarking, sets out what Anthropic, Google and OpenAI each actually do, tests the marks against ordinary editing, explains who can and cannot read them, and finishes with what the law asks of an ordinary business. It sits alongside the Best Answer Hub pillar on <a href="/playbooks/small-business-ai-readiness/">small business AI readiness</a> and the guide to <a href="/playbooks/small-business-ai-policy/">small business AI policy</a>.</p>
+
+    <div class="cav">Start here</div>
+    <h2 id="what">What is AI text watermarking?</h2>
+    <p>AI text watermarking is a deliberate, hidden signal placed in machine-written text at the moment it is generated. Unlike a visible label, it is designed to be invisible to a reader and readable by a machine. Three quite different technologies get called by that one name, and most of the confusion in the current coverage comes from mixing them up. Best Answer Hub separates them here because they behave in opposite ways under ordinary editing.</p>
+    <div class="sec">
+      <ul class="pillars">
+        <li><span class="dot">1</span><div><b>Statistical watermarking.</b> Nothing is added to the text. The model quietly biases its own word choices so the finished passage carries a statistical fingerprint that a holder of the secret key can test for. The signal <em>is</em> the prose. This is what Claude and Gemini use.</div></li>
+        <li><span class="dot">2</span><div><b>Provenance metadata.</b> A signed manifest, usually following the C2PA standard, is attached to a file. It is genuine cryptographic proof, but it is bound to the file container, so selecting the words and pasting them elsewhere leaves it behind. Claude applies this to image files only.</div></li>
+        <li><span class="dot">3</span><div><b>Invisible characters.</b> Zero-width spaces, soft hyphens and similar codepoints hidden between the visible letters. Easy to detect, easy to strip with a find and replace, and easy to produce by accident. No major lab has been shown to use this for text.</div></li>
+      </ul>
+    </div>
+    <p>Only the first of those is a watermark in any meaningful sense. The second is metadata that a copy and paste destroys. The third is closer to a trick than a security measure, and it doubles as an <em>attack</em> on the first: the original academic paper on statistical watermarking notes that inserting stray characters breaks enough tokens to remove the watermark entirely (<a href="https://arxiv.org/abs/2301.10226" target="_blank" rel="noopener noreferrer">Kirchenbauer et al., ICML 2023</a>).</p>
+    <figure class="chart">
+      <figcaption class="chart-title">Three things called a watermark, and what each survives</figcaption>
+      <svg viewBox="0 0 620 300" role="img" aria-label="Diagram of three watermarking approaches, showing that a statistical watermark survives copy and paste but dies on paraphrase, C2PA metadata dies on copy and paste, and invisible characters die on retyping or normalization">
+        <rect x="16" y="122" width="120" height="56" rx="12" fill="#33302A"/>
+        <text x="76" y="146" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#FBF6EE">AI writes</text>
+        <text x="76" y="162" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#e8e0d2">a passage of text</text>
+        <path d="M140 138 L184 56" stroke="#ddd0bb" stroke-width="2.5" fill="none"/>
+        <path d="M140 150 L184 150" stroke="#ddd0bb" stroke-width="2.5" fill="none"/>
+        <path d="M140 162 L184 244" stroke="#ddd0bb" stroke-width="2.5" fill="none"/>
+        <rect x="188" y="30" width="150" height="52" rx="11" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+        <text x="263" y="52" text-anchor="middle" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#33302A">Statistical</text>
+        <text x="263" y="68" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#847B6B">the word choices</text>
+        <rect x="188" y="124" width="150" height="52" rx="11" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+        <text x="263" y="146" text-anchor="middle" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#33302A">C2PA metadata</text>
+        <text x="263" y="162" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#847B6B">bound to a file</text>
+        <rect x="188" y="218" width="150" height="52" rx="11" fill="#fff" stroke="#E8DECE" stroke-width="2"/>
+        <text x="263" y="240" text-anchor="middle" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#33302A">Invisible characters</text>
+        <text x="263" y="256" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#847B6B">hidden codepoints</text>
+        <path d="M342 56 L376 56" stroke="#ddd0bb" stroke-width="2.5"/>
+        <path d="M342 150 L376 150" stroke="#ddd0bb" stroke-width="2.5"/>
+        <path d="M342 244 L376 244" stroke="#ddd0bb" stroke-width="2.5"/>
+        <rect x="380" y="30" width="224" height="52" rx="11" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"/>
+        <text x="492" y="51" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#5a7355">Survives copy and paste</text>
+        <text x="492" y="67" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#4f4940">but dies on paraphrase</text>
+        <rect x="380" y="124" width="224" height="52" rx="11" fill="#F3E2D6" stroke="#C6603F" stroke-width="2"/>
+        <text x="492" y="145" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#8a4429">Dies on copy and paste</text>
+        <text x="492" y="161" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#8a4429">the file is the carrier</text>
+        <rect x="380" y="218" width="224" height="52" rx="11" fill="#F3E2D6" stroke="#C6603F" stroke-width="2"/>
+        <text x="492" y="239" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#8a4429">Dies on retyping</text>
+        <text x="492" y="255" text-anchor="middle" font-family="Karla, sans-serif" font-size="10.5" fill="#8a4429">or a find and replace</text>
+      </svg>
+      <p class="chart-src">Behavior of each mechanism under ordinary editing, per the C2PA 2.4 specification and the published watermarking literature cited below.</p>
+    </figure>
+
+    <div class="cav">The news</div>
+    <h2 id="news">What did Anthropic actually announce, and when?</h2>
+    <p>Anthropic committed to marking Claude text output at model level, across every Claude surface, worldwide, with no documented opt-out. It was not a press release. The primary source is a Claude Help Center article that appeared around 10 August 2026 and was picked up by the technology press the following day. That quiet arrival is itself part of the story, and it explains why so little technical detail accompanied it.</p>
+    <p>The support documentation states that when a supported model generates text, it "weaves an imperceptible watermark directly into the text itself," and that the marking covers output "everywhere you use Claude, including Claude Platform (API), Claude, Claude Code, Claude Cowork, and Claude Tag" (<a href="https://support.claude.com/en/articles/16266773-how-claude-marks-ai-generated-content" target="_blank" rel="noopener noreferrer">Anthropic, 2026</a>). On timing, it is precise: "Claude models launched on or after August 2, 2026 support marking at launch," with earlier models being retrofitted.</p>
+    <div class="callout"><div class="h">Three claims to be careful with</div><p>First, the text watermark is <b>not</b> C2PA. Anthropic applies signed C2PA metadata to image files with the extensions .svg, .png and .jpg, and something entirely different to prose. Second, the exact algorithm behind the text mark is <b>undisclosed</b>: the described behavior is consistent with statistical watermarking, but Anthropic has published no specification. Third, nothing supports the widely repeated claim that hidden Unicode characters are involved. Best Answer Hub flags all three because each appears in current coverage as though it were established.</p></div>
+    <p>What has not shipped is the part that would make any of it usable. Anthropic says it is "working to enable users and other third parties to detect Claude's embedded watermarks," with technical documentation to follow. Until that lands, the practical position is a mark that exists and cannot be checked by anybody outside the company.</p>
+
+    <div class="cav">The field</div>
+    <h2 id="who">Which AI tools actually mark the text they write?</h2>
+    <p>Fewer than the headlines suggest. The popular framing is that the AI industry has started watermarking text, and that overstates it considerably. Two labs mark text today. One built the capability and deliberately shelved it. The rest have signed a European code of practice without shipping anything specific to text. Best Answer Hub sets the position out plainly, because the difference between signing a commitment and running the code matters.</p>
+    <table>
+      <thead><tr><th>Provider</th><th>Text watermarking status</th><th>Public detector</th></tr></thead>
+      <tbody>
+        <tr><td class="band">Anthropic (Claude)</td><td>Committed August 2026. Model level, all surfaces, worldwide, no opt-out</td><td><span class="score lv3">None yet</span></td></tr>
+        <tr><td class="band">Google (Gemini)</td><td>Live since 2024. SynthID-Text on the Gemini app and web experience</td><td><span class="score lv2">Waitlisted</span></td></tr>
+        <tr><td class="band">OpenAI (ChatGPT)</td><td><span class="score lv1">None</span>. Provenance covers images and audio only</td><td>Not applicable</td></tr>
+        <tr><td class="band">Meta, Mistral, Cohere</td><td>Signed the EU transparency code of practice. No shipped text marking documented</td><td>Not applicable</td></tr>
+      </tbody>
+    </table>
+    <p>Google reached production first, and by a wide margin. Its SynthID-Text method was published in Nature in October 2024 and validated across roughly 20 million Gemini responses, which remains the only production-scale text watermarking deployment with a peer-reviewed evaluation attached (<a href="https://www.nature.com/articles/s41586-024-08025-4" target="_blank" rel="noopener noreferrer">Dathathri et al., Nature, 2024</a>). Google describes the mechanism openly: the model adjusts the probability scores it assigns to candidate words, in a pattern that is invisible to a reader.</p>
+    <p>OpenAI is the interesting case, because it made the opposite decision on purpose. Its live provenance documentation lists C2PA and SynthID for images and audio, with text absent entirely. The stated reason for never shipping the text watermark it had already built is worth quoting: the method "has the potential to disproportionately impact some groups," and could "stigmatize use of AI as a useful writing tool for non-native English speakers" (<a href="https://openai.com/index/understanding-the-source-of-what-we-see-and-hear-online/" target="_blank" rel="noopener noreferrer">OpenAI, 2024</a>). Hold on to that sentence. It predicts, precisely, the problem set out further down this page.</p>
+
+    <div class="cav">The stress test</div>
+    <h2 id="survive">Does an AI watermark survive copy and paste, or editing?</h2>
+    <p>A statistical watermark survives almost everything except changing the words, and dies the moment somebody does. That is the whole picture, and it explains behavior that otherwise looks contradictory. There is nothing to strip out of the text, because nothing was added: the mark lives in which words were chosen. Retyping the passage by hand preserves it. Running it through a translator destroys it. Best Answer Hub finds this the most useful thing to understand about the technology, because it predicts every other outcome.</p>
+    <table>
+      <thead><tr><th>What you do to the text</th><th>Statistical watermark</th><th>C2PA metadata</th></tr></thead>
+      <tbody>
+        <tr><td class="band">Copy and paste into Word or Google Docs</td><td><span class="score lv3">Survives</span></td><td><span class="score lv1">Destroyed</span></td></tr>
+        <tr><td class="band">Paste as plain text, or send in an email</td><td><span class="score lv3">Survives</span></td><td><span class="score lv1">Destroyed</span></td></tr>
+        <tr><td class="band">Publish through a website editor</td><td><span class="score lv3">Survives</span></td><td><span class="score lv1">Destroyed</span></td></tr>
+        <tr><td class="band">Retype it by hand, word for word</td><td><span class="score lv3">Survives</span></td><td><span class="score lv1">Destroyed</span></td></tr>
+        <tr><td class="band">Screenshot it, or read it aloud</td><td>Survives if the words are reproduced</td><td><span class="score lv1">Destroyed</span></td></tr>
+        <tr><td class="band">Rewrite or paraphrase it</td><td><span class="score lv1">Destroyed</span></td><td><span class="score lv1">Destroyed</span></td></tr>
+        <tr><td class="band">Translate it and translate it back</td><td><span class="score lv1">Badly weakened</span></td><td><span class="score lv1">Destroyed</span></td></tr>
+        <tr><td class="band">Use fewer than about 150 words</td><td><span class="score lv2">Unreliable</span></td><td>Not affected</td></tr>
+      </tbody>
+    </table>
+    <p>Anthropic's own wording matches this exactly: the mark travels with copied text and "may persist through some editing," but detection may fail where text has been "heavily edited, paraphrased, translated, or mixed into other writing," or is very short. Google gives the same caveats for SynthID, adding that watermarking is less effective on factual answers, where there is less room to vary the wording without damaging accuracy.</p>
+    <p>The academic picture is blunter. A July 2026 evaluation ran three published schemes through meaning-preserving paraphrase across 846 test runs, and found a single pass removed 100 percent of two older watermarks and 98.3 percent of an open implementation of SynthID-Text. The authors concluded that the configurations tested "do not meet the evidentiary bar that courts require" (<a href="https://arxiv.org/abs/2607.16010" target="_blank" rel="noopener noreferrer">Tamim and Khan, 2026</a>). A 2024 theoretical result goes further, proving that strong watermarking is impossible in principle once an attacker has a way to rewrite text while preserving quality (<a href="https://arxiv.org/abs/2311.04378" target="_blank" rel="noopener noreferrer">Zhang et al., ICML 2024</a>).</p>
+    <figure class="chart">
+      <figcaption class="chart-title">Watermark removed by a single paraphrase pass</figcaption>
+      <svg viewBox="0 0 600 300" role="img" aria-label="Bar chart showing that one meaning-preserving paraphrase pass removed 100 percent of the KGW watermark, 100 percent of the Unigram watermark and 98.3 percent of an open SynthID-Text implementation">
+        <defs><linearGradient id="wmgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+        <line x1="60" y1="248" x2="570" y2="248" stroke="#E1D4be" stroke-width="2"/>
+        <rect x="108" y="78" width="104" height="170" rx="8" fill="url(#wmgrad)"/>
+        <text x="160" y="68" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="25" font-weight="800" fill="#33302A">100%</text>
+        <text x="160" y="268" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">KGW</text>
+        <rect x="256" y="78" width="104" height="170" rx="8" fill="url(#wmgrad)"/>
+        <text x="308" y="68" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="25" font-weight="800" fill="#33302A">100%</text>
+        <text x="308" y="268" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">Unigram</text>
+        <rect x="404" y="81" width="104" height="167" rx="8" fill="url(#wmgrad)"/>
+        <text x="456" y="71" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="25" font-weight="800" fill="#33302A">98.3%</text>
+        <text x="456" y="268" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">SynthID-Text</text>
+        <text x="456" y="285" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" fill="#a89c87">open implementation</text>
+      </svg>
+      <p class="chart-src">Source: Tamim and Khan, AI Watermark Evidence Fails Forensic Readiness, arXiv, July 2026. Conditional removal rate across 846 runs. Tests published academic schemes, not the undisclosed Anthropic algorithm.</p>
+    </figure>
+    <div class="callout sage"><div class="h">An honest counterweight</div><p>None of this means watermarking is pointless. A separate study found that watermarks do survive human paraphrasing when there is enough text to work with, remaining detectable after roughly 800 words (<a href="https://arxiv.org/abs/2306.04634" target="_blank" rel="noopener noreferrer">Kirchenbauer et al., ICLR 2024</a>). Robustness is a curve, not a switch. Casual editing leaves the mark intact. A deliberate attempt to remove it succeeds cheaply. Best Answer Hub states both halves because the honest summary is that watermarking works against people who are not trying to defeat it.</p></div>
+
+    <div class="cav">The gap</div>
+    <h2 id="detect">Who can actually detect an AI text watermark?</h2>
+    <p>Almost nobody, and that is the single most important fact on this subject. Detecting a statistical watermark requires the secret key used to create it, so detection is a private capability of the company that made the model. Not teachers, not editors, not publishers, not employers, and not the person who received the text. As of August 2026 there are <b>zero</b> public detectors for Claude text. The Google detector portal exists but is waitlisted to journalists and researchers, and its 2026 content detection preview covers images only.</p>
+    <p>So a strange situation now exists. Text is being marked by law, and the marking cannot be read by any of the people the law was written to protect. Meanwhile the tools those people already use are not watermark detectors at all. They are perplexity classifiers, which guess at whether writing looks statistically ordinary, and they are badly, measurably wrong.</p>
+    <p>The evidence on that is not close. A peer-reviewed Stanford study ran seven widely used detectors over 91 TOEFL essays written by non-native English speakers and found a mean false-positive rate of <b>61.22 percent</b>. Nearly one essay in five, 19.78 percent, was flagged as AI-written by all seven detectors at once. Against a control set of essays by native-speaking US eighth-grade students, the same detectors were near-perfect, with a false-positive rate of about 5.19 percent (<a href="https://www.cell.com/patterns/fulltext/S2666-3899(23)00130-7" target="_blank" rel="noopener noreferrer">Liang et al., Patterns, 2023</a>).</p>
+    <figure class="chart">
+      <figcaption class="chart-title">Human essays wrongly flagged as AI-written</figcaption>
+      <svg viewBox="0 0 600 300" role="img" aria-label="Bar chart comparing false-positive rates of seven AI detectors, at 61.22 percent for essays by non-native English writers against 5.19 percent for essays by native-speaking US students">
+        <defs><linearGradient id="fpgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+        <line x1="70" y1="248" x2="560" y2="248" stroke="#E1D4be" stroke-width="2"/>
+        <rect x="140" y="66" width="130" height="182" rx="8" fill="url(#fpgrad)"/>
+        <text x="205" y="56" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="26" font-weight="800" fill="#33302A">61.22%</text>
+        <text x="205" y="268" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">Non-native English writers</text>
+        <text x="205" y="285" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" fill="#a89c87">91 TOEFL essays</text>
+        <rect x="360" y="233" width="130" height="15" rx="6" fill="url(#fpgrad)" opacity="0.62"/>
+        <text x="425" y="223" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="26" font-weight="800" fill="#33302A">5.19%</text>
+        <text x="425" y="268" text-anchor="middle" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">Native-speaking US students</text>
+        <text x="425" y="285" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" fill="#a89c87">control essays</text>
+      </svg>
+      <p class="chart-src">Source: Liang, Yuksekgonul, Mao, Wu and Zou, GPT detectors are biased against non-native English writers, Patterns, 2023. Mean false-positive rate across seven detectors.</p>
+    </figure>
+    <p>The mechanism behind that result is the important part. When the same TOEFL essays were rewritten with richer vocabulary, misclassification collapsed from 61.22 percent to 11.77 percent. The detectors were never finding AI. They were penalizing simple word choice, which is what learning a language looks like. OpenAI's stated reason for shelving its own text watermark, quoted earlier on this page, described this exact harm two years before anyone measured it at scale.</p>
+    <p>The retired OpenAI classifier gives the numeric floor for how bad public detection was. It correctly identified 26 percent of AI-written text while wrongly labeling 9 percent of human writing as AI, and OpenAI withdrew it in July 2023 "due to its low rate of accuracy" (<a href="https://openai.com/index/new-ai-classifier-for-indicating-ai-written-text/" target="_blank" rel="noopener noreferrer">OpenAI, 2023</a>). Nothing available to the public since has been shown to do materially better.</p>
+    <div class="callout peach"><div class="h">On the tools now advertising watermark detection</div><p>A market of watermark checkers appeared within days of the Anthropic news, and several sites sell both detection and removal. Treat the detection claims with suspicion. Reading a Gemini watermark requires Google private keys. Reading a Claude watermark requires a specification Anthropic has not published, so any product claiming to do it today is describing something that does not exist publicly. Scanning for hidden characters is real and trivial, but it proves nothing, because non-breaking spaces and soft hyphens appear constantly in ordinary word-processed text.</p></div>
+
+    <div class="cav">The trap</div>
+    <h2 id="authorship">Does a watermark mean AI wrote it?</h2>
+    <p>No, and the clearest statement of that comes from Anthropic itself. Its documentation concedes that a detected mark means the content may have been <em>processed</em> by Claude, which covers proofreading, translating, summarizing and reformatting text a person wrote themselves. The mark cannot distinguish a novel drafted by a model from a paragraph a human wrote and asked a model to tidy. It also concedes the reverse: the absence of a mark does not mean the content was not AI-generated.</p>
+    <blockquote>A watermark answers a narrow question about which software touched a passage. <span class="accent">It does not answer the question people actually want answered, which is who did the thinking.</span></blockquote>
+    <p>This is where the no-opt-out decision bites hardest. Someone who writes their own work and runs it through Claude for a grammar check now ships marked text, indistinguishable at the detector level from text the model wrote from nothing. For non-native English speakers, who are among the heaviest users of AI for exactly that kind of polishing, the effect compounds with the detector bias in the section above.</p>
+    <p>There is a further problem in the opposite direction. Marks can be forged. A peer-reviewed attack showed that repeatedly querying a watermarked model reveals enough of the hidden pattern to stamp a convincing watermark onto text a human wrote. The authors report that for under 50 US dollars an attacker can both forge and strip state-of-the-art schemes, at an average success rate above 80 percent (<a href="https://arxiv.org/abs/2402.19361" target="_blank" rel="noopener noreferrer">Jovanovic, Staab and Vechev, ICML 2024</a>). Tournament-based schemes such as SynthID resisted this far better, but the principle stands. Best Answer Hub draws one practical conclusion from all of it: a watermark result is evidence, never proof, and no disciplinary or contractual decision should rest on one alone.</p>
+
+    <div class="cav">The law</div>
+    <h2 id="law">What does the law actually require of a business?</h2>
+    <p>Far less than most owners fear, because the marking duty falls on the model provider rather than on the person using the model. The European Commission is explicit that Article 50 of the EU AI Act "applies as from 2 August 2026," and the clause driving all of this month's news binds providers: those generating synthetic audio, image, video or text content must ensure outputs are "marked in a machine-readable format and detectable as artificially generated or manipulated" (<a href="https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act" target="_blank" rel="noopener noreferrer">European Commission, 2026</a>). That is Anthropic's obligation, not a small business obligation.</p>
+    <p>A separate clause does reach businesses that publish. Deployers must clearly label AI-generated or manipulated text "published with the purpose of informing the public on matters of public interest," and the Commission's own list of what counts is broader than most summaries report: politics, public administration, justice, fundamental rights, public security, public health, environmental protection, consumer safety, and economic, financial, political, scientific or cultural developments that may be a relevant subject of public debate. Ordinary product and marketing copy sits outside that. A blog post on financial or health topics may not.</p>
+    <div class="callout"><div class="h">The exemption that does most of the work</div><p>The Commission states that published text "that has undergone human review or editorial control" does not need to be labeled. It defines that as deliberate examination of the substance by a person with relevant knowledge, under an entity with the authority to approve, alter or reject the content. Systems performing an assistive function for standard editing, meaning grammar, spelling and formatting, are outside the marking duty altogether. Best Answer Hub reads this as the single most useful sentence in the whole framework for a small business: real editorial review, actually performed, removes the obligation.</p></div>
+    <p>Penalties for the transparency obligations reach 15 million euros or 3 percent of total worldwide turnover, whichever is higher, which is why providers moved quickly. Systems already on the market before 2 August 2026 have until 2 December 2026 to retrofit machine-readable marking, which is the deadline shaping Anthropic's rollout schedule.</p>
+    <table>
+      <thead><tr><th>Where</th><th>What the rule says</th><th>Does it bind a small business?</th></tr></thead>
+      <tbody>
+        <tr><td class="band">European Union</td><td>Providers must mark synthetic text. Deployers label only public-interest text, unless human-reviewed</td><td><span class="score lv2">Rarely</span></td></tr>
+        <tr><td class="band">China</td><td>Broadest regime. Visible labels on AI text, plus metadata, plus a duty on users to self-declare when posting</td><td><span class="score lv3">Yes, if operating there</span></td></tr>
+        <tr><td class="band">California</td><td>Operative 2 August 2026, but only for providers with over one million monthly users</td><td><span class="score lv1">No</span></td></tr>
+        <tr><td class="band">United Kingdom</td><td>No labeling law. Advertising rules apply the usual misleadingness test instead</td><td><span class="score lv1">No</span></td></tr>
+      </tbody>
+    </table>
+    <p>Platform rules matter more day to day than statute does, and text is the gap in almost all of them. Google Search has no disclosure requirement at all: its policy targets scaled content abuse, penalizing unoriginal, low-value pages "no matter how it's created" (<a href="https://developers.google.com/search/docs/essentials/spam-policies" target="_blank" rel="noopener noreferrer">Google Search Central</a>). YouTube explicitly exempts AI-written scripts, titles and outlines. Amazon KDP does require authors to disclose AI-generated text at the point of publishing, and academic publishers require a declaration that appears in the finished article. Best Answer Hub recommends checking the venue rather than assuming a general rule exists.</p>
+
+    <div class="cav">Your turn</div>
+    <h2 id="policy">What should a small business actually do?</h2>
+    <p>Set a disclosure standard by what the AI actually did, then hold to it. Three tiers cover almost every real situation, and they are the same three that Amazon, the academic publishers and the EU AI Act arrived at independently, which is a reasonable sign they are the right cut. Best Answer Hub recommends writing them down once and applying them to every deliverable, rather than deciding case by case under pressure.</p>
+    <div class="sec">
+      <ul class="pillars">
+        <li><span class="dot">1</span><div><b>AI-assisted, no disclosure needed.</b> Grammar, spelling, formatting, restructuring, brainstorming, or summarizing your own material. Exempt under the AI Act as assistive editing, exempt at Amazon, exempt at the journals, exempt on YouTube.</div></li>
+        <li><span class="dot">2</span><div><b>AI-drafted and human-verified, disclose in deliverables.</b> A model produced substantive draft text and a named person checked the substance, verified every factual claim and citation, and took responsibility. This is exactly the editorial control that switches off the European labeling duty, but only if the review genuinely happened.</div></li>
+        <li><span class="dot">3</span><div><b>AI-generated and unreviewed, do not ship it.</b> No serious policy should allow this into a paid deliverable. Every documented case of AI use causing real damage falls in this tier.</div></li>
+      </ul>
+    </div>
+    <p>That last point is worth dwelling on, because the pattern in the real cases is consistent and it is not what people expect. In October 2025 Deloitte Australia agreed a partial refund on a report for an Australian government department after it was found to contain fabricated citations and a misattributed legal quote, with the AI use undisclosed until academics raised questions. In May 2025 a syndicated summer reading list ran in the Chicago Sun-Times in which 10 of 15 recommended books did not exist; the paper refunded subscribers for that edition and the freelancer lost the client permanently. A running database of court judgments recorded 1,870 cases worldwide by 11 August 2026 in which parties relied on AI-fabricated citations (<a href="https://www.damiencharlotin.com/hallucinations/" target="_blank" rel="noopener noreferrer">AI Hallucination Cases database, 2026</a>).</p>
+    <p>Nobody in any of those cases got into trouble for using AI. They got into trouble for shipping invented facts, and non-disclosure turned a correctable error into a credibility failure. Which is why the controls that matter are unglamorous: verify every claim, name the human who checked it, agree the standard with the client in writing before the work starts, and ask what their own policy is. Best Answer Hub would add one prohibition to that list. Never claim content is AI-free or undetectable. Detection is unreliable in both directions, and a false claim of human authorship is a straightforward deception risk in a way that using the tool never was.</p>
+    <div class="callout peach"><div class="h">What not to do</div><p>Do not add a blanket "this page may contain AI-generated content" notice to an entire website. No jurisdiction requires it for ordinary commercial copy, UK advertising guidance warns that a disclosure which muddies the message is worse than none, and it spends reader trust for no compliance benefit at all. Disclose specifically, where it is owed, or not at all.</p></div>
+    <p>The practical starting point is knowing where AI already sits in the business, including which tools have been given standing access to email, files or accounts. That is the same inventory the Best Answer Hub guide to <a href="/playbooks/ai-agent-security-small-business/">AI agent security</a> argues for, and it is where the free assessment below begins.</p>
+    <div class="cta">
+      <span class="kicker">Know where AI already sits in your business</span>
+      <h3>Take the free Small Business AI Readiness assessment</h3>
+      <p>No signup and no email. Your readiness score and ranked gaps are computed in your browser, and nothing you enter is uploaded. An optional paid report adds a detailed action plan.</p>
+      <a class="btn" href="/knowledge-center/smb-ai-readiness/">Check your AI readiness</a>
+    </div>
+
+    <div class="cav">Good questions</div>
+    <h2 id="faq">Common questions about AI text watermarking</h2>
+    <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+    <div class="cav" style="margin-top:38px">For the record</div>
+    <h2>Sources</h2>
+    <ul class="sources">
+      <li>Anthropic, <a href="https://support.claude.com/en/articles/16266773-how-claude-marks-ai-generated-content" target="_blank" rel="noopener noreferrer">How Claude marks AI-generated content</a>, August 2026 (imperceptible watermark woven into the text; surfaces covered; models launched on or after 2 August 2026; C2PA metadata limited to .svg, .png and .jpg; detection tooling still to come).</li>
+      <li>European Commission, <a href="https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act" target="_blank" rel="noopener noreferrer">Transparency obligations under Article 50 of the AI Act</a>, 2026 (applies from 2 August 2026; provider marking duty; deployer labeling of public-interest text; human review exemption; 15 million euros or 3 percent penalty ceiling; 2 December 2026 grace period).</li>
+      <li>Dathathri et al., <a href="https://www.nature.com/articles/s41586-024-08025-4" target="_blank" rel="noopener noreferrer">Scalable watermarking for identifying large language model outputs</a>, Nature 634, October 2024 (SynthID-Text; Tournament sampling; validation across roughly 20 million Gemini responses).</li>
+      <li>Kirchenbauer et al., <a href="https://arxiv.org/abs/2301.10226" target="_blank" rel="noopener noreferrer">A Watermark for Large Language Models</a>, ICML 2023 (green-list token biasing; detection from as few as 25 tokens; stray-character attacks break the mark).</li>
+      <li>Kirchenbauer et al., <a href="https://arxiv.org/abs/2306.04634" target="_blank" rel="noopener noreferrer">On the Reliability of Watermarks for Large Language Models</a>, ICLR 2024 (watermarks remain detectable after human paraphrase given roughly 800 words).</li>
+      <li>Zhang et al., <a href="https://arxiv.org/abs/2311.04378" target="_blank" rel="noopener noreferrer">Watermarks in the Sand</a>, ICML 2024 (proof that strong watermarking is impossible given a quality oracle and a perturbation oracle).</li>
+      <li>Tamim and Khan, <a href="https://arxiv.org/abs/2607.16010" target="_blank" rel="noopener noreferrer">AI Watermark Evidence Fails Forensic Readiness</a>, arXiv, July 2026 (846 runs; 100 percent removal for KGW and Unigram, 98.3 percent for SynthID-Text, after one paraphrase pass). Tests published schemes, not the Anthropic algorithm.</li>
+      <li>Jovanovic, Staab and Vechev, <a href="https://arxiv.org/abs/2402.19361" target="_blank" rel="noopener noreferrer">Watermark Stealing in Large Language Models</a>, ICML 2024 (under 50 US dollars to both spoof and scrub state-of-the-art schemes, at an average success rate over 80 percent).</li>
+      <li>Liang, Yuksekgonul, Mao, Wu and Zou, <a href="https://www.cell.com/patterns/fulltext/S2666-3899(23)00130-7" target="_blank" rel="noopener noreferrer">GPT detectors are biased against non-native English writers</a>, Patterns, 2023 (61.22 percent mean false-positive rate across seven detectors on 91 TOEFL essays; 19.78 percent flagged unanimously; 5.19 percent on native-written controls; 11.77 percent after vocabulary enrichment).</li>
+      <li>OpenAI, <a href="https://openai.com/index/understanding-the-source-of-what-we-see-and-hear-online/" target="_blank" rel="noopener noreferrer">Understanding the source of what we see and hear online</a>, 2024 (text watermarking built but not shipped; disproportionate impact on non-native English speakers; vulnerability to translation and rewording).</li>
+      <li>OpenAI, <a href="https://openai.com/index/new-ai-classifier-for-indicating-ai-written-text/" target="_blank" rel="noopener noreferrer">New AI classifier for indicating AI-written text</a>, 2023 (26 percent true positive rate, 9 percent false positive rate, withdrawn July 2023 for low accuracy).</li>
+      <li>Google DeepMind, <a href="https://deepmind.google/science/synthid/" target="_blank" rel="noopener noreferrer">SynthID</a> and <a href="https://ai.google.dev/responsible/docs/safeguards/synthid" target="_blank" rel="noopener noreferrer">SynthID text documentation</a> (probability-score adjustment; reduced confidence after thorough rewriting or translation; weaker on factual responses).</li>
+      <li>C2PA, <a href="https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html" target="_blank" rel="noopener noreferrer">Technical Specification 2.4</a> (embeddable file formats; manifests bound to assets rather than to prose).</li>
+      <li>Google Search Central, <a href="https://developers.google.com/search/docs/essentials/spam-policies" target="_blank" rel="noopener noreferrer">Spam policies for Google web search</a> (scaled content abuse judged on value, not on production method).</li>
+      <li>Damien Charlotin, <a href="https://www.damiencharlotin.com/hallucinations/" target="_blank" rel="noopener noreferrer">AI Hallucination Cases database</a> (1,870 recorded court cases involving AI-fabricated citations as of 11 August 2026).</li>
+    </ul>
+    <p class="toolsrow">More from Best Answer Hub: <a href="/playbooks/small-business-ai-readiness/">the small business AI readiness pillar</a>, the <a href="/playbooks/small-business-ai-policy/">AI policy guide</a>, the <a href="/playbooks/ai-agent-security-small-business/">AI agent security guide</a>, <a href="/tools/">all free tools</a>, and the <a href="/knowledge-center/">Knowledge Center</a> assessments.</p>
+  </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{display:table;white-space:normal;width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .score{font-variant-numeric:tabular-nums;color:#fff;font-weight:700;font-size:.76rem;padding:4px 11px;border-radius:999px;display:inline-block;white-space:nowrap;font-family:'Bricolage Grotesque',sans-serif}
+  .pb .lv1{background:var(--sage)}
+  .pb .lv2{background:var(--clay)}
+  .pb .lv3{background:var(--ink)}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+
+  .pb .toolsrow{margin-top:46px;padding-top:22px;border-top:1.5px solid var(--border);font-size:.85rem;color:var(--muted);font-weight:600}
+
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+
+</script>

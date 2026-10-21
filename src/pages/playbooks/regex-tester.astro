@@ -1,0 +1,337 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-10T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Regex Tester?', a: 'The Best Answer Hub Regex Tester is a free, browser-based tool that writes, tests, and debugs regular expressions in real time. It highlights matches, shows capture groups, previews replacements, and uses the native JavaScript engine. It warns about dangerous patterns, needs no account, and sends nothing to a server.' },
+  { q: 'What is a regular expression?', a: 'A regular expression is a pattern that describes a set of strings, used to search, validate, and replace text. Developers use it to check emails, pull fields from logs, and find and replace in code. It is supported by most editors, languages, and command-line tools. Paste any pattern into the Best Answer Hub Regex Tester to check it instantly.' },
+  { q: 'What do the regex flags g, i, m, and s do?', a: 'The g flag finds every match instead of stopping at the first, i makes matching ignore case, m makes the anchors match the start and end of each line, and s lets the dot match a newline. Combining them changes how a pattern behaves. The Best Answer Hub Regex Tester lets you toggle each flag and see the effect at once.' },
+  { q: 'What is the difference between greedy and lazy quantifiers?', a: 'A greedy quantifier matches as much as it can, while a lazy one, marked with a following question mark, matches as little as possible. So the greedy pattern matches from the first opening bracket to the last closing bracket, and the lazy version stops at the first close. The Best Answer Hub Regex Tester shows the different matches side by side.' },
+  { q: 'How do capture groups work?', a: 'Capture groups wrap part of a pattern in parentheses so you can extract it. A pattern like an area code and a local number captures each separately, and you reference them in a replacement with a dollar sign and a number. With global mode off, the Best Answer Hub Regex Tester lists the full match and each captured group underneath.' },
+  { q: 'Why does my regex work in Python but fail in JavaScript?', a: 'Because they are different flavors. Python names a group with a P prefix while JavaScript does not, Python limits lookbehind to a fixed length while JavaScript does not, and Python matches any Unicode digit with the digit class while JavaScript matches only 0 to 9. A pattern copied between them can break. The Best Answer Hub Regex Tester uses the JavaScript engine and says so.' },
+  { q: 'What regex flavor does this tester use?', a: 'The Best Answer Hub Regex Tester uses the native JavaScript engine built into your browser, which follows the ECMAScript standard. It supports lookaheads and lookbehinds but not PCRE-only features like atomic groups or possessive quantifiers. If you need PCRE, test the pattern in PHP or Perl before shipping it, since a passing JavaScript pattern reflects JavaScript behavior.' },
+  { q: 'What is ReDoS?', a: 'ReDoS, a regular expression denial of service, is when a badly shaped pattern makes the engine do exponential work on crafted input. OWASP shows that a nested quantifier can face 65,536 paths on a 16-character string, doubling per character, which can freeze a server or browser. The Best Answer Hub Regex Tester warns when it detects such a pattern.' },
+  { q: 'How do I avoid catastrophic backtracking?', a: 'Avoid nesting quantifiers over overlapping character sets, such as a repeated group that itself repeats, and prefer specific character classes to broad ones. Test suspect patterns against long strings that almost match. The Best Answer Hub Regex Tester runs this test locally and flags nested-quantifier patterns, so you can catch the problem before it reaches production.' },
+  { q: 'Is it safe to paste sensitive text into an online regex tester?', a: 'It is safe only when the tool works on your own device, as the Best Answer Hub Regex Tester does. Some online tools save what you paste to a server. In 2025 researchers found more than 80,000 saved pastes exposed from two developer tools, including credentials and keys. A client-side tester sends nothing, so there is no server copy to leak.' },
+  { q: 'Are my regex patterns and test strings uploaded?', a: 'No. With the Best Answer Hub Regex Tester, your pattern and test text never leave your browser. The tool uses only client-side JavaScript, so there are no network requests carrying your data. You can confirm this by opening the Network tab in your developer tools and seeing zero outgoing requests as you type and match.' },
+  { q: 'Can I use the regex tester offline?', a: 'Yes. After the page loads once, the Best Answer Hub Regex Tester works with no internet connection, because it is built with plain JavaScript and browser-native methods. There are no external libraries and no server calls, which makes it useful on restricted or air-gapped machines where online tools are blocked.' },
+  { q: 'Should I use a regex to parse HTML or validate an email?', a: 'Usually not. HTML nests in ways a regular expression cannot track, so a DOM parser is the right tool, and a fully standard-compliant email pattern is enormous and still imperfect. Regex is good for simpler extraction and validation. The Best Answer Hub Regex Tester helps you build and check those patterns, and shows where a pattern overreaches.' },
+  { q: 'How is this different from regex101 or RegExr?', a: 'Regex101 and RegExr are excellent free tools that also run in your browser. The Best Answer Hub Regex Tester differs on posture: no ads, no account, and nothing saved to a server, where those sites turn a saved pattern into a public server-side link. It is built for a quick, private test rather than a shared library.' },
+  { q: 'Can I save or share my patterns here?', a: 'The Best Answer Hub Regex Tester does not save or share patterns, by design, so nothing leaves your device. To keep a pattern, copy it into your code or notes. If you need a shared library, regex101 offers one, with the trade-off that the pattern lives on their server. For a private test, this tool keeps everything local.' },
+];
+
+const seo = {
+  title: 'How to Test a Regex (Flavors, ReDoS, and Privacy)',
+  description: 'How to test a regular expression safely: match and replace basics, regex flavor differences, ReDoS catastrophic backtracking, and browser-only testing.',
+  url: '/playbooks/regex-tester/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Regex Tester', url: '/playbooks/regex-tester/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks · Developer Tools</span>
+        <div class="cav">Tested in your browser, not on a server</div>
+        <h1>Test Any Regex, <em>Nothing Uploaded</em></h1>
+        <p class="dek">A practical guide to regular expressions: the building blocks, why a pattern that works in Python can break in JavaScript, how a single careless regex can freeze a whole application, and why the test strings you paste are safest on your own device. The Best Answer Hub Regex Tester matches and replaces in your browser and sends nothing to a server.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~10 min read</span><span>Developer tools</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Real-time<small>match and replace</small></div>
+          <div class="seg b2">Private<small>never uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no ads</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">65,536</div><div class="l">paths a nested-quantifier regex explores on just 16 characters</div><div class="src">OWASP, 2025</div></div>
+      <div class="stat"><div class="n">80,000+</div><div class="l">saved pastes exposed from online dev tools in 2025</div><div class="src">watchTowr, 2025</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">regex flavors that often disagree: JavaScript, PCRE, Python</div><div class="src">MDN, 2025</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">network requests when you test a pattern here</div><div class="src">runs in your browser</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#basics">The building blocks</a>
+        <a href="#flavors">Why flavors differ</a>
+        <a href="#redos">ReDoS and backtracking</a>
+        <a href="#private">Why test in your browser</a>
+        <a href="#pitfalls">Common mistakes</a>
+        <a href="#different">Versus other testers</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>The Best Answer Hub Regex Tester is a free, browser-based tool that lets you write, test, and debug regular expressions in real time, showing every match, capture group, and replacement using the native JavaScript engine, with nothing uploaded to a server.</strong> This guide covers the building blocks of a regex, why a pattern that runs in one language fails in another, how a careless pattern can hang an application through catastrophic backtracking, and why the sample text you test is safest on your own device.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Regex Tester?</h2>
+        <p>The Best Answer Hub <a href="/tools/regex-tester/">Regex Tester</a> is a single-page tool that runs a regular expression against your test text and shows the result as you type. It highlights every match, breaks out each capture group when global mode is off, and previews a replacement string live, using the browser native JavaScript <code>RegExp</code> engine. It supports the four common flags, global, ignore case, multiline, and dotAll, and it flags a pattern that risks catastrophic backtracking before it bites you. Every match runs as JavaScript on your own device, so your pattern and your test data are never uploaded and no account is needed. The tool sits in the Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> next to a <a href="/tools/json-formatter/">JSON Formatter</a> and a JWT decoder, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The grammar</div>
+        <h2 id="basics">What are the building blocks of a regular expression?</h2>
+        <p>A regular expression is a pattern that describes a set of strings, built from a small grammar the Best Answer Hub Regex Tester checks as you type. The main pieces, as defined by MDN, are character classes like <code>\d</code> for a digit, <code>\w</code> for a word character, and <code>[a-z]</code> for a range; quantifiers like <code>*</code> for zero or more, <code>+</code> for one or more, and <code>&#123;2,4&#125;</code> for a bounded count; anchors like <code>^</code> and <code>$</code> for the start and end, and <code>\b</code> for a word boundary; and groups written <code>(...)</code> to capture part of a match. Behavior is tuned by flags: <code>g</code> finds every match rather than the first, <code>i</code> ignores case, <code>m</code> makes <code>^</code> and <code>$</code> match each line, and <code>s</code> lets <code>.</code> match a newline. Put together, <code>(\d&#123;3&#125;)-(\d&#123;4&#125;)</code> captures a phone number in two groups, which the tester shows labeled underneath.</p>
+
+        <div class="cav">Portability is a trap</div>
+        <h2 id="flavors">Why does a regex that works in one language fail in another?</h2>
+        <p>Because there is no single regular expression language: JavaScript, PCRE (used by PHP and Perl), and Python each run a different flavor, and a pattern is not automatically portable between them. The clearest example is named groups. JavaScript writes them <code>(?&lt;year&gt;\d&#123;4&#125;)</code>, while Python uses <code>(?P&lt;year&gt;\d&#123;4&#125;)</code>, so a pattern copied straight from a Python codebase is a syntax error in a browser and the reverse is also true. The differences run deeper. Python restricts lookbehind to a fixed length, so <code>(?&lt;=a&#123;3&#125;)</code> is rejected, while JavaScript allows a variable-length lookbehind. And <code>\d</code> is not even the same set: in Python it matches any Unicode decimal digit by default, including Arabic-Indic and Devanagari numerals, while in JavaScript <code>\d</code> matches only <code>0</code> to <code>9</code>. The Best Answer Hub Regex Tester runs the JavaScript engine, the one your browser and Node.js use, and states so plainly, so what passes here is what ships in JavaScript.</p>
+        <div class="callout sage"><div class="h">Know your engine before you copy a pattern</div><p>A regex from Stack Overflow or an AI assistant was often written for PCRE or Python. Before pasting it into JavaScript, check the named-group syntax, any lookbehind, and whether it leans on <code>\d</code> matching non-ASCII digits. Test it in the Best Answer Hub Regex Tester, which uses the JavaScript engine, and you will catch a flavor mismatch immediately rather than in production.</p></div>
+
+        <div class="cav">One pattern, frozen server</div>
+        <h2 id="redos">What is ReDoS, and how can one regex freeze an app?</h2>
+        <p>ReDoS, a regular expression denial of service, happens when a badly shaped pattern makes the engine do an exponential amount of work on certain input, and the Best Answer Hub Regex Tester warns you when it spots the danger. The cause is catastrophic backtracking: when a match fails, the engine goes back and tries every other way the pattern could have matched. With a nested quantifier like <code>(a+)+$</code>, the number of paths doubles for every extra character. OWASP gives the exact figures: the input <code>aaaaX</code> has 16 possible paths, but a string of 16 letters followed by an <code>X</code> has 65,536, and it keeps doubling from there. A pattern that looks harmless can stall a Node.js server, a web application firewall, or a browser for seconds or longer on a crafted string. The fix is to avoid nesting quantifiers over overlapping character sets, and to test suspect patterns against long non-matching input, which is exactly what the tester helps you do safely on your own machine.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">Add one character, double the work: why a bad regex explodes</figcaption>
+          <svg viewBox="0 0 600 300" role="img" aria-label="Bar chart of backtracking paths for the pattern (a+)+ dollar: 4 characters give 16 paths, 8 characters 256, 12 characters 4,096, and 16 characters 65,536, doubling for each extra character.">
+            <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+            <text x="20" y="30" font-family="Karla, sans-serif" font-size="13" fill="#847B6B">Backtracking paths for (a+)+$ by input length</text>
+            <text x="20" y="72" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">4 characters</text>
+            <rect x="20" y="82" width="75" height="30" rx="6" fill="url(#bg)"/>
+            <text x="107" y="103" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">16 paths</text>
+            <text x="20" y="132" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">8 characters</text>
+            <rect x="20" y="142" width="150" height="30" rx="6" fill="url(#bg)"/>
+            <text x="182" y="163" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">256 paths</text>
+            <text x="20" y="192" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">12 characters</text>
+            <rect x="20" y="202" width="225" height="30" rx="6" fill="url(#bg)"/>
+            <text x="257" y="223" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">4,096 paths</text>
+            <text x="20" y="252" font-family="Karla, sans-serif" font-size="13" font-weight="700" fill="#33302A">16 characters</text>
+            <rect x="20" y="262" width="300" height="30" rx="6" fill="url(#bg)"/>
+            <text x="332" y="283" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="800" fill="#33302A">65,536 paths</text>
+          </svg>
+          <p class="chart-src">Paths the regex engine can explore for the evil pattern (a+)+$ as the input grows, doubling per character (16 at 4 characters and 65,536 at 16 are OWASP's figures; bar length shows the exponent, not the raw count). Source: OWASP, ReDoS, 2025.</p>
+        </figure>
+
+        <div class="cav">The honest part</div>
+        <h2 id="private">Why should you test a regex in your browser?</h2>
+        <p>Because the test strings developers paste are often real data, and the safest place for that data is your own device, which is where the Best Answer Hub Regex Tester keeps it. When you build a pattern you feed it real examples: production logs, customer emails, API responses, sometimes tokens or keys. A tester that runs client-side never sends any of it to a server. The risk of the alternative is not hypothetical. In November 2025, security researchers at watchTowr found that two popular online developer tools had exposed more than 80,000 saved pastes, over five gigabytes, through a public save feature, including credentials, private keys, and personal data, with planted test credentials accessed within 48 hours. Those were server-side save tools, and a client-side tester avoids the entire class of exposure. The principle is the one the Federal Trade Commission gives to businesses: do not collect sensitive data you do not need. The Best Answer Hub Regex Tester collects nothing, so there is nothing to store, leak, or scrape.</p>
+        <blockquote>The sample text you test a pattern against is often the most sensitive thing you touch all day. <span class="accent">A tester that keeps it in your browser has nothing to lose.</span></blockquote>
+
+        <div class="cav">The usual bugs</div>
+        <h2 id="pitfalls">What are the most common regex mistakes?</h2>
+        <p>Most regex bugs come from a handful of habits, and the Best Answer Hub Regex Tester surfaces them the moment you type. The first is forgetting to escape a special character: symbols like <code>. * + ? ( ) [ ] &#123; &#125;</code> have meaning, so to match a literal dot you need <code>\.</code>, not <code>.</code>. The second is greedy matching. By default a quantifier grabs as much as it can, so <code>&lt;.*&gt;</code> over a line of HTML matches from the first <code>&lt;</code> to the last <code>&gt;</code> in one go; adding <code>?</code> to make it lazy, <code>&lt;.*?&gt;</code>, stops at the first tag. The third is asking regex to do a job it cannot: parsing HTML or fully validating an email address. HTML nests in ways a regular expression cannot track, so a DOM parser is the right tool, and a truly RFC 5322 compliant email pattern is famously enormous and still imperfect. The fourth is the multiline flag: <code>^</code> and <code>$</code> match only the whole string until you add <code>m</code>. Testing each pattern against real examples catches all four fast.</p>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from regex101 or RegExr?</h2>
+        <p>The difference is posture, not capability: the Best Answer Hub Regex Tester shows no ads, saves nothing to a server, and asks for no account, while it keeps every pattern and test string on your device. To be fair, regex101 and RegExr are excellent, free tools that also run their matching in your browser, and for exploring a complex pattern with an explanation panel they are hard to beat. The honest gap appears when you save or share: on those sites a saved pattern becomes a server-side permalink, and RegExr's community sharing publishes your expression and its sample text publicly, in a copy you cannot later edit or delete. Both also carry ads. The table sets the usual experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical online tester</th></tr></thead>
+          <tbody>
+            <tr><td>Ads</td><td class="band">None</td><td>Common (regex101, RegExr)</td></tr>
+            <tr><td>Anything saved to a server</td><td class="band">Nothing</td><td>Saved patterns and text become permalinks</td></tr>
+            <tr><td>Account or signup</td><td class="band">Never</td><td>Optional, to save or sync</td></tr>
+            <tr><td>Where matching runs</td><td class="band">In your browser</td><td>Also client-side, to be fair</td></tr>
+            <tr><td>Works offline</td><td class="band">Yes</td><td>Varies</td></tr>
+            <tr><td>ReDoS warning</td><td class="band">Yes</td><td>Rare</td></tr>
+          </tbody>
+        </table>
+        <p>None of this makes the matching special, because the JavaScript engine is the same one in every browser. What differs is what a tool does around it: whether it shows ads, whether a saved pattern leaves your device, and whether it warns you about a dangerous pattern. The Best Answer Hub Regex Tester keeps the data local and flags the danger.</p>
+        <div class="callout"><div class="h">Pair it with the rest of the toolbox</div><p>A pattern is rarely the whole job. The Best Answer Hub <a href="/developer-toolbox/">Developer Toolbox</a> has the neighbors you reach for next: a <a href="/tools/json-formatter/">JSON Formatter</a>, a JWT decoder, and a hash generator, each running in the browser and sending nothing. Test here, then carry on without a single upload.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Test it now</span>
+          <h3>Open the Regex Tester</h3>
+          <p>Free, no signup, and processed entirely in your browser. Write a pattern, see every match and group in real time, preview a replacement, and get a warning before a dangerous pattern bites.</p>
+          <a class="btn" href="/tools/regex-tester/">Test your regex</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about testing regex</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-developer-tools/">Free Developer Tools That Run in Your Browser</a></b> The Developer Toolbox guide, from a JSON formatter to a hash generator, all keeping your data local.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/json-formatter/">Format and Validate JSON, Nothing Uploaded</a></b> The same privacy-first approach, applied to reading and validating JSON.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to PDFs.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/how-good-is-your-ai-knowledge/">How Good Is Your AI Knowledge?</a></b> A free, no-signup check on where you really stand with everyday AI tools.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions" target="_blank" rel="noopener noreferrer">Regular expressions guide</a>, 2025 (character classes, quantifiers, anchors, groups, and the g, i, m, and s flags).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Quantifiers" target="_blank" rel="noopener noreferrer">Quantifiers</a>, 2025 (greedy by default; a following question mark makes a quantifier lazy).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Groups_and_backreferences" target="_blank" rel="noopener noreferrer">Groups and backreferences</a>, 2025 (JavaScript named groups use the angle-bracket syntax).</li>
+          <li>Python Software Foundation, <a href="https://docs.python.org/3/library/re.html" target="_blank" rel="noopener noreferrer">re, regular expression operations</a>, 2025 (Python named groups use a P prefix; lookbehind must be fixed-length; the digit class matches Unicode digits by default).</li>
+          <li>OWASP, <a href="https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS" target="_blank" rel="noopener noreferrer">Regular expression Denial of Service, ReDoS</a>, 2025 (the pattern (a+)+$ faces 16 paths on aaaaX and 65,536 on a 16-character string, doubling per character).</li>
+          <li>watchTowr Labs, <a href="https://labs.watchtowr.com/stop-putting-your-passwords-into-random-websites-yes-seriously-you-are-the-problem/" target="_blank" rel="noopener noreferrer">Stop Putting Your Passwords Into Random Websites</a>, 25 November 2025 (more than 80,000 saved pastes, over 5 GB, exposed from two online developer tools; planted credentials tested within 48 hours), with confirmation from <a href="https://www.bleepingcomputer.com/news/security/code-beautifiers-expose-credentials-from-banks-govt-tech-orgs/" target="_blank" rel="noopener noreferrer">BleepingComputer</a>.</li>
+          <li>Federal Trade Commission, <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">Protecting Personal Information: A Guide for Business</a>, 2026 (do not collect sensitive information you do not need).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_is_JavaScript" target="_blank" rel="noopener noreferrer">What is JavaScript?</a>, 2025 (client-side code runs on the user's own computer).</li>
+          <li>IETF, <a href="https://www.rfc-editor.org/rfc/rfc5322" target="_blank" rel="noopener noreferrer">RFC 5322, Internet Message Format</a>, 2008 (the email address grammar behind why a fully compliant email regex is impractical).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/regex-tester/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Regex Tester</a>, <a href="/developer-toolbox/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Developer Toolbox</a>, <a href="/tools/json-formatter/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">JSON Formatter</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

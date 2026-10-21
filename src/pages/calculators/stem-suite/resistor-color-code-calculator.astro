@@ -1,0 +1,1050 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import HowToSchema from '../../../components/seo/HowToSchema.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Resistor Color Code Calculator?',
+    a: 'The Best Answer Hub Resistor Color Code Calculator is a free, browser-based electronics tool that decodes 4-band, 5-band, and 6-band resistor color codes into resistance values, tolerances, and temperature coefficients. It also includes an Ohm\'s Law solver and an LED resistor calculator with wattage warnings and standard E-series value recommendations. Every calculation runs instantly in your browser with no signup required.',
+  },
+  {
+    q: 'Which way do you read resistor color codes when both ends look the same?',
+    a: 'Start from the end closest to a gold or silver tolerance band, which is always the last band. If there is no obvious tolerance band, look for a wider gap between the last band and the rest. The isolated band is the tolerance. On 5-band resistors, the tolerance band is often brown (1%) or red (2%) and sits slightly apart from the value bands. The Best Answer Hub Resistor Color Code Calculator shows a visual resistor diagram that highlights the reading direction automatically.',
+  },
+  {
+    q: 'What is the difference between a 4-band and a 5-band resistor?',
+    a: 'A 4-band resistor uses two significant digits, a multiplier, and a tolerance band. A 5-band resistor uses three significant digits, a multiplier, and a tolerance band, giving ten times more precision. For example, a 4-band resistor showing brown-black-red-gold is 1,000 ohms with 5% tolerance. A 5-band resistor showing brown-black-black-brown-brown is 1,000 ohms with 1% tolerance. The extra digit matters in precision circuits like audio amplifiers and sensor bridges.',
+  },
+  {
+    q: 'What size resistor do I need for a 5mm red LED on an Arduino 5V pin?',
+    a: 'Use the formula R = (V_supply minus V_LED) divided by I. For a standard red LED with a 2.0V forward voltage and 20mA current on a 5V Arduino pin, the calculation is (5.0 minus 2.0) divided by 0.020 = 150 ohms. A 220 ohm resistor is the common safe choice because it limits current to about 14mA, which is bright enough and leaves headroom below the Arduino pin\'s 40mA absolute maximum. The Best Answer Hub LED Resistor Calculator includes Arduino 5V and 3.3V presets.',
+  },
+  {
+    q: 'I know V=IR, but how do I actually use Ohm\'s Law to find the right resistor?',
+    a: 'Rearrange the formula to R = V divided by I, where V is the voltage across the resistor and I is the current you want to flow through it. In an LED circuit, V is the supply voltage minus the LED forward voltage drop. For a 9V battery driving a blue LED with a 3.2V forward voltage, the voltage across the resistor is 9.0 minus 3.2 = 5.8V. At 20mA, R = 5.8 divided by 0.020 = 290 ohms. The nearest standard E12 value is 270 ohms or 330 ohms.',
+  },
+  {
+    q: 'Why do Arduino tutorials always use 220 ohm resistors with LEDs?',
+    a: 'The 220 ohm value is a safe, round-number compromise that works with almost any common LED on a 5V Arduino pin. For a red LED with a 2.0V drop, 220 ohms limits current to about 14mA. For a blue LED with a 3.2V drop, it limits current to about 8mA. Both values are well below the 20mA typical rating and far below the Arduino pin\'s 40mA maximum. The Best Answer Hub LED Resistor Calculator shows the exact current for any LED color and explains why 220 ohms is the universal starting point.',
+  },
+  {
+    q: 'What happens if I don\'t use a resistor with my LED?',
+    a: 'The LED will draw excessive current, overheat, and burn out within seconds, often with a visible pop or a darkened lens. Without a current-limiting resistor, the LED acts like a near-short circuit. A 5V supply directly across a red LED can push 100mA or more through it, which is five times its rated current. The Best Answer Hub LED Resistor Calculator always warns when no resistor is selected and shows the safe current range for any LED type.',
+  },
+  {
+    q: 'Why does my multimeter read 215 ohms on a resistor that should be 220 ohms?',
+    a: 'That reading is completely normal. A 220 ohm resistor with a 5% tolerance is guaranteed to be between 209 and 231 ohms. A 215 ohm reading falls comfortably inside that range. A 1% tolerance 220 ohm resistor should read between 217.8 and 222.2 ohms, so 215 would be slightly out of spec. The Best Answer Hub Resistor Color Code Calculator displays the tolerance range alongside the nominal value so you can verify any multimeter reading instantly.',
+  },
+  {
+    q: 'How do I know what wattage resistor to use?',
+    a: 'Calculate the power dissipated using P = V times I or P = I squared times R. For a 220 ohm resistor driving a red LED at 14mA on 5V, the power is 0.014 times 0.014 times 220 = 0.043 watts. A standard 1/4 watt (0.25W) resistor has plenty of headroom. For a 12V supply with a 470 ohm resistor at 25mA, the power is 0.025 times 0.025 times 470 = 0.294 watts, which exceeds a 1/4 watt rating and requires a 1/2 watt resistor. The Best Answer Hub LED Resistor Calculator computes wattage automatically and warns if your selected resistor is undersized.',
+  },
+  {
+    q: 'How do you read SMD resistor codes like 103 or 4R7?',
+    a: 'A 3-digit SMD code uses the first two digits as significant figures and the third digit as the multiplier in powers of ten. Code 103 means 10 times 10 to the power of 3 = 10,000 ohms = 10 kOhm. Code 4R7 means 4.7 ohms, where the R acts as a decimal point. A 4-digit code like 1002 means 100 times 10 to the power of 2 = 10,000 ohms = 10 kOhm. Code 0R00 or 000 is a zero ohm jumper. The Best Answer Hub Resistor Color Code Calculator includes an SMD mode that decodes 3-digit, 4-digit, and EIA-96 codes instantly.',
+  },
+  {
+    q: 'How can I read resistor colors if I\'m colorblind?',
+    a: 'Use a calculator that labels every color with its name rather than relying on color vision alone. The Best Answer Hub Resistor Color Code Calculator includes a text-only mode where you select band colors from a labeled dropdown menu. Each option shows the color name and its numeric value, so red-brown-orange-gold becomes a sequence of text labels rather than a color-matching exercise. You can also use a multimeter to verify the value after selecting the bands.',
+  },
+  {
+    q: 'I calculated 350 ohms for my LED but my kit only has 330 and 470, so which one is safer?',
+    a: 'Always choose the next higher standard value, which is 470 ohms in this case. A higher resistor value reduces current, which makes the LED dimmer but never damages it. A lower value like 330 ohms increases current beyond your calculated safe level, which can overstress the LED or exceed your GPIO pin\'s current limit. The Best Answer Hub LED Resistor Calculator automatically rounds up to the nearest E12 or E24 standard value and shows the actual current at that resistance.',
+  },
+  {
+    q: 'Do I need to recalculate the resistor if I swap a red LED for a blue one?',
+    a: 'Yes. Red LEDs typically have a 1.8V to 2.2V forward voltage drop, while blue and white LEDs drop 3.0V to 3.4V. On a 5V supply, the voltage across the resistor changes from about 3.0V to about 1.8V. Using the same 220 ohm resistor, a red LED runs at 14mA but a blue LED runs at only 8mA, which may be too dim. For bright blue or white LEDs, you often need a lower resistor value like 150 ohms. The Best Answer Hub LED Resistor Calculator has presets for common LED colors that automatically adjust the forward voltage.',
+  },
+  {
+    q: 'How do I read a 6-band resistor with temperature coefficient?',
+    a: 'A 6-band resistor uses three significant digits, a multiplier, a tolerance band, and a sixth band that indicates the temperature coefficient in parts per million per degree Celsius. Brown on the sixth band means 100 ppm per degree Celsius, red means 50 ppm, orange means 15 ppm, and yellow means 25 ppm. A 100 ppm resistor changes by 0.01% for every degree of temperature change. The Best Answer Hub Resistor Color Code Calculator decodes all six bands and explains what the temperature coefficient means for circuit stability.',
+  },
+  {
+    q: 'Do I need a resistor if I\'m powering an LED from a 3.3V Raspberry Pi GPIO pin?',
+    a: 'Yes, always. Even at 3.3V, a red LED with a 2.0V forward voltage will try to draw excessive current without a resistor. The calculation is (3.3 minus 2.0) divided by R. Without a resistor, R is effectively zero and current is limited only by the GPIO pin\'s internal resistance, which can still exceed the LED\'s rating and the Pi\'s 16mA per-pin maximum. A 68 ohm resistor limits current to about 19mA, which is safe for the LED but close to the Pi\'s limit. A 100 ohm resistor at 13mA is the safer choice. The Best Answer Hub LED Resistor Calculator includes a Raspberry Pi 3.3V preset with conservative current limits.',
+  },
+];
+
+const seo = {
+  title: 'Resistor Color Code Calculator | LED + Ohm\'s Law (2026)',
+  description: 'Free resistor color code calculator: 4/5/6-band decoder, Ohm\'s Law solver, LED resistor calc, SMD codes, and wattage warnings. No signup.',
+  url: '/calculators/stem-suite/resistor-color-code-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'STEM Suite', url: '/calculators/stem-suite/' },
+    { name: 'Resistor Color Code Calculator', url: '/calculators/stem-suite/resistor-color-code-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated June 2026
+          </div>
+          <a href="/calculators/stem-suite/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            STEM Suite
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Resistor Color Code Calculator:<br/>
+          <em class="italic text-bae-primary">Decode bands, LEDs & Ohm's Law</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Decode 4-band, 5-band, and 6-band resistor color codes instantly. Calculate LED current-limiting resistors with wattage warnings. Solve Ohm's Law for any variable. Includes SMD decoder, colorblind-friendly mode, and GPIO presets for Arduino and Raspberry Pi.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Interface -->
+  <section class="py-6 md:py-8" aria-label="Resistor calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-6 overflow-x-auto pb-1" id="calc-tabs">
+        <button type="button" data-tab="color" class="tab-btn active inline-flex items-center gap-2 px-4 py-2.5 rounded-bae-sm text-sm font-semibold border transition-colors whitespace-nowrap bg-bae-primary text-white border-bae-primary">
+          <span>🔌</span> Resistor Color Code
+        </button>
+        <button type="button" data-tab="ohms" class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-bae-sm text-sm font-semibold border transition-colors whitespace-nowrap bg-white text-bae-ink border-bae-border hover:border-bae-primary">
+          <span>⚡</span> Ohm's Law
+        </button>
+        <button type="button" data-tab="led" class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-bae-sm text-sm font-semibold border transition-colors whitespace-nowrap bg-white text-bae-ink border-bae-border hover:border-bae-primary">
+          <span>💡</span> LED Resistor
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <!-- Color Code Tab -->
+          <div id="panel-color" class="tab-panel">
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+              <div class="flex items-center justify-between mb-5">
+                <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted">Resistor Bands</h2>
+                <label class="flex items-center gap-2 text-sm cursor-pointer">
+                  <input type="checkbox" id="colorblind-mode" class="w-4 h-4 accent-bae-primary" />
+                  <span class="text-bae-ink font-medium">Text-only mode</span>
+                  <span class="text-xs text-bae-muted">(colorblind-friendly)</span>
+                </label>
+              </div>
+
+              <!-- Band Count -->
+              <div class="flex gap-2 mb-5">
+                <button type="button" data-bands="4" class="band-btn active px-4 py-2 rounded-bae-sm text-sm font-semibold border transition-colors bg-bae-primary text-white border-bae-primary">4 Band</button>
+                <button type="button" data-bands="5" class="band-btn px-4 py-2 rounded-bae-sm text-sm font-semibold border transition-colors bg-white text-bae-ink border-bae-border hover:border-bae-primary">5 Band</button>
+                <button type="button" data-bands="6" class="band-btn px-4 py-2 rounded-bae-sm text-sm font-semibold border transition-colors bg-white text-bae-ink border-bae-border hover:border-bae-primary">6 Band</button>
+              </div>
+
+              <!-- Visual Resistor -->
+              <div class="bg-bae-bg border border-bae-border rounded-bae p-4 mb-5">
+                <div class="flex items-center justify-center">
+                  <div class="flex items-center">
+                    <div class="w-6 h-10 bg-gray-400 rounded-l-sm"></div>
+                    <div id="resistor-body" class="flex h-10 bg-amber-100 rounded-sm overflow-hidden">
+                      <div class="resistor-band w-3 h-full" data-band="0" style="background:#8B4513"></div>
+                      <div class="w-4 h-full"></div>
+                      <div class="resistor-band w-3 h-full" data-band="1" style="background:#000000"></div>
+                      <div class="w-4 h-full"></div>
+                      <div class="resistor-band w-3 h-full" data-band="2" style="background:#FF0000"></div>
+                      <div class="w-4 h-full"></div>
+                      <div class="resistor-band w-3 h-full" data-band="3" style="background:#FFD700"></div>
+                      <div class="w-4 h-full"></div>
+                      <div class="resistor-band w-3 h-full hidden" data-band="4" style="background:#8B4513"></div>
+                      <div class="w-4 h-full hidden" data-band="4-gap"></div>
+                      <div class="resistor-band w-3 h-full hidden" data-band="5" style="background:#FF0000"></div>
+                    </div>
+                    <div class="w-6 h-10 bg-gray-400 rounded-r-sm"></div>
+                  </div>
+                </div>
+                <div class="flex justify-center gap-6 mt-3 text-xs text-bae-muted" id="band-labels">
+                  <span>1st Digit</span>
+                  <span>2nd Digit</span>
+                  <span class="hidden" data-label="3">3rd Digit</span>
+                  <span>Multiplier</span>
+                  <span>Tolerance</span>
+                  <span class="hidden" data-label="5">Temp Coef</span>
+                </div>
+              </div>
+
+              <!-- Color Pickers -->
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="color-pickers">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <!-- Reverse Lookup -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm mt-4">
+              <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">Reverse Lookup: Value to Colors</h2>
+              <div class="flex flex-wrap items-end gap-3">
+                <div class="flex-1 min-w-[120px]">
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Resistance</label>
+                  <input type="number" id="reverse-value" min="0" step="0.1" placeholder="e.g. 10000" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div class="w-28">
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Unit</label>
+                  <select id="reverse-unit" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                    <option value="1">Ω</option>
+                    <option value="1000" selected>kΩ</option>
+                    <option value="1000000">MΩ</option>
+                  </select>
+                </div>
+                <div class="w-28">
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Tolerance</label>
+                  <select id="reverse-tolerance" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                    <option value="5">5% (Gold)</option>
+                    <option value="1">1% (Brown)</option>
+                    <option value="2">2% (Red)</option>
+                    <option value="10">10% (Silver)</option>
+                  </select>
+                </div>
+                <button type="button" id="reverse-btn" class="px-5 py-2 bg-bae-primary text-white text-sm font-semibold rounded-bae-sm hover:bg-bae-primary-dark transition-colors">Find Colors</button>
+              </div>
+              <div id="reverse-result" class="mt-4 hidden">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <!-- SMD Decoder -->
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm mt-4">
+              <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-4">SMD Resistor Code Decoder</h2>
+              <div class="flex flex-wrap items-end gap-3">
+                <div class="flex-1 min-w-[120px]">
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">SMD Code</label>
+                  <input type="text" id="smd-code" placeholder="e.g. 103, 4R7, 1002, 01C" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary uppercase" />
+                </div>
+                <button type="button" id="smd-btn" class="px-5 py-2 bg-bae-primary text-white text-sm font-semibold rounded-bae-sm hover:bg-bae-primary-dark transition-colors">Decode</button>
+              </div>
+              <div id="smd-result" class="mt-4 hidden">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Ohm's Law Tab -->
+          <div id="panel-ohms" class="tab-panel hidden">
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+              <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">Ohm's Law Calculator</h2>
+              <p class="text-sm text-bae-muted mb-4">Enter any two values to solve for the third. Power is calculated automatically.</p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Voltage (V)</label>
+                  <input type="number" id="ohms-v" step="0.01" placeholder="Volts" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Current (I)</label>
+                  <div class="flex gap-2">
+                    <input type="number" id="ohms-i" step="0.001" placeholder="Current" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                    <select id="ohms-i-unit" class="w-20 text-sm border border-bae-border rounded-bae-sm px-2 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                      <option value="1">A</option>
+                      <option value="0.001" selected>mA</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Resistance (R)</label>
+                  <div class="flex gap-2">
+                    <input type="number" id="ohms-r" step="0.1" placeholder="Ohms" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                    <select id="ohms-r-unit" class="w-20 text-sm border border-bae-border rounded-bae-sm px-2 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                      <option value="1" selected>Ω</option>
+                      <option value="1000">kΩ</option>
+                      <option value="1000000">MΩ</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2 mt-4">
+                <button type="button" id="ohms-solve" class="px-5 py-2 bg-bae-primary text-white text-sm font-semibold rounded-bae-sm hover:bg-bae-primary-dark transition-colors">Calculate</button>
+                <button type="button" id="ohms-clear" class="px-5 py-2 bg-white text-bae-ink border border-bae-border text-sm font-semibold rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+              </div>
+              <div id="ohms-result" class="mt-4 hidden">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- LED Resistor Tab -->
+          <div id="panel-led" class="tab-panel hidden">
+            <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+              <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-bae-muted mb-5">LED Resistor Calculator</h2>
+
+              <!-- GPIO Presets -->
+              <div class="flex flex-wrap gap-2 mb-5">
+                <span class="text-xs font-semibold text-bae-muted uppercase tracking-wider self-center mr-1">Presets:</span>
+                <button type="button" data-preset="arduino5v" class="preset-btn px-3 py-1.5 rounded-bae-sm text-xs font-semibold border transition-colors bg-white text-bae-ink border-bae-border hover:border-bae-primary">Arduino 5V</button>
+                <button type="button" data-preset="arduino3v3" class="preset-btn px-3 py-1.5 rounded-bae-sm text-xs font-semibold border transition-colors bg-white text-bae-ink border-bae-border hover:border-bae-primary">Arduino 3.3V</button>
+                <button type="button" data-preset="pi3v3" class="preset-btn px-3 py-1.5 rounded-bae-sm text-xs font-semibold border transition-colors bg-white text-bae-ink border-bae-border hover:border-bae-primary">Raspberry Pi 3.3V</button>
+                <button type="button" data-preset="pi5v" class="preset-btn px-3 py-1.5 rounded-bae-sm text-xs font-semibold border transition-colors bg-white text-bae-ink border-bae-border hover:border-bae-primary">Raspberry Pi 5V</button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Supply Voltage (V)</label>
+                  <input type="number" id="led-vsupply" step="0.1" value="5" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">LED Type</label>
+                  <select id="led-type" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                    <option value="custom">Custom forward voltage</option>
+                    <option value="1.2">Infrared (1.2V)</option>
+                    <option value="1.8">Red (1.8V)</option>
+                    <option value="2.0" selected>Red / standard (2.0V)</option>
+                    <option value="2.1">Yellow / Amber (2.1V)</option>
+                    <option value="2.2">Green (2.2V)</option>
+                    <option value="3.2">Blue (3.2V)</option>
+                    <option value="3.3">White (3.3V)</option>
+                    <option value="3.5">UV (3.5V)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">LED Forward Voltage (V)</label>
+                  <input type="number" id="led-vf" step="0.1" value="2.0" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Desired Current</label>
+                  <div class="flex gap-2">
+                    <input type="number" id="led-current" step="1" value="20" class="flex-1 text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                    <select id="led-current-unit" class="w-20 text-sm border border-bae-border rounded-bae-sm px-2 py-2 bg-white focus:outline-none focus:border-bae-primary">
+                      <option value="0.001" selected>mA</option>
+                      <option value="1">A</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <button type="button" id="led-calc" class="px-5 py-2 bg-bae-primary text-white text-sm font-semibold rounded-bae-sm hover:bg-bae-primary-dark transition-colors">Calculate LED Resistor</button>
+              </div>
+              <div id="led-result" class="mt-4 hidden">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Results Panel -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg" id="result-panel">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Results</h3>
+            <div id="result-content">
+              <p class="text-sm text-white/70">Select colors or enter values to see results.</p>
+            </div>
+          </div>
+
+          <button type="button" id="pdf-btn" class="w-full bg-bae-ink hover:bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+            Download PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">How it works</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">1</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Choose your mode</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Switch between the resistor color code decoder, Ohm's Law calculator, and LED resistor calculator. Each mode is optimized for a specific electronics task.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">2</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Enter your values</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">Click color bands, type SMD codes, or enter voltage and current values. Use GPIO presets for Arduino and Raspberry Pi to skip manual setup.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="w-8 h-8 rounded-full bg-bae-primary text-white flex items-center justify-center text-sm font-bold mb-3">3</div>
+          <h3 class="font-semibold text-bae-ink text-sm mb-2">Get instant results</h3>
+          <p class="text-sm text-bae-muted leading-relaxed">See resistance values, tolerance ranges, standard E-series recommendations, power dissipation, and wattage warnings. Everything updates instantly as you type.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <ToolRelatedCTA currentHref="/calculators/stem-suite/resistor-color-code-calculator/" />
+
+  <!-- FAQ Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border" id="faq">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">Frequently asked questions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl">
+        {faqs.map((item) => (
+          <div>
+            <h3 class="font-semibold text-bae-ink text-sm mb-2">{item.q}</h3>
+            <p class="text-sm text-bae-muted leading-relaxed">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What People Use It For -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people use it for</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from electronics students, Arduino hobbyists, and repair technicians.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Arduino Hobbyists</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Pick the right LED resistor every time</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Arduino 5V + GPIO presets</p>
+          <p class="text-sm text-bae-muted">Select the Arduino 5V preset, choose your LED color, and get the exact resistor value with wattage check. Never guess between 220 ohms and 330 ohms again. See the actual current and brightness for each standard value.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Repair Technicians</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Decode faded or damaged resistor bands</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Text-only mode + tolerance range</p>
+          <p class="text-sm text-bae-muted">When color bands are faded or burned, use the text-only colorblind-friendly mode to select bands by name. Verify the decoded value against the tolerance range, then confirm with a multimeter reading.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Electronics Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Learn Ohm's Law with real circuit numbers</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">V=IR + power calculation</p>
+          <p class="text-sm text-bae-muted">Enter any two values in the Ohm's Law calculator to solve for the third. See power dissipation in watts instantly. Understand why a 1/4 watt resistor is fine for a 5V LED circuit but fails on a 12V supply.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Makers & Builders</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Find standard resistor values from calculations</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">E12 / E24 auto-round-up</p>
+          <p class="text-sm text-bae-muted">When your calculation gives 347 ohms but your kit only has 330 and 470, the calculator automatically rounds up to the safe standard value and shows the exact current at that resistance. No more fried LEDs from guessing low.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PDF Report (hidden) -->
+  <section class="py-10 md:py-14 border-t border-bae-border hidden" id="print-report">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-6">Report Summary</h2>
+      <div class="bg-white border border-bae-border rounded-bae p-8 shadow-bae-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-[10px] flex items-center justify-center text-lg font-bold" style="background:#0f0f1a;color:#ffffff;font-family:Georgia,'Times New Roman',serif;">B<span style="color:#8b5cf6;">.</span></div>
+          <div>
+            <div class="text-xl font-bold text-bae-ink">Best Answer Hub</div>
+            <p class="text-sm text-bae-muted">Resistor Calculator Report</p>
+          </div>
+        </div>
+        <div id="pdf-content" class="text-sm">
+          <!-- Populated by JS -->
+        </div>
+        <div class="mt-6 text-xs text-bae-muted border-t border-bae-border pt-4">
+          <p>All calculations are estimates for educational purposes. Always verify resistor values with a multimeter before installing in critical circuits. Component ratings vary by manufacturer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <HowToSchema steps={[
+    { name: 'Choose your mode', text: 'Switch between resistor color code decoder, Ohm\'s Law calculator, and LED resistor calculator. Each mode handles a specific electronics task.' },
+    { name: 'Enter your values', text: 'Click color bands, type SMD codes, or enter voltage and current. Use GPIO presets for Arduino and Raspberry Pi to skip manual setup.' },
+    { name: 'Get instant results', text: 'See resistance values, tolerance ranges, standard E-series recommendations, and wattage warnings. Download a PDF report for your records.' },
+  ]} />
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const $ = (id) => document.getElementById(id);
+
+      // ===== Color Data =====
+      const COLORS = [
+        { name: 'Black',  val: 0,  mult: 0,     tol: null, tcr: null, hex: '#1a1a1a' },
+        { name: 'Brown',  val: 1,  mult: 1,     tol: 1,    tcr: 100,  hex: '#8B4513' },
+        { name: 'Red',    val: 2,  mult: 2,     tol: 2,    tcr: 50,   hex: '#DC143C' },
+        { name: 'Orange', val: 3,  mult: 3,     tol: null, tcr: 15,   hex: '#FF8C00' },
+        { name: 'Yellow', val: 4,  mult: 4,     tol: null, tcr: 25,   hex: '#FFD700' },
+        { name: 'Green',  val: 5,  mult: 5,     tol: 0.5,  tcr: null, hex: '#228B22' },
+        { name: 'Blue',   val: 6,  mult: 6,     tol: 0.25, tcr: 10,   hex: '#4169E1' },
+        { name: 'Violet', val: 7,  mult: 7,     tol: 0.1,  tcr: 5,    hex: '#8A2BE2' },
+        { name: 'Gray',   val: 8,  mult: 8,     tol: 0.05, tcr: null, hex: '#808080' },
+        { name: 'White',  val: 9,  mult: 9,     tol: null, tcr: 1,    hex: '#F5F5F5' },
+        { name: 'Gold',   val: null,mult: -1,    tol: 5,    tcr: null, hex: '#FFD700' },
+        { name: 'Silver', val: null,mult: -2,    tol: 10,   tcr: null, hex: '#C0C0C0' },
+      ];
+
+      const E12 = [1.0,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2];
+      const E24 = [1.0,1.1,1.2,1.3,1.5,1.6,1.8,2.0,2.2,2.4,2.7,3.0,3.3,3.6,3.9,4.3,4.7,5.1,5.6,6.2,6.8,7.5,8.2,9.1];
+
+      // EIA-96 SMD codes: 2-digit value code (01–96) maps to a 3-significant-figure base value,
+      // followed by a letter multiplier. R/S are omitted to avoid clashing with 4R7 decimal notation.
+      const EIA96 = [100,102,105,107,110,113,115,118,121,124,127,130,133,137,140,143,147,150,154,158,162,165,169,174,178,182,187,191,196,200,205,210,215,221,226,232,237,243,249,255,261,267,274,280,287,294,301,309,316,324,332,340,348,357,365,374,383,392,402,412,422,432,442,453,464,475,487,499,511,523,536,549,562,576,590,604,619,634,649,665,681,698,715,732,750,768,787,806,825,845,866,887,909,931,953,976];
+      const EIA96_MULT = { Z:0.001, Y:0.01, X:0.1, A:1, B:10, C:100, D:1000, E:10000, F:100000 };
+
+      const LED_PRESETS = {
+        arduino5v:  { v: 5.0, i: 20, iUnit: 0.001, note: 'Arduino 5V pin (max 40mA)' },
+        arduino3v3: { v: 3.3, i: 20, iUnit: 0.001, note: 'Arduino 3.3V pin (max 40mA)' },
+        pi3v3:      { v: 3.3, i: 16, iUnit: 0.001, note: 'Raspberry Pi GPIO (max 16mA)' },
+        pi5v:       { v: 5.0, i: 16, iUnit: 0.001, note: 'Raspberry Pi 5V rail' },
+      };
+
+      // ===== Tab Switching =====
+      let activeTab = 'color';
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeTab = btn.dataset.tab;
+          document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('active', 'bg-bae-primary', 'text-white', 'border-bae-primary');
+            b.classList.add('bg-white', 'text-bae-ink', 'border-bae-border');
+          });
+          btn.classList.add('active', 'bg-bae-primary', 'text-white', 'border-bae-primary');
+          btn.classList.remove('bg-white', 'text-bae-ink', 'border-bae-border');
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+          $('panel-' + activeTab).classList.remove('hidden');
+          updateResults();
+        });
+      });
+
+      // ===== Color Code Calculator =====
+      let bandCount = 4;
+      let selectedBands = [1, 0, 2, 10, 1, 1]; // default: brown-black-red-gold
+      let colorblind = false;
+
+      function buildColorPickers() {
+        const container = $('color-pickers');
+        container.innerHTML = '';
+
+        // Labels and types depend on band count
+        let labels, bandTypes;
+        if (bandCount === 4) {
+          labels = ['1st Digit','2nd Digit','Multiplier','Tolerance'];
+          bandTypes = ['digit','digit','mult','tol'];
+        } else if (bandCount === 5) {
+          labels = ['1st Digit','2nd Digit','3rd Digit','Multiplier','Tolerance'];
+          bandTypes = ['digit','digit','digit','mult','tol'];
+        } else {
+          labels = ['1st Digit','2nd Digit','3rd Digit','Multiplier','Tolerance','Temp Coef'];
+          bandTypes = ['digit','digit','digit','mult','tol','tcr'];
+        }
+
+        for (let i = 0; i < bandCount; i++) {
+          const wrap = document.createElement('div');
+          wrap.className = 'color-picker-wrap';
+          wrap.dataset.band = i;
+
+          const label = document.createElement('label');
+          label.className = 'text-xs font-semibold text-bae-muted block mb-1.5';
+          label.textContent = labels[i];
+          wrap.appendChild(label);
+
+          const sel = document.createElement('select');
+          sel.className = 'w-full text-sm border border-bae-border rounded-bae-sm px-2 py-2 bg-white focus:outline-none focus:border-bae-primary';
+          sel.dataset.band = i;
+
+          COLORS.forEach((c, idx) => {
+            let usable = false;
+            if (bandTypes[i] === 'digit' && c.val !== null) usable = true;
+            if (bandTypes[i] === 'mult' && c.mult !== null) usable = true;
+            if (bandTypes[i] === 'tol' && c.tol !== null) usable = true;
+            if (bandTypes[i] === 'tcr' && c.tcr !== null) usable = true;
+            if (!usable) return;
+
+            const opt = document.createElement('option');
+            opt.value = idx;
+            if (selectedBands[i] === idx) opt.selected = true;
+
+            if (colorblind) {
+              opt.textContent = c.name + ' (' + (c.val !== null ? c.val : (c.mult !== null ? '×10^' + c.mult : (c.tol !== null ? '±' + c.tol + '%' : c.tcr + ' ppm'))) + ')';
+            } else {
+              opt.textContent = c.name;
+              opt.style.backgroundColor = c.hex;
+              opt.style.color = (c.name === 'White' || c.name === 'Yellow') ? '#1a1a1a' : '#fff';
+            }
+            sel.appendChild(opt);
+          });
+
+          sel.addEventListener('change', () => {
+            selectedBands[i] = parseInt(sel.value);
+            updateResistorVisual();
+            updateResults();
+          });
+          wrap.appendChild(sel);
+          container.appendChild(wrap);
+        }
+      }
+
+      function updateResistorVisual() {
+        const bands = document.querySelectorAll('.resistor-band');
+        bands.forEach((b, i) => {
+          if (i < bandCount) {
+            b.classList.remove('hidden');
+            b.style.backgroundColor = COLORS[selectedBands[i]].hex;
+          } else {
+            b.classList.add('hidden');
+          }
+        });
+        // Show/hide gaps
+        const gap4 = document.querySelector('[data-band="4-gap"]');
+        if (gap4) gap4.classList.toggle('hidden', bandCount < 5);
+        // Update labels with correct mapping
+        document.querySelectorAll('#band-labels > span').forEach((s, i) => {
+          let show = false;
+          if (bandCount === 4) show = (i === 0 || i === 1 || i === 3 || i === 4);
+          else if (bandCount === 5) show = (i === 0 || i === 1 || i === 2 || i === 3 || i === 4);
+          else show = (i >= 0 && i <= 5);
+          s.classList.toggle('hidden', !show);
+        });
+      }
+
+      document.querySelectorAll('.band-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          bandCount = parseInt(btn.dataset.bands);
+          document.querySelectorAll('.band-btn').forEach(b => {
+            b.classList.remove('active', 'bg-bae-primary', 'text-white', 'border-bae-primary');
+            b.classList.add('bg-white', 'text-bae-ink', 'border-bae-border');
+          });
+          btn.classList.add('active', 'bg-bae-primary', 'text-white', 'border-bae-primary');
+          btn.classList.remove('bg-white', 'text-bae-ink', 'border-bae-border');
+          buildColorPickers();
+          updateResistorVisual();
+          updateResults();
+        });
+      });
+
+      $('colorblind-mode').addEventListener('change', () => {
+        colorblind = $('colorblind-mode').checked;
+        buildColorPickers();
+      });
+
+      function formatResistance(ohms) {
+        if (ohms >= 1000000) return (ohms / 1000000).toFixed(ohms >= 10000000 ? 1 : 2) + ' MΩ';
+        if (ohms >= 1000) return (ohms / 1000).toFixed(ohms >= 10000 ? 1 : 2) + ' kΩ';
+        if (ohms >= 1) return ohms.toFixed(ohms >= 100 ? 1 : 2) + ' Ω';
+        return ohms.toFixed(2) + ' Ω';
+      }
+
+      function findNearestStandard(ohms, series) {
+        const vals = series === 'E24' ? E24 : E12;
+        if (!(ohms > 0)) return { nearest: 0, higher: 0 };
+        const exp = Math.pow(10, Math.floor(Math.log10(ohms)));
+        // Build all standard values across the surrounding decades
+        const candidates = [];
+        for (const mult of [exp / 10, exp, exp * 10]) {
+          for (const v of vals) candidates.push(v * mult);
+        }
+        let nearest = candidates[0];
+        let minDiff = Math.abs(ohms - nearest);
+        let higher = Infinity; // smallest standard value >= ohms (round UP — safe for LEDs)
+        for (const c of candidates) {
+          const diff = Math.abs(ohms - c);
+          if (diff < minDiff) { minDiff = diff; nearest = c; }
+          if (c >= ohms - 1e-9 && c < higher) higher = c;
+        }
+        if (!isFinite(higher)) higher = nearest;
+        return { nearest, higher };
+      }
+
+      function calcColorCode() {
+        const c0 = COLORS[selectedBands[0]];
+        const c1 = COLORS[selectedBands[1]];
+        const c2 = bandCount >= 5 ? COLORS[selectedBands[2]] : null;
+        const multIdx = bandCount >= 5 ? 3 : 2;
+        const tolIdx = bandCount >= 5 ? 4 : 3;
+        const tcrIdx = 5;
+        const cm = COLORS[selectedBands[multIdx]];
+        const ct = COLORS[selectedBands[tolIdx]];
+
+        let val;
+        if (bandCount >= 5) {
+          val = (c0.val * 100 + c1.val * 10 + c2.val) * Math.pow(10, cm.mult);
+        } else {
+          val = (c0.val * 10 + c1.val) * Math.pow(10, cm.mult);
+        }
+
+        const tolPct = ct.tol;
+        const minVal = val * (1 - tolPct / 100);
+        const maxVal = val * (1 + tolPct / 100);
+
+        let html = '<div class="space-y-3">';
+        html += '<div class="text-3xl font-bold font-serif">' + formatResistance(val) + '</div>';
+        html += '<div class="text-sm text-white/70">Tolerance: ±' + tolPct + '% (' + ct.name + ')</div>';
+        html += '<div class="text-xs text-white/50">Range: ' + formatResistance(minVal) + ' – ' + formatResistance(maxVal) + '</div>';
+
+        if (bandCount === 6) {
+          const ctcr = COLORS[selectedBands[tcrIdx]];
+          html += '<div class="text-xs text-white/50 mt-1">Temp Coefficient: ' + ctcr.tcr + ' ppm/°C (' + ctcr.name + ')</div>';
+        }
+
+        // Standard values
+        const std = findNearestStandard(val, 'E24');
+        html += '<div class="border-t border-white/10 pt-3 mt-2">';
+        html += '<div class="text-xs text-white/50 mb-1">Nearest standard values</div>';
+        html += '<div class="flex justify-between"><span class="text-sm text-white/70">Nearest E24 value</span><span class="text-sm font-semibold">' + formatResistance(std.nearest) + '</span></div>';
+        html += '</div>';
+        html += '</div>';
+        return html;
+      }
+
+      // ===== Reverse Lookup =====
+      $('reverse-btn').addEventListener('click', () => {
+        const rawVal = parseFloat($('reverse-value').value);
+        const unit = parseFloat($('reverse-unit').value);
+        const tol = parseFloat($('reverse-tolerance').value);
+        if (!rawVal || rawVal <= 0) return;
+        const ohms = rawVal * unit;
+
+        // Convert to scientific notation with 2 significant digits
+        let exp = Math.floor(Math.log10(ohms));
+        let mantissa = ohms / Math.pow(10, exp);
+        let sigStr = mantissa.toFixed(1);
+        if (sigStr === '10.0') {
+          sigStr = '1.0';
+          exp += 1;
+        }
+        const d1Val = parseInt(sigStr[0]);
+        const d2Val = parseInt(sigStr[2]);
+        const multVal = exp - 1;
+
+        function findColorByVal(target) {
+          let bestIdx = -1, bestDiff = Infinity;
+          COLORS.forEach((c, i) => { if (c.val !== null) { const diff = Math.abs(c.val - target); if (diff < bestDiff) { bestDiff = diff; bestIdx = i; } } });
+          return bestIdx;
+        }
+        function findColorByMult(target) {
+          let bestIdx = -1, bestDiff = Infinity;
+          COLORS.forEach((c, i) => { if (c.mult !== null) { const diff = Math.abs(c.mult - target); if (diff < bestDiff) { bestDiff = diff; bestIdx = i; } } });
+          return bestIdx;
+        }
+
+        const d1 = findColorByVal(d1Val);
+        const d2 = findColorByVal(d2Val);
+        const m = findColorByMult(multVal);
+        const t = COLORS.findIndex(c => c.tol === tol);
+
+        const r = $('reverse-result');
+        r.classList.remove('hidden');
+        let html = '<div class="bg-bae-bg border border-bae-border rounded-bae p-4">';
+        html += '<div class="text-sm font-semibold text-bae-ink mb-2">Color bands for ' + formatResistance(ohms) + ' ±' + tol + '%</div>';
+        html += '<div class="flex items-center gap-1">';
+        html += '<div class="w-4 h-8 rounded-sm" style="background:' + COLORS[d1 >= 0 ? d1 : 0].hex + '"></div>';
+        html += '<div class="w-4 h-8 rounded-sm" style="background:' + COLORS[d2 >= 0 ? d2 : 0].hex + '"></div>';
+        html += '<div class="w-4 h-8 rounded-sm" style="background:' + COLORS[m >= 0 ? m : 0].hex + '"></div>';
+        if (t >= 0) html += '<div class="w-4 h-8 rounded-sm" style="background:' + COLORS[t].hex + '"></div>';
+        html += '</div>';
+        html += '<div class="text-xs text-bae-muted mt-2">' + COLORS[d1 >= 0 ? d1 : 0].name + ' – ' + COLORS[d2 >= 0 ? d2 : 0].name + ' – ' + COLORS[m >= 0 ? m : 0].name;
+        if (t >= 0) html += ' – ' + COLORS[t].name;
+        html += '</div></div>';
+        r.innerHTML = html;
+        updateResults();
+      });
+
+      // ===== SMD Decoder =====
+      $('smd-btn').addEventListener('click', () => {
+        const code = $('smd-code').value.trim().toUpperCase();
+        if (!code) return;
+        const r = $('smd-result');
+        r.classList.remove('hidden');
+        let val, type;
+
+        if (/^\d*R\d*$/.test(code)) {
+          // Decimal format: 4R7 = 4.7, 10R = 10, R47 = 0.47
+          val = parseFloat(code.replace('R', '.'));
+          type = 'Decimal (R = decimal point)';
+        } else if (/^\d{2}[A-FXYZ]$/.test(code)) {
+          // EIA-96 format: 2-digit value code + letter multiplier
+          const codeNum = parseInt(code.slice(0, 2), 10);
+          const letter = code[2];
+          if (codeNum < 1 || codeNum > 96 || !(letter in EIA96_MULT)) {
+            r.innerHTML = '<div class="text-sm text-red-600">Unrecognized EIA-96 code. The value code must be 01–96 and the letter a valid multiplier (Z, Y, X, A–F).</div>';
+            return;
+          }
+          val = EIA96[codeNum - 1] * EIA96_MULT[letter];
+          type = 'EIA-96 code (' + code.slice(0, 2) + ' = ' + EIA96[codeNum - 1] + ', ' + letter + ' = ×' + EIA96_MULT[letter] + ')';
+        } else if (/^\d{3}$/.test(code)) {
+          const a = parseInt(code[0] + code[1]);
+          const b = parseInt(code[2]);
+          val = a * Math.pow(10, b);
+          type = '3-digit code';
+        } else if (/^\d{4}$/.test(code)) {
+          const a = parseInt(code[0] + code[1] + code[2]);
+          const b = parseInt(code[3]);
+          val = a * Math.pow(10, b);
+          type = '4-digit code';
+        } else if (code === '0') {
+          val = 0;
+          type = 'Zero-ohm jumper';
+        } else {
+          r.innerHTML = '<div class="text-sm text-red-600">Unrecognized SMD code format. Try formats like 103, 4R7, 1002, 01C, or 000.</div>';
+          return;
+        }
+
+        // Any code that resolves to 0 ohms is a zero-ohm jumper (e.g. 000, 0R0).
+        if (val === 0) type = 'Zero-ohm jumper';
+
+        let html = '<div class="bg-bae-bg border border-bae-border rounded-bae p-4">';
+        html += '<div class="text-sm font-semibold text-bae-ink mb-1">' + formatResistance(val) + '</div>';
+        html += '<div class="text-xs text-bae-muted">Type: ' + type + '</div>';
+        html += '</div>';
+        r.innerHTML = html;
+        updateResults();
+      });
+
+      // ===== Ohm's Law =====
+      $('ohms-solve').addEventListener('click', () => {
+        const v = parseFloat($('ohms-v').value);
+        const iRaw = parseFloat($('ohms-i').value);
+        const iUnit = parseFloat($('ohms-i-unit').value);
+        const i = iRaw * iUnit;
+        const rRaw = parseFloat($('ohms-r').value);
+        const rUnit = parseFloat($('ohms-r-unit').value);
+        const r = rRaw * rUnit;
+
+        const res = $('ohms-result');
+        res.classList.remove('hidden');
+
+        let html = '<div class="bg-bae-bg border border-bae-border rounded-bae p-4 space-y-2">';
+        let known = 0;
+        if (!isNaN(v) && v > 0) known++;
+        if (!isNaN(i) && i > 0) known++;
+        if (!isNaN(r) && r > 0) known++;
+
+        if (known < 2) {
+          html += '<div class="text-sm text-bae-ink">Enter at least 2 values to solve for the third.</div>';
+        } else {
+          let sv, si, sr, p;
+          if (isNaN(v)) { sv = i * r; si = i; sr = r; }
+          else if (isNaN(i)) { sv = v; si = v / r; sr = r; }
+          else { sv = v; si = i; sr = v / i; }
+          p = sv * si;
+
+          html += '<div class="flex justify-between"><span class="text-sm text-bae-muted">Voltage</span><span class="text-sm font-semibold">' + sv.toFixed(3) + ' V</span></div>';
+          html += '<div class="flex justify-between"><span class="text-sm text-bae-muted">Current</span><span class="text-sm font-semibold">' + (si >= 1 ? si.toFixed(3) + ' A' : (si * 1000).toFixed(2) + ' mA') + '</span></div>';
+          html += '<div class="flex justify-between"><span class="text-sm text-bae-muted">Resistance</span><span class="text-sm font-semibold">' + formatResistance(sr) + '</span></div>';
+          html += '<div class="border-t border-bae-border pt-2 flex justify-between"><span class="text-sm text-bae-muted">Power</span><span class="text-sm font-semibold text-bae-primary">' + (p >= 1 ? p.toFixed(3) + ' W' : (p * 1000).toFixed(2) + ' mW') + '</span></div>';
+
+          // Wattage recommendation
+          let rec = '1/8 W (0.125W)';
+          if (p > 0.125) rec = '1/4 W (0.25W)';
+          if (p > 0.25) rec = '1/2 W (0.5W)';
+          if (p > 0.5) rec = '1 W';
+          if (p > 1) rec = '2 W';
+          if (p > 2) rec = '5 W+';
+          html += '<div class="text-xs text-bae-muted mt-1">Recommended resistor wattage: <span class="font-semibold text-bae-ink">' + rec + '</span></div>';
+          // Update right panel if on ohms tab
+          if (activeTab === 'ohms') {
+            let panelHtml = '<div class="space-y-2">';
+            panelHtml += '<div class="flex justify-between"><span class="text-sm text-white/70">Voltage</span><span class="text-sm font-semibold">' + sv.toFixed(3) + ' V</span></div>';
+            panelHtml += '<div class="flex justify-between"><span class="text-sm text-white/70">Current</span><span class="text-sm font-semibold">' + (si >= 1 ? si.toFixed(3) + ' A' : (si * 1000).toFixed(2) + ' mA') + '</span></div>';
+            panelHtml += '<div class="flex justify-between"><span class="text-sm text-white/70">Resistance</span><span class="text-sm font-semibold">' + formatResistance(sr) + '</span></div>';
+            panelHtml += '<div class="border-t border-white/10 pt-2 flex justify-between"><span class="text-sm text-white/70">Power</span><span class="text-sm font-semibold text-bae-primary">' + (p >= 1 ? p.toFixed(3) + ' W' : (p * 1000).toFixed(2) + ' mW') + '</span></div>';
+            panelHtml += '</div>';
+            $('result-content').innerHTML = panelHtml;
+          }
+        }
+        html += '</div>';
+        res.innerHTML = html;
+        updateResults();
+      });
+
+      $('ohms-clear').addEventListener('click', () => {
+        $('ohms-v').value = '';
+        $('ohms-i').value = '';
+        $('ohms-r').value = '';
+        $('ohms-result').classList.add('hidden');
+        updateResults();
+      });
+
+      // ===== LED Calculator =====
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = LED_PRESETS[btn.dataset.preset];
+          if (!p) return;
+          $('led-vsupply').value = p.v;
+          $('led-current').value = p.i;
+          $('led-current-unit').value = p.iUnit;
+          document.querySelectorAll('.preset-btn').forEach(b => {
+            b.classList.remove('bg-bae-primary', 'text-white', 'border-bae-primary');
+            b.classList.add('bg-white', 'text-bae-ink', 'border-bae-border');
+          });
+          btn.classList.add('bg-bae-primary', 'text-white', 'border-bae-primary');
+          btn.classList.remove('bg-white', 'text-bae-ink', 'border-bae-border');
+          // Clear old results so user must recalculate
+          $('led-result').classList.add('hidden');
+          $('led-result').innerHTML = '';
+          if (activeTab === 'led') {
+            $('result-content').innerHTML = '<p class="text-sm text-white/70">Click Calculate LED Resistor to see results.</p>';
+          }
+        });
+      });
+
+      $('led-type').addEventListener('change', () => {
+        const v = $('led-type').value;
+        if (v !== 'custom') $('led-vf').value = v;
+      });
+
+      $('led-calc').addEventListener('click', () => {
+        const vSupply = parseFloat($('led-vsupply').value);
+        const vF = parseFloat($('led-vf').value);
+        const iRaw = parseFloat($('led-current').value);
+        const iUnit = parseFloat($('led-current-unit').value);
+        const i = iRaw * iUnit;
+
+        const res = $('led-result');
+        res.classList.remove('hidden');
+
+        if (!vSupply || !vF || !i || vSupply <= vF) {
+          res.innerHTML = '<div class="bg-red-50 border border-red-200 rounded-bae p-4 text-sm text-red-700">Supply voltage must be greater than LED forward voltage. Check your inputs.</div>';
+          updateResults();
+          return;
+        }
+
+        const vRes = vSupply - vF;
+        const rExact = vRes / i;
+        const pDiss = vRes * i;
+        const std = findNearestStandard(rExact, 'E12');
+        const iAtStd = vRes / std.higher;
+
+        let html = '<div class="bg-bae-bg border border-bae-border rounded-bae p-4 space-y-3">';
+        html += '<div class="grid grid-cols-2 gap-3">';
+        html += '<div><div class="text-xs text-bae-muted">Exact resistor</div><div class="text-lg font-bold text-bae-ink">' + formatResistance(rExact) + '</div></div>';
+        html += '<div><div class="text-xs text-bae-muted">Use this standard value</div><div class="text-lg font-bold text-bae-primary">' + formatResistance(std.higher) + '</div></div>';
+        html += '</div>';
+        html += '<div class="border-t border-bae-border pt-2 space-y-1">';
+        html += '<div class="flex justify-between text-sm"><span class="text-bae-muted">Voltage across resistor</span><span class="font-semibold">' + vRes.toFixed(2) + ' V</span></div>';
+        html += '<div class="flex justify-between text-sm"><span class="text-bae-muted">Current at standard value</span><span class="font-semibold">' + (iAtStd * 1000).toFixed(1) + ' mA</span></div>';
+        html += '<div class="flex justify-between text-sm"><span class="text-bae-muted">Power dissipated</span><span class="font-semibold">' + (pDiss >= 1 ? pDiss.toFixed(3) + ' W' : (pDiss * 1000).toFixed(1) + ' mW') + '</span></div>';
+        html += '</div>';
+
+        // Wattage warning
+        let recW = 0.125;
+        if (pDiss > 0.125) recW = 0.25;
+        if (pDiss > 0.25) recW = 0.5;
+        if (pDiss > 0.5) recW = 1;
+        if (pDiss > 1) recW = 2;
+
+        if (pDiss > recW * 0.8) {
+          html += '<div class="bg-amber-50 border border-amber-200 rounded-bae-sm p-3 text-sm text-amber-800">';
+          html += '<strong>Wattage warning:</strong> This circuit dissipates ' + (pDiss * 1000).toFixed(1) + ' mW. Use at least a ' + (recW >= 1 ? recW + 'W' : (recW * 1000) + 'mW') + ' resistor for safety margin.';
+          html += '</div>';
+        } else {
+          html += '<div class="bg-green-50 border border-green-200 rounded-bae-sm p-3 text-sm text-green-800">';
+          html += 'A standard 1/4W (250mW) resistor is safe for this circuit.';
+          html += '</div>';
+        }
+
+        html += '</div>';
+        res.innerHTML = html;
+        // Update right panel if on led tab
+        if (activeTab === 'led') {
+          let panelHtml = '<div class="space-y-3">';
+          panelHtml += '<div class="text-2xl font-bold font-serif">' + formatResistance(rExact) + '</div>';
+          panelHtml += '<div class="text-sm text-white/70">Standard: ' + formatResistance(std.higher) + '</div>';
+          panelHtml += '<div class="border-t border-white/10 pt-3 space-y-1">';
+          panelHtml += '<div class="flex justify-between text-sm"><span class="text-white/70">V across resistor</span><span class="font-semibold">' + vRes.toFixed(2) + ' V</span></div>';
+          panelHtml += '<div class="flex justify-between text-sm"><span class="text-white/70">Current</span><span class="font-semibold">' + (iAtStd * 1000).toFixed(1) + ' mA</span></div>';
+          panelHtml += '<div class="flex justify-between text-sm"><span class="text-white/70">Power</span><span class="font-semibold">' + (pDiss >= 1 ? pDiss.toFixed(3) + ' W' : (pDiss * 1000).toFixed(1) + ' mW') + '</span></div>';
+          panelHtml += '</div></div>';
+          $('result-content').innerHTML = panelHtml;
+        }
+        updateResults();
+      });
+
+      // ===== Results Panel =====
+      function updateResults() {
+        const panel = $('result-content');
+        if (activeTab === 'color') {
+          panel.innerHTML = calcColorCode();
+        } else if (activeTab === 'ohms') {
+          const ohmsRes = $('ohms-result');
+          if (ohmsRes.classList.contains('hidden') || !ohmsRes.innerHTML.trim()) {
+            panel.innerHTML = '<p class="text-sm text-white/70">Enter any two values in Ohm\'s Law to see results.</p>';
+          }
+          // If results exist, they were set by the Calculate button handler
+        } else if (activeTab === 'led') {
+          const ledRes = $('led-result');
+          if (ledRes.classList.contains('hidden') || !ledRes.innerHTML.trim()) {
+            panel.innerHTML = '<p class="text-sm text-white/70">Click Calculate LED Resistor to see results.</p>';
+          }
+          // If results exist, they were set by the Calculate button handler
+        }
+      }
+
+      // ===== PDF Export =====
+      $('pdf-btn').addEventListener('click', async () => {
+        if (typeof html2pdf === 'undefined') return;
+        const btn = $('pdf-btn');
+        const orig = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        // Build PDF content
+        let pdfHtml = '';
+        if (activeTab === 'color') {
+          pdfHtml = '<h3 style="font-size:16px;font-weight:bold;margin-bottom:12px;">Resistor Color Code Result</h3>' + calcColorCode().replace(/class="/g, 'style="').replace(/text-white\/70/g, 'color:#666').replace(/text-white\/50/g, 'color:#999').replace(/border-white\/10/g, 'border-color:#eee');
+        } else if (activeTab === 'led') {
+          const ledRes = $('led-result');
+          if (!ledRes.classList.contains('hidden')) {
+            pdfHtml = '<h3 style="font-size:16px;font-weight:bold;margin-bottom:12px;">LED Resistor Calculation</h3>' + ledRes.innerHTML;
+          }
+        } else {
+          const ohmsRes = $('ohms-result');
+          if (!ohmsRes.classList.contains('hidden')) {
+            pdfHtml = '<h3 style="font-size:16px;font-weight:bold;margin-bottom:12px;">Ohm\'s Law Calculation</h3>' + ohmsRes.innerHTML;
+          }
+        }
+
+        if (!pdfHtml) {
+          btn.textContent = orig;
+          btn.disabled = false;
+          return;
+        }
+
+        $('pdf-content').innerHTML = pdfHtml;
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '210mm';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.style.margin = '0';
+        const report = $('print-report').cloneNode(true);
+        report.removeAttribute('id');
+        report.classList.remove('hidden');
+        wrapper.appendChild(report);
+        document.body.appendChild(wrapper);
+
+        try {
+          await html2pdf().set({
+            margin: [8, 8, 8, 8],
+            filename: 'resistor-calculator-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+            pagebreak: { mode: ['css', 'legacy'], avoid: 'p, li, div, h1, h2, h3, h4, h5, h6, ul, tr, td, table' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(wrapper).save();
+        } catch (e) { console.error(e); }
+        finally {
+          if (wrapper.parentNode) document.body.removeChild(wrapper);
+          btn.textContent = orig;
+          btn.disabled = false;
+        }
+      });
+
+      // ===== Init =====
+      buildColorPickers();
+      updateResistorVisual();
+      updateResults();
+    })();
+  </script>
+
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #print-report, #print-report * { visibility: visible; }
+      #print-report { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+      nav, footer, section:not(#print-report), main > *:not(#print-report) { display: none !important; }
+    }
+    .resistor-band { transition: background-color 0.2s; }
+  </style>
+</BaseLayout>

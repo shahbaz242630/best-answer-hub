@@ -1,0 +1,415 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-13T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Website Speed Test?', a: 'The Best Answer Hub Website Speed Test is a free, browser-based tool that measures how quickly a website responds from your location. It reports time to first byte, load time, SSL, compression, and caching, flags layout-shift risks, and gives a grade with fixes, with no signup and nothing sent to a third-party server.' },
+  { q: 'What does the Website Speed Test measure?', a: 'It measures the real network path from your browser to the site: response time, time to first byte, total download time, SSL configuration, compression, and caching headers, plus HTML checks for layout-shift risks. The Best Answer Hub Website Speed Test breaks these out so you can see which part is slow.' },
+  { q: 'What are Core Web Vitals?', a: 'Core Web Vitals are three Google metrics for real-world experience: Largest Contentful Paint for loading, Interaction to Next Paint for responsiveness, and Cumulative Layout Shift for visual stability. The Best Answer Hub Website Speed Test explains each so a single grade does not hide which one is weak.' },
+  { q: 'What is a good LCP, INP, and CLS?', a: 'A page is rated good at a Largest Contentful Paint of 2.5 seconds or less, an Interaction to Next Paint of 200 milliseconds or less, and a Cumulative Layout Shift of 0.1 or less, measured at the 75th percentile of loads. The Best Answer Hub Website Speed Test frames its results against these thresholds.' },
+  { q: 'Did INP replace FID?', a: 'Yes. Interaction to Next Paint replaced First Input Delay as a Core Web Vital on March 12, 2024. INP is stricter because it measures every interaction across the visit, not just the first. Any tool still reporting FID is out of date, which the Best Answer Hub Website Speed Test notes in its guidance.' },
+  { q: 'What is TTFB and is it a Core Web Vital?', a: 'Time to first byte measures how long the server takes to send the first byte of a response. It is not itself a Core Web Vital, but it precedes loading metrics like LCP, so a slow TTFB drags everything down. The Best Answer Hub Website Speed Test measures TTFB directly as an early warning.' },
+  { q: 'Why does my speed score change every time I run it?', a: 'Because performance varies with server load, network congestion, the device running the test, and other apps competing for resources, all of which Google documents for its own tools. The Best Answer Hub Website Speed Test measures your live network path, so running it several times and reading the pattern is more reliable than one number.' },
+  { q: 'Why is my mobile score lower than desktop?', a: 'Google\'s testing throttles to a simulated slow mobile network and a slower CPU by default, so a page that scores well on a fast desktop scores lower as a phone. Since Google indexes the mobile version of your site, the Best Answer Hub Website Speed Test encourages optimizing for the mobile experience first.' },
+  { q: 'What is the difference between lab and field data?', a: 'A lab test is one controlled run, useful for debugging, while field data comes from real visitors and is what Google uses to judge Core Web Vitals at the 75th percentile. The Best Answer Hub Website Speed Test is a lab snapshot, best paired with field data from PageSpeed Insights.' },
+  { q: 'Is page speed a Google ranking factor?', a: 'Yes, as part of page experience, but it does not override relevance. Google states it still shows the most relevant content even when the page experience is sub-par. The Best Answer Hub Website Speed Test helps you improve speed while treating content quality as the primary driver of ranking.' },
+  { q: 'How is the Website Speed Test different from PageSpeed Insights?', a: 'PageSpeed Insights adds real-user field data from Chrome, which is ideal for Google\'s own numbers, while the Best Answer Hub Website Speed Test is a fast, no-login lab check from your own connection. Use the Best Answer Hub tool for a quick pulse, then confirm field vitals in PageSpeed Insights.' },
+  { q: 'Why can\'t the Website Speed Test check some websites?', a: 'Some sites block cross-origin requests with security headers, which is a browser protection, not a tool limitation. When that happens the Best Answer Hub Website Speed Test can still measure basic timing but cannot read the full response, and it shows a manual checklist so you can still assess the page.' },
+  { q: 'How do I improve my website speed?', a: 'Start with the biggest wins: compress images, enable gzip or Brotli, use a CDN, cache static assets, and reduce heavy scripts. The Best Answer Hub Website Speed Test flags which of these apply and cross-links the Best Answer Hub Image Compressor for the most common bottleneck, oversized images.' },
+  { q: 'What is a good Lighthouse performance score?', a: 'Lighthouse scores a page from 0 to 100 as a weighted blend of metrics, with 90 to 100 shown green, 50 to 89 orange, and below 50 red. Total Blocking Time and Largest Contentful Paint carry the most weight. The Best Answer Hub Website Speed Test gives a quicker grade and pairs well with a full Lighthouse run in PageSpeed Insights.' },
+  { q: 'Is the Best Answer Hub Website Speed Test free and private?', a: 'Yes. It is completely free with no test cap and no signup, and the request runs from your own browser rather than through a third-party server. It stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.' },
+];
+
+const seo = {
+  title: 'What a Website Speed Score Actually Measures',
+  description: 'What a website speed score measures: the three Core Web Vitals and their thresholds, why scores vary, lab vs field data, and how it relates to ranking.',
+  url: '/playbooks/website-speed-test/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Website Speed Test', url: '/playbooks/website-speed-test/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+  <div class="hero">
+    <span class="glow"></span>
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div class="masthead">
+          <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+          <span class="word">Best Answer Hub<i>.</i></span>
+        </div>
+        <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+      </div>
+      <span class="eyebrow">Best Answer Hub Playbooks &middot; Web Performance</span>
+      <div class="cav">One number, three stories</div>
+      <h1>What a Website Speed Score Actually <em>Measures</em></h1>
+      <p class="dek">A single speed grade hides three separate questions: how fast the main content loads, how quickly the page responds to a tap, and whether it jumps around while loading. Here is what the Core Web Vitals actually measure, why the same page scores differently every run, and how a quick in-browser test relates to Google's own data.</p>
+      <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Web performance</span><span>No signup</span></div>
+      <div class="bandstrip">
+        <div class="seg b1">Loading<small>Largest Contentful Paint</small></div>
+        <div class="seg b2">Responsiveness<small>Interaction to Next Paint</small></div>
+        <div class="seg b3">Stability<small>Cumulative Layout Shift</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><div class="n">2.5s</div><div class="l">a good Largest Contentful Paint</div><div class="src">web.dev</div></div>
+    <div class="stat"><div class="n">200ms</div><div class="l">a good Interaction to Next Paint</div><div class="src">web.dev</div></div>
+    <div class="stat"><div class="n">0.1</div><div class="l">a good Cumulative Layout Shift</div><div class="src">web.dev</div></div>
+    <div class="stat"><div class="n">75th</div><div class="l">percentile of loads Google scores you at</div><div class="src">web.dev</div></div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="On this page">
+      <div class="t">On this page</div>
+      <a href="#what">What it is</a>
+      <a href="#vitals">The three vitals</a>
+      <a href="#ttfb">TTFB and loading</a>
+      <a href="#vary">Why scores change</a>
+      <a href="#lab">Lab vs real users</a>
+      <a href="#ranking">Speed and ranking</a>
+      <a href="#different">Why this tool</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <article>
+      <p class="lead"><strong>A website speed score blends three different measurements, and Google groups them as the Core Web Vitals: loading, responsiveness, and visual stability.</strong> A page is rated good when its Largest Contentful Paint is 2.5 seconds or less, its Interaction to Next Paint is 200 milliseconds or less, and its Cumulative Layout Shift is 0.1 or less (<a href="https://web.dev/articles/vitals" target="_blank" rel="noopener noreferrer">web.dev</a>). The Best Answer Hub <a href="/tools/website-speed-test/">Website Speed Test</a> runs a quick check from your own browser, measuring response time, time to first byte, compression, caching, and layout-shift risks, and it explains what each number means rather than handing you a bare grade.</p>
+
+      <p>This guide covers what the three Core Web Vitals measure, why time to first byte sits underneath them, why the same page scores differently on every run, how a one-off test differs from the real-user data Google ranks on, and where page speed actually fits into search. The tool sits in the Best Answer Hub <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+      <div class="cav">Start here</div>
+      <h2 id="what">What is the Best Answer Hub Website Speed Test?</h2>
+      <p>The Best Answer Hub Website Speed Test is a free, browser-based tool that measures how quickly a website responds from where you are sitting. It uses your browser to fetch the page directly, then reports the time to first byte, the total load time, SSL configuration, compression, and caching headers, and it inspects the HTML for layout-shift risks like images without dimensions. You get a grade and a prioritized list of fixes, with no signup and nothing sent to a third-party server.</p>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">1</span><div><b>Measures your real path.</b> The request runs from your browser, so the result reflects your network, DNS, and the nearest CDN edge, not a distant test server.</div></li>
+          <li><span class="dot">2</span><div><b>Explains the number.</b> Response time, TTFB, compression, caching, and SSL are broken out, so you see which part is slow.</div></li>
+          <li><span class="dot">3</span><div><b>Points to fixes.</b> A prioritized checklist, with heavy images the usual first place to look.</div></li>
+        </ul>
+      </div>
+
+      <div class="cav">Three separate things</div>
+      <h2 id="vitals">What do the Core Web Vitals measure?</h2>
+      <p>Each vital captures a different part of the experience, so one blended score can hide which one is failing. Largest Contentful Paint measures loading, the moment the biggest content element appears. Interaction to Next Paint measures responsiveness, the delay before the page reacts to taps and clicks across the whole visit. Cumulative Layout Shift measures visual stability, how much the layout jumps unexpectedly. Google sets a clear good threshold for each, judged at the 75th percentile of real page loads (<a href="https://web.dev/articles/vitals" target="_blank" rel="noopener noreferrer">web.dev</a>).</p>
+      <figure class="chart">
+        <figcaption class="chart-title">The good, needs-improvement, and poor bands</figcaption>
+        <svg viewBox="0 0 600 210" role="img" aria-label="Core Web Vitals thresholds: LCP good at or below 2.5 seconds, INP good at or below 200 milliseconds, CLS good at or below 0.1, with needs-improvement and poor bands beyond.">
+          <g font-family="Karla, sans-serif" font-size="11" font-weight="700">
+            <rect x="150" y="152" width="18" height="12" rx="3" fill="#8CA783"/><text x="174" y="162" fill="#4f4940">Good</text>
+            <rect x="238" y="152" width="18" height="12" rx="3" fill="#E7C9A9"/><text x="262" y="162" fill="#4f4940">Needs work</text>
+            <rect x="360" y="152" width="18" height="12" rx="3" fill="#C6603F"/><text x="384" y="162" fill="#4f4940">Poor</text>
+          </g>
+          <g>
+            <text x="128" y="42" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#33302A">LCP</text>
+            <rect x="140" y="28" width="190" height="22" rx="4" fill="#8CA783"/>
+            <rect x="330" y="28" width="120" height="22" fill="#E7C9A9"/>
+            <rect x="450" y="28" width="100" height="22" rx="4" fill="#C6603F"/>
+            <text x="235" y="43" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#33302A">&le; 2.5s</text>
+            <text x="330" y="66" text-anchor="middle" font-family="Karla, sans-serif" font-size="9.5" fill="#847B6B">2.5s</text>
+            <text x="450" y="66" text-anchor="middle" font-family="Karla, sans-serif" font-size="9.5" fill="#847B6B">4s</text>
+          </g>
+          <g>
+            <text x="128" y="98" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#33302A">INP</text>
+            <rect x="140" y="84" width="190" height="22" rx="4" fill="#8CA783"/>
+            <rect x="330" y="84" width="120" height="22" fill="#E7C9A9"/>
+            <rect x="450" y="84" width="100" height="22" rx="4" fill="#C6603F"/>
+            <text x="235" y="99" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#33302A">&le; 200ms</text>
+            <text x="330" y="122" text-anchor="middle" font-family="Karla, sans-serif" font-size="9.5" fill="#847B6B">200ms</text>
+            <text x="450" y="122" text-anchor="middle" font-family="Karla, sans-serif" font-size="9.5" fill="#847B6B">500ms</text>
+          </g>
+          <g>
+            <text x="128" y="140" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#33302A">CLS</text>
+            <rect x="140" y="126" width="190" height="22" rx="4" fill="#8CA783"/>
+            <rect x="330" y="126" width="120" height="22" fill="#E7C9A9"/>
+            <rect x="450" y="126" width="100" height="22" rx="4" fill="#C6603F"/>
+            <text x="235" y="141" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="700" fill="#33302A">&le; 0.1</text>
+            <text x="330" y="164" text-anchor="middle" font-family="Karla, sans-serif" font-size="9.5" fill="#847B6B">0.1</text>
+            <text x="450" y="164" text-anchor="middle" font-family="Karla, sans-serif" font-size="9.5" fill="#847B6B">0.25</text>
+          </g>
+        </svg>
+        <p class="chart-src">Good thresholds: LCP 2.5s, INP 200ms, CLS 0.1. Segment widths are illustrative, not to scale. Source: web.dev, Core Web Vitals.</p>
+      </figure>
+      <table>
+        <thead><tr><th>Vital</th><th>Measures</th><th>Good</th><th>Poor</th></tr></thead>
+        <tbody>
+          <tr><td class="band">LCP</td><td>Loading</td><td>2.5s or less</td><td>Over 4s</td></tr>
+          <tr><td class="band">INP</td><td>Responsiveness</td><td>200ms or less</td><td>Over 500ms</td></tr>
+          <tr><td class="band">CLS</td><td>Visual stability</td><td>0.1 or less</td><td>Over 0.25</td></tr>
+        </tbody>
+      </table>
+      <div class="callout sage"><div class="h">The metric older guides get wrong</div><p>Interaction to Next Paint replaced First Input Delay as a Core Web Vital on March 12, 2024 (<a href="https://web.dev/blog/inp-cwv-march-12" target="_blank" rel="noopener noreferrer">web.dev</a>). If a tool or article still lists FID, it is out of date. INP is stricter because it looks at every interaction across the visit, not just the first one.</p></div>
+      <p>A single lab performance score, like the one Google's Lighthouse produces, is a weighted blend of several metrics rather than one measurement, so the heaviest-weighted metric drives the grade. Total Blocking Time and Largest Contentful Paint carry the most weight, which is why a page can feel quick yet still score poorly if it blocks the main thread (<a href="https://developer.chrome.com/docs/lighthouse/performance/performance-scoring" target="_blank" rel="noopener noreferrer">Lighthouse scoring</a>).</p>
+      <figure class="chart">
+        <figcaption class="chart-title">How a Lighthouse performance score is weighted</figcaption>
+        <svg viewBox="0 0 600 178" role="img" aria-label="Lighthouse performance score weights: Total Blocking Time 30 percent, Largest Contentful Paint 25 percent, Cumulative Layout Shift 25 percent, First Contentful Paint 10 percent, Speed Index 10 percent.">
+          <defs><linearGradient id="lw" x1="0" x2="1"><stop offset="0" stop-color="#C6603F"/><stop offset="1" stop-color="#8a4429"/></linearGradient></defs>
+          <g>
+            <text x="196" y="30" text-anchor="end" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#33302A">Total Blocking Time</text>
+            <rect x="204" y="16" width="330" height="20" rx="5" fill="url(#lw)"/>
+            <text x="544" y="31" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">30%</text>
+          </g>
+          <g>
+            <text x="196" y="62" text-anchor="end" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#33302A">Largest Contentful Paint</text>
+            <rect x="204" y="48" width="275" height="20" rx="5" fill="url(#lw)"/>
+            <text x="489" y="63" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">25%</text>
+          </g>
+          <g>
+            <text x="196" y="94" text-anchor="end" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#33302A">Cumulative Layout Shift</text>
+            <rect x="204" y="80" width="275" height="20" rx="5" fill="url(#lw)"/>
+            <text x="489" y="95" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">25%</text>
+          </g>
+          <g>
+            <text x="196" y="126" text-anchor="end" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#33302A">First Contentful Paint</text>
+            <rect x="204" y="112" width="110" height="20" rx="5" fill="url(#lw)"/>
+            <text x="324" y="127" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">10%</text>
+          </g>
+          <g>
+            <text x="196" y="158" text-anchor="end" font-family="Karla, sans-serif" font-size="11.5" font-weight="700" fill="#33302A">Speed Index</text>
+            <rect x="204" y="144" width="110" height="20" rx="5" fill="url(#lw)"/>
+            <text x="324" y="159" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">10%</text>
+          </g>
+        </svg>
+        <p class="chart-src">Current Lighthouse performance weightings. Total Blocking Time and LCP dominate the grade. Source: Chrome for Developers, Lighthouse performance scoring.</p>
+      </figure>
+
+      <div class="cav">The foundation</div>
+      <h2 id="ttfb">Where does TTFB fit in?</h2>
+      <p>Time to first byte is the head start for everything else. It measures how long the server takes to send the first byte of the response, and it precedes the user-facing metrics like Largest Contentful Paint. Notably, TTFB is not itself a Core Web Vital, so hitting a specific TTFB number is not required, but a slow TTFB makes a good LCP much harder to reach (<a href="https://web.dev/articles/ttfb" target="_blank" rel="noopener noreferrer">web.dev</a>). This is the metric the Best Answer Hub Website Speed Test measures most directly, because it is the clearest early signal of a slow server or missing cache.</p>
+
+      <div class="cav">Not a fixed number</div>
+      <h2 id="vary">Why does the score change every time?</h2>
+      <p>Because a speed test is a measurement of a moving target, not a fixed property. Google documents several sources of run-to-run variability in its own Lighthouse tool: the hardware the test runs on, other apps competing for CPU and memory, local network congestion, server load at that moment, and browser nondeterminism (<a href="https://github.com/GoogleChrome/lighthouse/blob/main/docs/variability.md" target="_blank" rel="noopener noreferrer">Lighthouse variability docs</a>). The practical takeaway is to run a test several times and look at the pattern, not a single number.</p>
+      <div class="callout"><div class="h">Mobile scores lower for a reason</div><p>Google's Lighthouse throttles to a simulated slow-4G network and a 4x slower CPU by default when testing mobile (<a href="https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md" target="_blank" rel="noopener noreferrer">Lighthouse throttling docs</a>). A page that scores well on a fast desktop can score much lower on that simulated phone, which is the profile that matters most since Google indexes the mobile version of your site.</p></div>
+
+      <div class="cav">The ground truth</div>
+      <h2 id="lab">Lab test or real users?</h2>
+      <p>There are two kinds of speed data, and they answer different questions. A lab test loads the page once in a controlled environment with fixed network and device settings. Field data comes from real users visiting your site, collected in Chrome's Core Web Vitals reporting and summarized at the 75th percentile (<a href="https://web.dev/articles/lab-and-field-data-differences" target="_blank" rel="noopener noreferrer">web.dev</a>). A lab run, including the Best Answer Hub Website Speed Test, is a fast diagnostic snapshot; the field data is what Google actually uses to judge your Core Web Vitals. The two often disagree, and that is expected.</p>
+      <table>
+        <thead><tr><th></th><th>Lab test</th><th>Field data</th></tr></thead>
+        <tbody>
+          <tr><td class="band">Source</td><td>One controlled run</td><td>Real visitors (Chrome)</td></tr>
+          <tr><td class="band">Best for</td><td>Debugging, quick checks</td><td>How real users experience the site</td></tr>
+          <tr><td class="band">Used by Google to rank</td><td>No</td><td>Yes, at the 75th percentile</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cav">In perspective</div>
+      <h2 id="ranking">Is speed a Google ranking factor?</h2>
+      <p>Yes, but it is not a trump card. Page experience, including Core Web Vitals, is one of many signals Google uses, and it helps most when several genuinely helpful pages are competing. Google is explicit that it will still surface the most relevant result even when the page experience is weak: <a href="https://developers.google.com/search/docs/appearance/page-experience" target="_blank" rel="noopener noreferrer">"Google Search always seeks to show the most relevant content, even if the page experience is sub-par."</a> So a fast site helps, but it does not outrank better content.</p>
+      <blockquote>Google Search always seeks to show the most relevant content, even if the page experience is sub-par.<span class="cite">Google Search Central, Understanding page experience.</span></blockquote>
+
+      <div class="cav">Why this one</div>
+      <h2 id="different">How is Best Answer Hub different from other speed tools?</h2>
+      <p>The difference is speed and access, not scope. Deep tools like PageSpeed Insights add real-user field data, which the Best Answer Hub Website Speed Test does not, and that is the right tool when you need Google's own numbers. Where the Best Answer Hub tool wins is a fast, unlimited, no-login check from your own connection: some rivals require an account or cap free tests per month. Use it for a quick pulse, then confirm Core Web Vitals in the field with PageSpeed Insights.</p>
+      <table>
+        <thead><tr><th>Tool</th><th>Account to test</th><th>Free-test cap</th><th>Real-user field data</th></tr></thead>
+        <tbody>
+          <tr><td class="band">Best Answer Hub</td><td>No</td><td>None</td><td>No, lab snapshot</td></tr>
+          <tr><td>PageSpeed Insights</td><td>No</td><td>None (UI)</td><td>Yes</td></tr>
+          <tr><td>GTmetrix</td><td>Free account</td><td>Monthly cap</td><td>Yes (1-month)</td></tr>
+          <tr><td>WebPageTest</td><td>Free login</td><td>Monthly cap</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cta">
+        <span class="kicker">Check your speed in seconds</span>
+        <h3>Try the free Website Speed Test</h3>
+        <p>Measure response time, TTFB, compression, caching, and layout-shift risks from your own browser, with a grade and prioritized fixes. No signup, no test cap.</p>
+        <a class="btn" href="/tools/website-speed-test/">Open the Website Speed Test</a>
+      </div>
+
+      <div class="cav">Good questions</div>
+      <h2 id="faq">Frequently asked questions about website speed</h2>
+      <div class="faq">
+        {faqs.map((f) => (
+          <div class="qa">
+            <div class="q" set:html={f.q}></div>
+            <div class="a" set:html={f.a}></div>
+          </div>
+        ))}
+      </div>
+
+      <div class="cav">People also read</div>
+      <h2>Keep going</h2>
+      <div class="sec">
+        <ul class="pillars">
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/seo-score-checker/">What Your SEO Score Really Means</a></b> The companion piece on the on-page audit number and what it can and cannot tell you.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/image-compressor/">Why Image Compression Speeds Up Your Site</a></b> The most common speed bottleneck, fixed in your browser.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/meta-tag-generator/">Meta Tags, Done Right</a></b> The title and description tags a speed-fast page still needs.</div></li>
+          <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, No Signup</a></b> The whole Best Answer Hub toolkit, all client-side.</div></li>
+        </ul>
+      </div>
+
+      <h2>Sources</h2>
+      <ul class="sources">
+        <li>web.dev (Google), <a href="https://web.dev/articles/vitals" target="_blank" rel="noopener noreferrer">Web Vitals</a> (LCP 2.5s, INP 200ms, CLS 0.1, at the 75th percentile).</li>
+        <li>web.dev (Google), <a href="https://web.dev/blog/inp-cwv-march-12" target="_blank" rel="noopener noreferrer">INP becomes a Core Web Vital</a> (replaced FID on March 12, 2024).</li>
+        <li>web.dev (Google), <a href="https://web.dev/articles/ttfb" target="_blank" rel="noopener noreferrer">Time to First Byte</a> (precedes LCP; not itself a Core Web Vital).</li>
+        <li>web.dev (Google), <a href="https://web.dev/articles/lab-and-field-data-differences" target="_blank" rel="noopener noreferrer">Lab and field data</a> (why a single run differs from real-user data).</li>
+        <li>Chrome for Developers, <a href="https://github.com/GoogleChrome/lighthouse/blob/main/docs/variability.md" target="_blank" rel="noopener noreferrer">Lighthouse variability</a> and <a href="https://github.com/GoogleChrome/lighthouse/blob/main/docs/throttling.md" target="_blank" rel="noopener noreferrer">throttling</a> (why scores change; mobile throttling).</li>
+        <li>Google Search Central, <a href="https://developers.google.com/search/docs/appearance/page-experience" target="_blank" rel="noopener noreferrer">Understanding page experience</a> (relevance still wins over page experience).</li>
+      </ul>
+      <p class="foot">More free tools: <a href="/tools/">Tools hub</a>, <a href="/tools/seo-score-checker/">SEO Score Checker</a>, <a href="/tools/image-compressor/">Image Compressor</a>, and <a href="/tools/">all free tools</a>.</p>
+    </article>
+  </div>
+</div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.7rem;color:var(--clay);line-height:1}
+  .pb .stat .n sup{font-size:.6em}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .codebox{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 20px;margin:22px 0;overflow:hidden}
+  .pb .codebox .dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:12px}
+  .pb .codelines{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.84rem;line-height:1.8;background:#f7f0e5;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--clay-deep);white-space:pre-wrap;word-break:break-word}
+  .pb .codenote{font-size:.74rem;color:var(--muted);margin:10px 0 0;font-weight:600}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb blockquote .cite{display:block;font-family:'Karla',sans-serif;font-weight:600;font-size:.82rem;color:var(--label);margin-top:10px;letter-spacing:0}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+  .pb .foot{max-width:1080px;margin:0 auto;padding:0 24px 50px;font-size:.85rem;color:var(--muted)}
+  .pb .foot a{color:var(--clay-deep)}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>

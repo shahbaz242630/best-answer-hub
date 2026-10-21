@@ -1,0 +1,492 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UpdatedBadge from '../../components/content/UpdatedBadge.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Typing Speed Test?',
+    a: 'The Best Answer Hub Typing Speed Test is a free browser-based tool that measures your typing speed in words per minute (WPM) and accuracy percentage. It offers four test durations (15 seconds, 30 seconds, 60 seconds, and 3 minutes) using professional sample text. All calculations happen instantly in your browser. No signup is required, no data is sent to any server, and you can download a timestamped PDF report of your results to save or attach to job applications.',
+  },
+  {
+    q: 'Is the Typing Speed Test free and safe to use?',
+    a: 'Yes, the Best Answer Hub Typing Speed Test is completely free with no usage limits and no signup required. It is safe because everything runs locally inside your browser using JavaScript. Your keystrokes are processed on your own device and are never transmitted to a server, database, or third party. Unlike some online typing tests that require accounts or display ads, this tool has zero external data requests. You can verify this by opening your browser\'s Network tab while typing. You will see zero outbound requests.',
+  },
+  {
+    q: 'What is a good typing speed to put on a resume?',
+    a: 'For most office and administrative roles, listing 50 to 60 WPM with 95 percent accuracy or higher is considered solid and credible. Data entry positions typically expect 60 to 80 WPM. Customer service live chat roles look for 40 to 55 WPM. Medical transcriptionists usually need 70 to 90 WPM with 98 percent accuracy. The Best Answer Hub Typing Speed Test calculates both gross WPM and net WPM (with accuracy penalties), so you can list the net WPM figure on your resume with confidence. Always pair the number with your accuracy percentage.',
+  },
+  {
+    q: 'How is WPM calculated, and what is the difference between gross WPM and net WPM?',
+    a: 'Gross WPM counts every character you type divided by five (the average word length), then divides by the time in minutes. It ignores errors. Net WPM applies an accuracy penalty: it subtracts your errors from your total characters before dividing by five and time. For example, if you typed 300 characters in one minute with 10 errors, your gross WPM is 60, but your net WPM is 58. The Best Answer Hub Typing Speed Test displays net WPM as your primary score because it reflects your actual productive output. Most employers and professional certifications use net WPM.',
+  },
+  {
+    q: 'How many WPM do I need for data entry and remote admin jobs?',
+    a: 'Remote administrative and virtual assistant roles typically require 45 to 60 WPM with at least 95 percent accuracy. Data entry positions from home usually list 60 to 80 WPM as the minimum, with some transcription roles requiring 70 to 90 WPM. Customer service live chat jobs expect 40 to 55 WPM. The Best Answer Hub Typing Speed Test includes a keystrokes-per-hour (KPH) converter, since many data-entry job postings list requirements in KPH instead of WPM. A net WPM of 60 equals approximately 18,000 KPH.',
+  },
+  {
+    q: 'Is 60 WPM good enough for most office jobs?',
+    a: 'Yes, 60 WPM with 95 percent accuracy or higher meets or exceeds the requirements for almost every standard office job, including administrative assistant, executive assistant, content writer, and project coordinator roles. It places you in the top 25 to 30 percent of typists. However, specialized roles like court reporting, medical transcription, and real-time captioning require 80 to 100 WPM or more. The Best Answer Hub Typing Speed Test shows your percentile estimate alongside your score so you know exactly where you stand.',
+  },
+  {
+    q: 'How do I improve my typing speed from 40 WPM to 60 WPM?',
+    a: 'Improving from 40 to 60 WPM typically takes 3 to 6 weeks of consistent practice. Spend 15 to 20 minutes daily on focused drills. Start by ensuring you are using proper touch typing technique with all ten fingers on the home row. Practice with the Best Answer Hub Typing Speed Test using the 3-minute mode, which measures sustainable speed more accurately than burst tests. Focus on accuracy first: speed builds naturally on top of clean muscle memory. When you catch yourself making repeated errors on specific letters or combinations, slow down and drill those patterns until they feel automatic.',
+  },
+  {
+    q: 'Why do I get different scores on different typing test websites?',
+    a: 'Different typing tests use different text selections, timer mechanics, and scoring formulas. MonkeyType uses common English words, which inflate scores because your brain recognizes patterns faster. TypeRacer uses real quotes with punctuation and dialogue, which lowers scores for the same typist by 5 to 10 WPM. Some tools calculate gross WPM while others calculate net WPM. Font size, line spacing, and even backspace handling can nudge scores up or down. The Best Answer Hub Typing Speed Test uses professional sample text with realistic punctuation and calculates net WPM with a transparent formula so your score reflects real-world typing conditions.',
+  },
+  {
+    q: 'What typing test duration is most accurate, 15 seconds, 60 seconds, or 3 minutes?',
+    a: 'Fifteen-second tests measure burst speed and have a high luck factor, a single fast word can skew the result. Sixty-second tests are the industry standard and give a reasonable snapshot for most purposes. Three-minute tests are the most accurate for job-readiness because they measure sustainable speed and account for fatigue. The Best Answer Hub Typing Speed Test offers all four durations so you can choose based on your goal: use 15 seconds for quick checks, 60 seconds for general benchmarking, and 3 minutes for interview preparation.',
+  },
+  {
+    q: 'How do I convert WPM to keystrokes per hour (KPH) for job applications?',
+    a: 'The standard conversion is net WPM multiplied by 300. This formula comes from the fact that one word equals five characters on average, and one hour equals sixty minutes: 5 characters × 60 minutes = 300. For example, a net WPM of 40 equals 12,000 KPH. A net WPM of 60 equals 18,000 KPH. A net WPM of 80 equals 24,000 KPH. The Best Answer Hub Typing Speed Test automatically calculates and displays your KPH alongside your WPM and accuracy, so you can copy the number directly into job applications that ask for keystrokes per hour.',
+  },
+  {
+    q: 'Should I focus on accuracy or speed when practicing typing?',
+    a: 'Accuracy first, speed second. The consensus across typing pedagogy is that clean muscle memory builds faster than rushed speed. Aim for 95 percent accuracy as a minimum baseline. Once you consistently hit 95 percent or higher, speed will increase naturally as your fingers learn the correct paths. Rushing to 60 WPM with 85 percent accuracy means you are practicing mistakes, which becomes harder to unlearn later. The Best Answer Hub Typing Speed Test displays your accuracy in real time and penalizes errors in your net WPM score, encouraging you to prioritize clean keystrokes over raw speed.',
+  },
+  {
+    q: 'Is touch typing worth learning if I have been hunt-and-pecking for years?',
+    a: 'Yes. Hunt-and-peck typists typically plateau at 25 to 35 WPM because they are limited by visual processing and single-finger movement. Touch typists routinely reach 50 to 70 WPM and can sustain that speed for long periods without looking at the keyboard. The return on investment is significant: for someone who types two hours per day, improving from 30 to 60 WPM saves approximately one hour every day. The Best Answer Hub Typing Speed Test works well for both beginners and experienced typists. Use it to benchmark your current hunt-and-peck speed, then compare again after six weeks of touch typing practice.',
+  },
+  {
+    q: 'Can I use the Best Answer Hub Typing Speed Test without creating an account?',
+    a: 'Yes. The Best Answer Hub Typing Speed Test requires zero registration, zero login, and zero personal information. Open the page, select your duration, and start typing. When you finish, you can download a PDF report with your results, date, time, and test duration. Save the PDF to your computer, attach it to job applications, or email it to hiring managers. Because there is no account system, your data is never stored on any server. The tool runs entirely in your browser using JavaScript.',
+  },
+  {
+    q: 'How long does it take to improve typing speed with daily practice?',
+    a: 'With 15 to 20 minutes of focused daily practice, most people see measurable improvement within 2 to 4 weeks. Improving from 30 to 50 WPM typically takes 3 to 6 weeks. Improving from 50 to 70 WPM usually takes 2 to 4 months. The key is consistency rather than intensity. Short daily sessions build muscle memory more effectively than occasional long marathons. The Best Answer Hub Typing Speed Test lets you download a PDF report after every session, so you can keep a personal record of your progress by comparing reports over time.',
+  },
+  {
+    q: 'Can I download a PDF report of my typing test results?',
+    a: 'Yes. After completing a test, click the "Download PDF Report" button to generate a clean, professional PDF that includes your test date and time, duration selected, gross WPM, net WPM, accuracy percentage, keystrokes per hour (KPH), error count, and a snippet of the sample text you typed. Save the PDF to your computer, attach it to job applications, upload it to LinkedIn, or email it to hiring managers as proof of your typing ability. The PDF is generated entirely in your browser using html2pdf.js. No data is sent to any external server.',
+  },
+];
+
+const steps = [
+  { title: 'Pick a duration', description: 'Choose 15 seconds, 30 seconds, 60 seconds, or 3 minutes. Fifteen seconds is a quick burst. Three minutes is the most accurate for job-readiness.' },
+  { title: 'Start typing', description: 'Click the typing area and begin typing the sample text as accurately as you can. The timer starts automatically on your first keystroke. Watch your live WPM and accuracy update in real time.' },
+  { title: 'Review and download', description: 'When the timer ends, see your net WPM, accuracy, and KPH. Download a timestamped PDF report to save or attach to job applications.' },
+];
+
+const seo = {
+  title: 'Typing Speed Test — WPM, Accuracy & PDF Report (2026)',
+  description: 'Free typing speed test with WPM, accuracy, and KPH. 15s/30s/60s/3min modes. Download a timestamped PDF report. No signup, no ads, 100% client-side.',
+  url: '/tools/typing-speed-test/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Career Toolkit', url: '/career-toolkit/' },
+    { name: 'Typing Speed Test', url: '/tools/typing-speed-test/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Typing Speed Test:"
+    accentText="WPM, accuracy & PDF report"
+    description="Measure your typing speed in words per minute with real-time accuracy tracking. Choose from 15-second, 30-second, 60-second, or 3-minute tests. Download a timestamped PDF report to attach to job applications."
+    backLink="/career-toolkit/"
+    backLabel="← Career Toolkit"
+  />
+
+  <!-- Typing Speed Test Interface -->
+  <section class="py-6 md:py-8" aria-label="Typing speed test">
+    <div class="container max-w-page mx-auto px-6">
+        <div class="mb-5"><UpdatedBadge date={seo.dateModified} /></div>
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Typing Speed Test</h2>
+
+        <!-- Duration Selector -->
+        <div class="flex flex-wrap gap-2 mb-4" id="duration-tabs">
+          <button type="button" data-dur="15" class="dur-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">15 sec</button>
+          <button type="button" data-dur="30" class="dur-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">30 sec</button>
+          <button type="button" data-dur="60" class="dur-tab bg-bae-primary text-white text-xs font-semibold px-3 py-1.5 rounded-bae-sm">60 sec</button>
+          <button type="button" data-dur="180" class="dur-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3 py-1.5 rounded-bae-sm hover:border-bae-primary transition-colors">3 min</button>
+        </div>
+
+        <!-- Live Stats Bar -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+            <p class="text-[10px] text-bae-muted uppercase tracking-wider">Net WPM</p>
+            <p id="stat-wpm" class="text-2xl font-bold text-bae-primary font-serif">0</p>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+            <p class="text-[10px] text-bae-muted uppercase tracking-wider">Accuracy</p>
+            <p id="stat-accuracy" class="text-2xl font-bold text-bae-primary font-serif">0%</p>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+            <p class="text-[10px] text-bae-muted uppercase tracking-wider">Time</p>
+            <p id="stat-timer" class="text-2xl font-bold text-bae-ink font-serif">60.0s</p>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 text-center">
+            <p class="text-[10px] text-bae-muted uppercase tracking-wider">KPH</p>
+            <p id="stat-kph" class="text-2xl font-bold text-bae-ink font-serif">0</p>
+          </div>
+        </div>
+
+        <!-- Sample Text -->
+        <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4 mb-3">
+          <p class="text-[10px] text-bae-muted uppercase tracking-wider mb-1.5">Sample Text: Type this passage</p>
+          <p id="sample-text" class="text-sm text-bae-ink leading-relaxed select-none"></p>
+        </div>
+
+        <!-- Typing Area -->
+        <textarea
+          id="typing-area"
+          rows="4"
+          class="w-full bg-white border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-none mb-3"
+          placeholder="Click here and start typing when ready..."
+          disabled
+        ></textarea>
+
+        <!-- Controls -->
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <button type="button" id="start-btn" class="bg-bae-primary text-white text-sm font-semibold px-5 py-2.5 rounded-bae-sm hover:bg-bae-accent transition-colors">Start Test</button>
+          <button type="button" id="reset-btn" class="bg-bae-bg text-bae-muted border border-bae-border text-sm font-semibold px-5 py-2.5 rounded-bae-sm hover:border-bae-primary transition-colors">Reset</button>
+        </div>
+
+        <!-- Results Panel -->
+        <div id="results-panel" class="hidden bg-bae-bg border border-bae-border rounded-bae-sm p-4 mb-3">
+          <h3 class="text-xs font-bold text-bae-ink mb-3">Test Results</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mb-3">
+            <div class="text-center">
+              <p class="text-[10px] text-bae-muted">Gross WPM</p>
+              <p id="res-gross" class="text-lg font-bold text-bae-ink">0</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[10px] text-bae-muted">Net WPM</p>
+              <p id="res-net" class="text-lg font-bold text-bae-primary">0</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[10px] text-bae-muted">Accuracy</p>
+              <p id="res-accuracy" class="text-lg font-bold text-bae-primary">0%</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[10px] text-bae-muted">Errors</p>
+              <p id="res-errors" class="text-lg font-bold text-bae-ink">0</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[10px] text-bae-muted">KPH</p>
+              <p id="res-kph" class="text-lg font-bold text-bae-ink">0</p>
+            </div>
+            <div class="text-center">
+              <p class="text-[10px] text-bae-muted">Duration</p>
+              <p id="res-duration" class="text-lg font-bold text-bae-ink">60s</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="download-pdf-btn" class="bg-bae-ink text-white text-sm font-semibold px-5 py-2.5 rounded-bae-sm hover:bg-bae-primary transition-colors">Download PDF Report</button>
+            <p class="text-[11px] text-bae-muted">PDF includes date, time, WPM, accuracy, KPH, and test duration.</p>
+          </div>
+        </div>
+
+        <!-- PDF content is built dynamically in JS (no hidden template — avoids blank output) -->
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- Scenario Section -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-8">Who reaches for this tool</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Job Seeker, Admin &amp; Data Entry</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Proof of typing speed for hiring</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Download PDF reports for applications</p>
+          <p class="text-sm text-bae-muted leading-relaxed">Run a 3-minute test to measure sustainable speed, then download a timestamped PDF report with your net WPM, accuracy, and KPH. Attach it to job applications for data entry, virtual assistant, and administrative roles.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">College Student, Essay Writer</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Benchmark before term papers</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Track improvement over the semester</p>
+          <p class="text-sm text-bae-muted leading-relaxed">Test your speed at the start of the semester and again after six weeks of daily practice. Save each PDF report to compare your progress. Students who type 60+ WPM finish essay drafts significantly faster.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Remote Worker, Freelancer</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Client-ready speed verification</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Shareable PDF for Upwork &amp; Fiverr profiles</p>
+          <p class="text-sm text-bae-muted leading-relaxed">Freelancers in transcription, content writing, and customer support can generate a professional PDF report and upload it to their portfolio or send it directly to prospective clients as verified proof of typing ability.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Career Changer, Return-to-Work</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Rebuild confidence before interviews</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Non-intimidating, no account required</p>
+          <p class="text-sm text-bae-muted leading-relaxed">If you have been away from keyboard-heavy work, use the 30-second or 60-second modes for low-pressure practice. The clean interface and real-time feedback help rebuild muscle memory without the gamified stress of racing platforms.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Actual typing speed depends on technique, keyboard type, and practice consistency.</p>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Career Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more career tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/tools/resume-builder/" class="text-bae-primary hover:underline">Resume Builder</a>, <a href="/tools/cover-letter-builder/" class="text-bae-primary hover:underline">Cover Letter Builder</a>, <a href="/tools/word-counter/" class="text-bae-primary hover:underline">Word Counter</a>, <a href="/tools/reading-time/" class="text-bae-primary hover:underline">Reading Time</a>, <a href="/tools/case-converter/" class="text-bae-primary hover:underline">Case Converter</a>, and <a href="/tools/job-keyword-matcher/" class="text-bae-primary hover:underline">Job Keyword Matcher</a>, all free, no signup.</p>
+        </div>
+        <a href="/career-toolkit/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse career toolkit →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      const PASSAGES = [
+        "The ability to write clearly and effectively is one of the most valuable skills in the modern workplace. Whether you are composing an email to a colleague, drafting a proposal for a client, or preparing a report for senior management, the way you communicate in writing directly influences how your ideas are received. Clear writing saves time, reduces misunderstandings, and builds credibility with your audience. In an age where much of our professional communication happens through screens, the written word carries more weight than ever before. Developing this skill requires practice, patience, and a willingness to revise your work until it conveys exactly what you intend. The best writers understand that clarity comes from simplicity, not complexity. They choose words carefully, structure their sentences logically, and always keep their reader's needs in mind. This principle applies whether you are writing a brief message or a lengthy document. Every piece of writing is an opportunity to demonstrate your competence and attention to detail. Professionals who invest in developing their writing abilities consistently outperform those who treat communication as an afterthought.",
+        "Technology has fundamentally changed the way we work, communicate, and solve problems. From cloud computing that allows teams to collaborate across continents to artificial intelligence that automates routine tasks, innovation continues to reshape the modern workplace. Professionals who embrace these tools and learn to use them effectively gain a significant advantage in their careers. However, technology alone is not enough. The human skills of critical thinking, creativity, and emotional intelligence remain essential. The most successful individuals combine technical proficiency with strong interpersonal abilities. They know when to rely on automated systems and when human judgment is required. As we move further into the digital age, the ability to adapt quickly and learn continuously becomes more important than any specific technical skill. The workplaces of tomorrow will reward those who can bridge the gap between human insight and technological capability. Employers increasingly value candidates who demonstrate both digital literacy and the soft skills needed to work effectively with others. Building this combination requires deliberate effort and a commitment to lifelong learning.",
+        "Effective time management is a cornerstone of professional success in any field. The ability to prioritize tasks, set realistic deadlines, and maintain focus amid distractions separates high performers from those who struggle to meet expectations. Developing these skills requires self-awareness, discipline, and a willingness to adapt one's approach when circumstances change. Start by identifying your most productive hours and scheduling demanding work during those periods. Break large projects into smaller, manageable tasks with clear milestones. Learn to distinguish between urgent and important activities, and do not let the former constantly override the latter. Build buffers into your schedule for unexpected issues, and review your progress regularly to identify areas for improvement. Remember that time management is not about cramming more work into each day. It is about using your time intentionally so that you can produce high-quality results while maintaining a healthy work-life balance. When you manage your time well, you reduce stress, increase your output, and create space for the activities that matter most to you both professionally and personally.",
+        "Scientific research follows a rigorous methodology designed to produce reliable and reproducible results. Researchers begin with a well-defined question or hypothesis, design experiments to test it, collect data systematically, and analyze their findings using appropriate statistical methods. The peer review process then ensures that published work meets the standards of the scientific community before it reaches the public. This careful approach distinguishes science from mere speculation. Every claim must be supported by evidence, and every experiment must be described in sufficient detail that others can replicate it. When results contradict expectations, scientists do not abandon their methods. Instead, they examine their assumptions, refine their techniques, and design new studies to explore the unexpected findings. This self-correcting nature of science is one of its greatest strengths. Over time, flawed ideas are discarded and robust theories emerge, providing humanity with an ever-improving understanding of the natural world. The scientific method serves as a model for critical thinking in every domain of life."
+      ];
+
+      let currentDuration = 60;
+      let currentPassage = '';
+      let startTime = null;
+      let timerInterval = null;
+      let isRunning = false;
+      let isFinished = false;
+      let lastResult = null;
+
+      const sampleEl = document.getElementById('sample-text');
+      const typingArea = document.getElementById('typing-area');
+      const startBtn = document.getElementById('start-btn');
+      const resetBtn = document.getElementById('reset-btn');
+      const resultsPanel = document.getElementById('results-panel');
+      const statWpm = document.getElementById('stat-wpm');
+      const statAcc = document.getElementById('stat-accuracy');
+      const statTimer = document.getElementById('stat-timer');
+      const statKph = document.getElementById('stat-kph');
+
+      function setDuration(dur) {
+        currentDuration = dur;
+        document.querySelectorAll('.dur-tab').forEach(function(btn) {
+          if (parseInt(btn.dataset.dur) === dur) {
+            btn.classList.remove('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border', 'hover:border-bae-primary');
+            btn.classList.add('bg-bae-primary', 'text-white');
+          } else {
+            btn.classList.remove('bg-bae-primary', 'text-white');
+            btn.classList.add('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border', 'hover:border-bae-primary');
+          }
+        });
+        statTimer.textContent = dur + '.0s';
+      }
+
+      function resetTest() {
+        clearInterval(timerInterval);
+        isRunning = false;
+        isFinished = false;
+        startTime = null;
+        lastResult = null;
+        typingArea.value = '';
+        typingArea.disabled = true;
+        resultsPanel.classList.add('hidden');
+        statWpm.textContent = '0';
+        statAcc.textContent = '0%';
+        statKph.textContent = '0';
+        statTimer.textContent = currentDuration + '.0s';
+        sampleEl.textContent = '';
+        startBtn.textContent = 'Start Test';
+      }
+
+      function startTest() {
+        resetTest();
+        currentPassage = PASSAGES[Math.floor(Math.random() * PASSAGES.length)];
+        sampleEl.textContent = currentPassage;
+        typingArea.disabled = false;
+        typingArea.focus();
+        startBtn.textContent = 'Test Ready';
+      }
+
+      function calculateStats() {
+        const typed = typingArea.value;
+        const totalChars = typed.length;
+        let correctChars = 0;
+        let errors = 0;
+        for (let i = 0; i < totalChars; i++) {
+          if (i < currentPassage.length && typed[i] === currentPassage[i]) {
+            correctChars++;
+          } else {
+            errors++;
+          }
+        }
+        return { totalChars, correctChars, errors };
+      }
+
+      function updateLiveStats() {
+        if (!isRunning || isFinished) return;
+        const elapsed = (Date.now() - startTime) / 1000;
+        const remaining = Math.max(0, currentDuration - elapsed);
+        statTimer.textContent = remaining.toFixed(1) + 's';
+
+        const { totalChars, correctChars, errors } = calculateStats();
+        const timeMinutes = elapsed / 60;
+        const grossWPM = timeMinutes > 0 ? (totalChars / 5) / timeMinutes : 0;
+        const netWPM = timeMinutes > 0 ? (correctChars / 5) / timeMinutes : 0;
+        const accuracy = totalChars > 0 ? (correctChars / totalChars) * 100 : 0;
+        const kph = netWPM * 300;
+
+        statWpm.textContent = Math.round(netWPM);
+        statAcc.textContent = accuracy.toFixed(1) + '%';
+        statKph.textContent = Math.round(kph);
+
+        if (remaining <= 0) {
+          finishTest();
+        }
+      }
+
+      function finishTest() {
+        if (isFinished) return;
+        isFinished = true;
+        clearInterval(timerInterval);
+        typingArea.disabled = true;
+
+        const elapsed = Math.min((Date.now() - startTime) / 1000, currentDuration);
+        const { totalChars, correctChars, errors } = calculateStats();
+        const timeMinutes = elapsed / 60;
+        const grossWPM = timeMinutes > 0 ? Math.round((totalChars / 5) / timeMinutes) : 0;
+        const netWPM = timeMinutes > 0 ? Math.max(0, Math.round((correctChars / 5) / timeMinutes)) : 0;
+        const accuracy = totalChars > 0 ? (correctChars / totalChars) * 100 : 0;
+        const kph = netWPM * 300;
+
+        lastResult = {
+          grossWPM: grossWPM,
+          netWPM: netWPM,
+          accuracy: accuracy.toFixed(1),
+          errors: errors,
+          kph: Math.round(kph),
+          duration: currentDuration,
+          date: new Date().toLocaleString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        };
+
+        document.getElementById('res-gross').textContent = grossWPM;
+        document.getElementById('res-net').textContent = netWPM;
+        document.getElementById('res-accuracy').textContent = accuracy.toFixed(1) + '%';
+        document.getElementById('res-errors').textContent = errors;
+        document.getElementById('res-kph').textContent = Math.round(kph);
+        document.getElementById('res-duration').textContent = currentDuration >= 60 ? (currentDuration / 60) + ' min' : currentDuration + ' sec';
+        resultsPanel.classList.remove('hidden');
+      }
+
+      function onTyping() {
+        if (isFinished) return;
+        if (!isRunning) {
+          isRunning = true;
+          startTime = Date.now();
+          startBtn.textContent = 'Typing...';
+          timerInterval = setInterval(updateLiveStats, 100);
+        }
+      }
+
+      function buildPdfHtml() {
+        const r = lastResult;
+        const durLabel = r.duration >= 60 ? (r.duration / 60) + ' minutes' : r.duration + ' seconds';
+        let html = '<div style="padding: 40px 48px; max-width: 210mm; margin: 0 auto; color: #1e293b; font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.6; box-sizing: border-box;">';
+        html += '<div style="text-align: center; border-bottom: 2px solid #6366f1; padding-bottom: 16px; margin-bottom: 24px;">';
+        html += '<h1 style="font-size: 20px; font-weight: 700; margin: 0; color: #1e293b;">Best Answer Hub: Typing Speed Test Report</h1>';
+        html += '<p style="margin: 6px 0 0; color: #64748b; font-size: 11px;">www.bestanswerhub.com/tools/typing-speed-test/</p>';
+        html += '</div>';
+        html += '<table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px;">';
+        const rows = [
+          ['Test Date & Time', r.date],
+          ['Duration', durLabel],
+          ['Gross WPM', r.grossWPM.toString()],
+          ['Net WPM', r.netWPM.toString()],
+          ['Accuracy', r.accuracy + '%'],
+          ['Errors', r.errors.toString()],
+          ['Keystrokes Per Hour (KPH)', r.kph.toLocaleString()],
+        ];
+        rows.forEach(function(row, i) {
+          const bg = i % 2 === 0 ? '#f8fafc' : '#ffffff';
+          html += '<tr style="background: ' + bg + ';">';
+          html += '<td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-weight: 600; width: 45%; color: #334155;">' + row[0] + '</td>';
+          html += '<td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #1e293b; font-weight: 700;">' + row[1] + '</td>';
+          html += '</tr>';
+        });
+        html += '</table>';
+        html += '<p style="font-size: 10px; color: #94a3b8; text-align: center; margin-top: 32px;">This report was generated by the Best Answer Hub Typing Speed Test. All testing was performed client-side in the browser. No data was transmitted to any external server.</p>';
+        html += '</div>';
+        return html;
+      }
+
+      function downloadPDF() {
+        if (!lastResult) return;
+        if (typeof html2pdf === 'undefined') {
+          alert('PDF library is loading. Please try again in a moment.');
+          return;
+        }
+
+        const btn = document.getElementById('download-pdf-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Generating PDF...';
+        btn.disabled = true;
+
+        const reportDiv = document.createElement('div');
+        reportDiv.innerHTML = buildPdfHtml();
+        const content = reportDiv.firstElementChild;
+        content.style.width = '210mm';
+        content.style.maxWidth = 'none';
+        content.style.margin = '0';
+        document.body.appendChild(content);
+
+        try {
+          html2pdf().set({
+            margin: 0,
+            filename: 'typing-speed-test-report.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'] }
+          }).from(content).save().then(function() {
+            if (content.parentNode) document.body.removeChild(content);
+            btn.textContent = originalText;
+            btn.disabled = false;
+          }).catch(function() {
+            if (content.parentNode) document.body.removeChild(content);
+            btn.textContent = originalText;
+            btn.disabled = false;
+          });
+        } catch (err) {
+          if (content.parentNode) document.body.removeChild(content);
+          btn.textContent = originalText;
+          btn.disabled = false;
+          alert('PDF generation failed. Please try again.');
+        }
+      }
+
+      // Event listeners
+      startBtn.addEventListener('click', startTest);
+      resetBtn.addEventListener('click', resetTest);
+      typingArea.addEventListener('input', onTyping);
+      document.getElementById('download-pdf-btn').addEventListener('click', downloadPDF);
+      document.querySelectorAll('.dur-tab').forEach(function(btn) {
+        btn.addEventListener('click', function() { setDuration(parseInt(this.dataset.dur)); });
+      });
+
+      // Init
+      resetTest();
+    })();
+  </script>
+</BaseLayout>

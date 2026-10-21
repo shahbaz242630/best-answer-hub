@@ -1,0 +1,836 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ToolFAQ from '../../../components/tools/ToolFAQ.astro';
+import ToolHowItWorks from '../../../components/tools/ToolHowItWorks.astro';
+import ToolRelatedCTA from '../../../components/tools/ToolRelatedCTA.astro';
+import HowToSchema from '../../../components/seo/HowToSchema.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Normal Distribution Calculator?',
+    a: 'The Best Answer Hub Normal Distribution Calculator is a free, browser-based statistics tool that computes probabilities for any normal distribution with interactive shaded bell curves and step-by-step working. Unlike Calculator.net and StatTrek, which output only numeric answers, the Best Answer Hub Normal Distribution Calculator displays left-tail, right-tail, between-values, and outside-values probabilities on a live SVG bell curve with the z-score formula shown at every step. It supports reverse solving, empirical rule visualization, and percentile lookup. All calculations run client-side with no signup.',
+  },
+  {
+    q: 'How do I find the probability between two z-scores?',
+    a: 'To find the probability between two z-scores, subtract the smaller cumulative probability from the larger one using the standard normal table or a calculator. For P(-0.5 < Z < 1.2), look up Φ(1.2) = 0.8849 and Φ(-0.5) = 0.3085, then subtract to get 0.5764 or about 57.64%. The Best Answer Hub Normal Distribution Calculator has a dedicated Between mode: enter your lower and upper bounds, and the tool shades the area between them on the bell curve while showing the subtraction step explicitly. This matches the method taught in AP Statistics and most introductory statistics textbooks using the OpenStax curriculum.',
+  },
+  {
+    q: 'What is the difference between left-tail and right-tail probability?',
+    a: 'Left-tail probability P(X < x) is the area under the curve to the left of a given value, representing the proportion of data below that point. Right-tail probability P(X > x) is the area to the right, representing the proportion above, and equals 1 minus the left-tail value. For example, if P(X < 85) = 0.75, then P(X > 85) = 0.25. The Best Answer Hub Normal Distribution Calculator displays both values simultaneously and shades the corresponding tail on the bell curve so you can see exactly which region each probability represents.',
+  },
+  {
+    q: 'Why does my TI-84 give a different answer than online calculators?',
+    a: 'The most common cause is entering the standard deviation when the calculator expects the variance, or swapping the mean and standard deviation arguments in the wrong order. The TI-84 normalcdf function takes mean and standard deviation as the third and fourth arguments, but students often swap them or enter variance (σ²) instead of standard deviation (σ). Another cause is using population standard deviation when the problem involves a sample mean, which requires standard error (σ/√n). The Best Answer Hub Normal Distribution Calculator labels every input field clearly (Mean, Standard Deviation, and Sample Size) and shows the exact formula used so you can verify which parameter goes where.',
+  },
+  {
+    q: 'How do I convert a raw score to a z-score?',
+    a: 'Use the formula z = (x - μ) / σ, where x is the raw score, μ is the mean, and σ is the standard deviation. For example, scoring 78 on a test with mean 72 and standard deviation 6 gives z = (78 - 72) / 6 = 1.0, which is one standard deviation above the mean. The Best Answer Hub Normal Distribution Calculator computes this automatically when you enter the raw score, mean, and standard deviation. It also shows the percentile rank (a z-score of 1.0 corresponds to approximately the 84th percentile) and locates your score on the bell curve with a labeled marker.',
+  },
+  {
+    q: 'What is the empirical rule (68-95-99.7) and how do I use it?',
+    a: 'The empirical rule states that approximately 68% of values fall within one standard deviation of the mean, 95% within two, and 99.7% within three. For IQ scores with mean 100 and standard deviation 15, about 68% of people score between 85 and 115, and 95% between 70 and 130. The Best Answer Hub Normal Distribution Calculator overlays these three bands on the bell curve with labeled percentages, making it easy to estimate probabilities without looking up z-tables. This is the same rule taught in the Khan Academy statistics course and the OpenStax Introductory Statistics textbook.',
+  },
+  {
+    q: 'How do I find the raw score if I only know the percentile?',
+    a: 'Use the inverse normal distribution formula x = μ + z × σ, where z is the z-score corresponding to your percentile. For the 90th percentile, the z-score is approximately 1.282, so with mean 100 and standard deviation 15, the raw score equals 100 plus 1.282 times 15, which is 119.23. The Best Answer Hub Normal Distribution Calculator has a Reverse Solve mode: enter the percentile, mean, and standard deviation, and the tool returns the exact raw score, z-score, and marks the position on the bell curve. This eliminates the need to look up invNorm tables or guess between z-table values.',
+  },
+  {
+    q: 'What percentile is a z-score of 1.25?',
+    a: 'A z-score of 1.25 corresponds to approximately the 89.43rd percentile, meaning about 89.43% of values in a standard normal distribution fall below this point. You can verify this by looking up 1.25 in the standard normal table, which gives Φ(1.25) = 0.8944. The Best Answer Hub Normal Distribution Calculator gives the exact value to six decimal places (0.894350) and shows the corresponding percentile, the area shaded on the bell curve, and the complementary right-tail probability. For quick reference, z = 0 is the 50th percentile, z = 1 is about the 84th, and z = 2 is about the 97.5th.',
+  },
+  {
+    q: 'Do I use population standard deviation or sample standard deviation?',
+    a: 'Use population standard deviation σ when calculating probabilities for individual values from a known population. Use standard error σ divided by the square root of n when working with sample means, because sample means have less variability than individual values according to the Central Limit Theorem. The Best Answer Hub Normal Distribution Calculator has a Sample Size field: leave it blank for individual-value problems, or enter your sample size n and the tool automatically uses standard error in the z-formula. This matches the convention used in the TI-84 normalcdf and the Casio fx-991EX Normal CD modes.',
+  },
+  {
+    q: 'How do I find the probability outside two z-scores?',
+    a: 'Calculate the left-tail probability for the lower bound, add the right-tail probability for the upper bound, or use the shortcut 1 minus the between probability. For P(Z < -1.5 or Z > 2.0), add Φ(-1.5) = 0.0668 and 1 - Φ(2.0) = 0.0228 to get 0.0896. The Best Answer Hub Normal Distribution Calculator has a dedicated Outside mode that shades both tails simultaneously and shows the addition step. This is especially useful for hypothesis testing, where the outside probability equals the two-tailed p-value.',
+  },
+  {
+    q: 'Can I use z-scores if my data is not perfectly normal?',
+    a: 'Z-scores can be computed for any dataset, but probability calculations from the standard normal distribution are only valid when the underlying data is approximately normal or when the sample size is large enough for the Central Limit Theorem to apply, typically n greater than 30. For skewed data or small samples, the probabilities will be inaccurate. The Best Answer Hub Normal Distribution Calculator assumes normality and uses the Abramowitz & Stegun approximation for the cumulative distribution function, which is accurate to within 7.5 × 10⁻⁸. For non-normal data, consider the <a href="/calculators/statistics-suite/t-test-calculator/">Best Answer Hub T-Test Calculator</a> or a non-parametric alternative.',
+  },
+  {
+    q: 'What z-score corresponds to a 95% confidence level?',
+    a: 'For a 95% confidence level, the critical z-scores are negative 1.96 and positive 1.96 for a two-tailed test, and 1.645 for a one-tailed test. These come from the standard normal table: Φ(1.96) = 0.9750, leaving 2.5% in each tail. The Best Answer Hub Normal Distribution Calculator displays these critical values in the Empirical Rule section and can compute any critical z-score: enter your confidence level in the Reverse Solve mode and the tool returns the exact z-value. For reference, 90% confidence uses 1.645, 95% uses 1.96, 99% uses 2.576, and 99.9% uses 3.291.',
+  },
+  {
+    q: 'How do I compare scores from two different exams using z-scores?',
+    a: 'Convert each raw score to a z-score using its own mean and standard deviation, then compare the z-scores directly. A score of 78 on Exam A with mean 72 and standard deviation 6 gives z = 1.0, while 83 on Exam B with mean 77 and standard deviation 8.4 gives z ≈ 0.71, so the 78 on Exam A is the better relative performance because it is one standard deviation above the mean. The Best Answer Hub Normal Distribution Calculator shows both the z-score and percentile for each exam, making the comparison immediate. This method is taught in the OpenStax statistics textbook and is standard practice in educational testing.',
+  },
+  {
+    q: 'Why does my Casio calculator give wrong answers with extreme bounds?',
+    a: 'The Casio fx-991EX uses numerical integration for normal CDF calculations, and extremely large negative bounds like negative 999 can cause the algorithm to fail because the probability density is effectively zero but not exactly zero. A student on The Student Room reported that Lower = negative 999 produced 0.872098 instead of the correct 0.127902 for a mean of 32.5 and standard deviation of 2.2. Changing the lower bound to 10 fixed the result. The Best Answer Hub Normal Distribution Calculator uses the Abramowitz & Stegun analytic approximation instead of numerical integration, so extreme bounds are handled correctly without silent errors.',
+  },
+  {
+    q: 'Is the Best Answer Hub Normal Distribution Calculator free and private?',
+    a: 'Yes. The Best Answer Hub Normal Distribution Calculator is completely free with no usage limits, no signup, no email capture, and no premium tiers as of June 2026. Every calculation runs entirely in the browser using client-side JavaScript and the Abramowitz & Stegun CDF approximation with no server contact. No data, scores, or probability inputs are uploaded, stored, or logged on any server. To verify this, disconnect from the internet after loading the page and the tool will continue working perfectly. This makes it safe for processing sensitive research data, clinical measurements, and proprietary quality control statistics.',
+  },
+];
+
+const steps = [
+  { title: 'Enter mean, standard deviation, and calculation mode', description: 'Input the population mean μ and standard deviation σ. Choose from Left Tail, Right Tail, Between, Outside, Two-Tailed, or Reverse Solve mode. Enter a sample size n if computing probabilities for sample means.' },
+  { title: 'View probability, z-score, and shaded bell curve', description: 'The calculator computes the exact probability using the Abramowitz & Stegun CDF approximation, displays the z-score, percentile, and complementary probability, and renders an interactive SVG bell curve with the relevant region shaded.' },
+  { title: 'Explore step-by-step working and empirical rule', description: 'Toggle Show Steps to see the z-formula, CDF lookup logic, and arithmetic. Enable the Empirical Rule overlay to see the 68-95-99.7 bands marked on the curve with exact percentages.' },
+];
+
+const seo = {
+  title: 'Normal Distribution Calculator — Z-Score Probability (2026)',
+  description: 'Free normal distribution calculator with shaded bell curve. Left-tail, right-tail, between, outside probabilities, z-scores, step-by-step. No signup.',
+  url: '/calculators/stem-suite/normal-distribution-calculator/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Calculators', url: '/calculators/' },
+    { name: 'STEM Suite', url: '/calculators/stem-suite/' },
+    { name: 'Normal Distribution Calculator', url: '/calculators/stem-suite/normal-distribution-calculator/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <!-- Hero -->
+  <section class="pt-10 pb-6 md:pt-14 md:pb-8">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div class="inline-flex items-center gap-2 bg-bae-primary-soft border border-bae-primary/15 px-3.5 py-1.5 rounded-full text-xs font-semibold text-bae-primary">
+            <span class="w-1.5 h-1.5 rounded-full bg-bae-primary animate-pulse-dot"></span>
+            Updated June 2026
+          </div>
+          <a href="/calculators/stem-suite/" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bae-ink bg-white border border-bae-border px-3.5 py-2 rounded-bae-sm hover:border-bae-primary hover:text-bae-primary transition-colors no-underline shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            STEM Suite
+          </a>
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] tracking-tight text-bae-ink mb-4">
+          Normal Distribution Calculator:<br/>
+          <em class="italic text-bae-primary">Probability, z-score &amp; bell curve</em>
+        </h1>
+        <p class="text-base md:text-lg text-bae-muted leading-relaxed max-w-2xl">
+          Compute normal distribution probabilities with an interactive shaded bell curve. Supports left-tail, right-tail, between, outside, and two-tailed modes. Includes reverse solve, empirical rule visualization, z-scores, and step-by-step working. All calculations run locally in your browser.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <section class="py-6 md:py-8" aria-label="Normal distribution calculator">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-6 items-start">
+        <!-- Left: Inputs -->
+        <div class="space-y-4">
+          <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6 shadow-bae-sm">
+            <!-- Distribution params -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Mean (μ)</label>
+                <input type="number" id="mu-input" value="0" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Std Dev (σ)</label>
+                <input type="number" id="sigma-input" value="1" step="any" min="0.001" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="text-sm font-semibold text-bae-ink block mb-1.5">Sample Size (n) <span class="text-xs font-normal text-bae-muted">— optional, for sample means</span></label>
+              <input type="number" id="n-input" value="" placeholder="Leave blank for individual values" step="1" min="1" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+            </div>
+
+            <!-- Mode tabs -->
+            <div class="flex gap-2 overflow-x-auto mb-4 border-b border-bae-border pb-2">
+              <button type="button" class="mode-btn active px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap bg-bae-primary text-white" data-mode="left">Left Tail</button>
+              <button type="button" class="mode-btn px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-mode="right">Right Tail</button>
+              <button type="button" class="mode-btn px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-mode="between">Between</button>
+              <button type="button" class="mode-btn px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-mode="outside">Outside</button>
+              <button type="button" class="mode-btn px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-mode="twotail">Two-Tailed</button>
+              <button type="button" class="mode-btn px-3 py-1.5 text-sm font-medium rounded-bae-sm whitespace-nowrap" data-mode="reverse">Reverse Solve</button>
+            </div>
+
+            <!-- Mode: Left Tail -->
+            <div class="mode-panel" id="panel-left">
+              <div class="mb-4">
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Value (x)</label>
+                <input type="number" id="left-x" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1">P(X &lt; x): area to the left of x</p>
+              </div>
+            </div>
+
+            <!-- Mode: Right Tail -->
+            <div class="mode-panel hidden" id="panel-right">
+              <div class="mb-4">
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Value (x)</label>
+                <input type="number" id="right-x" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1">P(X &gt; x): area to the right of x</p>
+              </div>
+            </div>
+
+            <!-- Mode: Between -->
+            <div class="mode-panel hidden" id="panel-between">
+              <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Lower (a)</label>
+                  <input type="number" id="between-a" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Upper (b)</label>
+                  <input type="number" id="between-b" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+              </div>
+              <p class="text-xs text-bae-muted mb-4">P(a &lt; X &lt; b): area between a and b</p>
+            </div>
+
+            <!-- Mode: Outside -->
+            <div class="mode-panel hidden" id="panel-outside">
+              <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Lower (a)</label>
+                  <input type="number" id="outside-a" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+                <div>
+                  <label class="text-sm font-semibold text-bae-ink block mb-1.5">Upper (b)</label>
+                  <input type="number" id="outside-b" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                </div>
+              </div>
+              <p class="text-xs text-bae-muted mb-4">P(X &lt; a or X &gt; b): area in both tails</p>
+            </div>
+
+            <!-- Mode: Two-Tailed -->
+            <div class="mode-panel hidden" id="panel-twotail">
+              <div class="mb-4">
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Critical Value (x)</label>
+                <input type="number" id="twotail-x" step="any" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1">P(-x &lt; X &lt; x): middle area for hypothesis testing</p>
+              </div>
+            </div>
+
+            <!-- Mode: Reverse Solve -->
+            <div class="mode-panel hidden" id="panel-reverse">
+              <div class="mb-4">
+                <label class="text-sm font-semibold text-bae-ink block mb-1.5">Percentile (0–100)</label>
+                <input type="number" id="reverse-p" step="any" min="0" max="100" class="w-full text-sm border border-bae-border rounded-bae-sm px-3 py-2 bg-white focus:outline-none focus:border-bae-primary" />
+                <p class="text-xs text-bae-muted mt-1">Find x and z given a percentile</p>
+              </div>
+            </div>
+
+            <!-- Toggles -->
+            <div class="flex flex-wrap gap-4 mb-4">
+              <label class="flex items-center gap-1.5 text-xs text-bae-muted cursor-pointer select-none">
+                <input type="checkbox" id="show-steps" class="accent-bae-primary w-3.5 h-3.5" />
+                Show step-by-step
+              </label>
+              <label class="flex items-center gap-1.5 text-xs text-bae-muted cursor-pointer select-none">
+                <input type="checkbox" id="show-empirical" class="accent-bae-primary w-3.5 h-3.5" />
+                Show empirical rule
+              </label>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button type="button" id="calc-btn" class="px-4 py-2 bg-bae-ink text-white text-sm font-medium rounded-bae-sm hover:opacity-90 transition-opacity">Calculate</button>
+              <button type="button" id="clear-btn" class="px-4 py-2 border border-bae-border text-sm font-medium rounded-bae-sm hover:bg-bae-border/20 transition-colors">Clear</button>
+            </div>
+            <div id="calc-error" class="hidden mb-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-bae-sm px-3 py-2"></div>
+
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span class="text-xs text-bae-muted self-center">Try:</span>
+              <button type="button" class="quick-calc px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors" data-mode="left" data-mu="100" data-sigma="15" data-x="115">IQ 115</button>
+              <button type="button" class="quick-calc px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors" data-mode="between" data-mu="0" data-sigma="1" data-a="-1.96" data-b="1.96">95% CI</button>
+              <button type="button" class="quick-calc px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors" data-mode="reverse" data-mu="100" data-sigma="15" data-p="90">90th %ile</button>
+              <button type="button" class="quick-calc px-2 py-0.5 text-xs bg-bae-bg border border-bae-border rounded-bae-sm hover:border-bae-primary transition-colors" data-mode="twotail" data-mu="0" data-sigma="1" data-x="1.96">z = 1.96</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Results -->
+        <div class="xl:sticky xl:top-[84px] space-y-4">
+          <div class="bg-bae-ink text-white rounded-bae p-5 md:p-6 shadow-bae-lg" id="result-panel">
+            <h3 class="text-xs font-bold uppercase tracking-[0.12em] text-white/60 mb-4">Results</h3>
+            <div id="result-content">
+              <p class="text-sm text-white/70">Enter mean, standard deviation, and a calculation mode to see probabilities, z-scores, and the shaded bell curve.</p>
+            </div>
+          </div>
+          <button type="button" id="pdf-btn" class="hidden w-full bg-bae-ink hover:bg-bae-primary text-white font-semibold text-sm py-3 rounded-bae-sm transition-colors">
+            Download PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <ToolHowItWorks steps={steps} />
+
+  <!-- FAQ -->
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Scenarios -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people calculate with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases for the Best Answer Hub Normal Distribution Calculator.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Statistics Students</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Verify homework with step-by-step working</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Z-scores • Probability • Empirical rule</p>
+          <p class="text-sm text-bae-muted">Compute left-tail, right-tail, between, and outside probabilities for normal distribution homework. Toggle Show Steps to see the z-formula, standard normal table lookup, and subtraction logic that matches AP Statistics and OpenStax textbook methods.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Data Science Learners</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Understand p-values and confidence intervals</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Two-tailed • Critical z • Percentiles</p>
+          <p class="text-sm text-bae-muted">Use Two-Tailed mode to visualize the rejection regions for hypothesis testing at α = 0.05. Reverse Solve mode finds critical z-values for any confidence level. See exactly how z = 1.96 captures 95% of the area under the curve.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Quality Engineers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Analyze process capability and defect rates</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Six Sigma • DPMO • Process sigma</p>
+          <p class="text-sm text-bae-muted">Calculate probabilities outside specification limits to estimate defect rates and DPMO (defects per million opportunities). The shaded bell curve shows exactly what percentage of output falls outside tolerance bands for Six Sigma process improvement.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Psychology Researchers</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Convert test scores to percentiles</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">IQ • Standardized tests • Percentile rank</p>
+          <p class="text-sm text-bae-muted">Enter mean 100 and standard deviation 15 for Wechsler IQ scores, or mean 100 and SD 16 for Stanford-Binet. Reverse Solve mode converts any percentile to the exact raw score, z-score, and position on the bell curve for clinical reporting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Tools CTA -->
+  <ToolRelatedCTA currentHref="/calculators/stem-suite/normal-distribution-calculator/" />
+
+  <HowToSchema steps={steps} name="How to Use the Best Answer Hub Normal Distribution Calculator" />
+
+  <script slot="scripts" src="/html2pdf.bundle.min.js"></script>
+
+  <script is:inline>
+    (function() {
+      let lastResult = null;
+      const $ = id => document.getElementById(id);
+
+      function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+      function showError(msg) { const el = $('calc-error'); el.textContent = msg; el.classList.remove('hidden'); }
+      function hideError() { $('calc-error').classList.add('hidden'); }
+
+      // ========== Math ==========
+      function normalPDF(x) { return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI); }
+
+      function normalCDF(x) {
+        const a1 =  0.254829592, a2 = -0.284496736, a3 =  1.421413741;
+        const a4 = -1.453152027, a5 =  1.061405429, p  =  0.3275911;
+        const sign = x < 0 ? -1 : 1;
+        x = Math.abs(x) / Math.sqrt(2);
+        const t = 1 / (1 + p * x);
+        const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+        return 0.5 * (1 + sign * y);
+      }
+
+      function inverseNormalCDF(p) {
+        if (p <= 0) return -Infinity;
+        if (p >= 1) return Infinity;
+        const a1=-3.969683028665376e+01,a2=2.209460984245205e+02,a3=-2.759285104469687e+02,a4=1.383577518672690e+02,a5=-3.066479806614716e+01,a6=2.506628277459239e+00;
+        const b1=-5.447609879822406e+01,b2=1.615858368580409e+02,b3=-1.556989798598866e+02,b4=6.680131188771972e+01,b5=-1.328068155288572e+01;
+        const c1=-7.784894002430293e-03,c2=-3.223964580411365e-01,c3=-2.400758277161838e+00,c4=-2.549732539343734e+00,c5=4.374664141464968e+00,c6=2.938163982698783e+00;
+        const d1=7.784695709041462e-03,d2=3.224671290700398e-01,d3=2.445134137142996e+00,d4=3.754408661907416e+00;
+        const p_low=0.02425, p_high=1-p_low;
+        let q,r;
+        if (p < p_low) {
+          q = Math.sqrt(-2 * Math.log(p));
+          return (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6) / ((((d1*q+d2)*q+d3)*q+d4)*q+1);
+        } else if (p <= p_high) {
+          q = p - 0.5; r = q*q;
+          return (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q / (((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1);
+        } else {
+          q = Math.sqrt(-2 * Math.log(1-p));
+          return -(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6) / ((((d1*q+d2)*q+d3)*q+d4)*q+1);
+        }
+      }
+
+      function round6(v) { return Math.round(v * 1e6) / 1e6; }
+      function round4(v) { return Math.round(v * 1e4) / 1e4; }
+      function fmtPct(v) { return (v*100).toFixed(4) + '%'; }
+
+      // ========== SVG Bell Curve ==========
+      function drawBellCurve(zBounds, empirical) {
+        const W = 500, H = 200, padTop = 20, padBot = 30, graphH = H - padTop - padBot;
+        const minZ = -4, maxZ = 4;
+        const maxPDF = normalPDF(0);
+        const mu = parseFloat($('mu-input').value) || 0;
+        const sigma = parseFloat($('sigma-input').value) || 1;
+
+        function zx(z) { return ((z - minZ) / (maxZ - minZ)) * W; }
+        function zy(y) { return padTop + graphH - (y / maxPDF) * graphH * 0.92; }
+
+        // Generate curve points
+        let curvePath = '';
+        const steps = 200;
+        for (let i = 0; i <= steps; i++) {
+          const z = minZ + (maxZ - minZ) * (i / steps);
+          const x = zx(z), y = zy(normalPDF(z));
+          curvePath += (i === 0 ? 'M' : 'L') + x + ',' + y;
+        }
+
+        // Shaded area paths
+        let shadePaths = '';
+        if (zBounds && zBounds.length) {
+          zBounds.forEach(bound => {
+            const [z1, z2] = bound;
+            const clampedZ1 = Math.max(minZ, z1);
+            const clampedZ2 = Math.min(maxZ, z2);
+            if (clampedZ1 >= clampedZ2) return;
+            let d = '';
+            const startX = zx(clampedZ1);
+            const endX = zx(clampedZ2);
+            d += 'M' + startX + ',' + (padTop + graphH);
+            const s1 = Math.max(0, Math.floor((clampedZ1 - minZ) / (maxZ - minZ) * steps));
+            const s2 = Math.min(steps, Math.ceil((clampedZ2 - minZ) / (maxZ - minZ) * steps));
+            for (let i = s1; i <= s2; i++) {
+              const z = minZ + (maxZ - minZ) * (i / steps);
+              const x = zx(z), y = zy(normalPDF(z));
+              d += ' L' + x + ',' + y;
+            }
+            d += ' L' + endX + ',' + (padTop + graphH) + ' Z';
+            shadePaths += '<path d="' + d + '" fill="#6366f1" fill-opacity="0.35"/>';
+          });
+        }
+
+        // Vertical boundary lines
+        let lines = '';
+        if (zBounds) {
+          const allZ = [];
+          zBounds.forEach(b => { allZ.push(b[0], b[1]); });
+          [...new Set(allZ)].forEach(z => {
+            if (z < minZ || z > maxZ) return;
+            const x = zx(z);
+            lines += '<line x1="' + x + '" y1="' + padTop + '" x2="' + x + '" y2="' + (padTop + graphH) + '" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,3"/>';
+            const xLabel = round4(mu + z * sigma);
+            lines += '<text x="' + x + '" y="' + (padTop + graphH + 16) + '" text-anchor="middle" font-size="10" fill="#fff" fill-opacity="0.7">x=' + xLabel + '</text>';
+            lines += '<text x="' + x + '" y="' + (padTop + graphH + 28) + '" text-anchor="middle" font-size="9" fill="#6366f1">z=' + round4(z) + '</text>';
+          });
+        }
+
+        // Mean line
+        const meanX = zx(0);
+        lines += '<line x1="' + meanX + '" y1="' + padTop + '" x2="' + meanX + '" y2="' + (padTop + graphH) + '" stroke="#fff" stroke-width="1" stroke-opacity="0.3"/>';
+        lines += '<text x="' + meanX + '" y="' + (padTop + graphH + 16) + '" text-anchor="middle" font-size="10" fill="#fff" fill-opacity="0.5">μ=' + round4(mu) + '</text>';
+
+        // Empirical rule overlays
+        let empiricalOverlay = '';
+        if (empirical) {
+          const bands = [
+            {z: 1, pct: '68%', color: 'rgba(99,102,241,0.08)'},
+            {z: 2, pct: '95%', color: 'rgba(99,102,241,0.12)'},
+            {z: 3, pct: '99.7%', color: 'rgba(99,102,241,0.16)'}
+          ];
+          bands.forEach((band, idx) => {
+            const x1 = zx(-band.z), x2 = zx(band.z);
+            empiricalOverlay += '<rect x="' + x1 + '" y="' + padTop + '" width="' + (x2-x1) + '" height="' + graphH + '" fill="' + band.color + '"/>';
+            empiricalOverlay += '<text x="' + ((x1+x2)/2) + '" y="' + (padTop + 14 + idx*12) + '" text-anchor="middle" font-size="9" fill="#6366f1" font-weight="bold">' + band.pct + '</text>';
+          });
+        }
+
+        // X-axis ticks
+        let ticks = '';
+        for (let z = -4; z <= 4; z++) {
+          const x = zx(z);
+          ticks += '<line x1="' + x + '" y1="' + (padTop + graphH) + '" x2="' + x + '" y2="' + (padTop + graphH + 4) + '" stroke="#fff" stroke-opacity="0.2"/>';
+        }
+
+        return '<svg viewBox="0 0 ' + W + ' ' + H + '" class="w-full" style="max-height:220px;">' +
+          '<rect width="' + W + '" height="' + H + '" fill="transparent"/>' +
+          empiricalOverlay +
+          '<line x1="0" y1="' + (padTop + graphH) + '" x2="' + W + '" y2="' + (padTop + graphH) + '" stroke="#fff" stroke-opacity="0.15"/>' +
+          ticks +
+          shadePaths +
+          '<path d="' + curvePath + '" fill="none" stroke="#6366f1" stroke-width="2"/>' +
+          lines +
+          '</svg>';
+      }
+
+      // ========== Mode Switching ==========
+      function switchMode(name) {
+        document.querySelectorAll('.mode-btn').forEach(b => {
+          b.classList.remove('active', 'bg-bae-primary', 'text-white');
+          if (b.dataset.mode === name) b.classList.add('active', 'bg-bae-primary', 'text-white');
+        });
+        document.querySelectorAll('.mode-panel').forEach(p => p.classList.add('hidden'));
+        const panel = document.getElementById('panel-' + name);
+        if (panel) panel.classList.remove('hidden');
+      }
+
+      // ========== Calculation ==========
+      function getEffectiveSigma() {
+        const sigma = parseFloat($('sigma-input').value) || 1;
+        const n = parseInt($('n-input').value, 10);
+        if (n && n > 1) return sigma / Math.sqrt(n);
+        return sigma;
+      }
+
+      function calcZ(x, mu, sigma) { return (x - mu) / sigma; }
+
+      function doCalculate() {
+        hideError();
+        const mu = parseFloat($('mu-input').value) || 0;
+        const sigmaEff = getEffectiveSigma();
+        const mode = document.querySelector('.mode-btn.active')?.dataset.mode || 'left';
+
+        if (sigmaEff <= 0) { showError('Standard deviation must be greater than 0.'); return; }
+
+        let result = { mode, mu, sigma: parseFloat($('sigma-input').value) || 1, sigmaEff, n: parseInt($('n-input').value, 10) || null };
+
+        try {
+          if (mode === 'left') {
+            const x = parseFloat($('left-x').value);
+            if (isNaN(x)) { showError('Enter a valid x value.'); return; }
+            const z = calcZ(x, mu, sigmaEff);
+            const prob = normalCDF(z);
+            result = { ...result, x, z, prob, comp: 1 - prob, pct: prob * 100 };
+          } else if (mode === 'right') {
+            const x = parseFloat($('right-x').value);
+            if (isNaN(x)) { showError('Enter a valid x value.'); return; }
+            const z = calcZ(x, mu, sigmaEff);
+            const prob = 1 - normalCDF(z);
+            result = { ...result, x, z, prob, comp: 1 - prob, pct: normalCDF(z) * 100 };
+          } else if (mode === 'between') {
+            const a = parseFloat($('between-a').value);
+            const b = parseFloat($('between-b').value);
+            if (isNaN(a) || isNaN(b)) { showError('Enter valid lower and upper bounds.'); return; }
+            const za = calcZ(a, mu, sigmaEff);
+            const zb = calcZ(b, mu, sigmaEff);
+            const prob = normalCDF(zb) - normalCDF(za);
+            result = { ...result, a, b, za, zb, prob, comp: 1 - prob };
+          } else if (mode === 'outside') {
+            const a = parseFloat($('outside-a').value);
+            const b = parseFloat($('outside-b').value);
+            if (isNaN(a) || isNaN(b)) { showError('Enter valid lower and upper bounds.'); return; }
+            const za = calcZ(a, mu, sigmaEff);
+            const zb = calcZ(b, mu, sigmaEff);
+            const prob = normalCDF(za) + (1 - normalCDF(zb));
+            result = { ...result, a, b, za, zb, prob, comp: 1 - prob };
+          } else if (mode === 'twotail') {
+            const x = parseFloat($('twotail-x').value);
+            if (isNaN(x)) { showError('Enter a valid critical value.'); return; }
+            const z = Math.abs(calcZ(x, mu, sigmaEff));
+            const prob = normalCDF(z) - normalCDF(-z);
+            result = { ...result, x, z, prob, comp: 1 - prob, pct: prob * 100 };
+          } else if (mode === 'reverse') {
+            const p = parseFloat($('reverse-p').value);
+            if (isNaN(p) || p < 0 || p > 100) { showError('Enter a valid percentile between 0 and 100.'); return; }
+            const z = inverseNormalCDF(p / 100);
+            const x = mu + z * sigmaEff;
+            result = { ...result, p, z, x, prob: p / 100, comp: 1 - p / 100 };
+          }
+        } catch (e) {
+          showError('Calculation error: ' + e.message);
+          return;
+        }
+
+        lastResult = result;
+        renderResult();
+        updateURL('');
+      }
+
+      function renderResult() {
+        if (!lastResult) return;
+        const r = lastResult;
+        const showSteps = $('show-steps').checked;
+        const showEmp = $('show-empirical').checked;
+
+        let html = '<div class="space-y-4">';
+
+        // Distribution info
+        html += '<div class="text-sm text-white/50 mb-1">Distribution</div>';
+        html += '<div class="text-base font-semibold mb-2">X ~ N(' + round4(r.mu) + ', ' + round4(r.sigmaEff) + '²)</div>';
+        if (r.n && r.n > 1) {
+          html += '<div class="text-xs text-white/50 mb-2">Sample mean (n=' + r.n + '), σ/√n = ' + round4(r.sigmaEff) + '</div>';
+        }
+
+        // Probability result
+        html += '<div class="border-t border-white/10 pt-3">';
+        html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Probability</div>';
+
+        if (r.mode === 'left') {
+          html += '<div class="text-3xl font-bold font-serif text-bae-primary mb-1">' + fmtPct(r.prob) + '</div>';
+          html += '<div class="text-sm text-white/70 mb-2">P(X &lt; ' + round4(r.x) + ')</div>';
+          html += '<div class="grid grid-cols-2 gap-2 text-xs"><div class="text-white/50">Z-score</div><div class="font-mono text-white/90">' + round4(r.z) + '</div><div class="text-white/50">Percentile</div><div class="font-mono text-white/90">' + r.pct.toFixed(2) + 'th</div><div class="text-white/50">Complement</div><div class="font-mono text-white/90">' + fmtPct(r.comp) + '</div></div>';
+        } else if (r.mode === 'right') {
+          html += '<div class="text-3xl font-bold font-serif text-bae-primary mb-1">' + fmtPct(r.prob) + '</div>';
+          html += '<div class="text-sm text-white/70 mb-2">P(X &gt; ' + round4(r.x) + ')</div>';
+          html += '<div class="grid grid-cols-2 gap-2 text-xs"><div class="text-white/50">Z-score</div><div class="font-mono text-white/90">' + round4(r.z) + '</div><div class="text-white/50">Percentile</div><div class="font-mono text-white/90">' + r.pct.toFixed(2) + 'th</div><div class="text-white/50">Complement</div><div class="font-mono text-white/90">' + fmtPct(r.comp) + '</div></div>';
+        } else if (r.mode === 'between') {
+          html += '<div class="text-3xl font-bold font-serif text-bae-primary mb-1">' + fmtPct(r.prob) + '</div>';
+          html += '<div class="text-sm text-white/70 mb-2">P(' + round4(r.a) + ' &lt; X &lt; ' + round4(r.b) + ')</div>';
+          html += '<div class="grid grid-cols-2 gap-2 text-xs"><div class="text-white/50">Z lower</div><div class="font-mono text-white/90">' + round4(r.za) + '</div><div class="text-white/50">Z upper</div><div class="font-mono text-white/90">' + round4(r.zb) + '</div><div class="text-white/50">Complement</div><div class="font-mono text-white/90">' + fmtPct(r.comp) + '</div></div>';
+        } else if (r.mode === 'outside') {
+          html += '<div class="text-3xl font-bold font-serif text-bae-primary mb-1">' + fmtPct(r.prob) + '</div>';
+          html += '<div class="text-sm text-white/70 mb-2">P(X &lt; ' + round4(r.a) + ' or X &gt; ' + round4(r.b) + ')</div>';
+          html += '<div class="grid grid-cols-2 gap-2 text-xs"><div class="text-white/50">Z lower</div><div class="font-mono text-white/90">' + round4(r.za) + '</div><div class="text-white/50">Z upper</div><div class="font-mono text-white/90">' + round4(r.zb) + '</div><div class="text-white/50">Complement</div><div class="font-mono text-white/90">' + fmtPct(r.comp) + '</div></div>';
+        } else if (r.mode === 'twotail') {
+          html += '<div class="text-3xl font-bold font-serif text-bae-primary mb-1">' + fmtPct(r.prob) + '</div>';
+          html += '<div class="text-sm text-white/70 mb-2">P(-' + round4(r.x) + ' &lt; X &lt; ' + round4(r.x) + ')</div>';
+          html += '<div class="grid grid-cols-2 gap-2 text-xs"><div class="text-white/50">Z critical</div><div class="font-mono text-white/90">±' + round4(r.z) + '</div><div class="text-white/50">Complement</div><div class="font-mono text-white/90">' + fmtPct(r.comp) + '</div></div>';
+        } else if (r.mode === 'reverse') {
+          html += '<div class="text-3xl font-bold font-serif text-bae-primary mb-1">' + round4(r.x) + '</div>';
+          html += '<div class="text-sm text-white/70 mb-2">Raw score at ' + r.p + 'th percentile</div>';
+          html += '<div class="grid grid-cols-2 gap-2 text-xs"><div class="text-white/50">Z-score</div><div class="font-mono text-white/90">' + round4(r.z) + '</div><div class="text-white/50">Probability</div><div class="font-mono text-white/90">' + fmtPct(r.prob) + '</div><div class="text-white/50">Complement</div><div class="font-mono text-white/90">' + fmtPct(r.comp) + '</div></div>';
+        }
+        html += '</div>';
+
+        // Bell curve
+        html += '<div class="border-t border-white/10 pt-3">';
+        html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-2">Bell Curve</div>';
+        let zBounds = [];
+        if (r.mode === 'left') zBounds = [[-4, r.z]];
+        else if (r.mode === 'right') zBounds = [[r.z, 4]];
+        else if (r.mode === 'between') zBounds = [[r.za, r.zb]];
+        else if (r.mode === 'outside') zBounds = [[-4, r.za], [r.zb, 4]];
+        else if (r.mode === 'twotail') zBounds = [[-r.z, r.z]];
+        else if (r.mode === 'reverse') zBounds = [[-4, r.z]];
+        html += drawBellCurve(zBounds, showEmp);
+        html += '</div>';
+
+        // Steps
+        if (showSteps) {
+          html += '<div class="border-t border-white/10 pt-3">';
+          html += '<div class="text-xs font-bold uppercase tracking-wider text-white/50 mb-3">Step-by-Step</div>';
+          html += '<div class="bg-white/5 rounded-bae-sm p-3 text-xs space-y-2">';
+
+          if (r.mode === 'left') {
+            html += '<div class="text-white/70">1. Calculate z-score: z = (x - μ) / σ = (' + round4(r.x) + ' - ' + round4(r.mu) + ') / ' + round4(r.sigmaEff) + ' = ' + round4(r.z) + '</div>';
+            html += '<div class="text-white/70">2. Look up Φ(' + round4(r.z) + ') = ' + round6(r.prob) + '</div>';
+            html += '<div class="text-white/70">3. Result: P(X &lt; ' + round4(r.x) + ') = ' + fmtPct(r.prob) + '</div>';
+          } else if (r.mode === 'right') {
+            html += '<div class="text-white/70">1. Calculate z-score: z = (x - μ) / σ = (' + round4(r.x) + ' - ' + round4(r.mu) + ') / ' + round4(r.sigmaEff) + ' = ' + round4(r.z) + '</div>';
+            html += '<div class="text-white/70">2. Look up Φ(' + round4(r.z) + ') = ' + round6(normalCDF(r.z)) + '</div>';
+            html += '<div class="text-white/70">3. Right-tail: 1 - ' + round6(normalCDF(r.z)) + ' = ' + round6(r.prob) + '</div>';
+            html += '<div class="text-white/70">4. Result: P(X &gt; ' + round4(r.x) + ') = ' + fmtPct(r.prob) + '</div>';
+          } else if (r.mode === 'between') {
+            html += '<div class="text-white/70">1. z₁ = (' + round4(r.a) + ' - ' + round4(r.mu) + ') / ' + round4(r.sigmaEff) + ' = ' + round4(r.za) + '</div>';
+            html += '<div class="text-white/70">2. z₂ = (' + round4(r.b) + ' - ' + round4(r.mu) + ') / ' + round4(r.sigmaEff) + ' = ' + round4(r.zb) + '</div>';
+            html += '<div class="text-white/70">3. Φ(z₂) - Φ(z₁) = ' + round6(normalCDF(r.zb)) + ' - ' + round6(normalCDF(r.za)) + ' = ' + round6(r.prob) + '</div>';
+            html += '<div class="text-white/70">4. Result: P(' + round4(r.a) + ' &lt; X &lt; ' + round4(r.b) + ') = ' + fmtPct(r.prob) + '</div>';
+          } else if (r.mode === 'outside') {
+            html += '<div class="text-white/70">1. z₁ = (' + round4(r.a) + ' - ' + round4(r.mu) + ') / ' + round4(r.sigmaEff) + ' = ' + round4(r.za) + '</div>';
+            html += '<div class="text-white/70">2. z₂ = (' + round4(r.b) + ' - ' + round4(r.mu) + ') / ' + round4(r.sigmaEff) + ' = ' + round4(r.zb) + '</div>';
+            html += '<div class="text-white/70">3. Φ(z₁) + (1 - Φ(z₂)) = ' + round6(normalCDF(r.za)) + ' + ' + round6(1 - normalCDF(r.zb)) + ' = ' + round6(r.prob) + '</div>';
+            html += '<div class="text-white/70">4. Result: P(X &lt; ' + round4(r.a) + ' or X &gt; ' + round4(r.b) + ') = ' + fmtPct(r.prob) + '</div>';
+          } else if (r.mode === 'twotail') {
+            html += '<div class="text-white/70">1. z = |' + round4(r.x) + ' - ' + round4(r.mu) + '| / ' + round4(r.sigmaEff) + ' = ' + round4(r.z) + '</div>';
+            html += '<div class="text-white/70">2. Φ(' + round4(r.z) + ') - Φ(-' + round4(r.z) + ') = ' + round6(normalCDF(r.z)) + ' - ' + round6(normalCDF(-r.z)) + ' = ' + round6(r.prob) + '</div>';
+            html += '<div class="text-white/70">3. Result: P(-' + round4(r.x) + ' &lt; X &lt; ' + round4(r.x) + ') = ' + fmtPct(r.prob) + '</div>';
+          } else if (r.mode === 'reverse') {
+            html += '<div class="text-white/70">1. Look up z for percentile ' + r.p + '%: z = ' + round4(r.z) + '</div>';
+            html += '<div class="text-white/70">2. Convert to raw score: x = μ + z × σ = ' + round4(r.mu) + ' + ' + round4(r.z) + ' × ' + round4(r.sigmaEff) + ' = ' + round4(r.x) + '</div>';
+            html += '<div class="text-white/70">3. Result: ' + round4(r.x) + ' is at the ' + r.p + 'th percentile</div>';
+          }
+          html += '</div></div>';
+        }
+
+        html += '</div>';
+        $('result-content').innerHTML = html;
+        $('pdf-btn').classList.remove('hidden');
+      }
+
+      // ========== PDF Bell Curve (light theme) ==========
+      function drawBellCurvePDF(zBounds, empirical) {
+        const W = 500, H = 200, padTop = 20, padBot = 30, graphH = H - padTop - padBot;
+        const minZ = -4, maxZ = 4;
+        const maxPDF = normalPDF(0);
+        const mu = parseFloat($('mu-input').value) || 0;
+        const sigma = parseFloat($('sigma-input').value) || 1;
+
+        function zx(z) { return ((z - minZ) / (maxZ - minZ)) * W; }
+        function zy(y) { return padTop + graphH - (y / maxPDF) * graphH * 0.92; }
+
+        let curvePath = '';
+        const steps = 200;
+        for (let i = 0; i <= steps; i++) {
+          const z = minZ + (maxZ - minZ) * (i / steps);
+          const x = zx(z), y = zy(normalPDF(z));
+          curvePath += (i === 0 ? 'M' : 'L') + x + ',' + y;
+        }
+
+        let shadePaths = '';
+        if (zBounds && zBounds.length) {
+          zBounds.forEach(bound => {
+            const [z1, z2] = bound;
+            const clampedZ1 = Math.max(minZ, z1);
+            const clampedZ2 = Math.min(maxZ, z2);
+            if (clampedZ1 >= clampedZ2) return;
+            let d = '';
+            const startX = zx(clampedZ1);
+            const endX = zx(clampedZ2);
+            d += 'M' + startX + ',' + (padTop + graphH);
+            const s1 = Math.max(0, Math.floor((clampedZ1 - minZ) / (maxZ - minZ) * steps));
+            const s2 = Math.min(steps, Math.ceil((clampedZ2 - minZ) / (maxZ - minZ) * steps));
+            for (let i = s1; i <= s2; i++) {
+              const z = minZ + (maxZ - minZ) * (i / steps);
+              const x = zx(z), y = zy(normalPDF(z));
+              d += ' L' + x + ',' + y;
+            }
+            d += ' L' + endX + ',' + (padTop + graphH) + ' Z';
+            shadePaths += '<path d="' + d + '" fill="#6366f1" fill-opacity="0.25"/>';
+          });
+        }
+
+        let lines = '';
+        if (zBounds) {
+          const allZ = [];
+          zBounds.forEach(b => { allZ.push(b[0], b[1]); });
+          [...new Set(allZ)].forEach(z => {
+            if (z < minZ || z > maxZ) return;
+            const x = zx(z);
+            lines += '<line x1="' + x + '" y1="' + padTop + '" x2="' + x + '" y2="' + (padTop + graphH) + '" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,3"/>';
+            const xLabel = round4(mu + z * sigma);
+            lines += '<text x="' + x + '" y="' + (padTop + graphH + 16) + '" text-anchor="middle" font-size="10" fill="#666">x=' + xLabel + '</text>';
+            lines += '<text x="' + x + '" y="' + (padTop + graphH + 28) + '" text-anchor="middle" font-size="9" fill="#6366f1">z=' + round4(z) + '</text>';
+          });
+        }
+
+        const meanX = zx(0);
+        lines += '<line x1="' + meanX + '" y1="' + padTop + '" x2="' + meanX + '" y2="' + (padTop + graphH) + '" stroke="#ccc" stroke-width="1"/>';
+        lines += '<text x="' + meanX + '" y="' + (padTop + graphH + 16) + '" text-anchor="middle" font-size="10" fill="#999">μ=' + round4(mu) + '</text>';
+
+        let empiricalOverlay = '';
+        if (empirical) {
+          const bands = [
+            {z: 1, pct: '68%', color: 'rgba(99,102,241,0.08)'},
+            {z: 2, pct: '95%', color: 'rgba(99,102,241,0.12)'},
+            {z: 3, pct: '99.7%', color: 'rgba(99,102,241,0.16)'}
+          ];
+          bands.forEach((band, idx) => {
+            const x1 = zx(-band.z), x2 = zx(band.z);
+            empiricalOverlay += '<rect x="' + x1 + '" y="' + padTop + '" width="' + (x2-x1) + '" height="' + graphH + '" fill="' + band.color + '"/>';
+            empiricalOverlay += '<text x="' + ((x1+x2)/2) + '" y="' + (padTop + 14 + idx*12) + '" text-anchor="middle" font-size="9" fill="#6366f1" font-weight="bold">' + band.pct + '</text>';
+          });
+        }
+
+        let ticks = '';
+        for (let z = -4; z <= 4; z++) {
+          const x = zx(z);
+          ticks += '<line x1="' + x + '" y1="' + (padTop + graphH) + '" x2="' + x + '" y2="' + (padTop + graphH + 4) + '" stroke="#ccc"/>';
+        }
+
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="200" viewBox="0 0 ' + W + ' ' + H + '" style="display:block;width:100%;height:auto;max-height:220px;border:1px solid #eee;border-radius:8px;">' +
+          '<rect width="' + W + '" height="' + H + '" fill="#fafafa"/>' +
+          empiricalOverlay +
+          '<line x1="0" y1="' + (padTop + graphH) + '" x2="' + W + '" y2="' + (padTop + graphH) + '" stroke="#ddd" stroke-width="1"/>' +
+          ticks +
+          shadePaths +
+          '<path d="' + curvePath + '" fill="none" stroke="#6366f1" stroke-width="2"/>' +
+          lines +
+          '</svg>';
+      }
+
+      // ========== PDF Export ==========
+      async function exportPDF() {
+        if (typeof html2pdf === 'undefined' || !lastResult) return;
+        const btn = $('pdf-btn'); const orig = btn.textContent;
+        btn.textContent = 'Generating PDF...'; btn.disabled = true;
+        const report = document.createElement('div');
+        report.style.cssText = 'width:210mm;padding:20px;box-sizing:border-box;background:#fff;color:#1a1a1a;font-family:sans-serif;';
+        const r = lastResult;
+        const showEmp = $('show-empirical').checked;
+        let zBounds = [];
+        if (r.mode === 'left') zBounds = [[-4, r.z]];
+        else if (r.mode === 'right') zBounds = [[r.z, 4]];
+        else if (r.mode === 'between') zBounds = [[r.za, r.zb]];
+        else if (r.mode === 'outside') zBounds = [[-4, r.za], [r.zb, 4]];
+        else if (r.mode === 'twotail') zBounds = [[-r.z, r.z]];
+        else if (r.mode === 'reverse') zBounds = [[-4, r.z]];
+
+        let pdfHtml = '';
+        pdfHtml += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">';
+        pdfHtml += '<div style="width:40px;height:40px;border-radius:10px;background:#0f0f1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;font-family:Georgia,serif;">B<span style=\"color:#8b5cf6;\">.</span></div>';
+        pdfHtml += '<div><div style="font-size:18px;font-weight:bold;">Best Answer Hub</div><div style="font-size:13px;color:#666;">Normal Distribution Report</div></div></div>';
+        pdfHtml += '<div style="font-size:14px;font-weight:bold;margin-bottom:8px;">Distribution: X ~ N(' + round4(r.mu) + ', ' + round4(r.sigmaEff) + '²)</div>';
+        if (r.n && r.n > 1) pdfHtml += '<div style="font-size:12px;color:#666;margin-bottom:12px;">Sample mean, n = ' + r.n + '</div>';
+
+        pdfHtml += '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;">';
+        pdfHtml += '<tr style="border-bottom:2px solid #ddd;"><th style="text-align:left;padding:4px 8px 4px 0;">Property</th><th style="text-align:left;padding:4px 0;">Value</th></tr>';
+        if (r.mode === 'left') {
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">P(X &lt; ' + round4(r.x) + ')</td><td style="padding:3px 0;font-weight:bold;color:#6366f1;">' + fmtPct(r.prob) + '</td></tr>';
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">Z-score</td><td style="padding:3px 0;font-family:monospace;">' + round4(r.z) + '</td></tr>';
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">Percentile</td><td style="padding:3px 0;font-family:monospace;">' + r.pct.toFixed(2) + 'th</td></tr>';
+        } else if (r.mode === 'right') {
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">P(X &gt; ' + round4(r.x) + ')</td><td style="padding:3px 0;font-weight:bold;color:#6366f1;">' + fmtPct(r.prob) + '</td></tr>';
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">Z-score</td><td style="padding:3px 0;font-family:monospace;">' + round4(r.z) + '</td></tr>';
+        } else if (r.mode === 'between') {
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">P(' + round4(r.a) + ' &lt; X &lt; ' + round4(r.b) + ')</td><td style="padding:3px 0;font-weight:bold;color:#6366f1;">' + fmtPct(r.prob) + '</td></tr>';
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">Z bounds</td><td style="padding:3px 0;font-family:monospace;">' + round4(r.za) + ' to ' + round4(r.zb) + '</td></tr>';
+        } else if (r.mode === 'outside') {
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">P(X &lt; ' + round4(r.a) + ' or X &gt; ' + round4(r.b) + ')</td><td style="padding:3px 0;font-weight:bold;color:#6366f1;">' + fmtPct(r.prob) + '</td></tr>';
+        } else if (r.mode === 'twotail') {
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">P(-' + round4(r.x) + ' &lt; X &lt; ' + round4(r.x) + ')</td><td style="padding:3px 0;font-weight:bold;color:#6366f1;">' + fmtPct(r.prob) + '</td></tr>';
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">Z critical</td><td style="padding:3px 0;font-family:monospace;">±' + round4(r.z) + '</td></tr>';
+        } else if (r.mode === 'reverse') {
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">Percentile</td><td style="padding:3px 0;font-weight:bold;color:#6366f1;">' + r.p + 'th</td></tr>';
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">Raw score</td><td style="padding:3px 0;font-family:monospace;">' + round4(r.x) + '</td></tr>';
+          pdfHtml += '<tr style="border-bottom:1px solid #eee;"><td style="padding:3px 8px 3px 0;">Z-score</td><td style="padding:3px 0;font-family:monospace;">' + round4(r.z) + '</td></tr>';
+        }
+        pdfHtml += '</table>';
+
+        pdfHtml += '<div style="margin-bottom:16px;">' + drawBellCurvePDF(zBounds, showEmp) + '</div>';
+
+        if (showEmp) {
+          pdfHtml += '<div style="font-size:11px;font-weight:bold;color:#666;margin-bottom:6px;">Empirical Rule (68-95-99.7)</div>';
+          pdfHtml += '<div style="font-size:11px;color:#666;margin-bottom:16px;">68% within μ ± 1σ | 95% within μ ± 2σ | 99.7% within μ ± 3σ</div>';
+        }
+
+        report.innerHTML = pdfHtml;
+        document.body.appendChild(report);
+        // Allow SVG to fully render in DOM before capture
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        await html2pdf().set({margin:0,filename:'normal-distribution-report.pdf',image:{type:'jpeg',quality:0.95},html2canvas:{scale:2,scrollX:0,scrollY:0,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(report).save();
+        document.body.removeChild(report);
+        btn.textContent = orig; btn.disabled = false;
+      }
+
+      // ========== Event Listeners ==========
+      document.querySelectorAll('.mode-btn').forEach(b => {
+        b.addEventListener('click', () => switchMode(b.dataset.mode));
+      });
+      $('calc-btn').addEventListener('click', doCalculate);
+      $('clear-btn').addEventListener('click', () => {
+        $('left-x').value = ''; $('right-x').value = ''; $('between-a').value = ''; $('between-b').value = '';
+        $('outside-a').value = ''; $('outside-b').value = ''; $('twotail-x').value = ''; $('reverse-p').value = '';
+        hideError();
+        $('result-content').innerHTML = '<p class="text-sm text-white/70">Enter mean, standard deviation, and a calculation mode to see probabilities, z-scores, and the shaded bell curve.</p>';
+        $('pdf-btn').classList.add('hidden');
+        lastResult = null;
+      });
+      $('show-steps').addEventListener('change', () => { if (lastResult) renderResult(); });
+      $('show-empirical').addEventListener('change', () => { if (lastResult) renderResult(); });
+      $('pdf-btn').addEventListener('click', exportPDF);
+
+      document.querySelectorAll('.quick-calc').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mode = btn.dataset.mode;
+          $('mu-input').value = btn.dataset.mu;
+          $('sigma-input').value = btn.dataset.sigma;
+          $('n-input').value = '';
+          switchMode(mode);
+          if (mode === 'left') $('left-x').value = btn.dataset.x;
+          else if (mode === 'right') $('right-x').value = btn.dataset.x;
+          else if (mode === 'between') { $('between-a').value = btn.dataset.a; $('between-b').value = btn.dataset.b; }
+          else if (mode === 'outside') { $('outside-a').value = btn.dataset.a; $('outside-b').value = btn.dataset.b; }
+          else if (mode === 'twotail') $('twotail-x').value = btn.dataset.x;
+          else if (mode === 'reverse') $('reverse-p').value = btn.dataset.p;
+          doCalculate();
+        });
+      });
+
+      function updateURL(param) {
+        const url = new URL(window.location.href);
+        url.search = param ? '?' + param : '';
+        history.replaceState({}, '', url);
+      }
+    })();
+  </script>
+</BaseLayout>

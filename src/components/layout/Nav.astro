@@ -1,0 +1,55 @@
+---
+import { hubNavLinks } from '../../data/tools';
+
+// Nav-only short labels. Hub pages, the footer and llms.txt keep the full names.
+const navLabels: Record<string, string> = {
+  'AI Agent Skills': 'Agent Skills',
+  'Career Toolkit': 'Career',
+  'Developer Toolbox': 'Dev Tools',
+  'PDF Toolkit': 'PDF Tools',
+  'Finance Toolkit': 'Finance',
+};
+
+const navLinks = [
+  ...hubNavLinks.map(l => navLabels[l.label] ? { ...l, label: navLabels[l.label] } : l),
+  { label: 'About', href: '/about/' },
+];
+---
+
+<nav class="sticky top-0 z-[100] bg-bae-bg/90 backdrop-blur-lg border-b border-bae-border" role="navigation" aria-label="Main navigation">
+  <div class="container max-w-page mx-auto px-6 flex items-center justify-between h-[68px]">
+    <a href="/" class="flex items-center gap-2.5 font-bold text-[1.05rem] tracking-tight text-bae-ink no-underline whitespace-nowrap shrink-0" aria-label="Best Answer Hub - Home">
+      <img src="/brand-mark.png" alt="" width="32" height="32" class="w-8 h-8 rounded-[10px] shadow-[0_2px_8px_rgba(15,15,26,0.3)]" aria-hidden="true" />
+      Best Answer Hub
+    </a>
+    
+    <div class="hidden lg:flex items-center gap-x-5 xl:gap-x-8">
+      {navLinks.map((link) => (
+        <a href={link.href} class="relative text-sm font-medium text-bae-muted no-underline transition-colors hover:text-bae-ink group whitespace-nowrap">
+          {link.label}
+          <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-bae-primary rounded-sm transition-all group-hover:w-full"></span>
+        </a>
+      ))}
+    </div>
+    
+    <!-- Mobile menu button -->
+    <button class="lg:hidden p-2 text-bae-muted hover:text-bae-ink" aria-label="Open menu" id="mobile-menu-btn">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+  
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden lg:hidden border-t border-bae-border bg-bae-bg px-6 py-4">
+    {navLinks.map((link) => (
+      <a href={link.href} class="block py-2 text-sm font-medium text-bae-muted hover:text-bae-ink no-underline">{link.label}</a>
+    ))}
+  </div>
+</nav>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+</script>

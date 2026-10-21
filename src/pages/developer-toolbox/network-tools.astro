@@ -1,0 +1,482 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Network Tools suite?',
+    a: 'The Best Answer Hub Network Tools suite is a free browser-based collection of three network diagnostics utilities: a DNS Lookup tool, a Site Health Check, and a WHOIS Lookup. The DNS Lookup queries public DNS-over-HTTPS servers to show A, AAAA, MX, TXT, NS, CNAME, and SOA records for any domain. The Site Health Check attempts to reach a website and reports status, response headers, and redirect behavior. The WHOIS Lookup queries RDAP (Registration Data Access Protocol) servers for domain registration details. All queries originate from your browser, so no domain data is sent to Best Answer Hub servers.',
+  },
+  {
+    q: 'Is the Network Tools suite free and safe to use?',
+    a: 'The Best Answer Hub Network Tools suite is completely free with no usage limits and no signup required. All lookups happen directly between your browser and public DNS/WHOIS infrastructure. When you look up a domain, your browser sends requests to Google DNS-over-HTTPS, the target website, and IANA RDAP servers, not to Best Answer Hub servers. Best Answer Hub does not log, store, or transmit any of the domains you query. You can verify this by opening your browser\'s Network tab in Developer Tools.',
+  },
+  {
+    q: 'How does the DNS Lookup work?',
+    a: 'The Best Answer Hub DNS Lookup uses Google\'s public DNS-over-HTTPS API (dns.google) to resolve domain names into DNS records. When you enter a domain and select a record type, your browser sends an encrypted HTTPS request directly to Google\'s DNS resolver, which returns the records in JSON format. This is faster and more private than traditional DNS queries because the request is encrypted and no local DNS server sees your query. The tool displays the record type, TTL (time-to-live), and value for each result.',
+  },
+  {
+    q: 'What DNS record types can I look up?',
+    a: 'The Best Answer Hub DNS Lookup supports seven common record types. A records map a domain to an IPv4 address. AAAA records map a domain to an IPv6 address. MX records show mail server priorities and hostnames. TXT records contain text data often used for SPF, DKIM, and domain verification. NS records show the authoritative name servers for a domain. CNAME records show canonical name aliases. SOA records show the start of authority information including the primary name server and serial number.',
+  },
+  {
+    q: 'How does the Site Health Check work?',
+    a: 'The Best Answer Hub Site Health Check attempts to connect to a website using your browser\'s standard fetch API. It tries to load the site over HTTPS and reports whether the server responded, what HTTP status code was returned, what server software is reported in headers, and whether any redirects occurred. Because of browser security restrictions (CORS), some sites will not share detailed headers with third-party web pages. In those cases, the tool reports that the site is reachable but CORS policies prevent header inspection.',
+  },
+  {
+    q: 'How does the WHOIS Lookup work?',
+    a: 'The Best Answer Hub WHOIS Lookup uses RDAP (Registration Data Access Protocol), the modern replacement for traditional WHOIS port-43 queries. Your browser first queries IANA\'s RDAP bootstrap service to find the correct RDAP server for the domain\'s top-level domain (like .com or .org). It then queries that RDAP server for the domain\'s registration data. RDAP returns structured JSON data including registrar information, creation date, expiration date, name servers, and status codes. Because RDAP servers are run by individual registries, CORS support varies, with some responding directly to browser requests while others require a server-side relay.',
+  },
+  {
+    q: 'Why does WHOIS sometimes show a CORS error?',
+    a: 'RDAP servers are operated by hundreds of different domain registries and registrars around the world, and not all of them configure CORS (Cross-Origin Resource Sharing) headers to allow browser-based requests. When an RDAP server does not include CORS headers, your browser blocks the response for security reasons. This is a standard web security feature, not a bug. In these cases, the Best Answer Hub Network Tools display the raw RDAP URL so you can query it from a server-side tool like curl if needed. The tool intentionally avoids using a proxy server to preserve its privacy-first design and keep your queries client-side.',
+  },
+  {
+    q: 'Can I use the Network Tools offline?',
+    a: 'No. Unlike most other tools in the Developer Toolbox, the Best Answer Hub Network Tools require an active internet connection because they query live DNS servers, websites, and RDAP registries. The DNS Lookup connects to Google DNS-over-HTTPS, the Site Check connects to the target website, and the WHOIS Lookup connects to IANA RDAP servers. These are inherently online operations. However, no data passes through Best Answer Hub servers, so your browser communicates directly with the public infrastructure.',
+  },
+  {
+    q: 'Is my search history logged?',
+    a: 'No. Best Answer Hub does not operate the DNS resolvers, web servers, or RDAP registries that the tool queries. Your domain lookups go directly to Google DNS, the target website, and IANA. Best Answer Hub\'s server never sees the domains you enter. Google DNS may log queries according to their privacy policy. If you are concerned about DNS privacy, consider using a privacy-focused resolver like Quad9 or Cloudflare DNS directly in your browser or operating system settings.',
+  },
+  {
+    q: 'What is the difference between DNS Lookup and WHOIS Lookup?',
+    a: 'In the Best Answer Hub Network Tools, DNS Lookup tells you where a domain points on the internet: its IP addresses, mail servers, and name servers. This is operational data that changes whenever a website moves servers or reconfigures its infrastructure. WHOIS Lookup tells you who owns a domain: the registrar, registration dates, expiration date, and administrative contacts. This is ownership data managed by domain registries and registrars. DNS answers "where is this domain?" while WHOIS answers "who owns this domain?"',
+  },
+  {
+    q: 'Can I look up internal or private domains?',
+    a: 'The Best Answer Hub Network Tools block queries for private IP addresses and local hostnames for security reasons. Domains like localhost, 127.0.0.1, 10.x.x.x, 192.168.x.x, 172.16-31.x.x, and ::1 are rejected with a clear error message. This prevents accidental information leakage about your local network and protects against potential abuse. For internal domain diagnostics, use command-line tools like dig, nslookup, or host from within your network.',
+  },
+  {
+    q: 'How accurate is the Site Health Check?',
+    a: 'The Best Answer Hub Site Health Check provides a best-effort assessment of whether a website is reachable from your current network location. It can confirm that a server is responding to HTTPS requests and report any headers the server chooses to share via CORS. However, it cannot verify SSL certificate validity, check certificate expiry dates, or perform deep TLS analysis. These require server-side tools like OpenSSL or SSL Labs. For comprehensive SSL testing, use dedicated tools like SSL Labs SSL Test or OpenSSL command-line utilities.',
+  },
+  {
+    q: 'What are common DNS issues this tool can help diagnose?',
+    a: 'The Best Answer Hub DNS Lookup can identify several common problems. Missing A or AAAA records explain why a domain does not load. Incorrect MX records explain why email is bouncing or going to spam. Missing or incorrect TXT records explain why SPF and DKIM email authentication is failing. Stale NS records explain why DNS changes are not propagating. Short TTL values explain why DNS changes propagate quickly, while very long TTLs explain why changes take hours or days to take effect globally.',
+  },
+  {
+    q: 'How does this compare to MXToolbox or DNSChecker.org?',
+    a: 'MXToolbox and DNSChecker.org are excellent comprehensive network diagnostic platforms with deep SSL analysis, blacklist checks, and SMTP diagnostics. However, they are ad-supported, require an internet connection to their servers, and some features are paywalled. The Best Answer Hub Network Tools differentiate by being completely free, privacy-first, and focused on the most common diagnostic tasks (DNS resolution and basic reachability) with no account required. For enterprise-grade diagnostics, MXToolbox remains the gold standard. For quick, private DNS and WHOIS checks, the Best Answer Hub Network Tools are faster and simpler.',
+  },
+  {
+    q: 'What is DNS-over-HTTPS and why does this tool use it?',
+    a: 'DNS-over-HTTPS (DoH) encrypts DNS queries inside standard HTTPS traffic on port 443, preventing ISPs and man-in-the-middle attackers from seeing which domains you look up. Traditional DNS sends queries in plain text over UDP port 53, readable by anyone on the network path. The Best Answer Hub Network Tools use Google\'s public DoH resolver (dns.google) because it is fast, reliable, and widely available from browsers without additional configuration. Alternative DoH resolvers include Cloudflare (1.1.1.1) and Quad9, both of which offer stronger privacy policies if you prefer not to route queries through Google. The encryption benefit is the same regardless of which resolver you use.',
+  },
+];
+
+const steps = [
+  { title: 'Enter a domain', description: 'Type a domain name like example.com into the input field. The tool strips protocols and paths automatically.' },
+  { title: 'Choose a tool', description: 'Switch between DNS Lookup, Site Health Check, and WHOIS Lookup using the tabs. Each provides different diagnostic information.' },
+  { title: 'Review results', description: 'DNS shows records and TTLs. Site Check shows reachability and headers. WHOIS shows registration data when available.' },
+];
+
+const seo = {
+  title: 'Free Network Tools — DNS Lookup, Site Check & WHOIS (2026)',
+  description: 'Free browser-based network diagnostics: DNS lookup via DNS-over-HTTPS, site health check, and WHOIS lookup. No signup, your queries stay client-side.',
+  url: '/developer-toolbox/network-tools/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Developer Toolbox', url: '/developer-toolbox/' },
+    { name: 'Network Tools', url: '/developer-toolbox/network-tools/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · Queries Stay Client-Side"
+    title="Network Tools:"
+    accentText="DNS, site check & WHOIS"
+    description="Diagnose domains with DNS-over-HTTPS lookups, site reachability tests, and RDAP WHOIS queries. Your browser talks directly to public infrastructure, and nothing routes through our servers."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <section class="py-6 md:py-8" aria-label="Network tools">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Network Tools</h2>
+
+        <!-- Domain Input -->
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          <div class="flex-1 min-w-[16rem]">
+            <input type="text" id="net-domain" placeholder="example.com" class="w-full bg-bae-bg border border-bae-border rounded-bae-sm px-3 py-2 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary" />
+          </div>
+          <button type="button" id="net-run" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Run Check</button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex flex-wrap gap-1 mb-4 border-b border-bae-border pb-1" role="tablist">
+          <button type="button" class="net-tab active bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm transition-colors" data-tab="dns" role="tab" aria-selected="true">DNS Lookup</button>
+          <button type="button" class="net-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors" data-tab="site" role="tab" aria-selected="false">Site Check</button>
+          <button type="button" class="net-tab bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors" data-tab="whois" role="tab" aria-selected="false">WHOIS</button>
+        </div>
+
+        <!-- DNS Panel -->
+        <div class="net-panel" data-panel="dns">
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <span class="text-xs text-bae-muted">Record type:</span>
+            <select id="dns-type" class="bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+              <option value="A">A (IPv4)</option>
+              <option value="AAAA">AAAA (IPv6)</option>
+              <option value="MX">MX (Mail)</option>
+              <option value="TXT">TXT (Text)</option>
+              <option value="NS">NS (Name Servers)</option>
+              <option value="CNAME">CNAME (Alias)</option>
+              <option value="SOA">SOA (Authority)</option>
+            </select>
+          </div>
+          <div id="dns-results" class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 min-h-[8rem]">
+            <p class="text-bae-muted text-xs italic">Enter a domain and click Run Check to see DNS records.</p>
+          </div>
+        </div>
+
+        <!-- Site Check Panel -->
+        <div class="net-panel hidden" data-panel="site">
+          <div id="site-results" class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 min-h-[8rem]">
+            <p class="text-bae-muted text-xs italic">Enter a domain and click Run Check to test reachability.</p>
+          </div>
+        </div>
+
+        <!-- WHOIS Panel -->
+        <div class="net-panel hidden" data-panel="whois">
+          <div id="whois-results" class="bg-bae-bg border border-bae-border rounded-bae-sm p-3 min-h-[8rem]">
+            <p class="text-bae-muted text-xs italic">Enter a domain and click Run Check to query RDAP WHOIS.</p>
+          </div>
+        </div>
+
+        <p id="net-status" class="text-xs mt-3 hidden"></p>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- What developers use it for -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What developers use it for</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Email Engineer, deliverability team</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Email Deliverability Debugging</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">MX, SPF, and DKIM in one check</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Pull MX records to confirm authorised mail servers, then switch to TXT to inspect SPF policies and DKIM public keys, the two most common causes of messages landing in spam or being rejected outright.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Site Reliability Engineer, migration project</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">DNS Propagation Checks</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Confirm A records before going live</div>
+          <p class="text-sm text-bae-muted leading-relaxed">After pointing a domain to a new host or IP, query the A record and compare it against the new server, a quick sanity check before assuming a migration is live, especially when your local resolver may still serve cached results.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Security Analyst, domain portfolio</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Domain Research &amp; WHOIS</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Registration and expiry data instantly</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Pull registration data on a competitor or prospect domain: creation date, expiry date, and registrar. Useful for spotting domains approaching renewal lapse or verifying that a newly acquired domain transferred correctly.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">DevOps Engineer, on-call rotation</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Site Reliability Checks</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Catch redirect loops in seconds</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Verify a URL returns 200 OK and catch unintentional redirect loops or HTTP-to-HTTPS misconfigurations before users hit them, a fast first check when a monitoring alert fires or a client reports a site is down.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Actual network results depend on DNS resolver behaviour, caching layers, and target server configuration.</p>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/developer-toolbox/diff-checker/" class="text-bae-primary hover:underline">Diff Checker</a>, <a href="/developer-toolbox/cron-expression-generator/" class="text-bae-primary hover:underline">Cron Generator</a>, <a href="/developer-toolbox/css-generators/" class="text-bae-primary hover:underline">CSS Generators</a>, <a href="/developer-toolbox/data-converter/" class="text-bae-primary hover:underline">Data Converter</a>, <a href="/developer-toolbox/sql-formatter/" class="text-bae-primary hover:underline">SQL Formatter</a>, <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, and <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, all free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      // --- Utility ---
+      function showStatus(msg, isError) {
+        const el = document.getElementById('net-status');
+        if (!msg) { el.classList.add('hidden'); el.textContent = ''; return; }
+        el.textContent = msg;
+        el.classList.remove('hidden', 'text-green-600', 'text-red-600');
+        el.classList.add(isError ? 'text-red-600' : 'text-green-600', 'font-medium');
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+      }
+
+      function cleanDomain(input) {
+        let domain = input.trim().toLowerCase();
+        domain = domain.replace(/^https?:\/\//, '');   // protocol
+        domain = domain.replace(/^[^@/]*@/, '');         // userinfo (user:pass@host) — prevents @host bypass
+        domain = domain.replace(/[/?#].*$/, '');         // path / query / fragment
+        domain = domain.replace(/:\d+$/, '');            // port
+        domain = domain.replace(/^www\./, '');           // www.
+        domain = domain.replace(/\.$/, '');              // trailing FQDN dot
+        return domain;
+      }
+
+      function isInternalDomain(domain) {
+        if (/^localhost$/.test(domain)) return true;
+        if (/^127\./.test(domain)) return true;
+        if (/^10\./.test(domain)) return true;
+        if (/^192\.168\./.test(domain)) return true;
+        if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(domain)) return true;
+        if (/^::1$/.test(domain)) return true;
+        if (/^fc00:/i.test(domain)) return true;
+        if (/^fd00:/i.test(domain)) return true;
+        if (/^fe80:/i.test(domain)) return true;
+        return false;
+      }
+
+      function validateDomain(input) {
+        const domain = cleanDomain(input);
+        if (!domain) return { valid: false, error: 'Please enter a domain name.' };
+        if (!domain.includes('.')) return { valid: false, error: 'Please enter a valid domain (e.g., example.com).' };
+        if (isInternalDomain(domain)) return { valid: false, error: 'Internal addresses are not allowed for security reasons.' };
+        if (/^\d+\.\d+\.\d+\.\d+$/.test(domain)) return { valid: false, error: 'IP addresses are not supported. Please enter a domain name.' };
+        if (!/^[a-z0-9.-]+$/.test(domain)) return { valid: false, error: 'Please enter a valid domain (e.g., example.com).' };
+        return { valid: true, domain: domain };
+      }
+
+      // --- Tabs ---
+      const tabs = document.querySelectorAll('.net-tab');
+      const panels = document.querySelectorAll('.net-panel');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          const target = this.dataset.tab;
+          tabs.forEach(t => {
+            t.classList.remove('bg-bae-primary', 'text-white');
+            t.classList.add('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+            t.setAttribute('aria-selected', 'false');
+          });
+          this.classList.remove('bg-bae-bg', 'text-bae-ink', 'border', 'border-bae-border');
+          this.classList.add('bg-bae-primary', 'text-white');
+          this.setAttribute('aria-selected', 'true');
+
+          panels.forEach(p => {
+            if (p.dataset.panel === target) p.classList.remove('hidden');
+            else p.classList.add('hidden');
+          });
+        });
+      });
+
+      // --- DNS Lookup ---
+      async function lookupDNS(domain) {
+        const type = document.getElementById('dns-type').value;
+        const container = document.getElementById('dns-results');
+        container.innerHTML = '<p class="text-bae-muted text-xs italic">Querying DNS...</p>';
+
+        try {
+          const res = await fetch('https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=' + type, {
+            method: 'GET',
+            headers: { 'Accept': 'application/dns-json' }
+          });
+          if (!res.ok) throw new Error('DNS query failed: ' + res.status);
+          const data = await res.json();
+
+          if (!data.Answer || data.Answer.length === 0) {
+            container.innerHTML = '<p class="text-bae-muted text-xs">No ' + type + ' records found for ' + escapeHtml(domain) + '.</p>';
+            return;
+          }
+
+          const table = document.createElement('table');
+          table.className = 'w-full text-xs';
+          const thead = document.createElement('thead');
+          thead.innerHTML = '<tr class="border-b border-bae-border"><th class="text-left py-1 pr-2 text-bae-muted font-medium">Type</th><th class="text-left py-1 pr-2 text-bae-muted font-medium">TTL</th><th class="text-left py-1 text-bae-muted font-medium">Value</th></tr>';
+          table.appendChild(thead);
+
+          const tbody = document.createElement('tbody');
+          data.Answer.forEach(record => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-bae-border/50';
+            tr.innerHTML = '<td class="py-1.5 pr-2 font-mono text-bae-ink">' + escapeHtml(type) + '</td><td class="py-1.5 pr-2 font-mono text-bae-muted">' + escapeHtml(String(record.TTL)) + '</td><td class="py-1.5 font-mono text-bae-ink break-all">' + escapeHtml(record.data) + '</td>';
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          container.innerHTML = '';
+          container.appendChild(table);
+          showStatus('✓ DNS query successful', false);
+        } catch (e) {
+          container.innerHTML = '<p class="text-red-600 text-xs">DNS lookup failed: ' + escapeHtml(e.message) + '</p>';
+          showStatus('✗ DNS lookup failed', true);
+        }
+      }
+
+      // --- Site Check ---
+      async function checkSite(domain) {
+        const container = document.getElementById('site-results');
+        container.innerHTML = '<p class="text-bae-muted text-xs italic">Checking site...</p>';
+
+        const results = [];
+        const httpsUrl = 'https://' + domain;
+
+        // Try HTTPS with CORS
+        const start = performance.now();
+        try {
+          const res = await fetch(httpsUrl, { method: 'HEAD', mode: 'cors', redirect: 'follow', cache: 'no-store' });
+          const elapsed = Math.round(performance.now() - start);
+          results.push({ label: 'HTTPS Status', value: res.status + ' ' + res.statusText });
+          results.push({ label: 'Response Time', value: elapsed + ' ms' });
+
+          const server = res.headers.get('server');
+          if (server) results.push({ label: 'Server', value: server });
+
+          const ct = res.headers.get('content-type');
+          if (ct) results.push({ label: 'Content-Type', value: ct });
+
+          const hsts = res.headers.get('strict-transport-security');
+          results.push({ label: 'HSTS', value: hsts ? 'Enabled' : 'Not present' });
+
+          const cf = res.headers.get('cf-ray');
+          if (cf) results.push({ label: 'CDN', value: 'Cloudflare' });
+
+          showStatus('✓ Site is reachable', false);
+        } catch (e) {
+          // Try no-cors to see if site is reachable at all
+          try {
+            await fetch(httpsUrl, { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
+            results.push({ label: 'HTTPS Reachable', value: 'Yes (CORS blocked detailed headers)' });
+            showStatus('✓ Site is reachable (CORS limited)', false);
+          } catch (e2) {
+            results.push({ label: 'HTTPS Reachable', value: 'No: ' + e.message });
+            showStatus('✗ Site appears unreachable', true);
+          }
+        }
+
+        // Render
+        container.innerHTML = '';
+        const dl = document.createElement('dl');
+        dl.className = 'grid grid-cols-[8rem_1fr] gap-x-3 gap-y-2 text-xs';
+        results.forEach(r => {
+          const dt = document.createElement('dt');
+          dt.className = 'text-bae-muted font-medium';
+          dt.textContent = r.label;
+          const dd = document.createElement('dd');
+          dd.className = 'text-bae-ink font-mono break-all';
+          dd.textContent = r.value;
+          dl.appendChild(dt);
+          dl.appendChild(dd);
+        });
+        container.appendChild(dl);
+      }
+
+      // --- WHOIS ---
+      async function lookupWhois(domain) {
+        const container = document.getElementById('whois-results');
+        container.innerHTML = '<p class="text-bae-muted text-xs italic">Querying RDAP...</p>';
+
+        try {
+          // Direct RDAP query via rdap.org (handles TLD routing)
+          const res = await fetch('https://rdap.org/domain/' + encodeURIComponent(domain), {
+            method: 'GET',
+            headers: { 'Accept': 'application/rdap+json' }
+          });
+          if (!res.ok) throw new Error('RDAP query failed: ' + res.status);
+          const data = await res.json();
+
+          const results = [];
+
+          if (data.ldhName) results.push({ label: 'Domain', value: data.ldhName });
+          if (data.status) results.push({ label: 'Status', value: Array.isArray(data.status) ? data.status.join(', ') : data.status });
+
+          if (data.events) {
+            data.events.forEach(ev => {
+              if (ev.eventAction === 'registration') results.push({ label: 'Created', value: ev.eventDate });
+              if (ev.eventAction === 'expiration') results.push({ label: 'Expires', value: ev.eventDate });
+              if (ev.eventAction === 'last update') results.push({ label: 'Updated', value: ev.eventDate });
+            });
+          }
+
+          if (data.nameservers) {
+            const ns = data.nameservers.map(n => n.ldhName).filter(Boolean).join(', ');
+            if (ns) results.push({ label: 'Name Servers', value: ns });
+          }
+
+          if (data.entities) {
+            data.entities.forEach(ent => {
+              if (ent.vcardArray && ent.vcardArray[1]) {
+                const fn = ent.vcardArray[1].find(v => v[0] === 'fn');
+                const org = ent.vcardArray[1].find(v => v[0] === 'org');
+                if (fn) results.push({ label: 'Registrant', value: fn[3] });
+                if (org) results.push({ label: 'Organization', value: org[3] });
+              }
+            });
+          }
+
+          container.innerHTML = '';
+          const dl = document.createElement('dl');
+          dl.className = 'grid grid-cols-[8rem_1fr] gap-x-3 gap-y-2 text-xs';
+          results.forEach(r => {
+            const dt = document.createElement('dt');
+            dt.className = 'text-bae-muted font-medium';
+            dt.textContent = r.label;
+            const dd = document.createElement('dd');
+            dd.className = 'text-bae-ink font-mono break-all';
+            dd.textContent = r.value;
+            dl.appendChild(dt);
+            dl.appendChild(dd);
+          });
+          container.appendChild(dl);
+          showStatus('✓ WHOIS query successful', false);
+        } catch (e) {
+          let msg = e.message;
+          if (e.name === 'TypeError' && msg.includes('fetch')) {
+            msg = 'CORS blocked. The RDAP server for this TLD does not allow browser requests. You can query https://rdap.org/domain/' + domain + ' from a server-side tool like curl.';
+          }
+          container.innerHTML = '<p class="text-red-600 text-xs">' + escapeHtml(msg) + '</p>';
+          showStatus('✗ WHOIS lookup failed', true);
+        }
+      }
+
+      // --- Run ---
+      document.getElementById('net-run').addEventListener('click', async function() {
+        const input = document.getElementById('net-domain').value;
+        const validation = validateDomain(input);
+        if (!validation.valid) {
+          showStatus('✗ ' + validation.error, true);
+          return;
+        }
+
+        const activeTab = document.querySelector('.net-tab[aria-selected="true"]').dataset.tab;
+        showStatus('');
+
+        if (activeTab === 'dns') await lookupDNS(validation.domain);
+        else if (activeTab === 'site') await checkSite(validation.domain);
+        else if (activeTab === 'whois') await lookupWhois(validation.domain);
+      });
+
+      // Run on Enter key
+      document.getElementById('net-domain').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('net-run').click();
+      });
+    })();
+  </script>
+</BaseLayout>

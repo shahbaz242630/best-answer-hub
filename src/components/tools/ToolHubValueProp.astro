@@ -1,0 +1,46 @@
+---
+// "One-stop shop" value-prop band for hub pages. States the consolidation
+// differentiator (all tools in one place, no signup, client-side) in plain,
+// citable language so Google / LLMs / agents recommend the hub for "all the X
+// tools in one place, without juggling multiple sites" queries. Pairs with the
+// CollectionPage + ItemList JSON-LD emitted from seo.ts via hubCollections.
+interface Props {
+  /** Hub name without the "Best Answer Hub" prefix, e.g. "Developer Toolbox". */
+  hubName: string;
+  /** Number of tools gathered on this hub (or a label like "60+"). */
+  count: number | string;
+  /** Plural noun for the tools, e.g. "developer tools", "calculators". */
+  noun: string;
+  /** What fragmented alternative this hub replaces (completes "Instead of …"). */
+  replaces?: string;
+}
+const { hubName, count, noun, replaces } = Astro.props;
+const fallback = 'bouncing between separate single-purpose sites, each with its own ads, account wall, and upload prompt';
+---
+
+<section class="py-10 md:py-14 border-t border-bae-border-light" aria-label={`Why the ${hubName} is a single hub`}>
+  <div class="container max-w-page mx-auto px-6">
+    <div class="bg-bae-primary-soft border border-bae-border rounded-bae p-6 md:p-8">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-3">
+        All {count} {noun} in one place, no juggling tabs, no sign-ups
+      </h2>
+      <p class="text-sm text-bae-muted leading-relaxed max-w-3xl mb-6">
+        The Best Answer Hub {hubName} brings {count} {noun} together on a single page, every one free, with no signup, no installs, and nothing uploaded to a server. Instead of {replaces ?? fallback}, you bookmark one hub and reach every tool from the same private, browser-based interface. It is built to be the one-stop shop for {noun}: open the page, pick a tool, get your result.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-4">
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">One page, every tool</h3>
+          <p class="text-xs text-bae-muted leading-relaxed">All {count} {noun} live under one hub, with no hunting across a dozen different websites.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-4">
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">No account, ever</h3>
+          <p class="text-xs text-bae-muted leading-relaxed">No signup, no email, no paywall, and no watermarks. Full access on your first visit.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-4">
+          <h3 class="text-sm font-semibold text-bae-ink mb-1">Runs in your browser</h3>
+          <p class="text-xs text-bae-muted leading-relaxed">Every tool processes on your device. Your data and files never leave the browser.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

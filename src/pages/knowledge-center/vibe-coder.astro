@@ -1,0 +1,917 @@
+---
+/**
+ * Vibe Coder Readiness Check — KC assessment #4 (slug `vibe-coder`, paid manual $39).
+ *
+ * Structure follows VibeCheck_Build_Spec.md and the §6a/§6c locks in KnowledgeCenter_HANDOFF:
+ * pillar-rail question flow, single-card result in the locked order, sticky buy rail, live cover
+ * preview drawn with the STAMPER'S OWN numbers, ResumeState above this page's script.
+ *
+ * ONE template serves every buyer (no bucket routing) — `bucket` drives CTA copy only.
+ */
+import kcAvailability from '../../data/kc-availability.json';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../../components/tools/ToolRelatedCTA.astro';
+import ResumeState from '../../components/assessments/ResumeState.astro';
+import bankData from '../../data/vibe-bank.json';
+
+// FAIL-CLOSED BUY GATE (§6c(2)). Derived at build time from the template that actually deploys to
+// the bouncer, never hardcoded. Paddle takes the money at checkout but fulfilment resolves at
+// DOWNLOAD time, so an ungated missing template means pay-then-503. One template ⇒ a boolean.
+// The template list is snapshotted by scripts/kc-availability.mjs (paddle-server/ is private, not in CI).
+const VIBE_BUILT = (kcAvailability.templates || []).some((f) => /^vibe-coder-template\.pdf$/.test(f));
+
+const PADDLE_ENV = import.meta.env.PUBLIC_PADDLE_ENV || 'sandbox';
+const PADDLE_CLIENT_TOKEN = import.meta.env.PUBLIC_PADDLE_CLIENT_TOKEN || '';
+const PADDLE_VIBE_PRICE = import.meta.env.PUBLIC_PADDLE_VIBE_PRICE || '';
+
+// Cover-preview geometry. Extracted from the BUILT template's widget rects (A4 points, y down from
+// the top, matching the SVG viewBox), plus the radar geometry from report/specs/vibe-coder.json.
+// These are the same numbers stamp-core draws with, so preview and delivered PDF agree by
+// construction. ⚠ Do NOT flip y: drawRadar normalizes to a top-left origin with y running down,
+// which is already this viewBox's convention. A sign error here is the mirrored-radar bug.
+// ⚠ RE-EXTRACT AFTER EVERY COVER REBUILD:
+//     python paddle-server/tests/extract_cover_coords.py pdf-src/vibe-coder/<name>-template.pdf
+//   The 2026-08-17 cover fix (composition centred to kill 243pt of dead space) moved every rect by
+//   about 100pt. Stale numbers here do not fail any test: the preview simply shows the buyer's score
+//   in the wrong place, and nobody notices until a buyer compares it with the real PDF.
+//   `size` mirrors the DRAW SIZE in kc-web/report/handlers/vibe-coder.js so preview and stamp agree.
+const COVER = {
+  src: '/kc-covers/cover-vibe-coder.png',
+  W: 595.28,
+  H: 841.89,
+  radar: { x: 46.5, y: 351.19, w: 339.0, h: 240.12 },
+  score: { x: 425.62, y: 421.03, w: 122.62, h: 65.1, size: 55.5 },
+  band: { x: 425.62, y: 518.72, w: 122.62, h: 12.15, size: 12 },
+  vb: 480, vbh: 340, cx: 240, cy: 170, r: 110,
+  teal: '#006369', ink: '#231f17', fillOpacity: 0.14, strokeWidth: 2, dotR: 3.2,
+};
+
+const steps = [
+  { title: 'Answer 45 questions about how you actually build', description: 'Four quick setup questions first, then nine short sections. Real situations, not trivia, with an "I have not done this" option on every one so you never have to guess. Back navigation keeps your answers. About 12 to 15 minutes, no account and no email.' },
+  { title: 'Get your readiness score and nine dimension scores', description: 'A 0 to 100 score, your band, and a nine-point radar covering everything from product definition to compliance. Your two weakest dimensions are called out, with three fixes you can finish today. All of it free, on screen, computed in your browser.' },
+  { title: 'Optionally get the manual, the checklist and the agent instructions', description: 'A fillable PDF manual with a 124-item production readiness checklist, plus one drop-in file of 26 numbered coding agent instructions for your repository. Your score, band and all nine dimension scores are printed onto its cover and results page, and your reading path is ordered by your weakest areas.' },
+];
+
+/**
+ * FAQs — 15 exactly, first is the mandated brand question. AUTHORED RESEARCH-FIRST (house rule 1):
+ * every QUESTION is a phrasing verified against live search-demand or a real forum/HN title, and
+ * every FIGURE is verified to a primary source. Demand evidence killed several questions that read
+ * well but return an empty autocomplete array ("did i leak my api key", "is my app production
+ * ready"), and the research also produced a do-not-cite list of plausible but unverifiable stats
+ * (the "91.5% of vibe-coded apps" figure among them) which are deliberately absent here.
+ */
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Vibe Coder Readiness Check?',
+    a: 'The Best Answer Hub Vibe Coder Readiness Check is a free 45-question assessment for people building apps with AI coding agents. It scores nine dimensions, from product definition through to compliance, and shows a radar of your weakest areas. It takes about 15 minutes, needs no signup, and answers never leave your browser.',
+  },
+  {
+    q: 'Is vibe coding safe?',
+    a: 'Vibe coding is safe for prototypes and risky for anything holding real user data. A December 2025 benchmark ran 200 real feature requests through a coding agent: 61 percent of its solutions worked, but only 10.5 percent were secure. Working and safe are different bars, and the gap between them is where apps get hurt.',
+  },
+  {
+    q: 'Can a vibe-coded app go to production without a security review?',
+    a: 'It can, but access control is usually where it breaks. Broken Access Control is number one in the OWASP Top 10:2025, and it is the exact failure mode in AI-built apps: pages that check nothing, and records reachable by changing an ID in the address bar. Run the cross-user test before launch.',
+  },
+  {
+    q: 'What should I check before launching a web app?',
+    a: 'Check five things first. Spend caps armed at every provider. Secrets out of your code and out of your repository. A cross-user test proving one account cannot read another account’s records. A backup you have actually restored once. A privacy policy if you hold any personal data, including an email list.',
+  },
+  {
+    q: 'Can Claude Code or Cursor delete my files or database?',
+    a: 'Yes, and it has happened repeatedly. Documented 2025 and 2026 cases include a deleted production database, a wiped D drive, and 100GB removed from a C drive after a file path was mis-parsed. Cursor staff put it plainly: auto-run executes terminal commands without confirmation, and guardrails are best-effort.',
+  },
+  {
+    q: 'Is it safe to turn on skip-permissions or YOLO mode?',
+    a: 'Those modes remove the confirmation step before an agent runs a command, which is the step that stops a destructive one. Every documented agent-destruction case involved an agent running without approval. If you use them, run against a throwaway copy or a sandbox, never against production and never as your only backup.',
+  },
+  {
+    q: 'How do I stop my agent asking for permission every time?',
+    a: 'Approve categories rather than switching approval off. Allow read-only and test commands, keep destructive ones such as delete, drop, force push and deploy on ask-every-time, and enforce the rest with automatic checks. A hook that blocks a commit is stronger than an instruction an agent can talk itself out of.',
+  },
+  {
+    q: 'What is prompt injection and how do I prevent it?',
+    a: 'Prompt injection is when text your agent reads becomes an instruction it follows. A web page, an issue, a README or a cloned repository’s config file can all carry one. Treat anything the agent did not write as untrusted, inspect unknown repositories before opening them, and never let external content trigger an unreviewed action.',
+  },
+  {
+    q: 'How do I hide API keys in a frontend app?',
+    a: 'You cannot. Anything shipped to a browser is readable, so a key in frontend code is public no matter how it is stored. Keys belong in server-side environment variables or your host’s encrypted settings, with the call made from a server route. If a key has ever been in frontend code, rotate it.',
+  },
+  {
+    q: 'Should I commit my .env file?',
+    a: 'Never. Add .env to .gitignore before the first commit and keep a .env.example holding placeholder names only. GitGuardian recorded 28.65 million hardcoded secrets added to public GitHub during 2025. Note that GitHub secret scanning is free on public repositories, so a private repo does not get that safety net.',
+  },
+  {
+    q: 'What does "RLS disabled in public" mean in Supabase?',
+    a: 'It means a table in your public schema has no Row Level Security, so anyone holding your public key can read or write it. Supabase enables RLS by default for tables created in the Table Editor, but not for tables created through the SQL editor. The free Security Advisor in your dashboard lists them.',
+  },
+  {
+    q: 'How do I know if my app is production ready?',
+    a: 'Production ready is evidence, not confidence. You can say where every secret lives, you have watched one restore from backup succeed, a second account cannot reach the first account’s data, spend caps are armed, and errors reach you rather than the customer. If none of that can be demonstrated, it is not ready.',
+  },
+  {
+    q: 'Why did my cloud bill suddenly jump?',
+    a: 'Usually an unrestricted key, a misconfigured service, or real traffic meeting a per-request price. Documented cases include 4,676 dollars in six weeks on Cloud Run with no traffic. Vercel spend management is opt-in, and its own documentation says setting a spend amount does not automatically stop usage.',
+  },
+  {
+    q: 'Do I need a privacy policy for my app?',
+    a: 'If you collect personal data, including just an email address, you need one. It should say what is collected, why, how long it is kept, who it is shared with, and how someone requests deletion. A newsletter form counts. So does an analytics tool that stores an identifier against a visitor.',
+  },
+  {
+    q: 'How do I validate my app idea before building?',
+    a: 'Write one sentence naming who it is for and what breaks without it, then test that sentence before writing code. Set a pass mark in advance, run a landing page test or talk to potential buyers, and honour the result. The pass mark exists so a weak signal ends the project cheaply.',
+  },
+];
+
+const today = '2026-08-17T00:00:00+00:00';
+const seo = {
+  title: 'Vibe Coding Readiness Check — Free 15-Minute Score (2026)',
+  description: 'Free 45-question check for people building with AI coding agents. Score nine dimensions, see your weakest areas, get three fixes today. No signup.',
+  url: '/knowledge-center/vibe-coder/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Knowledge Center', url: '/knowledge-center/' },
+    { name: 'Vibe Coder Readiness Check', url: '/knowledge-center/vibe-coder/' },
+  ],
+  faq: faqs.map((f) => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <div id="as-hero">
+  <ToolHero
+    badge="Knowledge Center · Free Assessment"
+    title="Vibe Coder"
+    accentText="Readiness Check"
+    description="You built it with an AI agent. This tells you, honestly, what is still missing before real people and real money touch it. Nine dimensions, 45 questions, about 15 minutes. Your full result is free."
+    backLink="/knowledge-center/"
+    backLabel="Knowledge Center"
+  />
+  </div>
+
+  <section class="py-6 md:py-10" aria-label="Vibe Coder Readiness Check">
+    <div class="container mx-auto px-6 max-w-page">
+
+      <!-- INTRO -->
+      <div id="as-intro" class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-8 md:p-10 max-w-content mx-auto text-center">
+        <h2 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink">Find out what your build is missing</h2>
+        <p class="text-sm text-bae-muted mt-3 max-w-xl mx-auto">Most guides tell you how to build. Almost nothing tells you what to check before you ship. This scores the nine things that decide whether an AI-built app survives contact with real users.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-7 text-left">
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4">
+            <div class="text-xs font-bold uppercase tracking-wider text-bae-primary">Nine dimensions</div>
+            <div class="text-sm text-bae-muted mt-1">Each scored 0 to 100</div>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4">
+            <div class="text-xs font-bold uppercase tracking-wider text-bae-primary">49 questions</div>
+            <div class="text-sm text-bae-muted mt-1">A fresh draw every time</div>
+          </div>
+          <div class="bg-bae-bg border border-bae-border rounded-bae-sm p-4">
+            <div class="text-xs font-bold uppercase tracking-wider text-bae-primary">12 to 15 minutes</div>
+            <div class="text-sm text-bae-muted mt-1">Nothing to install</div>
+          </div>
+        </div>
+        <button id="as-start" type="button" class="mt-8 bg-bae-primary text-white font-semibold text-sm px-8 py-3.5 rounded-bae-sm hover:opacity-90 transition-all hover:-translate-y-0.5">Start the check &rarr;</button>
+        <p class="text-xs text-bae-muted mt-4">45 scored questions plus 4 setup questions &middot; roughly 12 to 15 minutes &middot; no signup, nothing saved &middot; your full result is free</p>
+      </div>
+
+      <!-- QUIZ -->
+      <div id="as-quiz" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-5 items-stretch">
+          <aside class="bg-bae-ink rounded-bae p-5 md:p-6 text-white flex flex-col h-full">
+            <div class="text-xs font-bold uppercase tracking-wider text-white/60">Vibe Coder Readiness Check</div>
+            <div class="text-sm font-semibold mt-1 mb-4">9 dimensions &middot; 49 items</div>
+            <div id="as-rail"></div>
+            <div class="text-xs text-white/60 mt-auto pt-5">
+              Elapsed <b class="text-white tabular-nums" id="as-timer">00:00</b> &middot; <b class="text-white" id="as-pct">0%</b> complete
+            </div>
+          </aside>
+          <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-8">
+            <div class="text-xs font-bold uppercase tracking-wider text-bae-primary mb-1" id="as-seclabel"></div>
+            <div class="text-xs font-semibold text-bae-muted mb-3">Question <span id="as-num">1</span> of <span id="as-total">49</span></div>
+            <h2 class="font-serif text-xl md:text-2xl font-semibold text-bae-ink leading-snug mb-1.5" id="as-q"></h2>
+            <p class="text-sm text-bae-muted mb-6" id="as-help"></p>
+            <div class="flex flex-col gap-2.5" id="as-opts" role="group" aria-label="Answer options"></div>
+            <!-- Back stays left; the hint and Continue sit together on the RIGHT. Continue must not
+                 be a middle child of the justify-between row, or it floats into the centre away
+                 from the "Select all that apply" hint it belongs with. -->
+            <div class="flex items-center justify-between gap-4 mt-6">
+              <button id="as-back" type="button" class="text-sm font-semibold text-bae-muted hover:text-bae-ink px-3 py-2 rounded-bae-sm hover:bg-bae-border-light transition-colors disabled:opacity-30">&larr; Back</button>
+              <div class="flex items-center gap-3">
+                <span class="text-xs text-bae-muted" id="as-kbd">Press 1 to 5</span>
+                <button id="as-continue" type="button" class="hidden bg-bae-primary text-white font-semibold text-sm px-6 py-2.5 rounded-bae-sm hover:opacity-90 transition-all">Continue &rarr;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALCULATING -->
+      <div id="as-calc" class="hidden bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-10 md:p-14 max-w-content mx-auto text-center">
+        <div class="w-8 h-8 mx-auto mb-5 rounded-full border-[3px] border-bae-border border-t-bae-primary animate-spin"></div>
+        <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink">Reading your build practice</h2>
+        <p id="as-calcmsg" class="text-sm text-bae-muted min-h-[1.5rem] mt-3 transition-opacity duration-300" aria-live="polite"></p>
+        <div class="h-1.5 w-full max-w-sm mx-auto mt-6 rounded-full bg-bae-border overflow-hidden">
+          <i id="as-calcbar" class="block h-full rounded-full bg-bae-primary" style="width:0%;transition:width 1s linear"></i>
+        </div>
+        <p class="text-xs text-bae-muted mt-6">All of this happens in your browser. Nothing is uploaded.</p>
+      </div>
+
+      <!-- RESULT -->
+      <div id="as-result" class="hidden">
+        <div id="as-resulthead" class="text-center mb-6">
+          <span class="inline-block text-xs font-bold uppercase tracking-wider text-bae-primary">Your result</span>
+          <h2 class="font-serif text-2xl md:text-3xl font-bold text-bae-ink mt-1">Where your build actually stands</h2>
+          <p class="text-sm text-bae-muted mt-1.5" id="res-stamp"></p>
+        </div>
+
+        <!-- headline card, full width above the split -->
+        <div class="bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-8 text-center mb-6">
+          <span class="inline-block text-xs font-bold uppercase tracking-wider text-bae-primary" id="res-bandkicker">Your band</span>
+          <h3 class="font-serif text-3xl md:text-4xl font-bold text-bae-primary mt-1 mb-2" id="res-band">&mdash;</h3>
+          <p class="text-sm text-bae-muted max-w-2xl mx-auto" id="res-blurb"></p>
+          <p class="text-sm font-semibold text-bae-ink mt-3 max-w-2xl mx-auto" id="res-framing"></p>
+          <p class="text-xs font-semibold text-bae-primary mt-2 max-w-2xl mx-auto" id="res-risk" style="display:none"></p>
+        </div>
+
+        <div class="grid lg:grid-cols-[minmax(0,1fr)_330px] gap-6 items-start">
+          <!-- detail -->
+          <div class="order-2 lg:order-1 bg-bae-card border border-bae-border rounded-bae shadow-bae-md p-6 md:p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+              <div class="text-center">
+                <svg id="res-radar" viewBox="-240 -170 480 340" width="100%" style="max-width:420px" aria-label="Your nine-dimension readiness radar" role="img"></svg>
+                <div class="mt-2">
+                  <div class="font-serif text-4xl font-bold text-bae-ink tabular-nums" id="res-score">0</div>
+                  <div class="text-xs text-bae-muted">out of 100 &middot; snapped to the nearest 5</div>
+                </div>
+              </div>
+              <div id="res-bars" class="flex flex-col gap-2"></div>
+            </div>
+
+            <div class="mt-8">
+              <h4 class="font-serif text-lg font-bold text-bae-ink mb-3">Your build stage</h4>
+              <div id="res-journey" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5"></div>
+              <p class="text-xs text-bae-muted mt-2" id="res-journeynote"></p>
+            </div>
+
+            <div class="mt-8">
+              <h4 class="font-serif text-lg font-bold text-bae-ink mb-3">Your first safety session: 3 quick wins</h4>
+              <div id="res-wins" class="grid grid-cols-1 gap-3"></div>
+            </div>
+
+            <div class="mt-8 text-center">
+              <button id="as-retake" type="button" class="text-xs font-semibold text-bae-muted hover:text-bae-ink underline underline-offset-4">Retake the check (fresh questions)</button>
+            </div>
+          </div>
+
+          <!-- sticky buy rail. MUST stay shorter than the viewport or it cannot pin (§6c(3)). -->
+          <aside class="order-1 lg:order-2 lg:sticky lg:top-6">
+            <div class="bg-bae-bg border border-bae-border rounded-bae p-5">
+              <div id="res-cover" class="relative rounded-bae-sm overflow-hidden shadow-xl ring-1 ring-black/10 mx-auto" style="max-width:150px">
+                <img id="res-coverimg" alt="" decoding="async" class="block w-full h-auto select-none" draggable="false" />
+                <svg id="res-coversvg" class="absolute inset-0 w-full h-full" viewBox="0 0 595.28 841.89" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+              </div>
+              <p class="text-[11px] text-bae-muted text-center mt-2">Your personalized cover &middot; 59-page fillable PDF</p>
+
+              <div class="text-xs font-bold uppercase tracking-wider text-bae-muted mt-4">Manual · Checklist · Agent instructions</div>
+              <h4 class="font-serif text-lg font-bold text-bae-ink mt-1 mb-2">The Vibe Coding Manual, 124-item production readiness checklist, <span class="text-bae-primary italic">coding agent instructions</span></h4>
+              <p class="text-sm text-bae-muted" id="res-ctahead"></p>
+              <ul class="text-xs text-bae-muted mt-3 flex flex-col gap-1.5" id="res-ctalist"></ul>
+              <button id="res-buy" type="button" class="mt-4 block w-full text-center bg-bae-primary text-white font-extrabold text-sm px-6 py-3.5 rounded-bae-sm opacity-90 cursor-default select-none transition hover:opacity-100">Coming soon &middot; $39 one-time</button>
+              <p class="text-[11px] text-bae-muted text-center mt-2" id="res-buynote">One-time payment. No subscription. Instant download.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Scenario section (§4a standard): exactly 4 cards, between the FAQ and the related CTA.
+       The four segments come from the research: hosted-builder makers and agent-repo builders are
+       the two platform halves the router asks about, and pre-launch versus already-live is the
+       split that decides whether a finding is a task or an incident. -->
+  <section class="py-10 md:py-14">
+    <div class="container mx-auto px-6 max-w-page">
+      <h2 class="font-serif text-xl md:text-2xl font-bold text-bae-ink mb-5">What people check with it</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">Hosted-builder makers</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1">Built on Lovable, Bolt, v0 or Replit</h3>
+          <p class="text-xs font-medium text-bae-primary mt-1">No repository to scan</p>
+          <p class="text-sm text-bae-muted mt-1">Scanners need a repo or a live URL, so a builder mid-project has nothing to point one at. The check scores the practice instead, and skips the wins that assume you own the repo.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">Agent-repo builders</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1">Running Claude Code, Cursor or Codex</h3>
+          <p class="text-xs font-medium text-bae-primary mt-1">Agent control is its own dimension</p>
+          <p class="text-sm text-bae-muted mt-1">Checkpoints, approval settings, untrusted repositories and what the agent may run without asking. Documented cases include deleted databases and wiped drives.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">Pre-launch founders</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1">About to put it in front of real users</h3>
+          <p class="text-xs font-medium text-bae-primary mt-1">Nine dimensions, scored 0 to 100</p>
+          <p class="text-sm text-bae-muted mt-1">A demo proves the idea works. It does not prove the product is safe to run. This is the gap between the two, written as things you can check today.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-bold uppercase tracking-wider text-bae-primary">Apps already live</span>
+          <h3 class="text-base font-bold text-bae-ink mt-1">Shipped, with users and maybe payments</h3>
+          <p class="text-xs font-medium text-bae-primary mt-1">Weakest areas first</p>
+          <p class="text-sm text-bae-muted mt-1">If something is already wrong, order matters. Your two weakest dimensions come first, and the cross-user test is the one to run before you read anything else.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+
+  <ResumeState />
+  <script is:inline src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script is:inline define:vars={{ PADDLE_ENV, PADDLE_CLIENT_TOKEN, PADDLE_VIBE_PRICE, VIBE_BUILT, BANK: bankData, COVER }}>
+    window.__BAE_PADDLE = { env: PADDLE_ENV, token: PADDLE_CLIENT_TOKEN, price: PADDLE_VIBE_PRICE };
+    window.__BAE_VIBE_BUILT = VIBE_BUILT;
+    window.__BAE_VIBE_BANK = BANK;
+    window.__BAE_VIBE_COVER = COVER;
+  </script>
+  <script is:inline>
+(function(){
+  'use strict';
+  var BANK = window.__BAE_VIBE_BANK || { bank: [], router: [] };
+  var COVER = window.__BAE_VIBE_COVER;
+
+  /* ───────────────────────── CONFIG (no magic numbers outside this block) ───────────────────────── */
+  var CONFIG = {
+    storageKey: 'bae_vibe_v1',
+    assessment: 'vibe-coder',
+    scoring: { weightMax: 15, snapStep: 5, dimBands: { low: 45, mid: 70 } },
+    serve: { scenario: 2, practice: 2, knowledge: 1 },
+    idk: { t: 'I don’t know / have not done this', w: 0 },
+    router: BANK.router,
+    bank: BANK.bank,
+
+    /* Canonical order 1..9 — MUST match the PDF radar axis order (stamp contract §4). Never reorder.
+       Wins 1-5 are the manual's own First Safety Session (p04), quoted in its voice; the other four
+       are authored from their phase pages. needsRepo wins are swapped out for hosted-builder users. */
+    dims: [
+      { id:'product-ux', name:'Product Definition & UX', short:'PRODUCT & UX', phases:[2,10],
+        win:{ title:'Write the one-sentence problem statement', body:'Before another feature, write the single sentence that says who this is for and what breaks without it, then check it against the words real customers use when they complain.', pass:'The sentence exists in writing, and every feature in your build maps back to it.', needsRepo:false } },
+      { id:'spec-threats', name:'Spec & Threat-Modeling', short:'SPEC & THREATS', phases:[2,5],
+        win:{ title:'List what an attacker would want', body:'Write down the three things in your app worth stealing, and for each one name what stands between an attacker and it right now. Nothing is a valid answer, and a useful one.', pass:'A written list of three targets, each with its current defense named honestly.', needsRepo:false } },
+      { id:'foundation', name:'Foundation & Machine Hygiene', short:'FOUNDATION', phases:[3],
+        win:{ title:'Protect main, and scan every commit for secrets', body:'In your repository settings, protect the main branch: require a pull request and block force pushes. Then have your agent install gitleaks as a pre-commit hook so any key-shaped string is blocked before it is saved.', pass:'A direct push to main is rejected, and an obviously fake canary secret is blocked at commit.', needsRepo:true } },
+      { id:'agent', name:'Agent Control & Security', short:'AGENT', phases:[4],
+        win:{ title:'Adopt the checkpoint ritual', body:'Before every agent run, save a checkpoint commit named "checkpoint: before <task>". Then practice one restore now, on a throwaway copy, so the first real rollback is not also the first rehearsal.', pass:'Your history shows a checkpoint before the latest agent session, and you have rolled back to one at least once.', needsRepo:true } },
+      { id:'data-access', name:'Data & Access Security', short:'DATA & ACCESS', phases:[6,7],
+        win:{ title:'Run the cross-user test', body:'Create two test accounts. Signed in as A, open one of A’s records and find its ID in the web address. Swap it for an ID belonging to B and load the page. You are asking whether a customer can read a stranger’s data by changing a number.', pass:'Denial: an error page or nothing at all. If B’s data appears, stop everything else.', needsRepo:false } },
+      { id:'testing', name:'Testing, Quality & Verification', short:'TESTING', phases:[10,11],
+        win:{ title:'Make one test prove one real rule', body:'Pick the rule that would hurt most if it broke, such as who may see a record, and write a single test that fails when the rule is removed. Delete the rule, watch it fail, put it back.', pass:'You have seen the test go red for the right reason, not just green.', needsRepo:false } },
+      { id:'app-api', name:'Application & API Security', short:'APP & API', phases:[8],
+        win:{ title:'Search your code for the secrets every model reuses', body:'Models fall back on the same predictable placeholder secrets. Search your whole project for supersecretkey, password123, changeme, and secret.', pass:'Zero hits used as a real credential. Any hit gets replaced with a generated secret in encrypted settings, and the old one treated as exposed.', needsRepo:false } },
+      { id:'money-ops', name:'Payments, Cost & Operations', short:'MONEY & OPS', phases:[9,12,13],
+        win:{ title:'Arm every spend cap', body:'Set a monthly spend cap and per-key limit at your LLM provider. On your host, open spend management, set an amount and enable the pause switch, because alerts alone are usually the default. Add billing alerts at 50, 75, 90 and 100 percent.', pass:'Each provider dashboard shows a cap or an armed pause, and you can name which kind each one is.', needsRepo:false } },
+      { id:'compliance', name:'Compliance & AI Governance', short:'COMPLIANCE', phases:[14],
+        win:{ title:'Write down what personal data you hold', body:'List every piece of personal data your app stores, even just an email address, and for each one write why you hold it and how long you keep it. An email list counts.', pass:'A written list exists, and nothing on it is there without a reason you could say out loud.', needsRepo:false } }
+    ],
+
+    /* Bucket selection is by max (first bucket where overall <= max); min drives display, marker
+       position and the points-to-next gap. Canonical bounds, never 41/66/86-style values. */
+    buckets: [
+      { id:'early-build', label:'Early Build', min:0, max:40,
+        blurb:'The build is moving faster than the guard rails. Nothing here is a verdict on the idea, only on what is currently protecting it.',
+        cta:{ headline:'At {score}, the fastest wins are the ones you have not started yet.', body:'Your two weakest areas are {weak1} and {weak2}. The manual opens on exactly those and works forward from there.' } },
+      { id:'hardening', label:'Hardening', min:45, max:65,
+        blurb:'Real instincts in some areas, real gaps in others. This is the most common place to be, and the most fixable.',
+        cta:{ headline:'At {score}, you are closer than most and missing specific things.', body:'Your two weakest areas are {weak1} and {weak2}. The manual routes you to those phases first instead of making you read all 59 pages in order.' } },
+      { id:'launch-ready', label:'Launch Ready', min:70, max:85,
+        blurb:'Most of the structure is there. What is left is the unglamorous verification that turns "should be fine" into "checked".',
+        cta:{ headline:'At {score}, the gap is proof, not effort.', body:'Your two weakest areas are {weak1} and {weak2}. The manual’s launch gate turns each one into a check you can actually pass or fail.' } },
+      { id:'operationally-mature', label:'Operationally Mature', min:90, max:100,
+        blurb:'Built to verify rather than to hope. At this level the manual is a reference and an audit trail, not a course.',
+        cta:{ headline:'At {score}, this is a reference, not a lesson.', body:'Your two weakest areas are {weak1} and {weak2}. Use the launch gate and the production checklist as the written evidence that they were checked.' } }
+    ],
+
+    calc: { stepMs: 1100, messages: [
+      'Reading your setup answers',
+      'Scoring product definition and UX',
+      'Scoring spec and threat modeling',
+      'Scoring foundation and machine hygiene',
+      'Scoring agent control',
+      'Scoring data and access security',
+      'Scoring testing and verification',
+      'Scoring application and API security',
+      'Scoring payments, cost and operations',
+      'Scoring compliance and governance',
+      'Ranking your weakest dimensions',
+      'Building your reading path'
+    ] }
+  };
+
+  /* ───────────────────────── ENGINE (pure, no DOM) ───────────────────────── */
+  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+  function pickN(arr,n){ return shuffle(arr.slice()).slice(0,n); }
+
+  function buildServed(cfg){
+    var served=[];
+    for(var d=1; d<=cfg.dims.length; d++){
+      var pools={scenario:[],practice:[],knowledge:[]};
+      cfg.bank.forEach(function(q){ if(q.dim===d) pools[q.kind].push(q); });
+      var chosen=[].concat(pickN(pools.scenario,cfg.serve.scenario))
+                   .concat(pickN(pools.practice,cfg.serve.practice))
+                   .concat(pickN(pools.knowledge,cfg.serve.knowledge));
+      chosen.forEach(function(q){
+        var order=shuffle([0,1,2,3]);
+        served.push({ id:q.id, dim:q.dim, kind:q.kind, q:q.q,
+          opts: order.map(function(k){ return q.opts[k].t; }).concat([cfg.idk.t]),
+          weights: order.map(function(k){ return q.opts[k].w; }).concat([cfg.idk.w]) });
+      });
+    }
+    return served;
+  }
+
+  function validServed(s){
+    if(!Array.isArray(s)||!s.length) return false;
+    for(var i=0;i<s.length;i++){
+      var e=s[i];
+      if(!e||typeof e.dim!=='number'||e.dim<1||e.dim>9) return false;
+      if(!Array.isArray(e.opts)||e.opts.length!==5) return false;
+      if(!Array.isArray(e.weights)||e.weights.length!==5) return false;
+      for(var w=0;w<5;w++){ if([0,5,10,15].indexOf(e.weights[w])<0) return false; }
+    }
+    return true;
+  }
+
+  function computeResult(answers, served, cfg){
+    var nd=cfg.dims.length, raw=[], max=[], i;
+    for(i=0;i<nd;i++){ raw.push(0); max.push(0); }
+    for(i=0;i<served.length;i++){
+      var d=served[i].dim-1;
+      max[d]+=cfg.scoring.weightMax;
+      var a=answers[i];
+      if(typeof a==='number'&&a>=0&&a<5) raw[d]+=served[i].weights[a];
+    }
+    var dimScores=[], totalRaw=0, totalMax=0;
+    for(i=0;i<nd;i++){
+      dimScores.push(max[i]?Math.round(raw[i]/max[i]*100):0);
+      totalRaw+=raw[i]; totalMax+=max[i];
+    }
+    var pct=totalMax?totalRaw/totalMax*100:0;
+    var overall=Math.round(pct/cfg.scoring.snapStep)*cfg.scoring.snapStep;
+
+    var bucket=cfg.buckets[cfg.buckets.length-1];
+    for(i=0;i<cfg.buckets.length;i++){ if(overall<=cfg.buckets[i].max){ bucket=cfg.buckets[i]; break; } }
+
+    /* weakest-first; ties break by canonical index ascending. Authoritative: raw scores cannot
+       reproduce the tie-break, so the server derives every ranked field from dimOrder. */
+    var idx=[]; for(i=0;i<nd;i++) idx.push(i);
+    idx.sort(function(a,b){ return (dimScores[a]-dimScores[b])||(a-b); });
+
+    var phases=[], seen={};
+    for(i=0;i<Math.min(3,idx.length);i++){
+      var p=cfg.dims[idx[i]].phases[0];
+      if(!seen[p]){ seen[p]=1; phases.push(p); }
+    }
+    return {
+      overall:overall, dimScores:dimScores, bucket:bucket, rank:idx,
+      readingPathPhases:phases, readingPath:readingPathSentence(phases)
+    };
+  }
+
+  /* Stamped verbatim onto PDF page 2, so it must never contain an em-dash. */
+  function readingPathSentence(phases){
+    if(!phases.length) return 'Read the phases in order, front to back.';
+    var list=phases.map(function(p){ return 'Phase '+p; });
+    var head=list.length===1 ? list[0] : list.slice(0,-1).join(', ')+', then '+list[list.length-1];
+    return 'Start with '+head+'. After those, read the remaining phases in order.';
+  }
+
+  function buildLastResult(r, router, cfg){
+    var dimOrder=r.rank.map(function(i){ return cfg.dims[i].id; });
+    return {
+      assessment: cfg.assessment,
+      bucket: r.bucket.id,
+      score: r.overall,
+      band: r.bucket.label,
+      bandBlurb: r.bucket.blurb,
+      readingPath: r.readingPath,
+      readingPathPhases: r.readingPathPhases,
+      dimScores: r.dimScores,
+      dimOrder: dimOrder,
+      weakestDim: r.rank[0]+1,
+      archetype: router.archetype||null,
+      platform: router.platform||null,
+      stage: router.stage||null,
+      modifiers: router.modifiers||[]
+    };
+  }
+
+  window.__baeVibe={ computeResult:computeResult, buildServed:buildServed, buildLastResult:buildLastResult,
+                     validServed:validServed, readingPathSentence:readingPathSentence, CONFIG:CONFIG, lastResult:null };
+
+  /* ───────────────────────── UI ─────────────────────────
+     Every node below is built with real DOM calls and textContent. No innerHTML anywhere on this
+     page: the copy is ours, but the rule is the rule, and it removes the whole question. */
+  var el=function(id){ return document.getElementById(id); };
+  var show=function(id){ var n=el(id); if(n) n.classList.remove('hidden'); };
+  var hide=function(id){ var n=el(id); if(n) n.classList.add('hidden'); };
+  function mk(tag,cls,text){ var n=document.createElement(tag); if(cls) n.className=cls; if(text!=null) n.textContent=String(text); return n; }
+  function clear(n){ while(n&&n.firstChild) n.removeChild(n.firstChild); }
+
+  var RCOUNT=CONFIG.router.length;                 // 4 setup questions, asked first
+  var st=null, timer=null, calcTimer=null;
+
+  function freshState(){
+    st={ served:buildServed(CONFIG), router:{archetype:null,platform:null,stage:null,modifiers:[],seen:{}},
+         i:0, answers:[], elapsed:0, done:false };
+    for(var k=0;k<st.served.length;k++) st.answers.push(null);
+  }
+  function total(){ return RCOUNT + (st&&st.served?st.served.length:0); }
+  function save(){ try{ sessionStorage.setItem(CONFIG.storageKey, JSON.stringify({ served:st.served, router:st.router, i:st.i, answers:st.answers, elapsed:st.elapsed, done:!!st.done })); }catch(e){} }
+  function clearSaved(){ try{ sessionStorage.removeItem(CONFIG.storageKey); }catch(e){} }
+
+  function restore(){
+    var s=window.__baeResume?window.__baeResume.read(CONFIG.storageKey):null;
+    if(!s||!validServed(s.served)) return false;
+    var sr=s.router||{};
+    st={ served:s.served,
+         router:{ archetype:sr.archetype||null, platform:sr.platform||null, stage:sr.stage||null,
+                  modifiers:Array.isArray(sr.modifiers)?sr.modifiers:[], seen:(sr.seen&&typeof sr.seen==='object')?sr.seen:{} },
+         i:typeof s.i==='number'?s.i:0, answers:[], elapsed:typeof s.elapsed==='number'?s.elapsed:0, done:s.done===true };
+    for(var k=0;k<s.served.length;k++){
+      var a=(s.answers||[])[k];
+      st.answers.push((typeof a==='number'&&a>=0&&a<=4)?a:null);
+    }
+    return true;
+  }
+
+  function routerAnswered(){
+    var n=0;
+    CONFIG.router.forEach(function(r){ if(st.router.seen[r.id]) n++; });
+    return n;
+  }
+
+  function renderRail(){
+    var rail=el('as-rail'); if(!rail) return;
+    clear(rail);
+    var rows=[{ label:'About your build', done:routerAnswered(), total:RCOUNT }];
+    CONFIG.dims.forEach(function(d,di){
+      var t=0,done=0;
+      st.served.forEach(function(q,qi){ if(q.dim===di+1){ t++; if(st.answers[qi]!=null) done++; } });
+      rows.push({ label:d.short, done:done, total:t });
+    });
+    rows.forEach(function(r){
+      var full=r.total>0&&r.done>=r.total;
+      var row=mk('div','flex items-center justify-between gap-2 py-1.5 border-b border-white/10 last:border-0');
+      row.appendChild(mk('span','text-[11px] '+(full?'text-white':'text-white/60'), (full?'✓ ':'')+r.label));
+      row.appendChild(mk('span','text-[11px] tabular-nums '+(full?'text-white':'text-white/40'), r.done+'/'+r.total));
+      rail.appendChild(row);
+    });
+  }
+
+  function renderQuiz(){
+    renderRail();
+    var i=st.i, isRouter=i<RCOUNT;
+    el('as-num').textContent=String(i+1);
+    el('as-total').textContent=String(total());
+    el('as-back').disabled=(i===0);
+    var opts=el('as-opts'); clear(opts);
+    var cont=el('as-continue'); cont.classList.add('hidden');
+
+    if(isRouter){
+      var r=CONFIG.router[i];
+      el('as-seclabel').textContent='About your build';
+      el('as-q').textContent=r.label;
+      el('as-help').textContent='Sets up your result’s framing. Never affects your scores.';
+      el('as-kbd').textContent=r.multi?'Select all that apply':'Press 1 to '+Math.min(9,r.opts.length);
+      r.opts.forEach(function(o,k){
+        var sel=r.multi ? (st.router.modifiers.indexOf(o.id)>=0) : (st.router[r.id]===o.id);
+        opts.appendChild(optionRow(k,o.t,sel,function(){
+          if(r.multi){
+            var pos=st.router.modifiers.indexOf(o.id);
+            if(pos>=0) st.router.modifiers.splice(pos,1); else st.router.modifiers.push(o.id);
+            st.router.seen[r.id]=true; save(); renderQuiz();
+          } else { st.router[r.id]=o.id; st.router.seen[r.id]=true; save(); advance(); }
+        }));
+      });
+      if(r.multi){
+        opts.appendChild(optionRow(r.opts.length,'None of these',
+          st.router.modifiers.length===0&&!!st.router.seen[r.id],
+          function(){ st.router.modifiers=[]; st.router.seen[r.id]=true; save(); renderQuiz(); }, true));
+        cont.classList.remove('hidden');
+      }
+      return;
+    }
+
+    var qi=i-RCOUNT, q=st.served[qi];
+    el('as-seclabel').textContent=CONFIG.dims[q.dim-1].name;
+    el('as-q').textContent=q.q;
+    el('as-help').textContent='Pick the closest match.';
+    el('as-kbd').textContent='Press 1 to 5';
+    q.opts.forEach(function(t,k){
+      opts.appendChild(optionRow(k,t,st.answers[qi]===k,function(){ answer(k); },k===4));
+    });
+  }
+
+  function optionRow(idx,text,selected,onClick,muted){
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='w-full text-left flex items-start gap-3 px-4 py-3 rounded-bae-sm border transition-colors '
+      +(selected?'border-bae-primary bg-bae-primary/5 ':'border-bae-border hover:border-bae-primary/50 hover:bg-bae-border-light ')
+      +(muted?'text-bae-muted':'text-bae-ink');
+    b.appendChild(mk('span','shrink-0 mt-0.5 w-5 h-5 rounded-full border text-[11px] font-bold flex items-center justify-center '
+      +(selected?'border-bae-primary text-bae-primary':'border-bae-border text-bae-muted'), idx+1));
+    b.appendChild(mk('span','text-sm leading-snug', text));
+    b.addEventListener('click',onClick);
+    return b;
+  }
+
+  function answer(k){
+    var qi=st.i-RCOUNT;
+    if(qi<0||qi>=st.served.length) return;
+    st.answers[qi]=k; save(); renderQuiz();
+    setTimeout(advance,240);
+  }
+  function advance(){
+    for(var r=0;r<RCOUNT;r++){
+      if(!st.router.seen[CONFIG.router[r].id]){ st.i=r; save(); renderQuiz(); return; }
+    }
+    var firstUnanswered=st.answers.indexOf(null);
+    if(firstUnanswered<0){ finish(); return; }
+    st.i=RCOUNT+firstUnanswered; save(); renderQuiz();
+  }
+
+  function startTimer(){ stopTimer(); timer=setInterval(function(){ st.elapsed++;
+    var m=Math.floor(st.elapsed/60),s=st.elapsed%60;
+    var t=el('as-timer'); if(t) t.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    var answered=st.answers.filter(function(a){return a!=null;}).length+routerAnswered();
+    var p=el('as-pct'); if(p) p.textContent=Math.round(answered/total()*100)+'%'; },1000); }
+  function stopTimer(){ if(timer){ clearInterval(timer); timer=null; } }
+
+  /* finish(skipCalc) — the ONE reveal path. The resume path calls finish(true); a hand-rolled
+     reveal would skip the lastResult assignment below and kill the buy button after every refresh. */
+  function finish(skipCalc){
+    st.done=true; stopTimer(); save();
+    var r=computeResult(st.answers, st.served, CONFIG);
+    window.__baeVibe.lastResult=buildLastResult(r, st.router, CONFIG);
+    hide('as-intro'); hide('as-quiz');
+    if(skipCalc){ hide('as-calc'); reveal(r); return; }
+    show('as-calc');
+    var msgs=CONFIG.calc.messages, n=0;
+    el('as-calcmsg').textContent=msgs[0];
+    el('as-calcbar').style.width='0%';
+    calcTimer=setInterval(function(){
+      n++;
+      if(n>=msgs.length){ clearInterval(calcTimer); hide('as-calc'); reveal(r); return; }
+      el('as-calcmsg').textContent=msgs[n];
+      el('as-calcbar').style.width=Math.round(n/msgs.length*100)+'%';
+    },CONFIG.calc.stepMs);
+  }
+
+  function reveal(r){
+    renderResult(r);
+    show('as-result');
+    if(window.__baeResume&&window.__baeResume.focusResult) window.__baeResume.focusResult();
+    el('as-result').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function renderResult(r){
+    var b=r.bucket;
+    el('res-band').textContent=b.label;
+    el('res-blurb').textContent=b.blurb;
+    el('res-score').textContent=String(r.overall);
+    var m=Math.floor(st.elapsed/60), s=st.elapsed%60;
+    el('res-stamp').textContent='Completed in '+(m<10?'0':'')+m+':'+(s<10?'0':'')+s+' · '+st.served.length+' questions · 9 dimensions';
+
+    var weak1=CONFIG.dims[r.rank[0]].name, weak2=CONFIG.dims[r.rank[1]].name;
+    el('res-ctahead').textContent=b.cta.headline.replace('{score}',r.overall);
+    el('res-framing').textContent=b.cta.body.replace('{weak1}',weak1).replace('{weak2}',weak2);
+
+    renderRadar(r); renderBars(r); renderJourney(r); renderWins(r); renderCtaList();
+    renderCoverPreview(r); setupBuyButton();
+  }
+
+  function bandColor(v){ return v<CONFIG.scoring.dimBands.low?'#dc2626':(v<CONFIG.scoring.dimBands.mid?'#f59e0b':'#10b981'); }
+
+  /* Radar uses the PDF cover's exact geometry so screen and stamped cover agree by construction. */
+  function renderRadar(r){
+    var svg=el('res-radar'); if(!svg) return;
+    var NS='http://www.w3.org/2000/svg', n=CONFIG.dims.length, R=COVER.r;
+    clear(svg);
+    function pt(rad,i){ var a=-Math.PI/2+i*2*Math.PI/n; return [rad*Math.cos(a), rad*Math.sin(a)]; }
+    function svgEl(tag,attrs){ var e=document.createElementNS(NS,tag); for(var k in attrs) e.setAttribute(k,String(attrs[k])); return e; }
+    [27.5,55,82.5,110].forEach(function(ring){
+      var pts=[]; for(var i=0;i<n;i++){ var q=pt(ring,i); pts.push(q[0].toFixed(1)+','+q[1].toFixed(1)); }
+      svg.appendChild(svgEl('polygon',{points:pts.join(' '),fill:'none',stroke:'#231f17',
+        'stroke-opacity':ring===110?0.45:0.15,'stroke-width':1}));
+    });
+    var pp=[]; for(var i=0;i<n;i++){ var q=pt(R*r.dimScores[i]/100,i); pp.push(q[0].toFixed(1)+','+q[1].toFixed(1)); }
+    svg.appendChild(svgEl('polygon',{points:pp.join(' '),fill:COVER.teal,'fill-opacity':COVER.fillOpacity,
+      stroke:COVER.teal,'stroke-width':2,'stroke-linejoin':'round'}));
+    var weak2=[r.rank[0],r.rank[1]];
+    for(i=0;i<n;i++){
+      var isWeak=weak2.indexOf(i)>=0, q2=pt(R*r.dimScores[i]/100,i), lp=pt(R+22,i);
+      svg.appendChild(svgEl('circle',{cx:q2[0].toFixed(1),cy:q2[1].toFixed(1),r:isWeak?5:3.2,fill:isWeak?'#dc2626':COVER.teal}));
+      var tx=svgEl('text',{x:lp[0].toFixed(1),y:lp[1].toFixed(1),
+        'text-anchor':Math.abs(lp[0])<8?'middle':(lp[0]>0?'start':'end'),
+        'font-size':11,fill:isWeak?'#dc2626':'#231f17','font-weight':isWeak?700:400});
+      tx.textContent=CONFIG.dims[i].short; svg.appendChild(tx);
+    }
+  }
+
+  function renderBars(r){
+    var host=el('res-bars'); if(!host) return;
+    clear(host);
+    var weak2=[r.rank[0],r.rank[1]];
+    CONFIG.dims.forEach(function(d,i){
+      var v=r.dimScores[i], isWeak=weak2.indexOf(i)>=0;
+      var box=mk('div');
+      var head=mk('div','flex items-baseline justify-between gap-2');
+      head.appendChild(mk('span','text-xs '+(isWeak?'font-bold text-bae-ink':'text-bae-muted'), d.name));
+      var sc=mk('span','text-xs font-semibold tabular-nums text-bae-ink', v);
+      sc.appendChild(mk('span','text-bae-muted','/100'));
+      head.appendChild(sc); box.appendChild(head);
+      var track=mk('div','h-1.5 mt-1 rounded-full bg-bae-border overflow-hidden');
+      var fill=mk('i','block h-full rounded-full');
+      fill.style.width=v+'%'; fill.style.background=bandColor(v);
+      track.appendChild(fill); box.appendChild(track);
+      if(isWeak) box.appendChild(mk('div','text-[10px] font-bold uppercase tracking-wider text-red-600 mt-0.5','Focus area'));
+      host.appendChild(box);
+    });
+  }
+
+  function renderJourney(r){
+    var host=el('res-journey'); if(!host) return;
+    clear(host);
+    CONFIG.buckets.forEach(function(b){
+      var active=b.id===r.bucket.id;
+      var seg=mk('div','rounded-bae-sm px-2 py-2 text-center '+(active?'bg-bae-primary text-white':'bg-bae-bg border border-bae-border text-bae-muted'));
+      seg.appendChild(mk('div','text-[11px] font-bold', b.label));
+      seg.appendChild(mk('div','text-[10px] '+(active?'text-white/80':'text-bae-muted'), b.min+'-'+b.max));
+      if(active) seg.appendChild(mk('div','text-[10px] font-bold mt-0.5','YOU ARE HERE · '+r.overall+'/100'));
+      host.appendChild(seg);
+    });
+    var idx=CONFIG.buckets.indexOf(r.bucket), next=CONFIG.buckets[idx+1];
+    var w1=CONFIG.dims[r.rank[0]].name, w2=CONFIG.dims[r.rank[1]].name;
+    el('res-journeynote').textContent = next
+      ? 'You are '+(next.min-r.overall)+' points from '+next.label+'. The fastest route up runs through your two weakest dimensions: '+w1+' and '+w2+'.'
+      : 'At this level the work is staying sharp: re-run the check after any significant change.';
+  }
+
+  function renderWins(r){
+    var host=el('res-wins'); if(!host) return;
+    clear(host);
+    var hosted=st.router.platform==='hosted-builder', chosen=[], k;
+    for(k=0;k<r.rank.length&&chosen.length<3;k++){
+      var d=CONFIG.dims[r.rank[k]];
+      if(!(hosted&&d.win.needsRepo)) chosen.push(d);
+    }
+    for(k=0;k<r.rank.length&&chosen.length<3;k++){
+      var dd=CONFIG.dims[r.rank[k]]; if(chosen.indexOf(dd)<0) chosen.push(dd);
+    }
+    chosen.forEach(function(d){
+      var card=mk('div','bg-bae-bg border border-bae-border rounded-bae-sm p-4');
+      card.appendChild(mk('div','text-sm font-bold text-bae-ink', d.win.title));
+      card.appendChild(mk('p','text-sm text-bae-muted mt-1', d.win.body));
+      var pass=mk('p','text-xs text-bae-primary font-semibold mt-2','Passing looks like: ');
+      pass.appendChild(mk('span','font-normal text-bae-muted', d.win.pass));
+      card.appendChild(pass);
+      host.appendChild(card);
+    });
+  }
+
+  /* CTA bullets. MUST describe what is actually in the built PDF (§6c(4)); audited before ship. */
+  function renderCtaList(){
+    var host=el('res-ctalist'); if(!host||host.dataset.filled) return;
+    host.dataset.filled='1';
+    /* Two wordings here are research-driven, not stylistic:
+       (1) never "prompt pack" or "26 prompts". In this niche that phrasing reads as snake oil
+           ("if someone's selling you prompts, prompt packs or pre-built agents..."), and buyers
+           report never reopening bought prompt libraries. The credible vocabulary is context,
+           rules and agent instruction files, plus where they physically go.
+       (2) don't lead with the page count. Buyers actively audit padded page counts, so the count
+           is a claim you get checked on. Lead with what is ON the pages. */
+    [ 'Your score, band and all nine dimension scores stamped on the cover and results page',
+      'A reading path ordered by your weakest dimensions, so you do not read it front to back',
+      'All sixteen phases, from first idea through to running it live with real users',
+      'A 124-item production checklist with tick boxes you fill in and save',
+      'A twelve-line launch gate to sign off before you go live',
+      '26 numbered coding agent instructions in one file you drop in your repo, so your agent follows the same rules'
+    ].forEach(function(t){
+      var li=mk('li','flex gap-2');
+      li.appendChild(mk('span','text-bae-primary','✓'));
+      li.appendChild(mk('span',null,t));
+      host.appendChild(li);
+    });
+  }
+
+  /* ── LIVE COVER PREVIEW ──
+     The buyer's real cover PNG with their own score, band and 9-point radar drawn on it, using the
+     SAME rects and geometry the stamper uses. Text baselines mirror stamp-core's own formula
+     (y = rect.y + rect.h/2 + size*0.36 in this y-down viewBox), verified against the emitted Tm.
+     ⚠ Do NOT flip y for the radar: drawRadar already works top-left with y running down. */
+  function renderCoverPreview(r){
+    var wrap=el('res-cover'), img=el('res-coverimg'), svg=el('res-coversvg');
+    if(!wrap||!img||!svg) return;
+    if(!window.__BAE_VIBE_BUILT){ wrap.style.display='none'; return; }
+    wrap.style.display='';
+    img.src=COVER.src;
+    img.alt='The Vibe Coder’s Owner’s Manual cover, personalized with your readiness score and radar';
+    clear(svg);
+    var NS='http://www.w3.org/2000/svg', n=CONFIG.dims.length;
+    var sx=COVER.radar.w/COVER.vb, sy=COVER.radar.h/COVER.vbh, pts=[];
+    for(var i=0;i<n;i++){
+      var rad=COVER.r*r.dimScores[i]/100, a=-Math.PI/2+i*2*Math.PI/n;
+      pts.push([ COVER.radar.x+(COVER.cx+rad*Math.cos(a))*sx,
+                 COVER.radar.y +(COVER.cy+rad*Math.sin(a))*sy ]);
+    }
+    function svgEl(tag,attrs){ var e=document.createElementNS(NS,tag); for(var k in attrs) e.setAttribute(k,String(attrs[k])); return e; }
+    svg.appendChild(svgEl('polygon',{points:pts.map(function(q){ return q[0].toFixed(2)+','+q[1].toFixed(2); }).join(' '),
+      fill:COVER.teal,'fill-opacity':COVER.fillOpacity,stroke:COVER.teal,'stroke-width':COVER.strokeWidth,'stroke-linejoin':'round'}));
+    pts.forEach(function(q){ svg.appendChild(svgEl('circle',{cx:q[0].toFixed(2),cy:q[1].toFixed(2),
+      r:Math.max(0.8,COVER.dotR*sx),fill:COVER.teal})); });
+    function stampText(rect,text,size,color,bold){
+      var t=svgEl('text',{x:(rect.x+1).toFixed(2),y:(rect.y+rect.h/2+size*0.36).toFixed(2),
+        'font-size':size,fill:color,'font-family':'Georgia, serif'});
+      if(bold) t.setAttribute('font-weight','700');
+      t.textContent=text; svg.appendChild(t);
+    }
+    stampText(COVER.score,String(r.overall),COVER.score.size,COVER.ink,true);
+    stampText(COVER.band,r.bucket.label,COVER.band.size,COVER.teal,false);
+  }
+
+  /* ───────────────────────── CHECKOUT ───────────────────────── */
+  var PADDLE=(window.__BAE_PADDLE)||{env:'sandbox',token:'',price:''};
+  var paddleReady=false;
+  function paddleLive(){ return PADDLE.env==='production'; }
+  function paddleTestFlag(){ try{ return new URLSearchParams(location.search).has('testbuy'); }catch(e){ return false; } }
+  /* Fail-closed: never sell a manual whose template is not deployed. The bouncer's own template
+     check runs at DOWNLOAD time, i.e. after the money has already moved. */
+  function bucketBuyable(){ return !!window.__baeVibe.lastResult && !!window.__BAE_VIBE_BUILT; }
+  function checkoutEnabled(){ return !!PADDLE.token && /^pri_[a-z0-9]+$/i.test(PADDLE.price) && (paddleLive()||paddleTestFlag()) && bucketBuyable(); }
+  function initPaddle(){
+    if(paddleReady||typeof Paddle==='undefined'||!PADDLE.token) return;
+    try{ if(PADDLE.env==='sandbox') Paddle.Environment.set('sandbox');
+      Paddle.Initialize({ token:PADDLE.token, eventCallback:function(ev){
+        if(ev&&ev.name==='checkout.completed'&&ev.data&&ev.data.transaction_id){
+          location.href='/kc/report/?txn='+encodeURIComponent(ev.data.transaction_id);
+        } } });
+      paddleReady=true;
+    }catch(e){}
+  }
+  function openCheckout(){
+    initPaddle();
+    if(typeof Paddle==='undefined'||!paddleReady) return;
+    var lr=window.__baeVibe.lastResult; if(!lr) return;
+    if(!bucketBuyable()) return;   /* defense in depth */
+    try{ Paddle.Checkout.open({ items:[{priceId:PADDLE.price,quantity:1}], customData:lr }); }catch(e){}
+  }
+  function setupBuyButton(){
+    var btn=el('res-buy'), note=el('res-buynote'); if(!btn) return;
+    if(!checkoutEnabled()){
+      if(note&&!window.__BAE_VIBE_BUILT) note.textContent='The manual is still in production. Your free result above is complete.';
+      return;
+    }
+    btn.textContent='Get the manual · $39 one-time';
+    btn.classList.remove('cursor-default','opacity-90');
+    btn.classList.add('cursor-pointer');
+    if(!btn.dataset.wired){ btn.dataset.wired='1'; btn.addEventListener('click',openCheckout); }
+  }
+
+  /* ───────────────────────── WIRING ───────────────────────── */
+  function startFresh(){ clearSaved(); freshState(); stopTimer(); hide('as-intro'); hide('as-result'); hide('as-calc'); show('as-quiz'); save(); renderQuiz(); startTimer(); el('as-quiz').scrollIntoView({behavior:'smooth',block:'start'}); }
+  if(el('as-start')) el('as-start').addEventListener('click',startFresh);
+  if(el('as-retake')) el('as-retake').addEventListener('click',startFresh);
+  if(el('as-back')) el('as-back').addEventListener('click',function(){ if(st&&st.i>0&&!st.done){ st.i--; save(); renderQuiz(); } });
+  if(el('as-continue')) el('as-continue').addEventListener('click',function(){ advance(); });
+  document.addEventListener('keydown',function(e){
+    if(!st||st.done||!el('as-quiz')||el('as-quiz').classList.contains('hidden')) return;
+    if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')) return;
+    var isRouter=st.i<RCOUNT;
+    if(isRouter&&CONFIG.router[st.i].multi) return;      /* multi-select is click only */
+    var max=isRouter?CONFIG.router[st.i].opts.length:5;
+    var n=parseInt(e.key,10);
+    if(n>=1&&n<=max){
+      if(isRouter){ var rq=CONFIG.router[st.i], o=rq.opts[n-1]; st.router[rq.id]=o.id; st.router.seen[rq.id]=true; save(); advance(); }
+      else answer(n-1);
+    }
+  });
+
+  /* Resume: length comes from the persisted served set, never a constant, and the reveal goes
+     through finish(true) so lastResult is assigned and the buy button survives a refresh.
+     maxIndex 4 because this check pins a fifth "I don't know" row on every question. */
+  (function(){
+    if(!restore()) return;
+    var mode=window.__baeResume?window.__baeResume.mode({answers:st.answers,done:st.done}, st.served.length, 4):'intro';
+    if(mode==='result'){ hide('as-intro'); finish(true); }
+    else if(mode==='quiz'){ hide('as-intro'); show('as-quiz'); renderQuiz(); startTimer(); }
+  })();
+})();
+  </script>
+</BaseLayout>

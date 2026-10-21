@@ -1,0 +1,632 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolHero from '../../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../../components/tools/ToolFAQ.astro';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Data Converter?',
+    a: 'The Best Answer Hub Data Converter is a free browser-based tool that converts data between four popular formats: CSV, JSON, XML, and YAML. You can convert in any direction, for example CSV to JSON, JSON to XML, YAML to CSV, or XML to YAML. The tool features auto-detect that guesses your input format when you paste data, plus one-click sample buttons for each format so you can test conversions instantly. Everything runs 100% in your browser, so no files or data are ever uploaded to a server.',
+  },
+  {
+    q: 'Is the Data Converter free and safe to use?',
+    a: 'The Best Answer Hub Data Converter is completely free with no usage limits and no signup required. It is safe because all parsing and conversion logic runs locally inside your browser using vanilla JavaScript. Your data (whether it is customer records, API responses, configuration files, or log entries) is never sent to a server, stored in a database, or logged anywhere. You can verify this by disconnecting from the internet after loading the page. The Best Answer Hub converter will continue to work perfectly.',
+  },
+  {
+    q: 'How do I use the Data Converter?',
+    a: 'Paste your data into the Input box on the left of the Best Answer Hub Data Converter. Select the input format from the dropdown, or leave it on "Auto-detect" and the tool will guess the format for you. Select your desired output format from the second dropdown. Click "Convert" to transform the data. The result appears in the Output box on the right. Use the "Sample" buttons to load example data for each format, or click "Copy Output" to copy the converted result to your clipboard.',
+  },
+  {
+    q: 'What formats does the Data Converter support?',
+    a: 'The Best Answer Hub Data Converter supports four formats. CSV (Comma-Separated Values) is the standard spreadsheet and database export format. JSON (JavaScript Object Notation) is the universal API and web application data format. XML (eXtensible Markup Language) is used by enterprise systems, RSS feeds, SOAP APIs, and configuration files. YAML (YAML Ain\'t Markup Language) is popular for Docker Compose files, Kubernetes manifests, CI/CD pipelines, and static site generators. You can convert any of these formats to any other.',
+  },
+  {
+    q: 'How does auto-detect work?',
+    a: 'When you set the input format to "Auto-detect," the Best Answer Hub Data Converter analyzes your pasted text using format-specific heuristics. JSON is detected if the text starts with a curly brace or square bracket and contains valid JSON syntax. XML is detected if the text starts with an angle bracket and contains XML-style tags. YAML is detected if the text contains colon-separated key-value pairs or hyphen-prefixed list items with indentation. CSV is detected if the text contains consistent rows separated by commas, tabs, or semicolons. If auto-detect is uncertain, it defaults to CSV.',
+  },
+  {
+    q: 'Can I convert CSV to JSON with this tool?',
+    a: 'Yes. Paste your CSV into the input box of the Best Answer Hub Data Converter, set the output format to JSON, and click Convert. The tool uses the first row as column headers and creates an array of JSON objects. For example, a CSV with columns "name,age,city" becomes a JSON array like [{"name":"Alice","age":"30","city":"NYC"}]. The CSV parser correctly handles quoted fields, commas inside quotes, and newline characters within cells.',
+  },
+  {
+    q: 'Can I convert JSON to CSV?',
+    a: 'Yes. Paste a JSON array of objects into the Best Answer Hub Data Converter, set the output format to CSV, and click Convert. The tool flattens the JSON objects into rows, using the object keys as column headers. Nested objects are serialized as JSON strings within their CSV cells. The CSV serializer automatically quotes fields that contain commas, quotes, or newlines to preserve data integrity.',
+  },
+  {
+    q: 'Can I convert XML to JSON?',
+    a: 'Yes. Paste XML into the Best Answer Hub Data Converter, set the output format to JSON, and click Convert. The tool parses the XML structure using the browser\'s built-in DOMParser and converts elements, attributes, and text content into a nested JSON representation. XML attributes are preserved with an "@" prefix in the JSON keys. Mixed content and repeating elements are handled as arrays. For complex XML documents, the resulting JSON structure mirrors the original document tree.',
+  },
+  {
+    q: 'Can I convert YAML to JSON?',
+    a: 'Yes. Paste YAML into the Best Answer Hub Data Converter, set the output format to JSON, and click Convert. The tool parses YAML mappings (key: value), sequences (- item), and nested structures into the equivalent JSON representation. It supports strings, numbers, booleans, nulls, arrays, and nested objects. One important gotcha: YAML 1.1 parsers treat values like yes, no, on, and off as booleans, for example the ISO country code NO silently becomes false unless quoted. Advanced YAML features like anchors and aliases are not supported, which covers the vast majority of Docker Compose, Kubernetes, and CI/CD use cases.',
+  },
+  {
+    q: 'Can I use the Data Converter offline?',
+    a: 'Yes. After you load the page once, the Best Answer Hub Data Converter works without an internet connection. It is built entirely with vanilla JavaScript and uses only browser-native APIs like JSON.parse and DOMParser. There are no external library downloads, no CDN dependencies, and no server-side processing. This makes it ideal for converting sensitive data or configuration files in restricted or air-gapped environments.',
+  },
+  {
+    q: 'Is my data sent to a server?',
+    a: 'No. In the Best Answer Hub Data Converter, your data never leaves your browser. It uses only client-side JavaScript to parse and transform your input. There are no network requests, no analytics pings containing your data, and no cloud processing. You can verify this by opening your browser\'s Network tab in Developer Tools. You will see zero outgoing requests when you convert data.',
+  },
+  {
+    q: 'What is the file size limit?',
+    a: 'The Best Answer Hub Data Converter can handle data up to approximately 5 megabytes, limited by your browser\'s memory and JavaScript string handling capacity. For most practical use cases (API responses, configuration files, spreadsheet exports, and database dumps), this is more than sufficient. Very large files over 1 MB may cause a brief processing delay because the conversion runs in the main thread. If you regularly work with massive datasets, consider splitting them into smaller chunks.',
+  },
+  {
+    q: 'How does this compare to ConvertCSV.com or CodeBeautify?',
+    a: 'ConvertCSV.com and CodeBeautify offer similar conversion features, but both have significant drawbacks. CodeBeautify and JSONFormatter.org had a major security breach in November 2025 that exposed over 80,000 user submissions publicly, including credentials and PII. Both sites also upload your data to their servers for processing. The Best Answer Hub Data Converter is 100% client-side, has no ads, requires no signup, and processes everything locally, making it the safest choice for sensitive data.',
+  },
+  {
+    q: 'What are common use cases for the Data Converter?',
+    a: 'Developers use the Best Answer Hub Data Converter to transform API responses from JSON to CSV for spreadsheet analysis, convert Docker Compose files from YAML to JSON for programmatic manipulation, turn XML RSS feeds into JSON for modern JavaScript applications, and convert database exports from CSV to YAML for configuration management. Data analysts use it to prepare datasets for visualization tools. DevOps engineers use it to migrate configuration files between formats. The tool is also invaluable for debugging format mismatches between systems that expect different data structures.',
+  },
+  {
+    q: 'What is the difference between JSON and YAML, and when should I use each?',
+    a: 'JSON is best for APIs and machine-to-machine data exchange; YAML is best for configuration files that humans need to read and edit. JSON is natively supported in JavaScript (Node.js) and Python without extra libraries, making it the default for REST APIs, package manifests, and database documents. YAML supports comments, multi-line strings, and anchors, features that make it standard for Kubernetes manifests, Docker Compose files, GitHub Actions workflows, and AWS CloudFormation templates. One critical gotcha: YAML 1.1 parsers treat yes, no, on, and off as booleans, and the ISO country code NO (Norway) silently becomes false unless quoted. Use the Best Answer Hub Data Converter to test YAML-to-JSON conversions and spot these type coercion issues before they reach production.',
+  },
+];
+
+const steps = [
+  { title: 'Paste your data', description: 'Copy and paste CSV, JSON, XML, or YAML into the input box. Choose auto-detect or manually select the input format.' },
+  { title: 'Pick output format', description: 'Select the format you need: CSV, JSON, XML, or YAML. Click Convert to transform the data instantly in your browser.' },
+  { title: 'Copy the result', description: 'Review the converted output and click Copy Output to grab the result. Paste it into your editor, API client, or pipeline.' },
+];
+
+const seo = {
+  title: 'Free Data Converter — CSV, JSON, XML & YAML (2026)',
+  description: 'Free online data converter for CSV, JSON, XML, and YAML. Auto-detect input format and convert in any direction. 100% client-side — no uploads, no signup.',
+  url: '/developer-toolbox/data-converter/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Developer Toolbox', url: '/developer-toolbox/' },
+    { name: 'Data Converter', url: '/developer-toolbox/data-converter/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · No Data Sent to Servers"
+    title="Data Converter:"
+    accentText="CSV, JSON, XML & YAML"
+    description="Convert data between CSV, JSON, XML, and YAML in any direction. Auto-detect input format and transform instantly in your browser. No uploads, no signup."
+    backLink="/developer-toolbox/"
+    backLabel="← Developer Toolbox"
+  />
+
+  <section class="py-6 md:py-8" aria-label="Data converter">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-card border border-bae-border rounded-bae p-5 md:p-6">
+        <h2 class="text-sm font-bold text-bae-ink mb-4">Data Converter</h2>
+
+        <!-- Format Selectors -->
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs text-bae-muted">From:</span>
+            <select id="conv-from" class="bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+              <option value="auto">Auto-detect</option>
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+              <option value="xml">XML</option>
+              <option value="yaml">YAML</option>
+            </select>
+          </div>
+          <span class="text-bae-muted text-xs">→</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs text-bae-muted">To:</span>
+            <select id="conv-to" class="bg-bae-bg border border-bae-border rounded-bae-sm text-xs text-bae-ink px-2 py-1.5 focus:outline-none focus:border-bae-primary">
+              <option value="json">JSON</option>
+              <option value="csv">CSV</option>
+              <option value="xml">XML</option>
+              <option value="yaml">YAML</option>
+            </select>
+          </div>
+          <div class="flex flex-wrap gap-1.5 ml-auto">
+            <button type="button" data-sample="csv" class="sample-btn bg-bae-bg text-bae-ink border border-bae-border text-[11px] font-semibold px-2.5 py-1 rounded-bae-sm hover:border-bae-primary transition-colors">Sample CSV</button>
+            <button type="button" data-sample="json" class="sample-btn bg-bae-bg text-bae-ink border border-bae-border text-[11px] font-semibold px-2.5 py-1 rounded-bae-sm hover:border-bae-primary transition-colors">Sample JSON</button>
+            <button type="button" data-sample="xml" class="sample-btn bg-bae-bg text-bae-ink border border-bae-border text-[11px] font-semibold px-2.5 py-1 rounded-bae-sm hover:border-bae-primary transition-colors">Sample XML</button>
+            <button type="button" data-sample="yaml" class="sample-btn bg-bae-bg text-bae-ink border border-bae-border text-[11px] font-semibold px-2.5 py-1 rounded-bae-sm hover:border-bae-primary transition-colors">Sample YAML</button>
+          </div>
+        </div>
+
+        <!-- Inputs -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Input</label>
+            <textarea id="conv-input" class="w-full h-64 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none focus:ring-2 focus:ring-bae-primary/30 focus:border-bae-primary resize-y" placeholder="Paste CSV, JSON, XML, or YAML here..." spellcheck="false"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-bae-muted mb-1.5">Output</label>
+            <textarea id="conv-output" readonly class="w-full h-64 bg-bae-bg border border-bae-border rounded-bae-sm px-3.5 py-2.5 text-sm text-bae-ink font-mono focus:outline-none resize-y" placeholder="Converted output will appear here..." spellcheck="false"></textarea>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <button type="button" id="conv-convert" class="bg-bae-primary text-white text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:bg-bae-accent transition-colors">Convert</button>
+          <button type="button" id="conv-copy" class="bg-bae-bg text-bae-ink border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Copy Output</button>
+          <button type="button" id="conv-clear" class="bg-bae-bg text-bae-muted border border-bae-border text-xs font-semibold px-3.5 py-2 rounded-bae-sm hover:border-bae-primary transition-colors">Clear</button>
+        </div>
+
+        <p id="conv-error" class="text-xs text-red-600 hidden"></p>
+      </div>
+    </div>
+  </section>
+
+  <ToolHowItWorks steps={steps} />
+
+  <!-- What developers use it for -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-2xl md:text-[1.75rem] font-bold text-bae-ink mb-8">What developers use it for</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Backend Developer, REST API team</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">API Development</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">JSON to CSV in one paste</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Convert JSON API responses to CSV for spreadsheet analysis, or transform XML payloads from SOAP services into clean JSON for modern REST integrations, with no custom script required.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">DevOps Engineer, infrastructure team</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">DevOps &amp; Config Files</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Kubernetes and Docker Compose ready</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Convert between YAML and JSON for Kubernetes manifests, Docker Compose files, AWS CloudFormation templates, and GitHub Actions workflows when tools export in one format but pipelines require another.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Data Analyst, analytics team</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Data Analysis</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Skip writing one-off scripts</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Flatten nested JSON records into CSV rows for import into Excel, pandas, or a SQL database. Skip writing one-off jq or Python scripts for every dataset: paste, convert, and copy.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-5">
+          <div class="text-xs font-semibold text-bae-muted uppercase tracking-wider mb-2">Integration Developer, enterprise systems</div>
+          <div class="text-xl font-bold text-bae-ink mb-1">Legacy Integration</div>
+          <div class="text-2xl font-bold text-bae-primary font-serif mb-2">Modern formats without touching legacy</div>
+          <p class="text-sm text-bae-muted leading-relaxed">Transform XML or CSV outputs from older enterprise systems into JSON or YAML to feed into modern REST APIs, message queues, or infrastructure-as-code pipelines without touching the legacy system.</p>
+        </div>
+      </div>
+      <p class="text-xs text-bae-muted mt-4">Scenarios are illustrative examples based on common use cases. Actual conversion accuracy depends on input structure and target format capabilities.</p>
+    </div>
+  </section>
+
+  <ToolFAQ faqs={faqs} />
+
+  <!-- Related Developer Tools CTA -->
+  <section class="py-10 md:py-14 border-t border-bae-border">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="bg-bae-primary-soft border border-bae-primary/15 rounded-bae p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-serif text-xl font-bold text-bae-ink mb-1">Explore more developer tools</h3>
+          <p class="text-sm text-bae-muted">Also try <a href="/developer-toolbox/diff-checker/" class="text-bae-primary hover:underline">Diff Checker</a>, <a href="/developer-toolbox/cron-expression-generator/" class="text-bae-primary hover:underline">Cron Generator</a>, <a href="/developer-toolbox/css-generators/" class="text-bae-primary hover:underline">CSS Generators</a>, <a href="/tools/json-formatter/" class="text-bae-primary hover:underline">JSON</a>, <a href="/tools/base64-encoder/" class="text-bae-primary hover:underline">Base64</a>, <a href="/tools/jwt-decoder/" class="text-bae-primary hover:underline">JWT</a>, <a href="/tools/regex-tester/" class="text-bae-primary hover:underline">Regex</a>, <a href="/tools/hash-generator/" class="text-bae-primary hover:underline">Hash</a>, and <a href="/tools/url-encoder/" class="text-bae-primary hover:underline">URL</a>, all free, no signup.</p>
+        </div>
+        <a href="/developer-toolbox/" class="inline-flex items-center gap-2 bg-bae-ink text-white px-5 py-2.5 rounded-bae-sm font-semibold text-sm no-underline hover:bg-bae-primary transition-colors shrink-0">
+          Browse developer toolbox →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function() {
+      // --- Utility ---
+      function copyText(text) {
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      }
+
+      function showError(msg) {
+        const el = document.getElementById('conv-error');
+        if (msg) { el.textContent = msg; el.classList.remove('hidden'); }
+        else { el.classList.add('hidden'); el.textContent = ''; }
+      }
+
+      // --- Detect format ---
+      function detectFormat(text) {
+        text = text.trim();
+        if (!text) return 'csv';
+        if ((text.startsWith('{') || text.startsWith('[')) && text.endsWith(text.startsWith('{') ? '}' : ']')) {
+          try { JSON.parse(text); return 'json'; } catch(e) {}
+        }
+        if (text.startsWith('<')) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(text, 'application/xml');
+          if (!doc.querySelector('parsererror')) return 'xml';
+        }
+        if (/^[\w\-]+:\s/m.test(text) || /^\s*-\s/m.test(text)) return 'yaml';
+        return 'csv';
+      }
+
+      // --- CSV Parser ---
+      function parseCSV(text) {
+        const rows = [];
+        let row = [];
+        let cell = '';
+        let inQuotes = false;
+        let i = 0;
+        while (i < text.length) {
+          const ch = text[i];
+          const next = text[i + 1];
+          if (inQuotes) {
+            if (ch === '"') {
+              if (next === '"') { cell += '"'; i += 2; continue; }
+              inQuotes = false;
+            } else {
+              cell += ch;
+            }
+          } else {
+            if (ch === '"') {
+              inQuotes = true;
+            } else if (ch === ',') {
+              row.push(cell);
+              cell = '';
+            } else if (ch === '\n') {
+              row.push(cell);
+              if (row.length > 1 || row[0] !== '') rows.push(row);
+              row = [];
+              cell = '';
+            } else if (ch === '\r') {
+              // skip
+            } else {
+              cell += ch;
+            }
+          }
+          i++;
+        }
+        row.push(cell);
+        if (row.length > 1 || row[0] !== '') rows.push(row);
+
+        if (rows.length < 2) return [];
+        const headers = rows[0];
+        return rows.slice(1).map(r => {
+          const obj = {};
+          headers.forEach((h, i) => { obj[h] = r[i] !== undefined ? r[i] : ''; });
+          return obj;
+        });
+      }
+
+      function toCSV(data) {
+        if (!Array.isArray(data) || data.length === 0) return '';
+        const headers = Object.keys(data[0]);
+        const escape = (val) => {
+          const s = val === null || val === undefined ? '' : String(val);
+          if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+            return '"' + s.replace(/"/g, '""') + '"';
+          }
+          return s;
+        };
+        const lines = [headers.join(','), ...data.map(row => headers.map(h => escape(row[h])).join(','))];
+        return lines.join('\n');
+      }
+
+      // --- YAML Parser (practical subset) ---
+      // Recursive, indentation-based YAML parser (practical subset: maps, sequences,
+      // nested structures, scalars). Correctly handles nested maps and the compact
+      // "list of maps" form (- key: value with indented sibling keys).
+      function parseYAML(text) {
+        const lines = [];
+        for (const raw of text.split('\n')) {
+          const content = raw.trim();
+          if (!content || content.startsWith('#')) continue;
+          lines.push({ indent: raw.length - raw.trimStart().length, content });
+        }
+        let pos = 0;
+        const isMapEntry = (s) => (s.startsWith('"') || s.startsWith("'")) ? false : /^[^:]+:(\s.*|)$/.test(s);
+
+        function addEntry(obj, content, keyIndent) {
+          const ci = content.indexOf(':');
+          const key = content.slice(0, ci).trim();
+          const valStr = content.slice(ci + 1).trim();
+          if (valStr === '') {
+            const child = parseNode(keyIndent + 1);
+            obj[key] = child === null ? {} : child;
+          } else {
+            obj[key] = parseYAMLValue(valStr);
+          }
+        }
+        function parseMap(indent) {
+          const obj = {};
+          while (pos < lines.length && lines[pos].indent === indent &&
+                 !lines[pos].content.startsWith('- ') && lines[pos].content !== '-') {
+            const line = lines[pos];
+            if (line.content.indexOf(':') < 0) { pos++; continue; }
+            pos++;
+            addEntry(obj, line.content, indent);
+          }
+          return obj;
+        }
+        function parseSeq(indent) {
+          const arr = [];
+          while (pos < lines.length && lines[pos].indent === indent &&
+                 (lines[pos].content.startsWith('- ') || lines[pos].content === '-')) {
+            const line = lines[pos];
+            const rest = line.content === '-' ? '' : line.content.slice(2).trim();
+            if (rest === '') {
+              pos++;
+              const child = parseNode(indent + 1);
+              arr.push(child === null ? null : child);
+            } else if (isMapEntry(rest)) {
+              // Compact map item: first key inline with the dash, siblings at indent+2.
+              const itemIndent = indent + 2;
+              const obj = {};
+              pos++;
+              addEntry(obj, rest, itemIndent);
+              while (pos < lines.length && lines[pos].indent === itemIndent &&
+                     !lines[pos].content.startsWith('- ') && lines[pos].content !== '-') {
+                if (lines[pos].content.indexOf(':') < 0) { pos++; continue; }
+                const sib = lines[pos]; pos++;
+                addEntry(obj, sib.content, itemIndent);
+              }
+              arr.push(obj);
+            } else {
+              pos++;
+              arr.push(parseYAMLValue(rest));
+            }
+          }
+          return arr;
+        }
+        function parseNode(minIndent) {
+          if (pos >= lines.length) return null;
+          const line = lines[pos];
+          if (line.indent < minIndent) return null;
+          if (line.content.startsWith('- ') || line.content === '-') return parseSeq(line.indent);
+          return parseMap(line.indent);
+        }
+
+        if (lines.length === 0) return {};
+        const result = parseNode(lines[0].indent);
+        return result === null ? {} : result;
+      }
+
+      function parseYAMLValue(s) {
+        s = s.trim();
+        if (s === '' || s === '~' || s === 'null') return null;
+        if (s === 'true') return true;
+        if (s === 'false') return false;
+        if (s === 'yes') return true;
+        if (s === 'no') return false;
+        if (/^\d+$/.test(s)) return parseInt(s);
+        if (/^\d+\.\d+$/.test(s)) return parseFloat(s);
+        if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) return s.slice(1, -1);
+        return s;
+      }
+
+      function toYAML(obj, indent) {
+        indent = indent || 0;
+        const pad = '  '.repeat(indent);
+        if (obj === null) return 'null';
+        if (typeof obj === 'boolean') return obj ? 'true' : 'false';
+        if (typeof obj === 'number') return String(obj);
+        if (typeof obj === 'string') {
+          if (obj.includes(':') || obj.includes('#') || obj.includes('\n') || obj.startsWith('-')) return '"' + obj.replace(/"/g, '\\"') + '"';
+          return obj;
+        }
+        if (Array.isArray(obj)) {
+          if (obj.length === 0) return '[]';
+          return obj.map(item => pad + '- ' + toYAML(item, indent + 1).trimStart()).join('\n');
+        }
+        const keys = Object.keys(obj);
+        if (keys.length === 0) return '{}';
+        return keys.map(k => {
+          const val = toYAML(obj[k], indent + 1);
+          if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
+            return pad + k + ':\n' + val;
+          }
+          if (Array.isArray(obj[k])) {
+            return pad + k + ':\n' + val;
+          }
+          return pad + k + ': ' + val;
+        }).join('\n');
+      }
+
+      // --- XML Parser ---
+      function xmlToJson(node) {
+        if (node.nodeType === 3) {
+          const text = node.nodeValue.trim();
+          return text || undefined;
+        }
+        if (node.nodeType !== 1) return undefined;
+
+        const obj = {};
+        if (node.attributes && node.attributes.length > 0) {
+          for (let i = 0; i < node.attributes.length; i++) {
+            const attr = node.attributes[i];
+            obj['@' + attr.name] = attr.value;
+          }
+        }
+
+        const children = [];
+        for (let i = 0; i < node.childNodes.length; i++) {
+          const child = xmlToJson(node.childNodes[i]);
+          if (child !== undefined) children.push(child);
+        }
+
+        let content;
+        if (children.length === 1 && typeof children[0] === 'string') {
+          if (Object.keys(obj).length === 0) {
+            content = children[0];        // leaf text element -> value is the text
+          } else {
+            obj['#text'] = children[0];   // text alongside attributes
+            content = obj;
+          }
+        } else if (children.length > 0) {
+          const childObj = {};
+          children.forEach(child => {
+            if (typeof child === 'object' && child !== null) {
+              const keys = Object.keys(child);
+              if (keys.length === 1) {
+                const k = keys[0];
+                if (childObj[k] !== undefined) {
+                  if (!Array.isArray(childObj[k])) childObj[k] = [childObj[k]];
+                  childObj[k].push(child[k]);
+                } else {
+                  childObj[k] = child[k];
+                }
+              } else {
+                Object.assign(childObj, child);
+              }
+            } else if (typeof child === 'string') {
+              obj['#text'] = (obj['#text'] || '') + child;
+            }
+          });
+          Object.assign(obj, childObj);
+          content = obj;
+        } else {
+          content = Object.keys(obj).length > 0 ? obj : '';
+        }
+
+        const result = {};
+        result[node.nodeName] = content;
+        return result;
+      }
+
+      function parseXML(text) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'application/xml');
+        const err = doc.querySelector('parsererror');
+        if (err) throw new Error('Invalid XML');
+        return xmlToJson(doc.documentElement);
+      }
+
+      function jsonToXml(obj, rootName) {
+        rootName = rootName || 'root';
+        function toXml(val, name) {
+          if (val === null || val === undefined) return '<' + name + ' />';
+          if (typeof val === 'string') return '<' + name + '>' + escapeXml(val) + '</' + name + '>';
+          if (typeof val === 'number' || typeof val === 'boolean') return '<' + name + '>' + val + '</' + name + '>';
+          if (Array.isArray(val)) {
+            return val.map(item => toXml(item, name)).join('\n');
+          }
+          let attrs = '';
+          let children = '';
+          for (const k of Object.keys(val)) {
+            if (k.startsWith('@')) {
+              attrs += ' ' + k.slice(1) + '="' + escapeXml(String(val[k])) + '"';
+            } else if (k === '#text') {
+              children = escapeXml(String(val[k]));
+            } else {
+              children += toXml(val[k], k);
+            }
+          }
+          return '<' + name + attrs + '>' + children + '</' + name + '>';
+        }
+        function escapeXml(s) {
+          return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        if (typeof obj === 'object' && obj !== null && !Array.isArray(obj)) {
+          const keys = Object.keys(obj);
+          if (keys.length === 1) {
+            return '<?xml version="1.0" encoding="UTF-8"?>\n' + toXml(obj[keys[0]], keys[0]);
+          }
+        }
+        return '<?xml version="1.0" encoding="UTF-8"?>\n' + toXml(obj, rootName);
+      }
+
+      // --- Samples ---
+      const samples = {
+        csv: 'name,age,city,role\nAlice,30,New York,Engineer\nBob,25,Los Angeles,Designer\nCarol,35,Chicago,Manager\nDavid,28,Miami,Developer',
+        json: JSON.stringify([
+          { name: 'Alice', age: 30, city: 'New York', role: 'Engineer' },
+          { name: 'Bob', age: 25, city: 'Los Angeles', role: 'Designer' },
+          { name: 'Carol', age: 35, city: 'Chicago', role: 'Manager' },
+          { name: 'David', age: 28, city: 'Miami', role: 'Developer' }
+        ], null, 2),
+        xml: '<?xml version="1.0" encoding="UTF-8"?>\n<users>\n  <user id="1">\n    <name>Alice</name>\n    <age>30</age>\n    <city>New York</city>\n    <role>Engineer</role>\n  </user>\n  <user id="2">\n    <name>Bob</name>\n    <age>25</age>\n    <city>Los Angeles</city>\n    <role>Designer</role>\n  </user>\n</users>',
+        yaml: 'users:\n  - name: Alice\n    age: 30\n    city: New York\n    role: Engineer\n  - name: Bob\n    age: 25\n    city: Los Angeles\n    role: Designer\n  - name: Carol\n    age: 35\n    city: Chicago\n    role: Manager',
+      };
+
+      // --- Convert ---
+      function convert() {
+        showError('');
+        const input = document.getElementById('conv-input').value;
+        let from = document.getElementById('conv-from').value;
+        const to = document.getElementById('conv-to').value;
+
+        if (!input.trim()) {
+          showError('Please paste data into the input box.');
+          return;
+        }
+
+        if (from === 'auto') from = detectFormat(input);
+
+        try {
+          let data;
+          // Parse input
+          if (from === 'csv') {
+            data = parseCSV(input);
+          } else if (from === 'json') {
+            data = JSON.parse(input);
+          } else if (from === 'xml') {
+            data = parseXML(input);
+          } else if (from === 'yaml') {
+            data = parseYAML(input);
+          }
+
+          // Convert to output
+          let output;
+          if (to === 'csv') {
+            if (Array.isArray(data)) output = toCSV(data);
+            else if (typeof data === 'object' && data !== null) {
+              // Try to extract array from object
+              const keys = Object.keys(data);
+              if (keys.length === 1 && Array.isArray(data[keys[0]])) output = toCSV(data[keys[0]]);
+              else output = toCSV([data]);
+            } else output = toCSV([{ value: data }]);
+          } else if (to === 'json') {
+            output = JSON.stringify(data, null, 2);
+          } else if (to === 'xml') {
+            output = jsonToXml(data);
+          } else if (to === 'yaml') {
+            output = toYAML(data);
+          }
+
+          document.getElementById('conv-output').value = output;
+        } catch (e) {
+          showError('Conversion error: ' + e.message);
+        }
+      }
+
+      document.getElementById('conv-convert').addEventListener('click', convert);
+
+      document.getElementById('conv-copy').addEventListener('click', function() {
+        copyText(document.getElementById('conv-output').value);
+      });
+
+      document.getElementById('conv-clear').addEventListener('click', function() {
+        document.getElementById('conv-input').value = '';
+        document.getElementById('conv-output').value = '';
+        showError('');
+      });
+
+      document.querySelectorAll('.sample-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const type = this.dataset.sample;
+          document.getElementById('conv-input').value = samples[type];
+          document.getElementById('conv-from').value = 'auto';
+          convert();
+        });
+      });
+
+      document.getElementById('conv-from').addEventListener('change', convert);
+      document.getElementById('conv-to').addEventListener('change', convert);
+    })();
+  </script>
+</BaseLayout>

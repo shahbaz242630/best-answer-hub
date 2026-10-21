@@ -1,0 +1,251 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolHero from '../components/tools/ToolHero.astro';
+import ToolHowItWorks from '../components/tools/ToolHowItWorks.astro';
+import ToolFAQ from '../components/tools/ToolFAQ.astro';
+import ToolRelatedCTA from '../components/tools/ToolRelatedCTA.astro';
+import ToolHubValueProp from '../components/tools/ToolHubValueProp.astro';
+import { careerTools as careerToolsData } from '../data/tools';
+
+const today = '2026-06-13T00:00:00+00:00';
+
+const faqs = [
+  {
+    q: 'What is the Best Answer Hub Career Toolkit?',
+    a: 'The Best Answer Hub Career Toolkit is a free collection of browser-based tools for job seekers, freelancers, and professionals. It includes a <a href="/tools/resume-builder/">Resume Builder</a> with ATS-safe templates and PDF/Word export, a <a href="/tools/cover-letter-builder/">Cover Letter Builder</a> for tailored application letters, a <a href="/tools/job-keyword-matcher/">Job Keyword Matcher</a> that compares your resume against job descriptions, a <a href="/tools/word-counter/">Word Counter</a>, a <a href="/tools/case-converter/">Case Converter</a>, a <a href="/tools/reading-time/">Reading Time Estimator</a>, and a <a href="/tools/typing-speed-test/">Typing Speed Test</a> with WPM, accuracy, and PDF reports. Every tool runs entirely in your browser, and no data is sent to any server.',
+  },
+  {
+    q: 'Why do resume builders like Zety charge for PDF downloads when they advertise as free?',
+    a: 'Zety, Resume.io, and Novoresume use a bait-and-switch model: the builder interface is free, but downloading your finished resume as a PDF requires a paid subscription (typically £2.95–£29.95 per month). Many users spend an hour filling in their details only to hit a paywall at the final step. The Best Answer Hub Resume Builder has no download gate: PDF and Word export are completely free with no card required, no subscription, and no watermark on the output. The download button is available from the start, not unlocked after payment.',
+  },
+  {
+    q: 'Are my resume and cover letter stored or sent to a server?',
+    a: 'No. Every document stays entirely in your browser. All processing happens locally using JavaScript. Nothing is uploaded to any server, stored in a database, or transmitted to any third party. This is a technical architecture decision, not just a policy promise. You can verify it by opening your browser\'s Network tab while building a document: no file data will appear in any outbound request. This makes the toolkit safe for confidential job searches, sensitive work histories, and private contact details.',
+  },
+  {
+    q: 'Will my resume pass ATS screening?',
+    a: 'ATS parsers look for clean, single-column text with standard section headings (Experience, Education, Skills) and no tables, text boxes, or multi-column layouts. The Best Answer Hub Resume Builder uses a single-column template specifically designed for ATS compatibility, with no sidebars, no text boxes, and no column structures that confuse parsing software. To further improve pass rates, use the <a href="/tools/job-keyword-matcher/">Best Answer Hub Job Keyword Matcher</a> to identify keywords from the job description that are missing from your resume. ATS systems often look for exact phrase matches, so "project management" and "managing projects" may score differently.',
+  },
+  {
+    q: 'Should I use a one-column or two-column resume template?',
+    a: 'Single-column is the safer choice for most applications. Multi-column and sidebar layouts, common in Canva templates and many resume builder defaults, are frequently misread by ATS parsers. The system reads columns left-to-right across the full page width, jumbling content from different sections and making a well-written resume appear incoherent to automated screening software. Single-column templates are also faster for recruiters scanning dozens of applications. Two-column formats are acceptable only for creative roles where the resume is reviewed directly by a human, not processed through ATS first.',
+  },
+  {
+    q: 'Should I submit my resume as a PDF or a Word file?',
+    a: 'PDF is the better default: it locks formatting exactly so the document looks identical on every device and operating system, and is the format expected by most modern ATS platforms. Submit as Word (.docx) only when the job posting explicitly requests it. Some legacy corporate ATS systems parse Word files more reliably than PDFs. Never submit a .doc (pre-2007 Word format) file. The Best Answer Hub Resume Builder exports both PDF and Word from the same template, so you can produce whichever format the role requires without rebuilding from scratch.',
+  },
+  {
+    q: 'Is a one-page or two-page resume better?',
+    a: 'For professionals with under 10 years of experience, a tightly edited one-page resume is generally preferred. It signals selectivity and concise writing. Recruiters spend an average of 6–7 seconds on a first pass, so every line needs to earn its place. For senior professionals with 10+ years of substantive experience, two pages is accepted and expected. The practical rule: fill every line with value, and never stretch content to reach two pages. Use the <a href="/tools/word-counter/">Best Answer Hub Word Counter</a> to track length and the <a href="/tools/reading-time/">Best Answer Hub Reading Time Estimator</a> to gauge how long your document takes to skim.',
+  },
+  {
+    q: 'How do I match my resume to a job description?',
+    a: 'Paste the full job description and your resume text into the <a href="/tools/job-keyword-matcher/">Best Answer Hub Job Keyword Matcher</a>. It highlights keywords from the job description that are missing from your resume, the most actionable output for ATS optimisation. Key rules: use the exact phrasing from the job description where it is accurate; include both abbreviated and spelled-out versions of credentials (MBA and Master of Business Administration); and add a skills section that mirrors the tools, technologies, and competencies listed in the job posting.',
+  },
+  {
+    q: 'Do I need to rewrite my cover letter for every job application?',
+    a: 'Not from scratch, but targeted edits per application are essential. The sections that must change are: the opening line (naming the specific role and company), the core paragraph linking your experience to the job\'s key requirements, and any company-specific research you reference. The <a href="/tools/cover-letter-builder/">Best Answer Hub Cover Letter Builder</a> uses a structured template where the tailorable sections are clearly separated from the fixed narrative. This makes a meaningful update a 5–10 minute task per application rather than 30 minutes of rewriting.',
+  },
+  {
+    q: 'Can I use the Career Toolkit on my phone?',
+    a: `Yes. All ${careerToolsData.length} tools work in mobile Safari and Chrome on iPhone and iPad, and in Chrome on Android, with no app download required. The Resume Builder and Cover Letter Builder are designed with touch-friendly form sections, and PDF and Word downloads work from mobile browsers the same as desktop. The Best Answer Hub Job Keyword Matcher, Word Counter, Case Converter, and Typing Speed Test are text-only tools with identical mobile and desktop experiences.`,
+  },
+  {
+    q: 'What tools are included in the Career Toolkit?',
+    a: `At Best Answer Hub, the Career Toolkit includes ${careerToolsData.length} utilities: a <a href="/tools/resume-builder/">Resume Builder</a> with ATS-safe single-column templates and PDF/Word export; a <a href="/tools/cover-letter-builder/">Cover Letter Builder</a> for tailored application letters; a <a href="/tools/job-keyword-matcher/">Job Keyword Matcher</a> that surfaces keywords from a job description missing from your resume; a <a href="/tools/word-counter/">Word Counter</a> with character, sentence, and paragraph stats; a <a href="/tools/case-converter/">Case Converter</a> supporting eight text formats; a <a href="/tools/reading-time/">Reading Time Estimator</a> for blog posts, reports, and speeches; and a <a href="/tools/typing-speed-test/">Typing Speed Test</a> that measures WPM and accuracy with timestamped PDF reports.`,
+  },
+  {
+    q: 'Is the Career Toolkit free, really?',
+    a: `Yes. All ${careerToolsData.length} tools are completely free with no usage limits, no signup, and no watermarks on any output. PDF and Word downloads from the Resume Builder and Cover Letter Builder are free with no payment card required. The Typing Speed Test PDF reports are also free with no restrictions. Unlike Zety ($23.70/mo), Resume.io ($29.95/mo), and Novoresume ($19.99/mo), the Best Answer Hub Career Toolkit does not gate downloads behind a subscription, does not auto-enroll users in recurring charges, and does not display advertising.`,
+  },
+  {
+    q: 'Do I need to create an account?',
+    a: 'No account, email address, or signup is required for any tool in the Best Answer Hub Career Toolkit. Open any tool, enter your information, type, and download your documents or reports. There are no paywalls, no premium tiers, no feature gates, and no email confirmation steps. The tools are designed to work on first visit with zero friction.',
+  },
+  {
+    q: 'Is there one place with all these career tools so I do not need a different site for each?',
+    a: `Yes. The Best Answer Hub Career Toolkit gathers all ${careerToolsData.length} job-search tools in one place, so there is no need for one site to build a resume, another to write a cover letter, and another to check keywords. Every tool is free, runs in the browser, and requires no signup, so you bookmark one hub instead of several. It is built to be the one-stop shop for a job application: build an ATS-safe resume, match it to the job description, write a tailored cover letter, and export everything to PDF or Word, all in a single session with no paywall.`,
+  },
+  {
+    q: 'Can I use the Career Toolkit offline?',
+    a: 'Yes. After loading any tool page once, it works without an internet connection. Every utility runs in your browser using client-side JavaScript. There are no external API calls, no cloud processing, and no server dependencies. This makes the Best Answer Hub Career Toolkit reliable for use on trains, flights, or anywhere with limited internet access. The Typing Speed Test works offline once loaded. Sample text and all calculations are included in the page.',
+  },
+  {
+    q: 'Which browsers are supported?',
+    a: `All modern browsers are fully supported: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+, and Opera 76+. The tools use standard Web APIs including the File API, Canvas API, and TypedArrays. Internet Explorer is not supported. All ${careerToolsData.length} tools work on both desktop and mobile browsers.`,
+  },
+];
+
+const steps = [
+  { title: 'Pick a career tool', description: 'Choose from Resume Builder, Cover Letter Builder, Keyword Matcher, Word Counter, Case Converter, Reading Time, or Typing Speed Test. Each has its own dedicated page.' },
+  { title: 'Enter your information', description: 'Fill in your details, paste job descriptions, or drop in text. Everything happens instantly in your browser with no uploads to any server.' },
+  { title: 'Download or refine', description: 'Get your resume, cover letter, or analysis immediately. Download PDF or Word with one click and continue applying.' },
+];
+
+const seo = {
+  title: 'Free Career Toolkit — Resume, Cover Letter & More (2026)',
+  description: 'Free browser-based career tools: resume builder, cover letter builder, keyword matcher, word counter, and more. No signup, no uploads, no watermarks.',
+  url: '/career-toolkit/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Career Toolkit', url: '/career-toolkit/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\\s{2,}/g, ' ').trim() })),
+};
+
+const careerTools = [
+  {
+    href: '/tools/resume-builder/',
+    badge: 'Resume',
+    title: 'Resume Builder',
+    description: 'Build ATS-friendly resumes with live preview. Export to PDF and Word. Single-column templates designed for real recruiters. No signup.',
+    meta: 'PDF + Word • ATS-safe • Live preview • No upload',
+    icon: '📄',
+    live: true,
+  },
+  {
+    href: '/tools/cover-letter-builder/',
+    badge: 'Cover Letter',
+    title: 'Cover Letter Builder',
+    description: 'Create tailored cover letters that match your resume. Choose from professional templates and export to PDF or Word instantly.',
+    meta: 'PDF + Word • Templates • Tailored • No upload',
+    icon: '✉️',
+    live: true,
+  },
+  {
+    href: '/tools/job-keyword-matcher/',
+    badge: 'Matcher',
+    title: 'Job Keyword Matcher',
+    description: 'Paste a job description and see which keywords are missing from your resume. Simple client-side text analysis, no AI, no server.',
+    meta: 'Client-side • Keyword gaps • ATS boost • Free',
+    icon: '🔍',
+    live: true,
+  },
+  {
+    href: '/tools/word-counter/',
+    badge: 'Counter',
+    title: 'Word Counter',
+    description: 'Count words, characters, sentences, and paragraphs. Perfect for essays, job applications, and content with strict length limits.',
+    meta: 'Words • Characters • Sentences • Paragraphs',
+    icon: '📝',
+    live: true,
+  },
+  {
+    href: '/tools/case-converter/',
+    badge: 'Converter',
+    title: 'Case Converter',
+    description: 'Convert text between uppercase, lowercase, title case, sentence case, camelCase, and snake_case instantly in your browser.',
+    meta: '8 formats • Instant • Copy with one click',
+    icon: 'Aa',
+    iconText: true,
+    live: true,
+  },
+  {
+    href: '/tools/reading-time/',
+    badge: 'Estimator',
+    title: 'Reading Time',
+    description: 'Estimate how long it takes to read any piece of text. Adjusts for average, slow, and fast reading speeds. Great for blogs and speeches.',
+    meta: 'Average • Slow • Fast • Word count included',
+    icon: '⏱️',
+    live: true,
+  },
+  {
+    href: '/tools/typing-speed-test/',
+    badge: 'Typing',
+    title: 'Typing Speed Test',
+    description: 'Measure your WPM and accuracy in real time. Choose 15s, 30s, 60s, or 3-minute tests. Download a timestamped PDF report for job applications.',
+    meta: 'WPM • Accuracy • KPH • PDF report',
+    icon: '⌨️',
+    live: true,
+  },
+];
+---
+
+<BaseLayout seo={seo}>
+  <ToolHero
+    badge="Free Tool · 7 Utilities · No Signup"
+    title="Career Toolkit:"
+    accentText="Build, refine & optimize"
+    description="Free browser-based career tools: resume builder, cover letter builder, job keyword matcher, word counter, case converter, reading time estimator, and typing speed test. Your data never leaves your device, with no uploads, no watermarks, and no daily limits."
+  />
+
+  <!-- Tool Cards -->
+  <section class="py-6 md:py-8" aria-label="Career tools">
+    <div class="container max-w-page mx-auto px-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="career-tools-grid">
+        {careerTools.map((tool) => (
+          tool.live ? (
+            <a href={tool.href} class="group bg-bae-card border border-bae-border rounded-bae p-6 no-underline text-inherit transition-all hover:-translate-y-1 hover:shadow-bae-lg hover:border-bae-primary">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">{tool.badge}</span>
+                <span class="w-7 h-7 rounded-bae-sm bg-bae-primary-soft text-bae-primary text-xs font-bold flex items-center justify-center shrink-0">{tool.icon}</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink mb-2">{tool.title}</h2>
+              <p class="text-sm text-bae-muted line-clamp-2">{tool.description}</p>
+              <p class="text-xs text-bae-muted mt-3 font-medium">{tool.meta}</p>
+            </a>
+          ) : (
+            <div class="group bg-bae-card/60 border border-bae-border/60 rounded-bae p-6 text-inherit cursor-not-allowed">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold uppercase tracking-wider text-bae-muted">{tool.badge}</span>
+                <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-bae-border/40 text-bae-muted">Coming Soon</span>
+              </div>
+              <h2 class="text-base font-semibold text-bae-ink/70 mb-2">{tool.title}</h2>
+              <p class="text-sm text-bae-muted/70 line-clamp-2">{tool.description}</p>
+              <p class="text-xs text-bae-muted/60 mt-3 font-medium">{tool.meta}</p>
+            </div>
+          )
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ToolHubValueProp
+    hubName="Career Toolkit"
+    count={careerToolsData.length}
+    noun="career tools"
+    replaces="using one site to build a resume, another to write a cover letter, and another to check keywords"
+  />
+
+  <ToolHowItWorks steps={steps} />
+  <ToolFAQ faqs={faqs} />
+
+  <!-- What people build with it -->
+  <section class="py-10 md:py-14 border-t border-bae-border-light">
+    <div class="container max-w-page mx-auto px-6">
+      <h2 class="font-serif text-xl md:text-2xl font-bold tracking-tight text-bae-ink mb-2">What people build with it</h2>
+      <p class="text-sm text-bae-muted mb-8">Common use cases from job seekers, career changers, freelancers, and content creators.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Job Applications</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">ATS-ready resume + tailored cover letter, no paywall</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">PDF + Word export free, no card required</p>
+          <p class="text-sm text-bae-muted">Build a single-column ATS-safe resume in the Resume Builder, run the job description through the Job Keyword Matcher to close any keyword gaps, then produce a matching cover letter, all in one session. Download both as PDF or Word with no subscription gate.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Career Change</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Rebuild your resume for a new sector</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Transferable skills surfaced in minutes</p>
+          <p class="text-sm text-bae-muted">Paste your existing resume and target job description into the Job Keyword Matcher to see exactly which transferable skills and phrases are missing. Rewrite those sections in the Resume Builder, then re-run the match until the gap score reaches zero before applying.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Content & Blogging</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Hit word counts and read-time targets</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">Articles, essays, newsletters, speeches</p>
+          <p class="text-sm text-bae-muted">Paste a draft into the Word Counter to track words, characters, sentences, and paragraphs, then run it through the Reading Time Estimator to verify average, slow, and fast read times. Both tools work instantly in-browser, with no upload and no account, ideal for freelance writers on deadline.</p>
+        </div>
+        <div class="bg-bae-card border border-bae-border rounded-bae p-6">
+          <span class="text-xs font-semibold uppercase tracking-wider text-bae-primary">Freelancers & Consultants</span>
+          <h3 class="text-base font-semibold text-bae-ink mt-2 mb-1">Professional documents without Microsoft Office</h3>
+          <p class="text-xs font-medium text-bae-primary mb-3">PDF and Word output from any device</p>
+          <p class="text-sm text-bae-muted">Use the Resume Builder and Cover Letter Builder to produce clean, professionally formatted PDFs without needing Word, Pages, or a paid subscription. Works on iPhone, iPad, and Android, ideal for contractors updating their materials between client engagements or while travelling.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ToolRelatedCTA />
+</BaseLayout>

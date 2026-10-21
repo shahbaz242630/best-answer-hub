@@ -1,0 +1,369 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const today = '2026-07-11T00:00:00+00:00';
+
+const faqs = [
+  { q: 'What is the Best Answer Hub Images to PDF Converter?', a: 'The Best Answer Hub Images to PDF Converter is a free, browser-based tool that combines JPG, PNG, and WebP images into one PDF. You drag to reorder, pick page size, margins, and image fit, then create the file. It is built on the pdf-lib library and runs on your own device, so nothing is uploaded and it needs no account.' },
+  { q: 'Is it safe to convert IDs, receipts, or bank statements online?', a: 'It is safe only when the conversion runs on your device, as the Best Answer Hub Images to PDF Converter does. Most other converters upload your files to a server first. Because this tool builds the PDF in your browser and sends nothing, a passport scan, ID, or bank statement never leaves your machine, which is the safer way to handle sensitive documents.' },
+  { q: 'Does the converter upload my images to a server?', a: 'No. The Best Answer Hub Images to PDF Converter builds the PDF entirely in your browser with the pdf-lib library and transmits nothing. You can confirm it by opening the Network tab in your browser developer tools and seeing zero uploads, or by turning off your internet after the page loads: the tool keeps working because everything happens locally.' },
+  { q: 'What image formats does it support?', a: 'The Best Answer Hub Images to PDF Converter accepts JPEG, PNG, and WebP files, and you can mix them in one PDF. PNG is embedded losslessly, JPEG is embedded directly, and WebP is converted to PNG. HEIC, the default iPhone format, is not supported directly because browser HEIC decoding is inconsistent, so convert those to JPEG first.' },
+  { q: 'Why do my iPhone HEIC photos not work, and how do I fix it?', a: 'iPhones save photos in HEIC by default, which browsers decode inconsistently, so the Best Answer Hub Images to PDF Converter does not accept it. To fix it, open Settings, then Camera, then Formats, and choose Most Compatible so new photos save as JPEG. For existing HEIC files, run them through a free HEIC-to-JPEG step, then convert as normal.' },
+  { q: 'Does converting to PDF reduce image quality?', a: 'Usually not. In the Best Answer Hub Images to PDF Converter, PNG images are embedded losslessly and JPEG images are embedded directly, so no new compression is added. Quality only changes if you lower the quality slider below 100 percent to shrink the file. For the sharpest result, leave the slider at 100 percent.' },
+  { q: 'Can I reorder the images before creating the PDF?', a: 'Yes. In the Best Answer Hub Images to PDF Converter, each image appears as a draggable card with a thumbnail. Drag the cards up or down to set the page order, and remove any image you do not want. The final PDF follows the order shown on screen, from top to bottom.' },
+  { q: 'What page sizes and fit options are available?', a: 'The Best Answer Hub Images to PDF Converter offers A4, US Letter, or a page sized to match each image, in portrait or landscape, with none, small, medium, or large margins. Image fit can scale to the page, keep the original pixel size, or stretch to fill, so you control whether pages have borders or go edge to edge.' },
+  { q: 'Why is my converted PDF larger than the original images?', a: 'A PDF wraps each image in a structured container, which adds some overhead, and high-quality JPEG embedding can expand the size. To make it smaller in the Best Answer Hub Images to PDF Converter, lower the quality slider to around 75 to 85 percent, or run the finished PDF through the Best Answer Hub PDF Compressor for further reduction.' },
+  { q: 'Why does my photo come out sideways?', a: 'Sideways photos come from EXIF orientation, where the image is stored rotated at the pixel level and the phone gallery corrects it on screen. When embedded into a PDF the orientation tag is ignored, so the raw pixels appear rotated. Fix it by rotating the pages in the Best Answer Hub PDF Rotator, or rotate the photo in your phone editor before converting.' },
+  { q: 'Does the converted PDF still contain my photo GPS location?', a: 'It can. Photos carry EXIF metadata that may include GPS coordinates, and a direct, full-quality embed can carry that into the PDF. Because the Best Answer Hub Images to PDF Converter never uploads anything, the location never reaches a server. To strip it before sharing, lower the quality slider, which re-encodes the image and drops the metadata.' },
+  { q: 'Can I use the converter offline?', a: 'Yes. After the page loads once, the Best Answer Hub Images to PDF Converter works with no internet connection, because it builds the PDF locally with the pdf-lib library. That makes it useful on restricted or air-gapped machines, and it is why sensitive images never need to touch a network to become a PDF.' },
+  { q: 'Is there a file size or image count limit?', a: 'No hard limits are enforced. The Best Answer Hub Images to PDF Converter accepts images of any size and any number in one session, with speed depending on your device. Most people convert 20 to 50 images comfortably on a desktop browser; for very large batches, work in smaller groups for the fastest, most reliable results.' },
+  { q: 'Can I use it on iPhone or Android without an app?', a: 'Yes. The Best Answer Hub Images to PDF Converter runs in mobile Safari and Chrome with no app to install. Open the page, tap to select photos, arrange them, and download the PDF. On iPhone, set the camera to Most Compatible first, since the default HEIC format is not supported directly.' },
+  { q: 'How is it different from Smallpdf and iLovePDF?', a: 'Smallpdf and iLovePDF upload your files to their servers and cap the free tier, deleting files after one to two hours. The Best Answer Hub Images to PDF Converter builds the PDF in your browser with no upload, no signup, no watermark, and no daily limit, and it still offers reordering, page sizes, margins, and fit controls.' },
+];
+
+const seo = {
+  title: 'How to Convert Images to PDF, Nothing Uploaded (2026)',
+  description: 'Combine JPG, PNG, and WebP images into one PDF in your browser, with nothing uploaded. Page sizes, quality, the HEIC fix, and why photos hold GPS data.',
+  url: '/playbooks/images-to-pdf/',
+  type: 'WebPage' as const,
+  datePublished: today,
+  dateModified: today,
+  breadcrumbs: [
+    { name: 'Home', url: '/' },
+    { name: 'Playbooks', url: '/playbooks/' },
+    { name: 'Images to PDF', url: '/playbooks/images-to-pdf/' },
+  ],
+  faq: faqs.map(f => ({ question: f.q, answer: f.a.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim() })),
+};
+---
+
+<BaseLayout seo={seo}>
+  <Fragment slot="head">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Karla:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  </Fragment>
+
+  <div class="pb">
+    <div class="hero">
+      <span class="glow"></span>
+      <div class="hero-inner">
+        <div class="hero-top">
+          <div class="masthead">
+            <img class="bmark" src="/brand-mark.png" alt="Best Answer Hub logo" width="44" height="44" />
+            <span class="word">Best Answer Hub<i>.</i></span>
+          </div>
+          <a class="backnav" href="/playbooks/"><span class="bk-ico" aria-hidden="true">&larr;</span> Back to Playbooks</a>
+        </div>
+        <span class="eyebrow">Best Answer Hub Playbooks &middot; PDF Tools</span>
+        <div class="cav">Built in your browser, never uploaded</div>
+        <h1>Turn Images into a PDF, <em>Nothing Uploaded</em></h1>
+        <p class="dek">A plain guide to combining photos and images into a single PDF: how an image becomes a PDF page, whether it loses quality, why iPhone HEIC photos need a step first, and the hidden location data your photos can carry. The Best Answer Hub Images to PDF Converter builds the file in your browser, so nothing is uploaded.</p>
+        <div class="byline"><span><b>Best Answer Hub</b></span><span>~9 min read</span><span>Privacy-first</span><span>No signup</span></div>
+        <div class="bandstrip">
+          <div class="seg b1">Combine<small>drag to reorder</small></div>
+          <div class="seg b2">Private<small>never uploaded</small></div>
+          <div class="seg b3">Free<small>no signup, no watermark</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">0</div><div class="l">files uploaded to a server</div><div class="src">built on your device</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">formats into one PDF</div><div class="src">JPG, PNG, WebP</div></div>
+      <div class="stat"><div class="n">$10.22M</div><div class="l">average US data breach cost</div><div class="src">IBM, 2025</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">runs in your browser</div><div class="src">pdf-lib, even offline</div></div>
+    </div>
+
+    <div class="layout">
+      <nav class="toc" aria-label="On this page">
+        <div class="t">On this page</div>
+        <a href="#what">What it is</a>
+        <a href="#safe">Is it safe?</a>
+        <a href="#how">How it becomes a PDF</a>
+        <a href="#quality">Does quality drop?</a>
+        <a href="#heic">iPhone HEIC photos</a>
+        <a href="#metadata">Hidden GPS data</a>
+        <a href="#different">Versus other tools</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <article>
+        <p class="lead"><strong>You can combine JPG, PNG, and WebP images into a single PDF, and the Best Answer Hub Images to PDF Converter does it entirely in your browser so your photos are never uploaded.</strong> This guide explains how an image actually becomes a PDF page, whether the conversion loses quality, why iPhone HEIC photos need one extra step, the hidden GPS location your photos can carry, and why uploading a scanned ID or bank statement to a random converter is a risk worth avoiding.</p>
+
+        <div class="cav">Start here</div>
+        <h2 id="what">What is the Best Answer Hub Images to PDF Converter?</h2>
+        <p>The Best Answer Hub <a href="/tools/images-to-pdf/">Images to PDF Converter</a> turns a set of JPG, PNG, and WebP images into one PDF, with drag-and-drop reordering, a choice of page size, orientation, margins, and how each image fits the page. It is built on the open-source pdf-lib library, which assembles the PDF in your browser using JavaScript, so nothing is transmitted, nothing is stored, and it keeps working with the internet switched off. There is no account, no watermark, and no daily cap. The tool sits in the Best Answer Hub <a href="/pdf-toolkit/">PDF Toolkit</a> and the wider <a href="/tools/">Tools hub</a>, is built and maintained by <a href="/about/shahbaz-ali-malik/">Shahbaz Ali Malik</a>, and stays free because Best Answer Hub is funded by optional paid assessments rather than advertising.</p>
+
+        <div class="cav">The part that matters</div>
+        <h2 id="safe">Is it safe to convert an ID or a bank statement online?</h2>
+        <p>Converting is safe only when the work happens on your own device, which is exactly how the Best Answer Hub Images to PDF Converter works. The catch with most other converters is that they upload your images to a server first. JPG2PDF states plainly that "our server uploads a copy of your original file and then uses that for the conversion process." Smallpdf keeps uploaded files for one hour, and iLovePDF says files are "permanently deleted within two hours of being processed." Those windows are short, but they still mean a scan of your passport, ID, or bank statement left your device and sat on someone else's server. The safer approach is to not send it at all, which the FTC frames as a first principle: if you do not have a real need to collect sensitive information, "don't even collect it" (<a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">FTC</a>). The stakes are set by the numbers, with the average United States data breach reaching a record 10.22 million dollars in 2025 (<a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">IBM</a>).</p>
+        <blockquote>The safest converter is one that never sees your files. <span class="accent">Build the PDF in your browser, and there is nothing to upload, store, or leak.</span></blockquote>
+        <figure class="chart">
+          <figcaption class="chart-title">Where your images go</figcaption>
+          <svg viewBox="0 0 620 244" role="img" aria-label="Diagram: images added to this tool are built into a PDF in your browser and nothing is uploaded; images added to many converters are uploaded to a server and deleted after one to two hours.">
+            <rect x="200" y="14" width="220" height="46" rx="12" fill="#33302A"></rect>
+            <text x="310" y="42" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="15" font-weight="700" fill="#fff">You add your images</text>
+            <line x1="310" y1="60" x2="150" y2="96" stroke="#ddd0bb" stroke-width="2"></line>
+            <line x1="310" y1="60" x2="470" y2="96" stroke="#ddd0bb" stroke-width="2"></line>
+            <text x="150" y="86" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">This tool</text>
+            <rect x="40" y="96" width="220" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"></rect>
+            <text x="150" y="124" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">Built by pdf-lib in-browser</text>
+            <line x1="150" y1="142" x2="150" y2="176" stroke="#ddd0bb" stroke-width="2"></line>
+            <rect x="40" y="176" width="220" height="54" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"></rect>
+            <text x="150" y="200" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#5a7355">Nothing uploaded</text>
+            <text x="150" y="218" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">and it works offline</text>
+            <text x="470" y="86" text-anchor="middle" font-family="Karla, sans-serif" font-size="12" font-weight="700" fill="#C6603F">Many online converters</text>
+            <rect x="360" y="96" width="220" height="46" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"></rect>
+            <text x="470" y="124" text-anchor="middle" font-family="Karla, sans-serif" font-size="13.5" font-weight="600" fill="#33302A">Uploaded to a server</text>
+            <line x1="470" y1="142" x2="470" y2="176" stroke="#ddd0bb" stroke-width="2"></line>
+            <rect x="360" y="176" width="220" height="54" rx="10" fill="#F3E2D6" stroke="#ecd6c5" stroke-width="2"></rect>
+            <text x="470" y="200" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="14" font-weight="800" fill="#8a4429">Held for 1 to 2 hours</text>
+            <text x="470" y="218" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#B0512F">on someone else server</text>
+          </svg>
+          <p class="chart-src">A client-side converter builds the PDF in your browser and sends nothing. Smallpdf deletes uploaded files after one hour, iLovePDF after two; with in-browser conversion there is nothing to delete. Sources in the list below.</p>
+        </figure>
+
+        <div class="cav">Under the hood</div>
+        <h2 id="how">How does an image become a PDF page?</h2>
+        <p>An image becomes a PDF page by being embedded as an object inside the PDF and then placed on a page of a chosen size, and the Best Answer Hub Images to PDF Converter does this with pdf-lib. PDF is an open ISO standard, ISO 32000, and it can carry a JPEG's compressed data directly using a filter called DCTDecode, which the specification describes as a technique "based on the JPEG standard" (<a href="https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf" target="_blank" rel="noopener noreferrer">ISO 32000-1</a>). That means a JPEG can be stored inside the PDF without being re-compressed, so it does not lose quality on the way in, while a PNG is embedded losslessly. Each image is then placed on a page measured in points, where there are 72 points to an inch, so an A4 page is 595 by 842 points and a US Letter page is 612 by 792 points. The tool lets you pick A4, Letter, or a page sized to match each image.</p>
+        <figure class="chart">
+          <figcaption class="chart-title">How a JPEG becomes a PDF page</figcaption>
+          <svg viewBox="0 0 620 132" role="img" aria-label="Flow: your JPEG bytes are embedded via the DCTDecode filter with no recompression, then placed on an A4 page of 595 by 842 points.">
+            <rect x="10" y="40" width="176" height="52" rx="10" fill="#fff" stroke="#E8DECE" stroke-width="2"></rect>
+            <text x="98" y="63" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#33302A">Your JPEG</text>
+            <text x="98" y="80" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#847B6B">already compressed</text>
+            <line x1="186" y1="66" x2="222" y2="66" stroke="#C6603F" stroke-width="2.5"></line>
+            <polygon points="222,61 232,66 222,71" fill="#C6603F"></polygon>
+            <rect x="232" y="40" width="176" height="52" rx="10" fill="#F3E2D6" stroke="#ecd6c5" stroke-width="2"></rect>
+            <text x="320" y="63" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#8a4429">Embedded (DCTDecode)</text>
+            <text x="320" y="80" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#B0512F">no recompression</text>
+            <line x1="408" y1="66" x2="444" y2="66" stroke="#C6603F" stroke-width="2.5"></line>
+            <polygon points="444,61 454,66 444,71" fill="#C6603F"></polygon>
+            <rect x="454" y="40" width="156" height="52" rx="10" fill="#E4EADD" stroke="#cdd9c8" stroke-width="2"></rect>
+            <text x="532" y="63" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-size="13" font-weight="800" fill="#5a7355">Placed on a page</text>
+            <text x="532" y="80" text-anchor="middle" font-family="Karla, sans-serif" font-size="11" font-weight="600" fill="#6F8A6A">A4 = 595 x 842 pt</text>
+          </svg>
+          <p class="chart-src">PDF stores a JPEG through the DCTDecode filter without re-compressing it (ISO 32000-1). Pages are measured in points, at 72 to the inch. Sources in the list below.</p>
+        </figure>
+        <table>
+          <thead><tr><th>Page size</th><th>Millimeters</th><th>Inches</th><th>Points (72 per inch)</th></tr></thead>
+          <tbody>
+            <tr><td class="band">A4</td><td>210 x 297</td><td>8.27 x 11.69</td><td>595 x 842</td></tr>
+            <tr><td class="band">US Letter</td><td>216 x 279</td><td>8.5 x 11</td><td>612 x 792</td></tr>
+            <tr><td class="band">Original</td><td colspan="3">The page is sized to match the image exactly, so there are no borders</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cav">Keeping it sharp</div>
+        <h2 id="quality">Does converting to PDF reduce quality?</h2>
+        <p>In most cases it does not, and the Best Answer Hub Images to PDF Converter is built to keep your images intact. A PNG is embedded losslessly, and a JPEG is embedded directly whenever possible, which means its original compressed data is carried into the PDF without a second round of compression. The one time quality can change is if you lower the quality slider below 100 percent, which asks the tool to re-encode a JPEG at a smaller size, a trade you make on purpose to shrink the file. WebP images are converted to PNG, which keeps all their visual data. For the sharpest result, leave the quality at 100 percent; to make a heavy batch smaller, drop it to around 75 to 85 percent, or run the finished PDF through the Best Answer Hub <a href="/tools/pdf-compressor/">PDF Compressor</a>.</p>
+        <div class="callout peach"><div class="h">Lossless versus lossy, in one line</div><p>PNG is lossless, so it never degrades. JPEG and WebP are lossy formats, but embedding a JPEG directly adds no new loss. You only re-compress a JPEG if you choose to, by lowering the quality slider to trade a little sharpness for a smaller file.</p></div>
+
+        <div class="cav">The iPhone catch</div>
+        <h2 id="heic">Why do my iPhone photos not work?</h2>
+        <p>iPhone photos usually will not convert directly because they are saved in HEIC, a format the tool does not accept, and the Best Answer Hub Images to PDF Converter is honest about that rather than failing silently. HEIC, part of the HEIF standard (ISO/IEC 23008-12), has been the default iPhone photo format since iPhone 7 and iOS 11, because it stores photos at high quality in a smaller file. The snag is that browser support for decoding HEIC is inconsistent, so most in-browser tools, including this one, accept JPG, PNG, and WebP instead. The fix is quick: on the iPhone, open Settings, then Camera, then Formats, and choose Most Compatible so new photos save as JPEG. For photos you already have in HEIC, run them through a free HEIC-to-JPEG step first, then convert.</p>
+
+        <div class="cav">The hidden passenger</div>
+        <h2 id="metadata">Does the converted PDF still hold my photo location?</h2>
+        <p>It can, and the honest answer is worth knowing before you share a PDF. Photos from a phone or camera carry EXIF metadata, defined by the Exif standard (CIPA DC-008), which the US Library of Congress notes can include "geographic data," meaning the GPS coordinates of where the photo was taken, along with the camera model and timestamp (<a href="https://www.loc.gov/preservation/digital/formats/fdd/fdd000618.shtml" target="_blank" rel="noopener noreferrer">Library of Congress</a>). Privacy advocates have long warned that these coordinates "hidden in these quick and candid pictures" are an easy way to work out where someone was (<a href="https://www.eff.org/deeplinks/2012/04/picture-worth-thousand-words-including-your-location" target="_blank" rel="noopener noreferrer">EFF</a>). Because the Best Answer Hub Images to PDF Converter never uploads your photos, that location never reaches a server either way. If you plan to share the PDF widely, keep in mind that a direct, full-quality embed can carry the original photo's metadata, while re-encoding the image, for example by lowering the quality slider, drops it, since a re-encode keeps only the pixels.</p>
+        <div class="callout sage"><div class="h">Before you share a photo PDF</div><p>If the images are personal photos and the PDF is going somewhere public, consider lowering the quality slider a notch, which re-encodes the image and strips its EXIF data, including GPS. For a scan of a document rather than a camera photo, there is usually no location data to worry about in the first place.</p></div>
+
+        <div class="cav">The honest comparison</div>
+        <h2 id="different">How is it different from Smallpdf and iLovePDF?</h2>
+        <p>The difference is that the Best Answer Hub Images to PDF Converter builds the PDF in your browser with no upload, no signup, and no watermark, while the popular alternatives send your files to a server and cap the free tier. The table sets the usual online experience next to this one.</p>
+        <table>
+          <thead><tr><th>What you get</th><th>Best Answer Hub</th><th>Typical online converter</th></tr></thead>
+          <tbody>
+            <tr><td>Where the PDF is built</td><td class="band">In your browser</td><td>On a server, after upload</td></tr>
+            <tr><td>Files uploaded</td><td class="band">Never</td><td>Yes, then deleted after 1 to 2 hours</td></tr>
+            <tr><td>Account or signup</td><td class="band">Not required</td><td>Often for full features</td></tr>
+            <tr><td>Watermark on output</td><td class="band">None</td><td>Sometimes on the free tier</td></tr>
+            <tr><td>Free-tier limits</td><td class="band">None</td><td>Daily task or file caps common</td></tr>
+            <tr><td>Reorder, page size, margins</td><td class="band">Yes</td><td>Varies</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><div class="h">Pair it with the rest of the toolkit</div><p>Once your PDF is built, the Best Answer Hub <a href="/pdf-toolkit/">PDF Toolkit</a> has the neighbors you reach for next: a <a href="/tools/pdf-compressor/">PDF Compressor</a> to shrink it, a PDF Merger to join files, and a PDF to Word converter, each running in the browser and sending nothing. Convert here, then carry on without a single upload.</p></div>
+
+        <div class="cta">
+          <span class="kicker">Convert them now</span>
+          <h3>Open the Images to PDF Converter</h3>
+          <p>Free, no signup, and built entirely in your browser. Drop your images, drag to reorder, choose the page size, and download one clean PDF.</p>
+          <a class="btn" href="/tools/images-to-pdf/">Convert images to PDF</a>
+        </div>
+
+        <div class="cav">Good questions</div>
+        <h2 id="faq">Common questions about images to PDF</h2>
+        <div class="faq">
+          {faqs.map((f) => (
+            <div class="qa">
+              <div class="q" set:html={f.q}></div>
+              <div class="a" set:html={f.a}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="cav">People also read</div>
+        <h2>Keep going</h2>
+        <div class="sec">
+          <ul class="pillars">
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-pdf-tools/">Free PDF Tools, Nothing Uploaded</a></b> The PDF Toolkit guide, from merging to compressing, all keeping your files on your device.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/pdf-compressor/">Compress a PDF Without Uploading It</a></b> Shrink the PDF you just built, in the browser, with nothing sent to a server.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/playbooks/free-online-tools/">70+ Free Online Tools, Nothing Uploaded</a></b> The overview of every Best Answer Hub hub, from calculators to developer tools.</div></li>
+            <li><span class="dot">&rarr;</span><div><b><a href="/knowledge-center/smb-ai-readiness/">SMB AI Readiness Score</a></b> A free assessment with an instant radar and quick wins for your business.</div></li>
+          </ul>
+        </div>
+
+        <h2>Sources</h2>
+        <ul class="sources">
+          <li>ISO, <a href="https://www.iso.org/standard/51502.html" target="_blank" rel="noopener noreferrer">ISO 32000-1:2008, Portable document format, Part 1: PDF 1.7</a>, and the free Adobe copy, <a href="https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/PDF32000_2008.pdf" target="_blank" rel="noopener noreferrer">PDF 32000-1:2008</a> (DCTDecode carries JPEG data without recompression).</li>
+          <li>PDF Association, <a href="https://pdfa.org/resource/iso-32000-1/" target="_blank" rel="noopener noreferrer">ISO 32000-1</a> (Adobe donated the PDF 1.7 specification to ISO in 2007; PDF is an open standard).</li>
+          <li>ISO, <a href="https://www.iso.org/standard/36631.html" target="_blank" rel="noopener noreferrer">ISO 216:2007</a> (A4 is 210 by 297 millimeters).</li>
+          <li>Library of Congress, <a href="https://www.loc.gov/preservation/digital/formats/fdd/fdd000526.shtml" target="_blank" rel="noopener noreferrer">HEIF and HEIC</a> (ISO/IEC 23008-12; the default iPhone format since iOS 11).</li>
+          <li>Library of Congress, <a href="https://www.loc.gov/preservation/digital/formats/fdd/fdd000618.shtml" target="_blank" rel="noopener noreferrer">Exif metadata</a>, and EFF, <a href="https://www.eff.org/deeplinks/2012/04/picture-worth-thousand-words-including-your-location" target="_blank" rel="noopener noreferrer">A Picture Is Worth a Thousand Words, Including Your Location</a> (photos can embed GPS coordinates).</li>
+          <li>jsPDF and pdf-lib, <a href="https://pdf-lib.js.org/" target="_blank" rel="noopener noreferrer">pdf-lib</a> (client-side PDF creation that embeds JPEG and PNG images in the browser).</li>
+          <li>MDN Web Docs, <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData" target="_blank" rel="noopener noreferrer">getImageData</a> (a canvas holds only raw pixels, so a re-encode carries no EXIF metadata).</li>
+          <li>Smallpdf, <a href="https://smallpdf.com/blog/is-smallpdf-safe" target="_blank" rel="noopener noreferrer">Is Smallpdf Safe?</a> (files deleted after one hour), iLovePDF, <a href="https://www.ilovepdf.com/help/security" target="_blank" rel="noopener noreferrer">Security</a> (deleted within two hours), and JPG2PDF, <a href="https://jpg2pdf.com/" target="_blank" rel="noopener noreferrer">jpg2pdf.com</a> (the server uploads a copy of your file).</li>
+          <li>FTC, <a href="https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business" target="_blank" rel="noopener noreferrer">Protecting Personal Information: A Guide for Business</a> (do not collect sensitive data you do not need), and IBM, <a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">Cost of a Data Breach Report 2025</a> (US record of 10.22 million dollars).</li>
+        </ul>
+        <p class="mt-12 pt-6 border-t border-bae-border-light text-sm text-bae-muted">Jump into the tools: <a href="/tools/images-to-pdf/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">Images to PDF</a>, <a href="/pdf-toolkit/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Toolkit</a>, <a href="/tools/pdf-compressor/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">PDF Compressor</a>, and <a href="/tools/" class="text-bae-ink underline underline-offset-2 hover:text-bae-primary transition-colors">all Tools</a>.</p>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pb{
+    --cream:#FBF6EE; --card:#fff;
+    --clay:#C6603F; --clay-dark:#B0512F; --clay-deep:#8a4429;
+    --sage:#6F8A6A; --sage-dark:#5a7355;
+    --ink:#33302A;
+    --peach:#F3E2D6; --sage-tint:#E4EADD;
+    --border:#E8DECE; --fill-line:#ddd0bb;
+    --body:#4f4940; --label:#847B6B; --muted:#a89c87; --faint:#bcae99;
+    background:var(--cream);font-family:'Karla',system-ui,sans-serif;color:var(--body);line-height:1.65;
+  }
+  .pb *{box-sizing:border-box}
+  .pb a{color:var(--clay)}
+  .pb .cav{font-family:'Caveat',cursive;font-weight:600;color:var(--sage);transform:rotate(-1.5deg);display:inline-block}
+
+  .pb .hero{background:var(--cream);padding:28px 0 40px;position:relative;overflow:hidden}
+  .pb .hero .glow{position:absolute;right:-160px;top:-60px;width:420px;height:420px;background:radial-gradient(circle,rgba(198,96,63,.10),transparent 70%);filter:blur(10px)}
+  .pb .hero-inner{max-width:1080px;margin:0 auto;padding:0 24px;position:relative}
+  .pb .hero-top{position:relative;display:flex;justify-content:space-between;align-items:center;min-height:44px;margin:4px 0 30px}
+  .pb .masthead{display:flex;align-items:center;gap:11px}
+  .pb .masthead .bmark{width:44px;height:44px;border-radius:11px;display:block}
+  .pb .masthead .word{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.01em;line-height:1.05}
+  .pb .masthead .word i{font-style:normal;color:var(--clay)}
+  .pb .backnav{display:inline-flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--clay-dark);text-decoration:none;background:var(--peach);border:1px solid #ecd6c5;padding:7px 14px;border-radius:999px;transition:.15s}
+  .pb .backnav:hover{background:#eed6c6}
+  .pb .backnav .bk-ico{font-size:.95rem;line-height:1}
+  .pb .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Karla',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);background:var(--peach);padding:6px 14px;border-radius:999px}
+  .pb .hero .cav{font-size:1.5rem;margin:20px 0 6px}
+  .pb h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.4rem,5.6vw,3.7rem);line-height:1.0;margin:2px 0 18px;letter-spacing:-.02em;max-width:15em;color:var(--ink)}
+  .pb h1 em{font-style:normal;color:var(--clay)}
+  .pb .dek{font-size:1.16rem;color:var(--body);max-width:40em}
+  .pb .byline{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-size:.84rem;color:var(--label);font-weight:600}
+  .pb .byline b{color:var(--ink)}
+  .pb .bandstrip{display:flex;gap:8px;margin-top:28px;max-width:620px}
+  .pb .bandstrip .seg{flex:1;text-align:center;padding:11px 6px;border-radius:12px;font-size:.74rem;font-weight:700;border:2px solid var(--border);background:var(--card);color:var(--ink);line-height:1.25}
+  .pb .bandstrip .seg small{display:block;font-weight:600;font-size:.66rem;color:var(--label);margin-top:2px}
+  .pb .bandstrip .seg.b1{border-color:#cdd9c8;background:var(--sage-tint)}
+  .pb .bandstrip .seg.b2{border-color:#ecd6c5;background:var(--peach)}
+  .pb .bandstrip .seg.b3{border-color:var(--clay);background:var(--clay);color:#fff}
+  .pb .bandstrip .seg.b3 small{color:#f3ddd2}
+
+  .pb .stat-grid{max-width:1080px;margin:18px auto 0;padding:0 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:3}
+  .pb .stat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:18px 16px;text-align:center}
+  .pb .stat .n{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;color:var(--clay);line-height:1}
+  .pb .stat .l{font-size:.78rem;color:var(--ink);margin-top:8px;font-weight:600;line-height:1.35}
+  .pb .stat .src{font-size:.66rem;color:var(--muted);margin-top:6px;font-weight:600;letter-spacing:.02em}
+
+  .pb .layout{max-width:1080px;margin:0 auto;padding:44px 24px 60px;display:grid;grid-template-columns:220px 1fr;gap:48px}
+  .pb .toc{position:sticky;top:24px;align-self:start;font-size:.88rem}
+  .pb .toc .t{font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:700;margin-bottom:12px}
+  .pb .toc a{display:block;color:var(--label);text-decoration:none;padding:7px 0;border-left:2px solid var(--border);padding-left:14px;transition:.15s;font-weight:600}
+  .pb .toc a:hover{color:var(--clay);border-left-color:var(--clay)}
+  .pb .toc a.active{color:var(--clay);border-left-color:var(--clay);font-weight:700}
+  .pb article{min-width:0;max-width:744px}
+  .pb .lead{font-size:1.22rem;color:var(--ink);margin:0 0 24px;line-height:1.55}
+  .pb .lead strong{font-weight:700;color:var(--ink)}
+  .pb article .cav{font-size:1.4rem;margin:38px 0 2px}
+  .pb h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.72rem;color:var(--ink);margin:2px 0 14px;letter-spacing:-.02em;line-height:1.06;scroll-margin-top:24px}
+  .pb p{margin:14px 0;color:var(--body)}
+  .pb code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86em;background:#f3ece0;border:1px solid var(--border);border-radius:5px;padding:1px 5px;color:var(--clay-deep)}
+  .pb .sec{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 22px;margin:18px 0}
+  .pb .pillars{list-style:none;margin:0;padding:0}
+  .pb .pillars li{padding:13px 0;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+  .pb .pillars li:last-child{border-bottom:0}
+  .pb .pillars .dot{flex:none;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.92rem;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .pb .pillars b{color:var(--ink)}
+  .pb table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem;border:2px solid var(--border);border-radius:14px;overflow:hidden}
+  .pb th{background:var(--peach);color:var(--clay-deep);text-align:left;padding:12px 14px;font-family:'Karla',sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .pb td{padding:13px 14px;border-top:1px solid var(--border);vertical-align:top;background:var(--card);color:var(--body)}
+  .pb td.band{font-weight:700;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+  .pb .callout{background:var(--card);border:2px solid var(--border);border-left:5px solid var(--clay);border-radius:14px;padding:18px 20px;margin:20px 0}
+  .pb .callout .h{font-family:'Karla',sans-serif;font-weight:700;color:var(--clay-dark);margin-bottom:7px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+  .pb .callout.sage{border-left-color:var(--sage);background:var(--sage-tint);border-color:#cdd9c8}
+  .pb .callout.sage .h{color:var(--sage-dark)}
+  .pb .callout.peach{border-left-color:var(--clay);background:var(--peach);border-color:#ecd6c5}
+  .pb .callout.peach .h{color:var(--clay-dark)}
+  .pb .callout p{margin:0;color:var(--body)}
+  .pb blockquote{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:1.34rem;line-height:1.32;color:var(--ink);background:var(--peach);border:1px solid #ecd6c5;border-left:5px solid var(--clay);border-radius:14px;padding:24px 28px;margin:28px 0;letter-spacing:-.01em}
+  .pb blockquote .accent{color:var(--clay)}
+  .pb .cta{background:var(--ink);color:var(--cream);border-radius:18px;padding:34px 32px;margin:26px 0;text-align:center}
+  .pb .cta .kicker{font-family:'Caveat',cursive;font-weight:600;font-size:1.4rem;color:#E2B79f;display:inline-block;margin-bottom:4px}
+  .pb .cta h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:2px 0 8px;color:#fff;letter-spacing:-.01em}
+  .pb .cta p{margin:0 auto 20px;color:#e8e0d2;max-width:34em}
+  .pb .btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:.96rem;padding:14px 32px;border-radius:12px;font-family:'Karla',sans-serif}
+  .pb .btn:hover{background:var(--clay-dark)}
+  .pb .faq .q{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--ink);margin-top:20px;font-size:1.02rem}
+  .pb .faq .a{color:var(--body);font-size:.96rem;margin-top:5px}
+  .pb .chart{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:20px 24px;margin:22px 0}
+  .pb .chart-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--ink);margin-bottom:2px}
+  .pb .chart svg{width:100%;height:auto;display:block;margin:8px 0 2px}
+  .pb .chart-src{font-size:.74rem;color:var(--muted);margin:6px 0 0;font-weight:600}
+  .pb .sources{font-size:.82rem;color:var(--muted);margin-top:20px;padding-left:18px}
+  .pb .sources li{margin:5px 0}
+
+  @media(max-width:860px){.pb .layout{grid-template-columns:1fr}.pb .toc{display:none}}
+  @media(max-width:680px){.pb .stat-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.pb .hero-top{flex-direction:column;gap:14px;align-items:flex-start;min-height:0;margin:4px 0 24px}}
+</style>
+
+<script is:inline>
+  (function () {
+    function init() {
+      var toc = document.querySelector('.pb .toc');
+      if (!toc) return;
+      var items = Array.prototype.slice.call(toc.querySelectorAll('a')).map(function (a) {
+        var href = a.getAttribute('href') || '';
+        var el = href.charAt(0) === '#' ? document.getElementById(href.slice(1)) : null;
+        return el ? { a: a, el: el } : null;
+      }).filter(Boolean);
+      if (!items.length) return;
+      var current = null;
+      function update() {
+        var line = 110, active = items[0];
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= line) active = items[i];
+          else break;
+        }
+        if (active.a !== current) {
+          items.forEach(function (it) { it.a.classList.remove('active'); });
+          active.a.classList.add('active');
+          current = active.a;
+        }
+      }
+      var ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { update(); ticking = false; });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+</script>
