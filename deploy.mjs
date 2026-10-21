@@ -101,6 +101,13 @@ function saveCache(cache) {
   fs.writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 0));
 }
 
+// Exact SAN entries only. A substring test would also accept a cert issued for
+// e.g. `hstgr.io.attacker.example` or `nothstgr.io`.
+export function isHostingerCert(subjectaltname = '') {
+  const names = subjectaltname.split(',').map((s) => s.trim());
+  return names.includes('DNS:*.hstgr.io') || names.includes('DNS:hstgr.io');
+}
+
 const accessOptions = {
   host: config.host,
   user: config.user,
@@ -113,10 +120,7 @@ const accessOptions = {
     // We verify the cert chain but allow the known Hostinger wildcard
     // to prevent MITM while still working with shared hosting SSL.
     checkServerIdentity: (host, cert) => {
-      const altNames = cert.subjectaltname || '';
-      if (altNames.includes('*.hstgr.io') || altNames.includes('hstgr.io')) {
-        return undefined; // Hostinger wildcard cert — accept
-      }
+      if (isHostingerCert(cert.subjectaltname)) return undefined; // Hostinger wildcard cert — accept
       return tls.checkServerIdentity(host, cert);
     },
   },
