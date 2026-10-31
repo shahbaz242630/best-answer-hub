@@ -1436,6 +1436,16 @@ export const playbooks: PlaybookMeta[] = [
   },
   {
     kind: 'spoke',
+    href: '/playbooks/binance-hack-explained/',
+    badge: 'Security',
+    title: 'The Binance Hack: What the $6.3B Theft Means for You',
+    description: 'Binance lost about $6.3 billion in the largest crypto theft on record by value at the time. What is confirmed, whether your money is safe or insured, and the scams to expect next.',
+    meta: '~14 min read • News explainer',
+    icon: '🚨',
+    live: true,
+  },
+  {
+    kind: 'spoke',
     href: '/playbooks/ai-text-watermarking/',
     badge: 'AI Content',
     title: 'AI Text Watermarking, Explained',
