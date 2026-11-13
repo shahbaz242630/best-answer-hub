@@ -197,9 +197,21 @@ async function uploadResilient(localDir) {
 // After a successful upload, notify IndexNow about the pages whose HTML
 // actually changed since the last deploy (content-hash diff). Never throws —
 // a search-ping failure must not fail an otherwise-good deploy.
-async function pingIndexNow() {
+export async function pingIndexNow() {
   if (process.argv.includes('--no-indexnow') || process.env.INDEXNOW === 'false') {
     console.log('⏭️  IndexNow skipped (--no-indexnow).');
+    return;
+  }
+  // INDEXNOW=seed: a site-wide markup change (no content change) just went
+  // out. Record the new hashes as the baseline and submit nothing.
+  if (process.env.INDEXNOW === 'seed') {
+    try {
+      const curr = computeManifest();
+      writeManifest(curr);
+      console.log(`\n🔔 IndexNow: baseline re-seeded (${Object.keys(curr).length} pages). No submission this run.`);
+    } catch (err) {
+      console.log('⚠️  IndexNow re-seed skipped: ' + err.message);
+    }
     return;
   }
   try {
